@@ -7,32 +7,51 @@ beforeEach(function(){
   obs = new ObserverAdapter();
 });
 
-describe('ErrorObserver suite', function(done){
-  it('Should call complete callback if complete is called');
-  it('Should call error callback if error is called');
-  it('Should notify when not paused', function(done){
-    obs.onNext(success(done));
-    obs.next('data');
+describe('Libs', function(done)
+{
+  describe('ErrorObserver', function(done){
+    describe('complete', function(done)
+    {
+      it('Deve chiamare complete_cb');
+      it('Non deve chiamare complete_cb se l\'observer è in pausa');
+      it('Deve chiamare complete_cb dopo che l\'observer è stato ripreso se mentre era in pausa il metodo è stato chiamato');
+    });
+
+    describe('error', function(done)
+    {
+      it('Deve chiamare error_cb');
+      it('Non deve chiamare error_cb se l\'observer è in pausa');
+      it('Deve chiamare error_cb dopo che l\'observer è stato ripreso se mentre era in pausa il metodo è stato chiamato');
+    });
+
+    describe('next', function(done)
+    {
+      it('Deve chiamare next_cb, inoltrandogli il parametro ricevuto, se l\'observer non è in pausa', function(done)
+      {
+        obs.onNext(success(done));
+        obs.next('data');
+      });
+      it('Non deve chiamare next_cb se è in pausa', function(done)
+      {
+        obs.onNext(error(done));
+        obs.pause();
+        obs.next('Function called');
+        done();
+      });
+      it('Deve chiamare next_cb, inoltrandogli il parametro ricevuto, dopo che l\'observer ha ripreso', function(done)
+      {
+        obs.onNext(continueTest(done));
+        obs.next('data');
+        obs.pause();
+        obs.onNext(error(done));
+        obs.next('function called');
+        obs.resume();
+        obs.onNext(success(done));
+        obs.next('data');
+      });
+    });
   });
-  it('Should not notify when paused', function(done){
-    obs.onNext(error(done));
-    obs.pause();
-    obs.next('Function called');
-    done();
-  });
-  it('Should notify after being resumed', function(done){
-    obs.onNext(continueTest(done));
-    obs.next('data');
-    obs.pause();
-    obs.onNext(error(done));
-    obs.next('function called');
-    obs.resume();
-    obs.onNext(success(done));
-    obs.next('data');
-  });
-  it('Should call error callback after being resumed if error was called');
-  it('Should call complete after being resumed if complete was called');
-});
+})
 
 function error(done)
 {
