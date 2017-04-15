@@ -1,11 +1,10 @@
 const STTWatsonAdapter = require('../Back-end/STT/STTWatsonAdapter');
-const mocha = require('mocha');
 
-describe('Back-end', function() 
+describe('Back-end', function()
 {
 	describe('STT', function()
 	{
-		describe('STTWatsonAdapter', function() 
+		describe('STTWatsonAdapter', function()
 		{
 			describe('speechToText', function()
 			{

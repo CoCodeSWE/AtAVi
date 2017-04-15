@@ -1,11 +1,9 @@
 const Logic = require('../Client/Logic/Logic');
-const mocha = require('mocha');
-
 describe('Client', function()
 {
 	describe('Logic', function()
 	{
-		describe('Logic', function() 
+		describe('Logic', function()
 		{
 			describe('sendData', function()
 			{
