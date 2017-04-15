@@ -11,10 +11,19 @@ describe('Back-end', function(done)
   {
     describe('ConversationsDAODynamoDB', function(done)
     {
-      let conversations = new dao(dynamo_client);
+      let conv = new dao(dynamo_client);
       describe('addConversation', function(done)
       {
-		    it("Nel caso in cui una conversazione non venga aggiunta a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.");
+		    it("Nel caso in cui una conversazione non venga aggiunta a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
+        {
+          conv.addConversation().subscribe(
+          {
+            next: (data) => {done(data);},
+            error: (err) => {done();},
+            complete: () => {done('complete called');}
+          });
+          dynamo_client.put.yield({code:500, msg:"error downloading data"});
+        });
 		    it("Nel caso in cui una conversazione sia aggiunta correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.");
       });
       describe('addMessage', function(done)
