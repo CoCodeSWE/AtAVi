@@ -1,1 +1,6 @@
-module.exports = {}
+class ApiAiVAAdapter
+{
+
+}
+
+module.exports = ApiAiVAAdapter;

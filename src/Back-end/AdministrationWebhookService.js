@@ -1,1 +1,6 @@
-module.exports = {}
+class AdministrationWebhookService
+{
+
+}
+
+module.exports = AdministrationWebhookService;

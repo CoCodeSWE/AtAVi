@@ -1,1 +1,6 @@
-module.exports = {}
+class MembersDAOSlack
+{
+
+}
+
+module.exports = MembersDAOSlack;

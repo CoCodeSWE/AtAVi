@@ -1,1 +1,6 @@
-module.exports = {}
+class VocalAPI
+{
+
+}
+
+module.exports = VocalAPI;
