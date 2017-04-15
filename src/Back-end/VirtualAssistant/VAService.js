@@ -1,1 +1,6 @@
-module.exports = {}
+class VAService
+{
+
+}
+
+module.exports = VAService;

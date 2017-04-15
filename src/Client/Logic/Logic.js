@@ -1,1 +1,6 @@
-module.exports = {}
+class Logic
+{
+
+}
+
+module.exports = Logic;

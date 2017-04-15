@@ -1,1 +1,6 @@
-module.exports = {}
+class STTWatsonAdapter
+{
+
+}
+
+module.exports = STTWatsonAdapter;

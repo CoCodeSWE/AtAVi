@@ -1,1 +1,6 @@
-module.exports = {}
+class VAMessageListener
+{
+
+}
+
+module.exports = VAMessageListener;

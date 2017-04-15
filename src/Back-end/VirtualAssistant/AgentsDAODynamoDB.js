@@ -1,1 +1,6 @@
-module.export={};
+class AgentsDAODynamoDB
+{
+
+}
+
+module.export= AgentsDAODynamoDB;
