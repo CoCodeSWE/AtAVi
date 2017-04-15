@@ -37,3 +37,6 @@ describe('Back-end', function(done)
         it("Nel caso in cui una conversazione non venga eliminata a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.");
         it("Nel caso in cui una conversazione sia eliminata correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.");
       });
+    });
+  });
+});
