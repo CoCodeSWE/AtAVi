@@ -10,11 +10,11 @@ describe('Back-end', function(done)
   describe('Agents', function(done)
   {
     describe('AgentsDAODynamoDB', function(done){
-      //let agents = new dao(dynamo_client);
+      let agents = new dao(dynamo_client);
       describe('addAgent', function(done)
       {
-		it("Nel caso in cui un agente di api.ai non venga aggiunto a causa di un'errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'observer iscritto.");
-		it("Nel caso in cui un agente di api.ai sia aggiunto correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'observer iscritto un'unica volta.");
+		    it("Nel caso in cui un agente di api.ai non venga aggiunto a causa di un'errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'observer iscritto.");
+		    it("Nel caso in cui un agente di api.ai sia aggiunto correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'observer iscritto un'unica volta.");
       });
 
       describe('getAgent',function(done)
