@@ -13,14 +13,38 @@ describe('Back-end', function(done)
       let users = new dao(dynamo_client);
       describe('addUser', function(done)
       {
-        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
+        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto"function(done)
+        {
+          users.getUser('mou').subscribe(
+          {
+            next: (data) => {done(data);},
+            error: (err) => {done();},
+            complete: () => {done('complete called');}
+          });
+          dynamo_client.get.yield({code:500, msg:"error getting data"});
+        });
         it("Nel caso in cui l'utente sia aggiunto correttamento, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta");
       });
 
       describe('getUser',function(done)
       {
         it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta");
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+        {
+          let observable = users.getUser('mou');
+          observable.subscribe(
+          {
+            next: function(data)
+            {
+              expect(data).to.not.be.null;
+              expect(data.username).to.equal('mou');
+              expect(data.name).to.equal('mauro');
+            },
+            error: (err) => {done(err);},
+            complete: () => {done();}
+          });
+          dynamo_client.get.yield(null,{name: "mauro", username: "mou"});
+        });
       });
 
       describe('getUserList',function(done)
@@ -31,9 +55,26 @@ describe('Back-end', function(done)
 
       describe('removeUser',function(done)
       {
-        it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
-        it("Nel caso in cui l'utente sia rimosso correttamento, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta");
-
+        it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
+        {
+          users.removeUser('mou').subscribe(
+          {
+            next: (data) => {done(data);},
+            error: () => {done();},
+            complete: () => {done('complete called');}
+          });
+          dynamo_client.delete.yield({code: 500, msg:"error removing user"});
+        });
+        it("Nel caso in cui l'utente sia rimosso correttamento, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
+        {
+          users.removeUser('mou').subscribe(
+          {
+            next: (data) => {done(data);},
+            error: (err) => {done(err);},
+            complete: () => {done();}
+          });
+          dynamo_client.delete.yield(null, {code: 200, msg:"success"});
+        });
       });
 
       describe('updateUser',function(done)
