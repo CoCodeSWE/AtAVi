@@ -1,4 +1,5 @@
 const Logic = require('../Client/Logic/Logic');
+
 describe('Client', function()
 {
 	describe('Logic', function()
