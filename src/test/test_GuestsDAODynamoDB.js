@@ -16,7 +16,7 @@ describe('Back-end', function(done)
       {
 		    it("Nel caso in cui un ospite non venga aggiunto a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
         {
-          conv.addGuest().subscribe(
+          guests.addGuest().subscribe(
           {
             next: (data) => {done(data);},
             error: (err) => {done();},
@@ -30,7 +30,7 @@ describe('Back-end', function(done)
       {
         it("Nel caso in cui un ospite non venga restituito a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
         {
-					users.getGuest('mou').subscribe(
+					guests.getGuest('mou').subscribe(
           {
             next: (data) => {done(data);},
             error: (err) => {done();},
@@ -49,10 +49,10 @@ describe('Back-end', function(done)
       {
         it("Nel caso in cui un ospite non venga eliminato a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
         {
-          users.removeGuest('mou').subscribe(
+          guests.removeGuest('mou').subscribe(
           {
             next: (data) => {done(data);},
-            error: done,
+            error: (err) => {done();},
             complete: () => {done('complete called');}
           });
           dynamo_client.delete.yield({code: 500, msg:"error removing guest"});

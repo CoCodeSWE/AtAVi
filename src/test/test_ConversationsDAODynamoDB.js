@@ -24,16 +24,16 @@ describe('Back-end', function(done)
           });
           dynamo_client.put.yield({code:500, msg:"error adding conversation"});
         });
-		     it("Nel caso in cui una conversazione sia aggiunta correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.", function(done)
+		    it("Nel caso in cui una conversazione sia aggiunta correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.", function(done)
         {
-          conv.addConversation().subscribe(
+          conv.addConversation('conv').subscribe(
           {
             next: function(data)
             {
               expect(data).to.not.be.null;
             },
             error: (err) => {done(err)},
-            complete: done()
+            complete: () => {done();}
           });
           dynamo_client.put.yield(null, {});
         });
@@ -42,7 +42,7 @@ describe('Back-end', function(done)
       {
         it("Nel caso in cui un messaggio non venga aggiunta alla conversazione a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
         {
-          conv.addMessage().subscribe(
+          conv.addMessage('mess','asd').subscribe(
           {
             next: (data) => {done(data);},
             error: (err) => {done();},
@@ -64,7 +64,22 @@ describe('Back-end', function(done)
           });
           dynamo_client.get.yield({code:500, msg:"error downloading conversation"});
         });
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta");
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta",function(done)
+        {
+          let observable = conv.getConversation('conv');
+          observable.subscribe(
+          {
+            next: function(data)
+            {
+              expect(data).to.not.be.null;
+              expect(data.session_id).to.equal('conv');
+              expect(data.guest_id).to.equal('mauro');
+            },
+            error: (err) => {done(err);},
+            complete: () => {done();}
+          });
+          dynamo_client.get.yield(null, {session_id: "conv", guest_id: "mauro"});
+        });
       });
       describe('getConversationList', function(done)
       {

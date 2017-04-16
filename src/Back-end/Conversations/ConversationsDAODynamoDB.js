@@ -33,8 +33,8 @@ class ConversationsDAODynamoDB
       let params = {
         TableName: self.table,
         Key: {"session_id": sessionId},
-        UpdateExpression: "set #messages= list_append(#messages, :msg)",
-        ReturnValues:"UPDATED_NEW" };
+        UpdateExpression: "set #messages= list_append(#messages, :msg)"
+      };
     });
     this.client.update(params, function(err, data)
     {
