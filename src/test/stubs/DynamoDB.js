@@ -6,5 +6,6 @@ module.exports = {
   get: sinon.stub(),
   delete: sinon.stub(),
   update: sinon.stub(),
-  scan: sinon.stub()
+  scan: sinon.stub(),
+	put: sinon.stub()
 }
