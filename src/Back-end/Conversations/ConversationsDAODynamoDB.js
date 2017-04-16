@@ -65,6 +65,48 @@ class ConversationsDAODynamoDB
       });
     });
   }
+
+  getConversation(sessionId)
+  {
+    let self = this;
+    return new Rx.Observable(function(observer)
+    {
+      let params = {
+        TableName: self.table,
+        Key: {
+          "session_id": sessionId
+        }
+      };
+      this.client.get(params, function(err, data)
+      {
+        if(err)
+          observer.error(err);
+        else
+          observer.complete();
+      });
+    });
+  }
+
+  removeConversation(sessionId)
+  {
+    let self = this;
+    return new Rx.Observable(function(observer)
+    {
+      let params = {
+        TableName: self.table,
+        Key: {
+          "session_id": sessionId
+        }
+      };
+      this.client.delete(params, function(err, data)
+      {
+        if(err)
+          observer.error(err);
+        else
+          observer.complete();
+      });
+    });
+  }
 }
 
 module.exports = ConversationsDAODynamoDB;
