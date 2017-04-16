@@ -13,8 +13,8 @@ class guestsDAODynamoDB
     let self = this;
     return new Rx.Observable(function(observer)
     {
-      let params = {TableName: this.table, Item: guest};
-      this.client.put(params, function(err, data)
+      let params = {TableName: self.table, Item: guest};
+      self.client.put(params, function(err, data)
       {
         if(err)
           observer.error(err);
@@ -35,7 +35,7 @@ class guestsDAODynamoDB
           "name": name
         }
       };
-      this.client.get(params, function(err, data)
+      self.client.get(params, function(err, data)
       {
         if(err)
           observer.error(err);
@@ -56,7 +56,7 @@ class guestsDAODynamoDB
           "name": name
         }
       };
-      this.client.delete(params, function(err, data)
+      self.client.delete(params, function(err, data)
       {
         if(err)
           observer.error(err);

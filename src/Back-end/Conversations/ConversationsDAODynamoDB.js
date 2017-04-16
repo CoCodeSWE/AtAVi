@@ -7,15 +7,14 @@ class ConversationsDAODynamoDB
     this.client = client;
     this.table = 'Conversations';
   }
-
+/*
   addConversation(conv)
   {
     let self = this;
     return new Rx.Observable(function(observer)
     {
-      let params = {
-        TableName: self.table, Item: conv};
-        this.client.put(params, function(err, data)
+      let params = {TableName: self.table, Item: conv};
+      self.client.put(params, function(err, data)
       {
         if(err)
           observer.error(err);
@@ -36,7 +35,7 @@ class ConversationsDAODynamoDB
         UpdateExpression: "set #messages= list_append(#messages, :msg)"
       };
     });
-    this.client.update(params, function(err, data)
+    self.client.update(params, function(err, data)
     {
       if(err)
         observer.error(err);
@@ -56,7 +55,7 @@ class ConversationsDAODynamoDB
           "session_id": sessionId
         }
       };
-      this.client.get(params, function(err, data)
+      self.client.get(params, function(err, data)
       {
         if(err)
           observer.error(err);
@@ -66,7 +65,7 @@ class ConversationsDAODynamoDB
     });
   }
 
-  getConversation(sessionId)
+  /*getConversation(sessionId)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -77,7 +76,7 @@ class ConversationsDAODynamoDB
           "session_id": sessionId
         }
       };
-      this.client.get(params, function(err, data)
+      self.client.get(params, function(err, data)
       {
         if(err)
           observer.error(err);
@@ -98,7 +97,7 @@ class ConversationsDAODynamoDB
           "session_id": sessionId
         }
       };
-      this.client.delete(params, function(err, data)
+      self.client.delete(params, function(err, data)
       {
         if(err)
           observer.error(err);
@@ -106,7 +105,7 @@ class ConversationsDAODynamoDB
           observer.complete();
       });
     });
-  }
+  }*/
 }
 
 module.exports = ConversationsDAODynamoDB;

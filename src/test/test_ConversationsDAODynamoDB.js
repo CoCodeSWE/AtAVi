@@ -28,10 +28,7 @@ describe('Back-end', function(done)
         {
           conv.addConversation('conv').subscribe(
           {
-            next: function(data)
-            {
-              expect(data).to.not.be.null;
-            },
+            next: (data) => {done(data);},
             error: (err) => {done(err)},
             complete: () => {done();}
           });
@@ -42,7 +39,7 @@ describe('Back-end', function(done)
       {
         it("Nel caso in cui un messaggio non venga aggiunta alla conversazione a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
         {
-          conv.addMessage('mess','asd').subscribe(
+          conv.addMessage('mess','session_id_conv').subscribe(
           {
             next: (data) => {done(data);},
             error: (err) => {done();},
@@ -50,7 +47,16 @@ describe('Back-end', function(done)
           });
           dynamo_client.update.yield({code:500, msg:"error adding message"});
         });
-        it("Nel caso in cui un messaggio venga aggiunto correttamente alla conversazione, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.");
+        it("Nel caso in cui un messaggio venga aggiunto correttamente alla conversazione, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.", function(done)
+        {
+          conv.addMessage('mess','session_id_conv').subscribe(
+          {
+            next: (data) => {done(data);},
+            error: (err) => {done(err);},
+            complete: () => {done();}
+          });
+          dynamo_client.update.yield(null,{});
+        });
       });
       describe('getConversation', function(done)
       {
@@ -98,7 +104,17 @@ describe('Back-end', function(done)
           });
           dynamo_client.delete.yield({code: 500, msg:"error removing converstion"});
         });
-        it("Nel caso in cui una conversazione sia eliminata correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.");
+        it("Nel caso in cui una conversazione sia eliminata correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function(done)
+        {
+          let observable = conv.removeConversation('conv');
+          observable.subscribe(
+          {
+            next: (data) => {done(data);},
+            error: (err) => {done(err);},
+            complete: () => {done();}
+          });
+          dynamo_client.get.yield(null, {code: 200, msg:"success"});
+        });
       });
     });
   });
