@@ -1,1 +1,6 @@
-module.exports = {}
+class RulesDAODynamoDB
+{
+  
+}
+
+module.exports = RulesDAODynamoDB;

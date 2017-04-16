@@ -1,1 +1,6 @@
-module.export =  {};
+class TasksDAODYnamoDB
+{
+
+}
+
+module.exports =  TasksDAODYnamoDB;
