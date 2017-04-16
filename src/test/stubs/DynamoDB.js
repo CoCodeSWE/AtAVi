@@ -1,5 +1,4 @@
 //import sinon from 'sinon';
-const  Rx = require('rxjs');
 const sinon = require('sinon');
 
 module.exports = {

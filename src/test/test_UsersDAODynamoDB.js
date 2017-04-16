@@ -19,11 +19,11 @@ describe('Back-end', function(done)
           users.addUser('mou').subscribe(
 					{
 						next: (data) => {done(data);},
-						error: done,
+						error: (err) => {done();},
 						complete: () => {done('complete called');}
 					});
 					//TableName: [nome tabella che non esiste]
-					dynamo_client.add.yield({code:400, msg:"Requested resource not found"});
+					dynamo_client.put.yield({code:400, msg:"Requested resource not found"});
         });
 
 				it("Nel caso in cui l'utente sia aggiunto correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
