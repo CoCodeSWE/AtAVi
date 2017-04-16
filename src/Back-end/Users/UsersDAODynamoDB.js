@@ -25,14 +25,18 @@ class UsersDAODynamoDB
   getUser(username)
   {
     let self = this;
-    return new Rx.Observable(function(observer){
-      let params = {
+    return new Rx.Observable(function(observer)
+    {
+      let params =
+      {
         TableName: self.table,
-        Key: {
+        Key:
+        {
           HashKey: username
         }
       };
-      self.client.get(params, function(err, data){
+      self.client.get(params, function(err, data)
+      {
         if(err)
           observer.error(err);
         else
