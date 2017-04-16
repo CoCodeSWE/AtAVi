@@ -13,10 +13,10 @@ describe('Client', function()
         it('Nel caso in cui l’applicazione non è presente all\'interno di \file{State}, viene interrogato il Client per ottenerla e la vecchia applicazione viene salvata nello \file{State}.');
       });
 
-      describe('setFrame', function())
+      describe('setFrame', function()
       {
         it('Deve chiamare \file{appendChild} sul parametro passato al metodo per poter mostrare l’interfaccia utente.');
-      }
+      });
     });
   });
 });

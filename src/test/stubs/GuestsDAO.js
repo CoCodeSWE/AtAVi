@@ -3,9 +3,9 @@ const  Rx = require('rxjs');
 const sinon = require('sinon');
 
 module.exports = {
+  add: sinon.stub(),
   get: sinon.stub(),
-  delete: sinon.stub(),
-  update: sinon.stub(),
-  scan: sinon.stub(),
-  put: sinon.stub()
+  getList: sinon.stub(),
+  remove: sinon.stub(),
+  update: sinon.stub()
 }
