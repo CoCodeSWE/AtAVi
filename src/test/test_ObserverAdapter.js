@@ -10,7 +10,7 @@ beforeEach(function()
 
 describe('Libs', function(done)
 {
-  describe('ErrorObserver', function(done)
+  describe('ObserverAdapter', function(done)
 	{
     describe('complete', function(done)
     {
@@ -19,7 +19,7 @@ describe('Libs', function(done)
 				obs.onComplete(success(done));
 				obs.complete();
 			});
-      
+
 			it('Non deve chiamare complete_cb se l\'observer è in pausa', function(done)
 			{
 				obs.onComplete(error(done));
@@ -27,7 +27,7 @@ describe('Libs', function(done)
 				obs.complete('Function called');
 				done();
 			});
-      
+
 			it('Deve chiamare complete_cb dopo che l\'observer è stato ripreso se, mentre era in pausa, il metodo è stato chiamato', function(done)
 			{
 				obs.onComplete(continueTest(done));
@@ -42,13 +42,13 @@ describe('Libs', function(done)
 
     describe('error', function(done)
     {
-      it('Deve chiamare error_cb', function(done) 
+      it('Deve chiamare error_cb', function(done)
 			{
 				let err = new Error('Errore');
 				obs.onError(success(done, err));
 				obs.error(err);
 			});
-			
+
       it('Non deve chiamare error_cb se l\'observer è in pausa', function(done)
 			{
 				obs.onError(error(done));
@@ -56,7 +56,7 @@ describe('Libs', function(done)
 				obs.error('Function called');
 				done();
 			});
-			
+
       it('Deve chiamare error_cb dopo che l\'observer è stato ripreso se, mentre era in pausa, il metodo è stato chiamato', function(done)
 			{
 				let err = new Error('Errore');
@@ -77,7 +77,7 @@ describe('Libs', function(done)
         obs.onNext(success(done, 'data'));
         obs.next('data');
       });
-			
+
       it('Non deve chiamare next_cb se l\'observer è in pausa', function(done)
       {
         obs.onNext(error(done));
@@ -85,7 +85,7 @@ describe('Libs', function(done)
         obs.next('Function called');
         done();
       });
-			
+
       it('Deve chiamare next_cb, inoltrandogli il parametro ricevuto, dopo che l\'observer ha ripreso', function(done)
       {
         obs.onNext(continueTest(done));
@@ -108,7 +108,7 @@ function error(done)
 
 function success(done, data)
 {
-  return function(d) 
+  return function(d)
 	{
 		expect(d).to.equal(data);
 		done();

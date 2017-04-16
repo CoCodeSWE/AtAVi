@@ -13,7 +13,7 @@ describe('Back-end', function(done)
       let users = new dao(dynamo_client);
       describe('addUser', function(done)
       {
-        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto"function(done)
+        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
         {
           users.getUser('mou').subscribe(
           {
@@ -26,7 +26,7 @@ describe('Back-end', function(done)
         it("Nel caso in cui l'utente sia aggiunto correttamento, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta");
       });
 
-      describe('getUser',function(done)
+      describe('getUser', function(done)
       {
         it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
@@ -47,13 +47,13 @@ describe('Back-end', function(done)
         });
       });
 
-      describe('getUserList',function(done)
+      describe('getUserList', function(done)
       {
         it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta");
       });
 
-      describe('removeUser',function(done)
+      describe('removeUser', function(done)
       {
         it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
         {
@@ -77,7 +77,7 @@ describe('Back-end', function(done)
         });
       });
 
-      describe('updateUser',function(done)
+      describe('updateUser', function(done)
       {
         it("Nel caso in cui l'utente non venga modificato a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
         it("Nel caso in cui l'utente sia modificato correttamento, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta");
