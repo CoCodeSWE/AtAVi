@@ -1,6 +1,8 @@
 const RulesService = require('../Back-end/Rules/RulesService');
 const chai = require('chai');
 const expect = chai.expect;
+const task = require('./stubs/TasksDAO');
+const rules = require('./stubs/RulesDAO');
 
 describe('Back-end', function(done)
 {
@@ -8,6 +10,7 @@ describe('Back-end', function(done)
   {
     describe('RulesService', function(done)
     {
+      let rule = new RulesService(task,rules);
       describe('addRule', function(done)
       {
         it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.");
