@@ -25,12 +25,12 @@ describe('Back-end', function(done)
 					//TableName: [nome tabella che non esiste]
 					dynamo_client.add.yield({code:400, msg:"Requested resource not found"});
         });
-        
+
 				it("Nel caso in cui l'utente sia aggiunto correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
 				{
 					users.addUser('mou').subscribe(
 					{
-						next: function(data) 
+						next: function(data)
 						{
 							expect(data).to.not.be.null;
 						},
@@ -48,12 +48,12 @@ describe('Back-end', function(done)
 					users.getUser('mou').subscribe(
           {
             next: (data) => {done(data);},
-            error: done,
+            error: (err) => {done();},
             complete: () => {done('complete called');}
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
 				});
-        
+
 				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
         {
           let observable = users.getUser('mou');
@@ -75,7 +75,7 @@ describe('Back-end', function(done)
       describe('getUserList', function(done)
       {
         it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
-        
+
 				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta");
       });
 
@@ -91,7 +91,7 @@ describe('Back-end', function(done)
           });
           dynamo_client.delete.yield({code: 500, msg:"error removing user"});
         });
-        
+
 				it("Nel caso in cui l'utente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
         {
           users.removeUser('mou').subscribe(
@@ -116,7 +116,7 @@ describe('Back-end', function(done)
 					});
 					dynamo_client.update.yield({code: 500, msg:"error updating user"});
 				});
-        
+
 				it("Nel caso in cui l'utente sia modificato correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
 				{
 					/* valore di data in caso l'utente sia stato modificato correttamente
@@ -137,7 +137,7 @@ describe('Back-end', function(done)
 						error: (err) => {done(err);},
 						complete: done
 					});
-					
+
 					dynamo_client.update.yield(null, {"Attributes": {"name": "Mauro"}});
 				});
       });
