@@ -14,7 +14,7 @@ describe('Back-end', function(done)
       let conv = new dao(dynamo_client);
       describe('addConversation', function(done)
       {
-		it("Nel caso in cui una conversazione non venga aggiunta a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
+		    it("Nel caso in cui una conversazione non venga aggiunta a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
         {
           conv.addConversation().subscribe(
           {
@@ -24,7 +24,19 @@ describe('Back-end', function(done)
           });
           dynamo_client.put.yield({code:500, msg:"error adding data"});
         });
-		it("Nel caso in cui una conversazione sia aggiunta correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.");
+		     it("Nel caso in cui una conversazione sia aggiunta correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.", function(done)
+        {
+          conv.addConversation().subscribe(
+          {
+            next: function(data)
+            {
+              expect(data).to.not.be.null;
+            },
+            error: (err) => {done(err)},
+            complete: done()
+          });
+          dynamo_client.put.yield(null, {});
+        });
       });
       describe('addMessage', function(done)
       {
