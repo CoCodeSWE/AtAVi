@@ -6,7 +6,7 @@ class ObserverAdapter
     this.error_cb = null;
     this.complete_cb = null;
     this.paused = false;
-    this.error = null;
+    this.err = null;
     this.completed = false;
   }
 
@@ -19,9 +19,9 @@ class ObserverAdapter
   error(err)
   {
     if(this.paused)
-      this.error = err;
-    else if(this.next_cb)
-      this.next_cb(err);
+      this.err = err;
+    else if(this.error_cb)
+      this.error_cb(err);
   }
 
   complete()
@@ -42,8 +42,8 @@ class ObserverAdapter
     this.paused = false;
     if(this.completed)
       this.complete_cb();
-    if(this.error)
-      this.error_cb(this.error);
+    if(this.err)
+      this.error_cb(this.err);
   }
 
   onNext(cb)
