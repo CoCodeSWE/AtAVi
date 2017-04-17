@@ -13,7 +13,7 @@ class UsersDAODynamoDB
     let self = this;
     return new Rx.Observable(function(observer){
       let params = {TableName: this.table, Item: user};
-      this.client.put(params, function(err, data){
+      self.client.put(params, function(err, data){
         if(err)
           observer.error(err);
         else
