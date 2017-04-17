@@ -1,5 +1,17 @@
 const MembersDAOSlack = require('../Back-end/Members/MembersDAOSlack');
+const Rx = require('rxjs/Rx');
 const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
+const web_client = require('./stubs/SlackWebClient');
+
+let next, error, complete;
+beforeEach(function()
+{
+	next = sinon.stub();
+	error = sinon.stub();
+	complete = sinon.stub();
+});
 
 describe('Back-end', function()
 {
@@ -7,9 +19,21 @@ describe('Back-end', function()
 	{
 		describe('MembersDAOSlack', function ()
 		{
+			let members = new MembersDAOSlack(web_client);
 			describe('addMember', function()
 			{
-				it('Anche se viene passato un Member corretto, l\'ErrorObservable ritornato deve notificare l\'Observer richiamando il suo metodo error.');
+				it('Anche se viene passato un Member corretto, l\'ErrorObservable ritornato deve notificare l\'Observer richiamando il suo metodo error.', function()
+				{
+					members.addMember('mou').subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+					expect(error.callCount).to.equal(1);
+					expect(next.callCount).to.equal(0);
+					expect(complete.callCount).to.equal(0);
+				});
 			});
 
 			describe('getMember', function()
@@ -26,12 +50,34 @@ describe('Back-end', function()
 
 			describe('removeMember', function()
 			{
-				it('Anche se viene passato un Member corretto, l\'ErrorObservable ritornato deve notificare l\'Observer richiamando il suo metodo error.');
+				it('Anche se viene passato un Member corretto, l\'ErrorObservable ritornato deve notificare l\'Observer richiamando il suo metodo error.', function()
+				{
+					members.removeMember('mou').subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+					expect(error.callCount).to.equal(1);
+					expect(next.callCount).to.equal(0);
+					expect(complete.callCount).to.equal(0);
+				});
 			});
 
 			describe('updateMember', function()
 			{
-				it('Anche se viene passato un Member corretto, l\'ErrorObservable ritornato deve notificare l\'Observer richiamando il suo metodo error.');
+				it('Anche se viene passato un Member corretto, l\'ErrorObservable ritornato deve notificare l\'Observer richiamando il suo metodo error.', function()
+				{
+					members.updateMember('mou').subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+					expect(error.callCount).to.equal(1);
+					expect(next.callCount).to.equal(0);
+					expect(complete.callCount).to.equal(0);
+				});
 			});
 		});
 	});

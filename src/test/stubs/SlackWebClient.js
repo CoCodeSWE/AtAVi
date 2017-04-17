@@ -10,7 +10,7 @@ module.exports =
   {
     revoke: sinon.stub(),
     test: sinon.stub()
-  }
+  },
   bots:
   {
     info: sinon.stub()
@@ -96,7 +96,7 @@ module.exports =
     mark: sinon.stub(),
     open: sinon.stub(),
     replies: sinon.stub()
-  }
+  },
   mpim:
   {
     close: sinon.stub(),
