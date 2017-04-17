@@ -1,3 +1,5 @@
+const Rx = require('rxjs/Rx');
+
 class MsgStore
 {
   constructor()
@@ -17,6 +19,9 @@ class MsgStore
     {
       case 'displayMsgs':
         this.msgs.push({text: action.params[0], sender:0}, {text: action.params[1], sender:1});
+        break;
+      case 'clear':
+        //this.onClear();
         break;
       case 'sendMsg':
       case 'receiveMsg':
