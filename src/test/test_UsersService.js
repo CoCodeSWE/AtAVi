@@ -6,7 +6,7 @@ const context = require('./stubs/LambdaContext');
 
 describe('Back-end', function(done)
 {
-  service = ... //dependency injection stub
+  //service = ... //dependency injection stub
   describe('Users', function(done)
   {
     describe('UsersService', function(done)
@@ -21,7 +21,7 @@ describe('Back-end', function(done)
             name: "Mauro",
             username: "mou"
           };
-          let ev = { body: JSON.stringfy(user); }
+          let ev = { body: JSON.stringfy(user) }
           service.addUser(ev, context);
           let call = context.succeed.getCall(0);
 
