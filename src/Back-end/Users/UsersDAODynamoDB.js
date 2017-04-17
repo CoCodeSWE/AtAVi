@@ -11,9 +11,15 @@ class UsersDAODynamoDB
   addUser(user)
   {
     let self = this;
-    return new Rx.Observable(function(observer){
-      let params = {TableName: this.table, Item: user};
-      this.client.put(params, function(err, data){
+    return new Rx.Observable(function(observer)
+		{
+      let params = 
+			{
+				TableName: self.table,
+				Item: user
+			};
+      self.client.put(params, function(err, data)
+			{
         if(err)
           observer.error(err);
         else
@@ -32,7 +38,7 @@ class UsersDAODynamoDB
         TableName: self.table,
         Key:
         {
-          HashKey: username
+          "username": username
         }
       };
       self.client.get(params, function(err, data)

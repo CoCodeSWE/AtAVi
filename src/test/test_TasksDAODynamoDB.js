@@ -71,8 +71,25 @@ describe('Back-end', function(done)
 
 	 describe('getTaskList', function(done)
       {
-		    it("Nel caso in cui un blocco di funzioni di direttive non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.");
-		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta");
+		    it("Nel caso in cui un blocco di funzioni di direttive non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
+        {
+          tasks.getTaskList().subscribe(
+          {
+            next: (data) => {done(data);},
+            error: (err) => {done();},
+            complete: () => {done('complete called');}
+          });
+          dynamo_client.get.yield({code:500, msg:"error getting data"});
+        });
+		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+        {
+          tasks.getTaskList().subscribe(
+          {
+            next: (data) => {expect(data).to.not.be.null;},
+            error: (err) => {done(err);},
+            complete: () => {done();}
+          });
+        });
       });
 
      describe('removeTask', function(done)
@@ -82,7 +99,7 @@ describe('Back-end', function(done)
           tasks.removeTask('mock_type').subscribe(
           {
             next: (data) => {done(data);},
-            error: done,
+            error: () => {done();},
             complete: () => {done('complete called');}
           });
           dynamo_client.delete.yield({code: 500, msg:"error removing task"});
@@ -93,7 +110,7 @@ describe('Back-end', function(done)
           {
             next: (data) => {done(data);},
             error: (err) => {done(err);},
-            complete: done
+            complete: () => {done();}
           });
           dynamo_client.delete.yield(null, {code: 200, msg:"success"});
         });
@@ -106,7 +123,7 @@ describe('Back-end', function(done)
 					tasks.updateTask('mock_type').subscribe(
 					{
 						next: (data) => {done(data);},
-						error: done,
+						error: () => {done();},
 						complete: () => {done('complete called');}
 					});
 					dynamo_client.update.yield({code: 500, msg:"error updating task"});
@@ -121,7 +138,7 @@ describe('Back-end', function(done)
 							expect(data).to.deep.equal(mock_task);
 						},
 						error: (err) => {done(err);},
-						complete: done
+						complete: () => {done();}
 					});
 
 					dynamo_client.update.yield(null, mock_task);
