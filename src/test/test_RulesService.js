@@ -28,7 +28,7 @@ describe('Back-end', function(done)
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 400; done();});
+          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 400});
 
         });
         it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.",function(done)
@@ -60,7 +60,8 @@ describe('Back-end', function(done)
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 500; done();});
+          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 500});
+          done();
       });
         it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200.",function(done)
         {
@@ -91,7 +92,8 @@ describe('Back-end', function(done)
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 200; done();});
+          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 200});
+          done();
         });
       describe('deleteRule', function(done)
       {
