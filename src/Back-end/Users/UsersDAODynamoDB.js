@@ -13,7 +13,7 @@ class UsersDAODynamoDB
     let self = this;
     return new Rx.Observable(function(observer)
 		{
-      let params = 
+      let params =
 			{
 				TableName: self.table,
 				Item: user
