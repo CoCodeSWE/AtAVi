@@ -1,11 +1,11 @@
-
+const Rx = require('rxjs/Rx');
 const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
-const dao = require('../Back-end/Rules/RulesDAODynamoDB');
+const dao = require('../Back-end/Rules/TasksDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
-var mock_rule = {enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}};
+var mock_task = {type:"mock_type"};
 
 let next, error, complete;
 beforeEach(function()
@@ -17,17 +17,17 @@ beforeEach(function()
 
 describe('Back-end', function(done)
 {
-  describe('Rules', function(done)
+  describe('Tasks', function(done)
   {
-    let rules = new dao(dynamo_client);
-    describe('RulesDAODynamoDB', function(done){
-      describe('addRule', function(done)
+    describe('TasksDAODynamoDB', function(done){
+      let tasks = new dao(dynamo_client);
+      describe('addTask', function(done)
       {
-		    it("Nel caso in cui una direttiva non venga aggiunta a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
+		    it("Nel caso in cui la funzione di una direttiva non venga aggiunta a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
         {
-          rules.addRule(mock_rule).subscribe(
+          tasks.addTask(mock_task).subscribe(
 					{
-						next: (data) => {next(data)},
+            next: (data) => {next(data)},
 						error: (err) => {error(error)},
 						complete: () => {complete()}
 					});
@@ -36,10 +36,9 @@ describe('Back-end', function(done)
         //  expect(error.getCall(0).args[0].statusCode).to.equal(400);
           done();
         });
-
-		    it("Nel caso in cui una direttiva sia aggiunta correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
+		    it("Nel caso in cui la funzione di una direttiva sia aggiunta correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
 				{
-					rules.addRule(mock_rule).subscribe(
+					tasks.addTask(mock_task).subscribe(
 					{
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
@@ -51,11 +50,11 @@ describe('Back-end', function(done)
 				});
       });
 
-      describe('getRule',function(done)
+      describe('getTask',function(done)
       {
         it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
   			{
-  				rules.getRule(1).subscribe(
+  				tasks.getTask('mock_type').subscribe(
           {
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
@@ -68,25 +67,25 @@ describe('Back-end', function(done)
 
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
         {
-          let observable = rules.getRule(1);
+          let observable = tasks.getTask('mock_type');
           observable.subscribe(
           {
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
 						complete: () => {complete()}
           });
-          dynamo_client.get.yield(null, mock_rule);
+          dynamo_client.get.yield(null, mock_task);
           expect(next.callCount).to.be.above(0);
           expect(complete.callCount).to.equal(1);
           done();
         });
       });
 
-	 describe('getRuleList', function(done)
-   {
-		    it("Nel caso in cui un blocco di direttive non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
+	 describe('getTaskList', function(done)
+      {
+		    it("Nel caso in cui un blocco di funzioni di direttive non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
         {
-          rules.getRuleList().subscribe(
+          tasks.getTaskList().subscribe(
           {
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
@@ -96,10 +95,9 @@ describe('Back-end', function(done)
           expect(error.callCount).to.equal(1);
           done();
         });
-
 		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
         {
-          rules.getRuleList().subscribe(
+          tasks.getTaskList().subscribe(
           {
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
@@ -109,13 +107,13 @@ describe('Back-end', function(done)
           expect(complete.callCount).to.equal(1);
           done();
         });
-     });
+      });
 
-     describe('removeRule', function(done)
+     describe('removeTask', function(done)
       {
-		    it("Nel caso in cui una direttiva non venga rimossa a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
+		    it("Nel caso in cui la funzione di una direttiva non venga rimossa a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
         {
-          rules.removeRule(1).subscribe(
+          tasks.removeTask('mock_type').subscribe(
           {
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
@@ -125,9 +123,9 @@ describe('Back-end', function(done)
           expect(error.callCount).to.equal(1);
           done();
         });
-		    it("Nel caso in cui una direttiva sia rimossa correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
+		    it("Nel caso in cui la funzione di una direttiva sia rimossa correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
         {
-          rules.removeRule(1).subscribe(
+          tasks.removeTask('mock_type').subscribe(
           {
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
@@ -139,35 +137,36 @@ describe('Back-end', function(done)
         });
       });
 
-	  describe('updateRule', function(done)
-    {
-		    it("Nel caso in cui una direttiva non venga aggiornata a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
+	  describe('updateTask', function(done)
+      {
+		    it("Nel caso in cui la funzione di una direttiva non venga aggiornata a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
 				{
-					rules.updateRule(1).subscribe(
+					tasks.updateTask('mock_type').subscribe(
 					{
             next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
-					});
-					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
-          expect(error.callCount).to.equal(1);
-          done();
+  					error: (err) => {error(error)},
+  					complete: () => {complete()}
+  				});
+  					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
+            expect(error.callCount).to.equal(1);
+            done();
 				});
-		    it("Nel caso in cui una direttiva sia aggiornata correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
+
+		    it("Nel caso in cui la funzione di una direttiva sia aggiornata correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
 				{
-					rules.updateRule(1).subscribe(
+					tasks.updateTask('mock_type').subscribe(
 					{
             next: (data) => {next(data);},
 						error: (err) => {error(error)},
 						complete: () => {complete()}
 					});
 
-					dynamo_client.update.yield(null, mock_rule);
+					dynamo_client.update.yield(null, mock_task);
           expect(next.callCount).to.be.above(0);
           expect(complete.callCount).to.equal(1);
           done();
+					});
 				});
-     });
-   });
- });
-});
+      });
+    });
+  });

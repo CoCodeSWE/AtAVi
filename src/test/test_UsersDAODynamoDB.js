@@ -5,121 +5,224 @@ const expect = chai.expect;
 const dao = require('../Back-end/Users/UsersDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
-describe('Back-end', function(done)
+let next, error, complete;
+beforeEach(function()
 {
-  describe('Users', function(done)
+	next = sinon.stub();
+	error = sinon.stub();
+	complete = sinon.stub();
+});
+
+describe('Back-end', function()
+{
+  describe('Users', function()
   {
-    describe('UsersDAODynamoDB', function(done)
+    describe('UsersDAODynamoDB', function()
 		{
       let users = new dao(dynamo_client);
-      describe('addUser', function(done)
+      describe('addUser', function()
       {
-        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
+        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
         {
           users.addUser('mou').subscribe(
 					{
-						next: (data) => {done(data);},
-						error: (err) => {done();},
-						complete: () => {done('complete called');}
+						next: next,
+						error: error,
+						complete: complete 
 					});
+					
 					//TableName: [nome tabella che non esiste]
-					dynamo_client.put.yield({code:400, msg:"Requested resource not found"});
+					dynamo_client.put.yield({statusCode: 400, message:"Requested resource not found"});
+					
+					expect(error.callCount).to.equal(1);
+					let callError = error.getCall(0);
+					expect(callError.args[0].statusCode).to.equal(400);
+					
+					expect(next.callCount).to.equal(0);
+					
+					expect(complete.callCount).to.equal(0);
         });
 
-				it("Nel caso in cui l'utente sia aggiunto correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
+				it("Nel caso in cui l'utente sia aggiunto correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
 				{
 					users.addUser('mou').subscribe(
 					{
-						next: function(data)
-						{
-							expect(data).to.not.be.null;
-						},
-						error: (err) => {done(err)},
-						complete: done
+						next: next,
+						error: error,
+						complete: complete
 					});
 					dynamo_client.put.yield(null, {});
+					expect(error.callCount).to.equal(0);				
+					expect(complete.callCount).to.equal(1);				
 				});
       });
 
-      describe('getUser', function(done)
+      describe('getUser', function()
       {
-        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
+        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
 				{
 					users.getUser('mou').subscribe(
-          {
-            next: (data) => {done(data);},
-            error: (err) => {done();},
-            complete: () => {done('complete called');}
-          });
-          dynamo_client.get.yield({code:500, msg:"error getting data"});
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+          
+					dynamo_client.get.yield({statusCode: 500, message:"error getting data"});
+					
+					expect(error.callCount).to.equal(1);
+					let callError = error.getCall(0);
+					expect(callError.args[0].statusCode).to.equal(500);
+					
+					expect(next.callCount).to.equal(0);
+					
+					expect(complete.callCount).to.equal(0);
 				});
 
-				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function()
         {
           let observable = users.getUser('mou');
           observable.subscribe(
           {
-            next: function(data)
-            {
-              expect(data).to.not.be.null;
-              expect(data.username).to.equal('mou');
-              expect(data.name).to.equal('mauro');
-            },
-            error: (err) => {done(err);},
-            complete: () => {done();}
+            next: next,
+						error: error,
+						complete: complete
           });
-          dynamo_client.get.yield(null, {name: "mauro", username: "mou"});
+         
+					dynamo_client.get.yield(null, {name: "mauro", username: "mou"});
+					
+					expect(error.callCount).to.equal(0);
+					
+					expect(next.callCount).to.equal(1);
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
+					
+					expect(complete.callCount).to.equal(1);
         });
       });
 
-      describe('getUserList', function(done)
+      describe('getUserList', function()
       {
-        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto");
+        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
+				{
+					users.getUserList().subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+					
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'piero'});
+					dynamo_client.scan.yield(null, {Items: [{name: "piero", username: "sun"}], LastEvaluatedKey: 'marco'});
+					dynamo_client.scan.yield({statusCode: 500});
+					
+					expect(error.callCount).to.equal(1);
+					let callError = error.getCall(0);
+					expect(callError.args[0].statusCode).to.equal(500);
+					
+					expect(next.callCount).to.equal(2);
+					
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].Items[0].name).to.equal('mauro');
+					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					
+					callNext = next.getCall(1);
+					expect(callNext.args[0].Items[0].name).to.equal('piero');
+					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					
+					expect(complete.callCount).to.equal(0);
+				});
 
-				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta");
+				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function()
+				{
+					users.getUserList().subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+					
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'piero'});
+					dynamo_client.scan.yield(null, {Items: [{name: "piero", username: "sun"}]}); //ultimo elemento da ottenere
+					
+					expect(error.callCount).to.equal(0);
+					
+					expect(next.callCount).to.equal(2);
+					
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].Items[0].name).to.equal('mauro');
+					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					
+					callNext = next.getCall(1);
+					expect(callNext.args[0].Items[0].name).to.equal('piero');
+					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					
+					expect(complete.callCount).to.equal(1);
+				});
       });
 
-      describe('removeUser', function(done)
+      describe('removeUser', function()
       {
-        it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
+        it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
         {
           users.removeUser('mou').subscribe(
           {
-            next: (data) => {done(data);},
-            error: done,
-            complete: () => {done('complete called');}
+            next: next,
+						error: error,
+						complete: complete
           });
-          dynamo_client.delete.yield({code: 500, msg:"error removing user"});
+          
+					dynamo_client.delete.yield({statusCode: 500, message:"error removing user"});
+					
+					expect(error.callCount).to.equal(1);
+					let callError = error.getCall(0);
+					expect(callError.args[0].statusCode).to.equal(500);
+					
+					expect(next.callCount).to.equal(0);
+					
+					expect(complete.callCount).to.equal(0);
         });
 
-				it("Nel caso in cui l'utente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
+				it("Nel caso in cui l'utente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
         {
           users.removeUser('mou').subscribe(
           {
-            next: (data) => {done(data);},
-            error: (err) => {done(err);},
-            complete: done
+            next: next,
+						error: error,
+						complete: complete
           });
-          dynamo_client.delete.yield(null, {code: 200, msg:"success"});
+          dynamo_client.delete.yield(null, {});				
+					expect(error.callCount).to.equal(0);
+					expect(complete.callCount).to.equal(1);
         });
       });
 
-      describe('updateUser', function(done)
+      describe('updateUser', function()
       {
-        it("Nel caso in cui l'utente non venga modificato a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
+        it("Nel caso in cui l'utente non venga modificato a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
 				{
 					users.updateUser('mou').subscribe(
 					{
-						next: (data) => {done(data);},
-						error: done,
-						complete: () => {done('complete called');}
+						next: next,
+						error: error,
+						complete: complete
 					});
-					dynamo_client.update.yield({code: 500, msg:"error updating user"});
+					
+					dynamo_client.update.yield({statusCode: 500, message:"error updating user"});
+					
+					expect(error.callCount).to.equal(1);
+					let callError = error.getCall(0);
+					expect(callError.args[0].statusCode).to.equal(500);
+					
+					expect(next.callCount).to.equal(0);
+					
+					expect(complete.callCount).to.equal(0);
 				});
 
-				it("Nel caso in cui l'utente sia modificato correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function(done)
+				it("Nel caso in cui l'utente sia modificato correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
 				{
-					/* valore di data in caso l'utente sia stato modificato correttamente
+					/* Valore di data in caso l'utente sia stato modificato correttamente
 					"Attributes": {
 						1 parametro modificato: nuovo valore 1 parametro,
 						2 parametro modificato: nuovo valore 2 parametro,
@@ -129,16 +232,13 @@ describe('Back-end', function(done)
 					*/
 					users.updateUser('mou').subscribe(
 					{
-						next: function(data)
-						{
-							expect(data).to.not.be.null;
-							expect(data.Attributes.name).to.equal('Mauro');
-						},
-						error: (err) => {done(err);},
-						complete: done
+						next: next,
+						error: error,
+						complete: complete
 					});
-
-					dynamo_client.update.yield(null, {"Attributes": {"name": "Mauro"}});
+					dynamo_client.update.yield(null, {"Attributes": {"name": "Mauro"}});				
+					expect(error.callCount).to.equal(0);
+					expect(complete.callCount).to.equal(1);
 				});
       });
 		});
