@@ -50,7 +50,6 @@ describe('Back-end', function(done)
           done();
 				});
       });
-     });
 
       describe('getRule',function(done)
       {
@@ -170,4 +169,5 @@ describe('Back-end', function(done)
 				});
      });
    });
+ });
 });
