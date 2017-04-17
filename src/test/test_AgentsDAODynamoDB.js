@@ -7,6 +7,14 @@ const dynamo_client = require('./stubs/DynamoDB');
 
 var mock_agent = {lang:'en', name:'mock_name', token:'mock_token'};
 
+let next, error, complete;
+beforeEach(function()
+{
+	next = sinon.stub();
+	error = sinon.stub();
+	complete = sinon.stub();
+});
+
 describe('Back-end', function(done)
 {
   describe('Agents', function(done)
@@ -19,24 +27,26 @@ describe('Back-end', function(done)
         {
           agents.addAgent(mock_agent).subscribe(
 					{
-						next: (data) => {done(data);},
-						error: (err) => {done();},
-						complete: () => {done('complete called');}
+            next: (data) => {next(data)},
+						error: (err) => {error(error)},
+						complete: () => {complete()}
 					});
 					dynamo_client.put.yield({code:400, msg:"Requested resource not found"});
+          expect(error.callCount).to.equal(1);
+        //  expect(error.getCall(0).args[0].statusCode).to.equal(400);
+          done();
         });
 		    it("Nel caso in cui un agente di api.ai sia aggiunto correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'observer iscritto un'unica volta.", function(done)
 				{
 					agents.addAgent(mock_agent).subscribe(
 					{
-						next: function(data)
-						{
-							expect(data).to.not.be.null;
-						},
-						error: (err) => {done(err)},
-						complete: done
+            next: (data) => {next(data);},
+						error: (err) => {error(error)},
+						complete: () => {complete()}
 					});
 					dynamo_client.put.yield(null, {});
+          expect(complete.callCount).to.equal(1);
+          done();
 				});
       });
 
@@ -46,26 +56,27 @@ describe('Back-end', function(done)
   			{
   				agents.getAgent('mock_name').subscribe(
           {
-            next: (data) => {done(data);},
-            error: (err) => {done();},
-            complete: () => {done('complete called');}
+            next: (data) => {next(data);},
+						error: (err) => {error(error)},
+						complete: () => {complete()}
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
+          expect(error.callCount).to.equal(1);
+          done();
   			});
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function(done)
         {
           let observable = agents.getAgent('mock_name');
           observable.subscribe(
           {
-            next: function(data)
-            {
-              expect(data).to.not.be.null;
-              expect(data).to.deep.equal(mock_agent);
-            },
-            error: (err) => {done(err);},
-            complete: () => {done();}
+            next: (data) => {next(data);},
+						error: (err) => {error(error)},
+						complete: () => {complete()}
           });
           dynamo_client.get.yield(null, mock_agent);
+          expect(next.callCount).to.be.above(0);
+          expect(complete.callCount).to.equal(1);
+          done();
         });
       });
 
@@ -75,21 +86,26 @@ describe('Back-end', function(done)
               {
                 agents.getAgentList().subscribe(
                 {
-                  next: (data) => {done(data);},
-                  error: (err) => {done();},
-                  complete: () => {done('complete called');}
+                  next: (data) => {next(data);},
+      						error: (err) => {error(error)},
+      						complete: () => {complete()}
                 });
                 dynamo_client.get.yield({code:500, msg:"error getting data"});
+                expect(error.callCount).to.equal(1);
+                done();
               });
-              
+
       		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
               {
                 agents.getAgentList().subscribe(
                 {
-                  next: (data) => {expect(data).to.not.be.null;},
-                  error: (err) => {done(err);},
-                  complete: () => {done();}
+                  next: (data) => {next(data);},
+      						error: (err) => {error(error)},
+      						complete: () => {complete()}
                 });
+                expect(next.callCount).to.be.above(0);
+                expect(complete.callCount).to.equal(1);
+                done();
               });
          });
 
@@ -99,21 +115,25 @@ describe('Back-end', function(done)
               {
                 agents.removeAgent('mock_name').subscribe(
                 {
-                  next: (data) => {},
-      						error: () => {done();},
-      						complete: () => {done('complete called');}
+                  next: (data) => {next(data);},
+      						error: (err) => {error(error)},
+      						complete: () => {complete()}
                 });
-                dynamo_client.delete.yield({code: 500, msg:"error removing agent"});
+                dynamo_client.delete.yield({code: 500, msg:"error removing rule"});
+                expect(error.callCount).to.equal(1);
+                done();
               });
       		    it("Nel caso in cui un agente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
               {
                 agents.removeAgent('mock_name').subscribe(
                 {
-                  next: (data) => {expect(data).to.not.be.null;},
-                  error: (err) => {done(err);},
-                  complete: () => {done();}
+                  next: (data) => {next(data);},
+      						error: (err) => {error(error)},
+      						complete: () => {complete()}
                 });
                 dynamo_client.delete.yield(null, {code: 200, msg:"success"});
+                expect(complete.callCount).to.equal(1);
+                done();
               });
             });
 
@@ -123,26 +143,27 @@ describe('Back-end', function(done)
       				{
       					agents.updateAgent('mock_name').subscribe(
       					{
-      						next: (data) => {done(data);},
-      						error: () => {done();},
-      						complete: () => {done('complete called');}
+                  next: (data) => {next(data);},
+      						error: (err) => {error(error)},
+      						complete: () => {complete()}
       					});
-      					dynamo_client.update.yield({code: 500, msg:"error updating agent"});
+      					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
+                expect(error.callCount).to.equal(1);
+                done();
       				});
       		    it("Nel caso in cui un agente sia aggiornato correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
       				{
       					agents.updateAgent('mock_name').subscribe(
       					{
-      						next: function(data)
-      						{
-      							expect(data).to.not.be.null;
-      							expect(data).to.deep.equal(mock_agent);
-      						},
-      						error: (err) => {done(err);},
-      						complete: () => {done();}
+                  next: (data) => {next(data);},
+      						error: (err) => {error(error)},
+      						complete: () => {complete()}
       					});
 
       					dynamo_client.update.yield(null, mock_agent);
+                expect(next.callCount).to.be.above(0);
+                expect(complete.callCount).to.equal(1);
+                done();
       				});
            });
     });

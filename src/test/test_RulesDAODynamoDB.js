@@ -146,26 +146,27 @@ describe('Back-end', function(done)
 				{
 					rules.updateRule(1).subscribe(
 					{
-            next: (data) => {done(data);},
-            error: (err) => {done();},
-            complete: () => {done('complete called');}
+            next: (data) => {next(data);},
+						error: (err) => {error(error)},
+						complete: () => {complete()}
 					});
 					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
+          expect(error.callCount).to.equal(1);
+          done();
 				});
 		    it("Nel caso in cui una direttiva sia aggiornata correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
 				{
 					rules.updateRule(1).subscribe(
 					{
-						next: function(data)
-						{
-							expect(data).to.not.be.null;
-							//expect(data).to.deep.equal(mock_rule);
-						},
-						error: (err) => {done(err);},
-						complete: () => {done();}
+            next: (data) => {next(data);},
+						error: (err) => {error(error)},
+						complete: () => {complete()}
 					});
 
 					dynamo_client.update.yield(null, mock_rule);
+          expect(next.callCount).to.be.above(0);
+          expect(complete.callCount).to.equal(1);
+          done();
 				});
      });
    });
