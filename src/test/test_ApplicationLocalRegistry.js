@@ -13,9 +13,9 @@ describe('Client', function()
   {
     describe('ApplicationLocalRegistry', function()
     {
-      describe('register e query', function()
+      describe("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere ritornato tramite il metodo query. ", function()
       {
-        it("L'*ApplicationPackage passato come parametro deve essere ritornato correttamente, dopo essere stato inserito con un determinato nome.", function()
+        it("L'\\{ApplicationPackage} passato come parametro deve essere ritornato correttamente, dopo essere stato inserito con un determinato nome.", function()
         {
           registry.register('conv', { name:'Conversation' });
           let app_pckg = registry.query('conv');
@@ -25,7 +25,7 @@ describe('Client', function()
       });
       describe('register e remove', function()
       {
-        it("L'*ApplicationPackage passato come parametro deve essere rimosso correttamente, dopo essere stato inserito con un determinato nome."),function()
+        it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere eliminato tramite il metodo remove."),function()
         {
           let name_app_pack = 'ConversationApp';
           registry.register('conv', { name:'Conversation' });
