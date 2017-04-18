@@ -244,6 +244,7 @@ describe('Back-end', function()
         {
           let targets =
             {
+              "targets":
               [
                 {
                   "company": "testCompany",
@@ -290,6 +291,7 @@ describe('Back-end', function()
         {
           let targets =
             {
+              "targets":
               [
                 {
                   "company": "testCompany",
