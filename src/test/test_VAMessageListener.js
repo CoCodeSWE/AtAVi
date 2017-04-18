@@ -1,4 +1,3 @@
-
 const VAMessageListener = require('../Back-end/Events/VAMessageListener');
 const chai = require('chai');
 const expect = chai.expect;
