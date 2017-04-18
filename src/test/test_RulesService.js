@@ -240,7 +240,7 @@ describe('Back-end', function()
       });
       describe('queryRule', function()
       {
-        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200 e il campo \file{body} deve contenere la lista delle \file{Rule} da applicare ad un determinato caso.".function()
+        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200 e il campo \file{body} deve contenere la lista delle \file{Rule} da applicare ad un determinato caso.",function()
         {
           let targets =
             {
