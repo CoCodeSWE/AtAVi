@@ -372,7 +372,7 @@ describe('Back-end', function()
                 "task": "testTask"
             }
           };
-          let ev =  { body: JSON.stringfy(rule); }
+          let ev =  { body: JSON.stringfy(rule) }
           rules.updateRule(ev,context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
