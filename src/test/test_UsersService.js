@@ -9,14 +9,14 @@ beforeEach(function()
   service = new users_service(users_DAO);
 });
 
-describe('Back-end', function(done)
+describe('Back-end', function()
 {
-  describe('Users', function(done)
+  describe('Users', function()
   {
-    describe('UsersService', function(done)
+    describe('UsersService', function()
     {
       let users = new users_service(users_DAO);
-      describe('addUser', function(done)
+      describe('addUser', function()
       {
         it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
         {
@@ -108,7 +108,7 @@ describe('Back-end', function(done)
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : { name : 'Mauro', username : 'mou' }, statusCode : 200});
         });
-        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function(done)
+        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
         {
           let ev = {pathParameters: ""};
           service.getUser(ev, context);
@@ -129,7 +129,7 @@ describe('Back-end', function(done)
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 500});
         });
-        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista degli utenti", function(done)
+        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista degli utenti", function()
         {
           users_DAO.getUserList.returns(Rx.Observable.of({ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }));
           let ev = {};
@@ -138,7 +138,7 @@ describe('Back-end', function(done)
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : [{ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }], statusCode : 200});
         });
-        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function(done)
+        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
         {
           let ev = {pathParameters: ""};
           service.getUserList(ev, context);
@@ -150,7 +150,7 @@ describe('Back-end', function(done)
       });
       describe('updateUser', function(done)
       {
-        it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function(done)
+        it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
         {
           users_DAO.updateUser.returns(Rx.Observable.throw(new Error()));
           let user =
@@ -163,7 +163,7 @@ describe('Back-end', function(done)
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 500});
         });
-        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function(done)
+        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
         {
           users_DAO.updateUser.returns(Rx.Observable.empty());
           let user =
@@ -176,7 +176,7 @@ describe('Back-end', function(done)
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : { name : 'gianluca' }, statusCode : 200});
         });
-        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function(done)
+        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
         {
           let ev = {pathParameters: "", body: ""};
           service.updateUser(ev, context);

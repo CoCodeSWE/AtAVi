@@ -91,14 +91,33 @@ describe('Back-end', function(done)
       {
         it("Nel caso in cui un blocco di conversazioni non venga restituito a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
         {
-          agents.getConversationList().subscribe(
-          {
-              next: (data) => {done(data);},
-              error: (err) => {done();},
-              complete: () => {done('complete called');}
-            });
-            dynamo_client.get.yield({ code : 500, msg : "error getting data"});
-          });
+          conv.getConversationList().subscribe(
+					{
+						next: sinon.stub(),
+						error: sinon.stub(),
+						complete: sinon.stub()
+					});
+					
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'piero'});
+					dynamo_client.scan.yield(null, {Items: [{name: "piero", username: "sun"}], LastEvaluatedKey: 'marco'});
+					dynamo_client.scan.yield({statusCode: 500});
+
+					expect(error.callCount).to.equal(1);
+					let callError = error.getCall(0);
+					expect(callError.args[0].statusCode).to.equal(500);
+
+					expect(next.callCount).to.equal(2);
+
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].Items[0].name).to.equal('mauro');
+					expect(callNext.args[0].Items[0].username).to.equal('mou');
+
+					callNext = next.getCall(1);
+					expect(callNext.args[0].Items[0].name).to.equal('piero');
+					expect(callNext.args[0].Items[0].username).to.equal('sun');
+
+					expect(complete.callCount).to.equal(0);
+				});
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte le conversazioni ottenute dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function(done)
         {
           agents.getConversationList().subscribe(
