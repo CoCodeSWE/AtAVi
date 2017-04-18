@@ -15,7 +15,7 @@ describe('Client', function()
     {
       describe('register e query', function()
       {
-        it("DA SCRIVERE", function()
+        it("L'*ApplicationPackage passato come parametro deve essere ritornato correttamente, dopo essere stato inserito con un determinato nome.", function()
         {
           registry.register('conv', { name:'Conversation' });
           let app_pckg = registry.query('conv');
@@ -23,15 +23,15 @@ describe('Client', function()
           expect(app_pckg.name).to.equal('Conversation');
         }
       });
-      describe(' ???register???? e remove', function()
+      describe('register e remove', function()
       {
-        it("L'*ApplicationPackage passato come parametro deve essere rimosso correttamente."),function()
+        it("L'*ApplicationPackage passato come parametro deve essere rimosso correttamente, dopo essere stato inserito con un determinato nome."),function()
         {
           let name_app_pack = 'ConversationApp';
           registry.register('conv', { name:'Conversation' });
           registry.remove(name_app_pack);
           expect(registry.query(name_app_pack)).to.be.null;
-        }DA SISTEMARE
+        }
       });
     });
   });
