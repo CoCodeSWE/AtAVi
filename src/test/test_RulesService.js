@@ -51,7 +51,7 @@ describe('Back-end', function()
                 "task": "testTask"
             }
           };
-          let ev =  { body: JSON.stringfy(rule); }
+          let ev =  { body: JSON.stringfy(rule) }
           rules.addRule(ev,context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
@@ -83,7 +83,7 @@ describe('Back-end', function()
                 "task": "testTask"
             }
           };
-          let ev =  { body: JSON.stringfy(rule); }
+          let ev =  { body: JSON.stringfy(rule)}
           rules.addRule(ev,context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
@@ -153,28 +153,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body :
-            {
-              "enabled": false,
-              "id": 1,
-              "name" : "testRule",
-              "targets":
-                [
-                  {
-                    "company": "testCompany",
-                    "member": "testMember",
-                    "name": "testName"
-                  }
-                ],
-              "task":
-                {
-                  "params":
-                    {
-                      "param":"testParam"
-                    },
-                  "task": "testTask"
-                }
-            }, statusCode : 200});
+          expect(call.args[0]).to.be.deep.equal({body : JSON.stringfy(rule), statusCode : 200});
 
         });
         it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.",function()
@@ -228,28 +207,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body :
-            {
-              "enabled": false,
-              "id": 1,
-              "name" : "testRule",
-              "targets":
-                [
-                  {
-                    "company": "testCompany",
-                    "member": "testMember",
-                    "name": "testName"
-                  }
-                ],
-              "task":
-                {
-                  "params":
-                    {
-                      "param":"testParam"
-                    },
-                  "task": "testTask"
-                }
-            }, statusCode : 200});
+          expect(call.args[0]).to.be.deep.equal({body : JSON.stringfy(rule), statusCode : 200});
 
         });
         it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.",function()
@@ -317,33 +275,12 @@ describe('Back-end', function()
                 }
               };
           rulesDAO.query.returns(Rx.Observable.of(rule));
-          let ev =  { body: JSON.stringfy(targets); }
+          let ev =  { body: JSON.stringfy(targets) }
           rules.queryRule(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body :
-            {
-              "enabled": false,
-              "id": 1,
-              "name" : "testRule",
-              "targets":
-                [
-                  {
-                    "company": "testCompany",
-                    "member": "testMember",
-                    "name": "testName"
-                  }
-                ],
-              "task":
-                {
-                  "params":
-                    {
-                      "param":"testParam"
-                    },
-                  "task": "testTask"
-                }
-            }, statusCode : 200});
+          expect(call.args[0]).to.be.deep.equal({body : JSON.stringfy(rule), statusCode : 200});
         });
         it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.",function()
         {
@@ -362,7 +299,7 @@ describe('Back-end', function()
               ]
             };
           rulesDAO.query.returns(Rx.Observable.throw(new Error()));
-          let ev =  { body: JSON.stringfy(targets); }
+          let ev =  { body: JSON.stringfy(targets) }
           rules.queryRule(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
@@ -397,7 +334,7 @@ describe('Back-end', function()
                 "task": "testTask"
             }
           };
-          let ev =  { body: JSON.stringfy(rule); }
+          let ev =  { body: JSON.stringfy(rule) }
           rules.updateRule(ev,context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
