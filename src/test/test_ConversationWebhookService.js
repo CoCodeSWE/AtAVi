@@ -56,7 +56,7 @@ describe('Back-end', function()
      `};
       it("La risposta deve avere il campo -name del context uguale a 'admin' nel caso in cui l'utente sia stato riconosciuto come possibile amministratore.", function()
       {
-        users_DAO.getUser.returns(RxObservable.of({ name : "Mauro Carlin", username : "mou"}));
+        users_DAO.getUsername.returns(RxObservable.of({ name : "Mauro Carlin", username : "mou"}));
         let call = context.succeed.getCall(0);
         expect(context.succeed.calledOnce).to.be.true;
         expect(call.args[0]).not.to.be.null;
@@ -73,7 +73,7 @@ describe('Back-end', function()
       });
       it("La risposta deve avere il campo -name del context uguale a 'welcome' nel caso in cui l'utente sia stato riconosciuto come ospite che ha avuto interazioni passate con il sistema.", function()
       {
-        guests_DAO.getUser.returns(RxObservable.of({ name : "Mauro Carlin", username : "mou", company : "Google"}));
+        guests_DAO.getGuest.returns(RxObservable.of({ name : "Mauro Carlin", username : "mou", company : "Google"}));
         let call = context.succeed.getCall(0);
         expect(context.succeed.calledOnce).to.be.true;
         expect(call.args[0]).not.to.be.null;
@@ -88,13 +88,6 @@ describe('Back-end', function()
           }
         }
         expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(resp)});
-      });
-    });
-    describe('getUser', function()
-    {
-      it('descrizione test getUser', function()
-      {
-
       });
     });
   });

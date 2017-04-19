@@ -28,10 +28,10 @@ describe('Back-end', function()
           };
           let ev = { body: JSON.stringfy(user); }
           service.addUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 500});
-
         });
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
         {
@@ -43,6 +43,7 @@ describe('Back-end', function()
           };
           let ev = { body: JSON.stringfy(user); }
           service.addUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 200});
@@ -65,6 +66,7 @@ describe('Back-end', function()
           users_DAO.removeUser.returns(Rx.Observable.throw(new Error()));
           let ev = { pathParameters: 'mou' };
           service.deleteUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 500});
@@ -74,6 +76,7 @@ describe('Back-end', function()
           users_DAO.removeUser.returns(Rx.Observable.empty());
           let ev = { pathParameters: 'mou' }
           service.deleteUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 200});
@@ -95,6 +98,7 @@ describe('Back-end', function()
           users_DAO.getUser.returns(Rx.Observable.throw(new Error()));
           let ev = { pathParameters: 'mou' };
           service.getUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 500});
@@ -104,6 +108,7 @@ describe('Back-end', function()
           users_DAO.getUser.returns(Rx.Observable.of({ name : 'Mauro', username : 'mou' }));
           let ev = { pathParameters: 'mou' };
           service.getUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : { name : 'Mauro', username : 'mou' }, statusCode : 200});
@@ -125,6 +130,7 @@ describe('Back-end', function()
           users_DAO.getUserList.returns(Rx.Observable.throw(new Error()));
           let ev = {};
           service.getUserList(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 500});
@@ -134,6 +140,7 @@ describe('Back-end', function()
           users_DAO.getUserList.returns(Rx.Observable.of({ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }));
           let ev = {};
           service.getUserList(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : [{ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }], statusCode : 200});
@@ -159,6 +166,7 @@ describe('Back-end', function()
           };
           let ev = {pathParameters: "mou", body: JSON.stringfy(user)};
           service.updateUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 500});
@@ -172,6 +180,7 @@ describe('Back-end', function()
           };
           let ev = { pathParameters: "mou", body: JSON.stringfy(user) };
           service.updateUser(ev, context);
+          let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : { name : 'gianluca' }, statusCode : 200});
