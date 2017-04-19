@@ -10,4 +10,4 @@ class ObserverStub
   }
 }
 
-module.exports = ObserverStub
+module.exports = ObserverStub;
