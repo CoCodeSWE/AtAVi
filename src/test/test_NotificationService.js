@@ -4,41 +4,56 @@ const expect = chai.expect;
 const client = require('./stubs/SlackWebClient');
 const context = require('./stubs/LambdaContext');
 
-describe('Back-end', function(done)
+describe('Back-end', function()
 {
-  describe('Notifications', function(done)
+  describe('Notifications', function()
   {
-    describe('NotificationService', function(done)
+    describe('NotificationService', function()
     {
-      describe('getChannelList', function(done)
+      describe('getChannelList', function()
       {
         let service = new NotificationService(client);
-        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui canali a slack, il campo statusCode della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui canali a Slack, il campo statusCode della risposta deve essere impostato a 500", function()
         {
-          let ev = {body:''};
+          let ev = {body: ''};
           service.getChannelList(ev, context);
-          client.users.list.yield(null,users);
+          client.users.list.yield(null, users);
           client.channels.list.yield('errore');
           client.groups.list.yield(null, groups);
 
           expect(context.succeed.callCount).to.equal(1);
           let call = context.succeed.getCall(0);
           expect(call.args[0]).to.have.property('statusCode', 500);
-
         });
-        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a slack, il campo statusCode della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500", function()
         {
+					let ev = {body: ''};
+          service.getChannelList(ev, context);
+          client.users.list.yield('errore');
+          client.channels.list.yield(null, channels);
+          client.groups.list.yield(null, groups);
 
+          expect(context.succeed.callCount).to.equal(1);
+          let call = context.succeed.getCall(0);
+          expect(call.args[0]).to.have.property('statusCode', 500);
         });
-        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a slack, il campo statusCode della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a Slack, il campo statusCode della risposta deve essere impostato a 500", function()
         {
+					let ev = {body: ''};
+          service.getChannelList(ev, context);
+          client.users.list.yield(null, groups);
+          client.channels.list.yield(null, channels);
+          client.groups.list.yield('errore');
 
+          expect(context.succeed.callCount).to.equal(1);
+          let call = context.succeed.getCall(0);
+          expect(call.args[0]).to.have.property('statusCode', 500);
         });
         it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista dei canali Slack (utenti, canali pubblici e gruppi privati) in formato JSON", function()
         {
-          let ev = {body:''};
+          let ev = {body: ''};
           service.getChannelList(ev, context);
-          client.users.list.yield(null,users);
+          client.users.list.yield(null, users);
           client.channels.list.yield(null, channels);
           client.groups.list.yield(null, groups);
 
@@ -51,8 +66,29 @@ describe('Back-end', function(done)
 
       describe('sendMsg', function(done)
       {
-        it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500");
-        it("Nel caso in cui non si verifichi nessun un errore, il campo statusCode della risposta deve essere impostato a 200");
+        it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500", function()
+				{
+					let ev = {body: ''};
+					service.sendMsg(ev, context);
+					client.chat.postMessage('errore');
+					
+					expect(context.succeed.callCount).to.equal(1);
+					let call = context.succeed.getCall(0);
+					
+					expect(call.args[0]).to.have.property('statusCode', 500);
+				});
+				
+        it("Nel caso in cui non si verifichi alcun errore, il campo statusCode della risposta deve essere impostato a 200", function()
+				{
+					let ev = {body: ''};
+					service.sendMsg(ev, context);
+					client.chat.postMessage(null, responseSendMsg);
+					
+					expect(context.succeed.callCount).to.equal(1);
+					let call = context.succeed.getCall(0);
+					
+					expect(call.args[0]).to.have.property('statusCode', 200);
+				});
       });
     });
   });
@@ -96,51 +132,67 @@ var channels =
 {
   "ok": true,
   "channels": [
-  {
-      "id": "C024BE91L",
-      "name": "fun",
-      "created": 1360782804,
-      "creator": "U024BE7LH",
-      "is_archived": false,
-      "is_member": false,
-      "num_members": 6,
-      "topic": {
-          "value": "Fun times",
-          "creator": "U024BE7LV",
-          "last_set": 1369677212
-      },
-      "purpose": {
-          "value": "This channel is for fun",
-          "creator": "U024BE7LH",
-          "last_set": 1360782804
-      }
-  }
+		{
+			"id": "C024BE91L",
+			"name": "fun",
+			"created": 1360782804,
+			"creator": "U024BE7LH",
+			"is_archived": false,
+			"is_member": false,
+			"num_members": 6,
+			"topic": 
+			{
+				"value": "Fun times",
+				"creator": "U024BE7LV",
+				"last_set": 1369677212
+			},
+			"purpose": 
+			{
+				"value": "This channel is for fun",
+				"creator": "U024BE7LH",
+				"last_set": 1360782804
+			}
+		}
   ]
 };
 
 var groups =
 {
-  "ok": true,
+	"ok": true,
   "groups": [
-      {
-          "id": "G024BE91L",
-          "name": "secretplans",
-          "created": 1360782804,
-          "creator": "U024BE7LH",
-          "is_archived": false,
-          "members": [
-              "U024BE7LH"
-          ],
-          "topic": {
-              "value": "Secret plans on hold",
-              "creator": "U024BE7LV",
-              "last_set": 1369677212
-          },
-          "purpose": {
-              "value": "Discuss secret plans that no-one else should know",
-              "creator": "U024BE7LH",
-              "last_set": 1360782804
-          }
-      }
+		{
+			"id": "G024BE91L",
+			"name": "secretplans",
+			"created": 1360782804,
+			"creator": "U024BE7LH",
+			"is_archived": false,
+			"members": [
+					"U024BE7LH"
+			],
+			"topic":
+			{
+				"value": "Secret plans on hold",
+				"creator": "U024BE7LV",
+				"last_set": 1369677212
+			},
+			"purpose":
+			{
+				"value": "Discuss secret plans that no-one else should know",
+				"creator": "U024BE7LH",
+				"last_set": 1360782804
+			}
+		}
   ]
 };
+
+
+var responseSendMsg = 
+{
+	"ok": true,
+	"ts": "1405895017.000506",
+	"channel": "C024BE91L",
+	"message":
+	{
+		//info posted message
+	}
+}
