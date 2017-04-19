@@ -22,7 +22,7 @@ describe('Back-end', function(done)
             error: (err) => {done();},
             complete: () => {done('complete called');}
           });
-          dynamo_client.put.yield({code:500, msg:"error adding guest"});
+          dynamo_client.put.yield({ code:500, msg:"error adding guest" });
         });
 		    it("Nel caso in cui un ospite sia aggiunto correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function(done)
         {
