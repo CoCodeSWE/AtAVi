@@ -75,7 +75,7 @@ describe('Back-end', function()
 						}
 					};
 					
-					web_client.users.info.yield(res);
+					web_client.users.info.yield(null, res);
 					
 					expect(error.callCount).to.equal(0);
 					
