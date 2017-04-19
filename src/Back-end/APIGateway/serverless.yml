@@ -1,0 +1,22 @@
+# Welcome to Serverless!
+#
+
+service: test-service
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: us-west-2
+  profile: default
+
+functions:
+  query:
+    handler: handler.query
+    events:
+      - http:
+          path: query
+          method: post

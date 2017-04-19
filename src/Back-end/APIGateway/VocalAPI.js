@@ -23,7 +23,7 @@ class VocalAPI
         result = this.method1();
         break;
       default:
-        result = default;
+        result = 'default';
     }
     console.log(result, action);
     context.succeed({statusCode: 200, body: result});
