@@ -13,7 +13,7 @@ describe('Client', function()
   {
     describe('ApplicationLocalRegistry', function()
     {
-      describe("register e query", function()
+      describe("register, query", function()
       {
         it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere ritornato tramite il metodo query. ", function()
         {
@@ -23,7 +23,7 @@ describe('Client', function()
           expect(app_pckg.name).to.equal('Conversation');
         }
       });
-      describe('register e remove', function()
+      describe('register, remove', function()
       {
         it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere eliminato tramite il metodo remove."),function()
         {

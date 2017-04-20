@@ -69,7 +69,7 @@ describe('Back-end', function()
             "username" : "Mou"
           }
         }
-        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(resp)});
+        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(resp) });
       });
       it("La risposta deve avere il campo -name del context uguale a 'welcome' nel caso in cui l'utente sia stato riconosciuto come ospite che ha avuto interazioni passate con il sistema.", function()
       {
@@ -81,13 +81,13 @@ describe('Back-end', function()
         {
           "context":
           {
-            "context_name":"welcome",
-            "guest_name":"Mauro Carlin",
-            "company":"Google",
-            "member_name":"Stefano Dindo"
+            "context_name" : "welcome",
+            "guest_name" : "Mauro Carlin",
+            "company" : "Google",
+            "name" : "Stefano Dindo"
           }
         }
-        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(resp)});
+        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(resp) });
       });
     });
   });

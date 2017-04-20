@@ -22,7 +22,7 @@ describe('Back-end', function(done)
             error: (err) => {done();},
             complete: () => {done('complete called');}
           });
-          dynamo_client.put.yield({ code:500, msg:"error adding guest" });
+          dynamo_client.put.yield({ code : 500, msg : "error adding guest" });
         });
 		    it("Nel caso in cui un ospite sia aggiunto correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function(done)
         {
@@ -39,13 +39,13 @@ describe('Back-end', function(done)
       {
         it("Nel caso in cui un ospite non venga restituito a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
         {
-					guests.getGuest('mou').subscribe(
+					guests.getGuest('Mauro', 'Zero12').subscribe(
           {
             next: (data) => {done(data);},
             error: (err) => {done();},
             complete: () => {done('complete called');}
           });
-          dynamo_client.get.yield({code:500, msg:"error getting data"});
+          dynamo_client.get.yield({ code : 500, msg : "error getting data" });
 				});
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta",function(done)
         {
@@ -60,29 +60,69 @@ describe('Back-end', function(done)
             error: (err) => {done(err);},
             complete: () => {done();}
           });
-          dynamo_client.get.yield(null, {"name": "Mauro", "company": "Zero12"});
+          dynamo_client.get.yield(null, { name : "Mauro", company : "Zero12" });
         });
       });
       describe('getGuestList', function(done)
       {
-        it("Nel caso in cui un blocco di ospiti non venga restituito a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function(done)
+        it("Nel caso in cui un blocco di ospiti non venga restituito a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
         {
-          agents.getGuestList().subscribe(
+          guests.getGuestList().subscribe(
           {
-            next: (data) => {done(data);},
-            error: (err) => {done();},
-            complete: () => {done('complete called');}
+            next: sinon.stub(),
+            error: sinon.stub(),
+            complete: sinon.stub()
           });
-          dynamo_client.get.yield({ code : 500, msg : "error getting data"});
+
+          dynamo_client.scan.yield(null, {Items: [{ name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
+          dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }], LastEvaluatedKey: 'Luca'});
+          dynamo_client.scan.yield({ statusCode : 500 });
+
+          expect(error.callCount).to.equal(1);
+          let callError = error.getCall(0);
+          expect(callError.args[0].statusCode).to.equal(500);
+
+          expect(next.callCount).to.equal(2);
+
+          let callNext = next.getCall(0);
+          expect(callNext.args[0].Items[0].name).to.equal('Mauro');
+          expect(callNext.args[0].Items[0].company).to.equal('Zero12');
+
+          callNext = next.getCall(1);
+          expect(callNext.args[0].Items[0].name).to.equal('Piero');
+          expect(callNext.args[0].Items[0].company).to.equal('Google');
+
+          expect(complete.callCount).to.equal(0);
         });
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte gli ospiti ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function(done)
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte gli ospiti ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function()
         {
-          agents.getGuestList().subscribe(
+          guests.getGuestList().subscribe(
           {
-            next: (data) => { expect(data).to.not.be.null; },
-            error: (err) => {done(err);},
-            complete: () => {done();}
+            next: sinon.stub(),
+            error: sinon.stub(),
+            complete: sinon.stub()
           });
+
+          dynamo_client.scan.yield(null, {Items: [{ name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
+          dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }], LastEvaluatedKey: 'Luca'});
+          dynamo_client.scan.yield({ statusCode : 500 });
+
+          expect(error.callCount).to.equal(1);
+          let callError = error.getCall(0);
+          expect(callError.args[0].statusCode).to.equal(500);
+
+          expect(error.callCount).to.equal(0);
+
+          expect(next.callCount).to.equal(2);
+
+          expect(callNext.args[0].Items[0].name).to.equal('Mauro');
+          expect(callNext.args[0].Items[0].company).to.equal('Zero12');
+
+          callNext = next.getCall(1);
+          expect(callNext.args[0].Items[0].name).to.equal('Piero');
+          expect(callNext.args[0].Items[0].company).to.equal('Google');
+
+          expect(complete.callCount).to.equal(1);
         });
       });
       describe('removeGuest', function(done)
@@ -95,7 +135,7 @@ describe('Back-end', function(done)
             error: (err) => {done();},
             complete: () => {done('complete called');}
           });
-          dynamo_client.delete.yield({code: 500, msg:"error removing guest"});
+          dynamo_client.delete.yield({ code : 500, msg : "error removing guest" });
         });
         it("Nel caso in cui un ospite sia eliminato correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function(done)
         {
@@ -105,7 +145,7 @@ describe('Back-end', function(done)
             error: (err) => {done(err)},
             complete: () => {done()}
           });
-          dynamo_client.delete.yield(null, {code: 200, msg:"success"});
+          dynamo_client.delete.yield(null, { code : 200, msg : "success" });
         });
       });
       describe('updateGuest', function(done)
@@ -118,7 +158,7 @@ describe('Back-end', function(done)
             error: (err) => {done();},
             complete: () => {done('complete called');}
           });
-          dynamo_client.delete.yield({code: 500, msg:"error updating guest"});
+          dynamo_client.update.yield({code: 500, msg:"error updating guest"});
         });
         it("Nel caso in cui un ospite sia aggiornato correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function(done)
         {
@@ -131,7 +171,7 @@ describe('Back-end', function(done)
             error: (err) => {done(err)},
             complete: () => {done()}
           });
-          dynamo_client.put.yield(null, {"Attributes": {"name": "Paolo"}});
+          dynamo_client.update.yield(null, { "Attributes" : { "name" : "Paolo" }});
         });
       });
     });

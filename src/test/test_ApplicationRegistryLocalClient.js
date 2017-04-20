@@ -33,7 +33,7 @@ describe('Client', function()
       });
       describe('query', function()
       {
-        it('Vogliamo testare che venga aggiunto correttamente l’\\file{ApplicationPackage} passato come parametro, se è un \\file{ApplicationPackage} completo.', function()
+        it('Vogliamo testare che venga riornato correttamente l’\\file{ApplicationPackage} a partire dal suo nome passato come parametro.', function()
         {
           app_local_reg.query.returns({ name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' });
           let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };

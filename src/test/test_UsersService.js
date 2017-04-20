@@ -46,7 +46,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 200});
+          expect(call.args[0]).to.be.deep.equal({ body : {}, statusCode: 200});
         });
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400",function()
         {
@@ -59,7 +59,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.be.deep.equal({ body:{}, statusCode: 400 });
         });
       });
-      describe('deleteUser', function(done)
+      describe('deleteUser', function()
       {
         it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
         {
@@ -91,7 +91,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 200});
         });
       });
-      describe('getUser', function(done)
+      describe('getUser', function()
       {
         it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
         {
@@ -123,7 +123,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 400});
         });
       });
-      describe('getUserList', function(done)
+      describe('getUserList', function()
       {
         it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
         {
@@ -155,7 +155,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(user) }, statusCode: 400 });
         });
       });
-      describe('updateUser', function(done)
+      describe('updateUser', function()
       {
         it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
         {
