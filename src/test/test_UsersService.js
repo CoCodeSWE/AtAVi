@@ -31,7 +31,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 500});
+          expect(call.args[0]).to.be.deep.equal({ body : {}, statusCode: 500});
         });
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
         {
@@ -56,7 +56,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body:{}, statusCode: 400 });
+          expect(call.args[0]).to.be.deep.equal({ body : {}, statusCode: 400 });
         });
       });
       describe('deleteUser', function()
@@ -81,14 +81,14 @@ describe('Back-end', function()
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 200});
         });
-        it("Nel caso in cui sia passato un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400", function()
+        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
         {
           let ev = {pathParameters: ""};
           service.deleteUser(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 200});
+          expect(call.args[0]).to.be.deep.equal({body : {}, statusCode : 400});
         });
       });
       describe('getUser', function()
@@ -120,7 +120,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{}, statusCode: 400});
+          expect(call.args[0]).to.be.deep.equal({ body : {}, statusCode: 400});
         });
       });
       describe('getUserList', function()
@@ -147,12 +147,12 @@ describe('Back-end', function()
         });
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
         {
-          let ev = {pathParameters: ""};
+          let ev = { body : "mauro" };
           service.getUserList(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(user) }, statusCode: 400 });
+          expect(call.args[0]).to.be.deep.equal( body : {}, statusCode: 400 });
         });
       });
       describe('updateUser', function()
@@ -192,7 +192,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : ""}, statusCode: 400 });
+          expect(call.args[0]).to.be.deep.equal({ body : {}, statusCode: 400 });
         });
       });
     });
