@@ -1,6 +1,6 @@
 const ConversationApp = require('../Client/ConversationApp/ConversationApp');
 const chai = require('chai');
-const expect = require('expect');
+const expect = chai.expect;
 
 describe('Client', function() 
 {
@@ -10,9 +10,7 @@ describe('Client', function()
 		{
 			describe('runCmd', function()
 			{
-				let conversation = new ConversationApp();
-				conversation.dispatcher.dispatch = sinon.stub();
-				
+				let conversation = new ConversationApp();				
 				it('Il metodo deve chiamare il metodo dispatcher.dispatch inoltrandogli i parametri ricevuti.', function()
 				{
 					let cmd = 'msgReceived';
