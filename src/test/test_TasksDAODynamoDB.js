@@ -52,7 +52,7 @@ describe('Back-end', function(done)
 
       describe('getTask',function(done)
       {
-        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
+        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
   			{
   				tasks.getTask('mock_type').subscribe(
           {
@@ -65,7 +65,7 @@ describe('Back-end', function(done)
           done();
   			});
 
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function(done)
         {
           let observable = tasks.getTask('mock_type');
           observable.subscribe(
@@ -95,7 +95,7 @@ describe('Back-end', function(done)
           expect(error.callCount).to.equal(1);
           done();
         });
-		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function(done)
         {
           tasks.getTaskList().subscribe(
           {

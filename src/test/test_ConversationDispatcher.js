@@ -17,7 +17,7 @@ describe('Client', function(done)
        
 			 //it('Nel caso in cui i parametri passati non siano corretti, non deve chiamare il metodo dispatcher.dispatch ma sollevare un\'eccezione');
        
-			 it("Deve notificare tutti gli observer iscritti, passando loro un oggetto composto dai parametri della chiamata ricevuta", function()
+			 it("Deve notificare tutti gli observer iscritti, passando loro un oggetto composto dai parametri della chiamata ricevuta.", function()
         {
           let obs1 = new Observer();
           let obs2 = new Observer();

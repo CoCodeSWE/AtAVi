@@ -9,7 +9,7 @@ describe('Libs', function()
     obs = new ErrorObserver();
     describe('next', function()
     {
-      it('Deve sollevare un\'eccezione se viene chiamato', function()
+      it('Deve sollevare un\'eccezione se viene chiamato.', function()
       {
         expect(obs.next.bind(obs)).to.throw();
       });

@@ -54,6 +54,7 @@ class UsersDAODynamoDB
     });
   }
 
+	//Da rivedere 
   getUserList()
   {
 		let self = this;
@@ -62,7 +63,7 @@ class UsersDAODynamoDB
 			
 		});
   }
-
+	
   removeUser(username)
   {
 		let self = this;
@@ -86,7 +87,7 @@ class UsersDAODynamoDB
 		});
   }
 
-	//Da rivedere
+	//Da rivedere (alcuni campi sono opzionali quindi bisogna stare attenti al set)
   updateUser(user)
   {
 		let self = this;
@@ -98,7 +99,7 @@ class UsersDAODynamoDB
 				Key:
 				{
 					'username': user.username
-				}
+				},
 				UpdateExpression: 'set name = :name, password = :password, slack_channel = :slack_channel, sr_id = :sr_id',
 				ExpressionAttributeValues:
 				{

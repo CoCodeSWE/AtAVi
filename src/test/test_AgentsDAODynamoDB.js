@@ -52,7 +52,7 @@ describe('Back-end', function(done)
 
       describe('getAgent',function(done)
       {
-        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'observer iscritto", function(done)
+        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'observer iscritto.", function(done)
   			{
   				agents.getAgent('mock_name').subscribe(
           {
@@ -64,7 +64,7 @@ describe('Back-end', function(done)
           expect(error.callCount).to.equal(1);
           done();
   			});
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function(done)
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta.", function(done)
         {
           let observable = agents.getAgent('mock_name');
           observable.subscribe(
@@ -95,7 +95,7 @@ describe('Back-end', function(done)
                 done();
               });
 
-      		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+      		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function(done)
               {
                 agents.getAgentList().subscribe(
                 {
