@@ -54,7 +54,6 @@ describe('Back-end', function()
         {
           service.query({ body: JSON.stringify(req_body) }, context);
           expect(agents.getAgent.callCount).to.equal(1);
-          expect(agents.getAgent.calledWith('test'));
 					expect(context.succeed.callCount).to.equal(1);
           let result = context.succeed.getCall(0).args[0];
           expect(result).to.not.be.null;
@@ -63,14 +62,13 @@ describe('Back-end', function()
 				
 				it('Se la richiesta HTTP ad api.ai genera un errore, nel caso in cui lo status code oppure status.code sia diverso da 200, il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.', function()
         {
-          res_body.statusCode = 500;
+          res_body.statusCode = 403;
           service.query({ body: JSON.stringify(req_body) }, context);
 					expect(agents.getAgent.callCount).to.equal(1);
-					expect(agents.getAgent.calledWith('test'));
 					expect(context.succeed.callCount).to.equal(1);
 					let result = context.succeed.getCall(0).args[0];
           expect(result).to.not.be.null;
-          expect(result.statusCode).to.equal(500)
+          expect(result.statusCode).to.equal(500);
         });
 				
 				it('Se la richiesta HTTP ad api.ai genera un errore, nel caso in cui result.fulfillment.data.status sia impostato ad un valore diverso da 200, il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è uguale allo status di result.fulfillment.data.status.', function()
@@ -78,7 +76,6 @@ describe('Back-end', function()
           res_body.statusCode = 1234; //codice che non corrisponde a niente, per testare che sia uguale
           service.query({ body: JSON.stringify(req_body) }, context);
 					expect(agents.getAgent.callCount).to.equal(1);
-					expect(agents.getAgent.calledWith('test'));
 					expect(context.succeed.callCount).to.equal(1);
 					let result = context.succeed.getCall(0).args[0];
           expect(result).to.not.be.null;
