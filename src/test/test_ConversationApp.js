@@ -11,12 +11,15 @@ describe('Client', function()
 			describe('runCmd', function()
 			{
 				let conversation = new ConversationApp();
+				conversation.dispatcher.dispatch = sinon.stub();
+				
 				it('Il metodo deve chiamare il metodo dispatcher.dispatch inoltrandogli i parametri ricevuti.', function()
 				{
 					let cmd = 'msgReceived';
 					let params = 
 					{
-						
+						'text_request': 'richiesta',
+						'text_response': 'risposta'
 					}
 					
 					conversation.runCmd(cmd, params);
