@@ -59,42 +59,7 @@ class UsersDAODynamoDB
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			// Per non usare la ricorsione uso una variabile booleana (lastEvaluatedKey) che mi dice se il blocco ricevuto da scan è l'ultimo o meno
-			let lastEvaluatedKey = true;
 			
-			let params =
-			{
-				TableName: self.table
-			};
-			
-			do
-			{
-				self.client.scan(params, function(err, data)
-				{
-					if(err)
-						observer.error(err);
-					else
-					{
-						observer.next(data);
-						if(!data.LastEvaluatedKey)
-						{
-							//Terminati i blocchi e quindi notifico l'Observer con il suo metodo complete
-							lastEvaluatedKey = false;
-							observer.complete();
-						}
-						else
-						{
-							//Params per il prossimo blocco
-							params =
-							{
-								TableName: self.table,
-								ExclusiveStartKey: data.lastEvaluatedKey
-							};
-						}
-					}
-				});
-			}
-			while(lastEvaluatedKey);
 		});
   }
 
