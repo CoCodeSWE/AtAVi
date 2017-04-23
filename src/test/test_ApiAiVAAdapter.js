@@ -14,7 +14,7 @@ describe('Back-end', function(done)
       {
         it('Nel caso in cui la richiesta HTTP vada a buon fine, la Promise restituita deve essere risolta.', function()
 				{
-
+					
 				});
 				
         it('Nel caso si verifichi un errore durante la richiesta HTTP, la Promise restituita deve essere respinta.', function()

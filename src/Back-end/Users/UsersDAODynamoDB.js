@@ -60,7 +60,7 @@ class UsersDAODynamoDB
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			
+
 		});
   }
 	

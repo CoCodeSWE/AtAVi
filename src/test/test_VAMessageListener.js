@@ -9,7 +9,7 @@ const promise = require('./stubs/RequestPromise');
 let callback;
 beforeEach(function()
 {
-	callback = sinon.stub(guests, conversations, rp);
+	callback = sinon.stub();
 });
 
 let event = 
@@ -22,11 +22,11 @@ let event =
 				Message: 'Oh bella',
 				MessageAttributes:
 				{
-					action: 'action'
+					action: 'abbiamo finito'
 				},
 				MessageId: 2,
 				Subject: 'subject',
-				Timestamp: new Date().toISOString();
+				Timestamp: new Date().toISOString()
 			}
 		}
 	]
@@ -39,14 +39,15 @@ describe('Back-end', function()
     describe('VAMessageListener', function()
     {
 			let listener = new VAMessageListener(conversations, guests, promise);
-      describe('onMessage', function()
+			describe('onMessage', function()
       {
         it("Nel caso in cui la chiamata al microservizio \\file{Notification} non vada a buon fine, la funzione di callback deve essere chiamata con un solo parametro diverso da null.", function()
 				{
 					let context = { body: '' };
 					listener.onMessage(event, context, callback);
 					
-					//manca qualcosa nel mezzo
+					promise.onCall(0).returns(Promise.resolve(JSON.stringify(rules_response)));
+					promise.onCall(1).returns(Promise.reject(JSON.stringify(notifications_error)));
 					
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.not.be.null;
@@ -57,8 +58,8 @@ describe('Back-end', function()
 				{
 					let context = { body: '' };
 					listener.onMessage(event, context, callback);
-					
-					//manca qualcosa nel mezzo
+	
+					promise.onCall(0).returns(Promise.reject(JSON.stringify(rules_error)));
 					
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.not.be.null;
@@ -70,7 +71,7 @@ describe('Back-end', function()
 					let context = { body: '' };
 					listener.onMessage(event, context, callback);
 					
-					//manca qualcosa nel mezzo
+					guests.getGuest.yield(null, { 'msg': 'error getting guest' });
 					
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.not.be.null;
@@ -82,7 +83,7 @@ describe('Back-end', function()
 					let context = { body: '' };
 					listener.onMessage(event, context, callback);
 					
-					//manca qualcosa nel mezzo
+					conversations.addConversation.yield({ 'msg': 'error adding conversation' });
 					
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.not.be.null;
@@ -93,9 +94,12 @@ describe('Back-end', function()
 				{
 					let context = { body: '' };
 					listener.onMessage(event, context, callback);
-					
-					//manca qualcosa nel mezzo
-					
+
+					guests.getGuest.yield(null, { 'type': 'example' });
+					conversations.addConversation.yield(null, {});	
+					promise.onCall(0).returns(Promise.resolve(JSON.stringify(rules_response)));
+					promise.onCall(1).returns(Promise.resolve(JSON.stringify(notifications_response)));
+
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.be.null;
 					expect(callback.getCall(0).args[1]).to.not.be.null;
@@ -104,3 +108,43 @@ describe('Back-end', function()
     });
   });
 });
+
+let notifications_response =
+{
+	'message': 'success'
+};
+
+let rules_response =
+{
+	rules : [
+	{
+		'enabled': true,
+		'id': 5,
+		'name': 'oh bella',
+		'targets': [
+		{
+			'company': 'co.code',
+			'member': 'mauro',  
+			'name': 'mauro',  
+		}],
+		'task':
+		{
+			'params':
+			{
+				'par1': 'Object',
+				'par2': 'Object',
+			},
+			'task': 'richiesta'
+		}
+	}]
+};
+
+let notifications_error =
+{
+	'message': 'Errore'
+};
+
+let rules_error =
+{
+	'message': 'Errore'
+};
