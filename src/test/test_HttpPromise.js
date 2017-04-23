@@ -1,6 +1,29 @@
 const HttpPromise = require('../Client/Logic/HttpPromise');
 const chai = require('chai');
 
+
+let httppromise;
+let xhr;
+
+beforeEach(function()
+{
+  var requests = [];
+    httppromise = new HttpPromise('method','url',{},{});
+});
+
+before(function()
+{
+    xhr = sinon.useFakeXMLHttpRequest();
+    this.xhr.onCreate = function (xhr) {
+            requests.push(xhr);
+    };
+});
+
+after(function()
+{
+    xhr.restore();
+});
+
 describe('Client', function()
 {
   describe('Logic', function()
@@ -9,22 +32,27 @@ describe('Client', function()
     {
       describe('then', function()
       {
-        it('Se la richiesta va a buon fine, viene chiamata la funzione di callback \file{fulfill}.',function()
+        it('Se la richiesta va a buon fine, viene chiamato il metodo then', function(done)
         {
-          let httppromise = new HttpPromise('method','headers','[]',{});
-          let fulfill = function();
-          let reject = function();
-          let call = httppromise.then(fulfill, reject);
-          expect(call.args[0].calledOnce).to.be.true;
-        });
+          httppromise.then(
+            done();
+          ).catch(done);
 
-        it('Se la richiesta fallisce, viene chiamata la funzione di callback \file{reject}.',function()
+          expect(requests.length).to.equal(1);
+          requests[0].respond(200,'funziona','prova');
+        }
+
+        it('Se la richiesta fallisce, viene chiamato il metodo catch.',function()
         {
-          let httppromise = new HttpPromise('method','headers','[]',{});
-          let fulfill = function();
-          let reject = function();
-          let call = httppromise.then(fulfill, reject);
-          expect(call.args[1].calledOnce).to.be.true;
+
+          httppromise.then(done)
+          .catch(
+            function(err)
+            {
+              done();
+            });
+          expect(request.length).to.equal(1);
+          request[0].error();  
         });
       });
     });
