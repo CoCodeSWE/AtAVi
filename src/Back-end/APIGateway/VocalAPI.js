@@ -1,9 +1,21 @@
+/*
+Diario
+
+ Versione        Programmatore         Data
+ ######################################################################
+ 0.0.1           Mattia Bottaro       2017-04-23
+
+ ----------------------------------------------------------------------
+implementata la parte di queryLambda che interagisce con STTWatsonAdapter
+ ----------------------------------------------------------------------
+
+*/
+
 const http = require("http");
 const rp = require('request-promise');
 //var sys = require('sys');
-//var base64_decode = require('base64').decode;
+var base64 = require('base-64');
 var fs = require('fs');
-var SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 
 class VocalAPI
@@ -17,21 +29,8 @@ class VocalAPI
     this.jwt = jwt;
   }
 
-  static queryLambda(event, context){
-    //let body=JSON.parse(event.body);
-
-    // CONTATTO IBM WATSON
-
-/* audio -> Base64 è fatto nel client
-    var buf = new Buffer('./hello4.wav');
-
-    sys.print(base64_encode(buf));
-
-    sys.print(base64_decode('hello_audio'));
-*/
-/*
-    ########## QUESTE COSE DEVONO ESSERE FATTE DA STTMODULE E VIRTUALASSISTANT #############
-
+  queryLambda(event, context){
+    /* Questo JSON è ciò che api.ai accetta in input. È qui solo per prova
     let action, text_request, text_response;
     let options_api_ai = {
       method: 'POST',
@@ -52,37 +51,25 @@ class VocalAPI
       },
       json: true
     }
+*/
 
-    let speech_to_text = new SpeechToTextV1({
-      username: '637a5774-9755-4b80-b134-af716927bc9d',
-      password: 'QfOX3P4ZlndK'
-    });
-
-    let params = {
-      audio: fs.createReadStream('./hello.wav'),
-      content_type: 'audio/wav'
-    };
-
-
-    speech_to_text.recognize(params, function(err, res) {
-      if (err)
-        console.log(err);
-      else
+    this.stt.speechToText(fs.createReadStream('./hello.wav'),'audio/wav').then(function(res)
       {
-        options_api_ai.body.query=res.results[0].alternatives[0].transcript; // query api.ai = testo ritornato da STT
-        // CONTATTO API.AI
+      //  options_api_ai.body.query=res; // query api.ai = testo ritornato da STT
+        // CONTATTO VirtualAssistant
+        /* il codice qui sotto dovrà andare in ApiAiVAAdapter, è qui solo per prova. Notare la request-promise
         rp(options_api_ai).then(function(parsedBody){
-          //console.log("Q: "+parsedBody.result.resolvedQuery+'\nA: '+parsedBody.result.speech);
+          console.log("Q: "+parsedBody.result.resolvedQuery+'\nA: '+parsedBody.result.speech);
           action=parsedBody.result.action;
           text_request=parsedBody.result.resolvedQuery;
           text_response=parsedBody.result.speech;
         }).catch(function(err){
           console.log(err);
         });
-      }
-    });
-    #########################################
-*/
+        */
+      }).catch(err => {console.log("problem")});
+
+    //#########################################
 
     switch(action){
       case 'rule.add':
@@ -125,25 +112,8 @@ class VocalAPI
         this._updateUser();
         break;
     }
-
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({
-          "action":action,
-          "res":{
-              "contexts":['nisba',"two"],
-              "data":{
-                  "token":"TOKEN"
-              },
-              "text_request": text_request,
-              "text_response":text_response
-          },
-          "session_id":"123"
-      }),
-    };
   }
-
-  context.succeed(response);
+  //context.succeed(response);
 
   /******* RULE *********/
 
@@ -200,6 +170,7 @@ class VocalAPI
 
 }
 
-VocalAPI.queryLambda();
+var v = new VocalAPI({},{},{},{},{});
+v.queryLambda({},{});
 
 module.exports = VocalAPI;
