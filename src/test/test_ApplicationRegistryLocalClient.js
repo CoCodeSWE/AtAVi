@@ -20,20 +20,21 @@ describe('Client', function()
         {
           let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };
           let bool = registry.register('conv', app_pckg);
-          expect(app_pckg).to.include.keys('name');
-          expect(app_pckg.name).to.not.be.null;
-          expect(app_pckg).to.include.keys('cmdHandler');
-          expect(app_pckg.cmdHandler).to.not.be.null;
-          expect(app_pckg).to.include.keys('setup');
-          expect(app_pckg.setup).to.not.be.null;
-          expect(app_pckg).to.include.keys('ui');
-          expect(app_pckg.ui).to.not.be.null;
+          let call = registry.register.getCall(0);
+          expect(call.args[1]).to.include.keys('name');
+          expect(call.args[1].name).to.not.be.null;
+          expect(call.args[1]).to.include.keys('cmdHandler');
+          expect(call.args[1].cmdHandler).to.not.be.null;
+          expect(call.args[1]).to.include.keys('setup');
+          expect(call.args[1].setup).to.not.be.null;
+          expect(call.args[1]).to.include.keys('ui');
+          expect(call.args[1].ui).to.not.be.null;
           expect(bool).to.be.true;
         });
       });
       describe('query', function()
       {
-        it('Vogliamo testare che venga riornato correttamente l’\\file{ApplicationPackage} a partire dal suo nome passato come parametro.', function()
+        it('Vogliamo testare che venga ritornato correttamente l’\\file{ApplicationPackage} a partire dal suo nome passato come parametro.', function()
         {
           app_local_reg.query.returns({ name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' });
           let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };

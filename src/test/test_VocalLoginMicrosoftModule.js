@@ -22,20 +22,20 @@ describe('Back-end', function(done)
       {
         it("Se la chiamata al servizio di Speaker Recognition per aggiungere un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
-          microsoft_login.addEnrollment().subscribe(
-          {
-            next: (data) => {done(data);},
-            error: (err) => {done();},
-            complete: () => {done('complete called');}
-          }
-          promise.catch.yield(handleError);
-
+          promise.returns(Promise.reject(
+            "error" : {
+              "code" : "InternalServerError",
+              "message" : "SpeakerInvalid"
+            }
+          ));
           microsoft.addEnrollment().subscribe(
           {
             next: next,
             error: error,
             complete: complete
           });
+          expect(next.countCall).to.equal(0);
+          expect(complete.countCall).to.equal(0);
           expect(error.countCall).to.equal(1);
         });
       });
@@ -43,38 +43,59 @@ describe('Back-end', function(done)
       {
         it("Se la chiamata al servizio di Speaker Recognition per creare un utente ritorna uno statusCode diverso da 200, StringObservable deve notificare lo StringObserver chiamando il suo metodo error.", function()
         {
+          promise.returns(Promise.reject(
+            "error" : {
+              "code" : "InternalServerError",
+              "message" : "SpeakerInvalid"
+            }
+          ));
           microsoft.createUser().subscribe(
           {
             next: next,
             error: error,
             complete: complete
           });
+          expect(next.countCall).to.equal(0);
+          expect(complete.countCall).to.equal(0);
           expect(error.countCall).to.equal(1);
         });
       });
       describe('deleteUser', function(done)
       {
-        it("Se la chiamata al servizio di Speaker Recognition per effettuareil login ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per eliminare un utente ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
+          promise.returns(Promise.reject(
+            "error" : {
+              "code" : "InternalServerError",
+              "message" : "SpeakerInvalid"
+            }
+          ));
           microsoft.deleteUser().subscribe(
           {
             next: next,
             error: error,
             complete: complete
           });
+          expect(next.countCall).to.equal(0);
+          expect(complete.countCall).to.equal(0);
           expect(error.countCall).to.equal(1);
         });
       });
       describe('doLogin', function(done)
       {
-        it("Se la chiamata al servizio di Speaker Recognition per aggiungere un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per effettuare il login ritorna un oggetto con campo 'result' pari a 'Reject', l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
+          promise.returns(Promise.reject(
+            { "result" : "Reject" }
+          ));
           microsoft.doLogin().subscribe(
           {
             next: next,
             error: error,
             complete: complete
           });
+          expect(next.countCall).to.equal(0);
+          expect(complete.countCall).to.equal(0);
           expect(error.countCall).to.equal(1);
         });
       });
@@ -82,12 +103,20 @@ describe('Back-end', function(done)
       {
         it("Se la chiamata al servizio di Speaker Recognition per ottenere la lista degli utenti ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function()
         {
+          promise.returns(Promise.reject(
+            "error" : {
+              "code" : "InternalServerError",
+              "message" : "SpeakerInvalid"
+            }
+          ));
           microsoft.getList().subscribe(
           {
             next: next,
             error: error,
             complete: complete
           });
+          expect(next.countCall).to.equal(0);
+          expect(complete.countCall).to.equal(0);
           expect(error.countCall).to.equal(1);
         });
       });
@@ -95,12 +124,20 @@ describe('Back-end', function(done)
       {
         it("Se la chiamata al servizio di Speaker Recognition per ottenere un utente ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function()
         {
+          promise.returns(Promise.reject(
+            "error" : {
+              "code" : "InternalServerError",
+              "message" : "SpeakerInvalid"
+            }
+          ));
           microsoft.getUser().subscribe(
           {
             next: next,
             error: error,
             complete: complete
           });
+          expect(next.countCall).to.equal(0);
+          expect(complete.countCall).to.equal(0);
           expect(error.countCall).to.equal(1);
         });
       });
@@ -108,12 +145,20 @@ describe('Back-end', function(done)
       {
         it("Se la chiamata al servizio di Speaker Recognition per resettare un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
+          promise.returns(Promise.reject(
+            "error" : {
+              "code" : "InternalServerError",
+              "message" : "SpeakerInvalid"
+            }
+          ));
           microsoft.resetEnrollment().subscribe(
           {
             next: next,
             error: error,
             complete: complete
           });
+          expect(next.countCall).to.equal(0);
+          expect(complete.countCall).to.equal(0);
           expect(error.countCall).to.equal(1);
         });
       });
