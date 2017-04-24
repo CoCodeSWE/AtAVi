@@ -8,7 +8,7 @@ module.exports = function(grunt) {
       options:
       {
         sourceMap: true,
-        presets: ['babel-preset-es2015', 'babel-preset-react'] 
+        presets: ['babel-preset-es2015', 'babel-preset-react']
       },
       dist:
       {
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
           clearRequireCache: false, // Optionally clear the require cache before running tests (defaults to false)
           noFail: false // Optionally set to not fail on failed tests (will still fail on other errors)
         },
-        src: ['test/*.js']
+        src: ['src/test/*.js']
       }
     }
 
