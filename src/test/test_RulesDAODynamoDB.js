@@ -33,7 +33,7 @@ describe('Back-end', function(done)
 					});
 					dynamo_client.put.yield({code:400, msg:"Requested resource not found"});
           expect(error.callCount).to.equal(1);
-        //  expect(error.getCall(0).args[0].statusCode).to.equal(400);
+          expect(error.getCall(0).args[0].statusCode).to.equal(400);
           done();
         });
 
@@ -63,6 +63,7 @@ describe('Back-end', function(done)
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
   			});
 
@@ -94,6 +95,7 @@ describe('Back-end', function(done)
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
         });
 
@@ -123,6 +125,7 @@ describe('Back-end', function(done)
           });
           dynamo_client.delete.yield({code: 500, msg:"error removing rule"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
         });
 		    it("Nel caso in cui una direttiva sia rimossa correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
@@ -151,6 +154,7 @@ describe('Back-end', function(done)
 					});
 					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
 				});
 		    it("Nel caso in cui una direttiva sia aggiornata correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
