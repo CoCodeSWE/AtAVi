@@ -26,7 +26,7 @@ describe('Back-end', function()
           }
         }
       };
-			
+
       let res_body =
       {
         action: 'action',
@@ -45,41 +45,34 @@ describe('Back-end', function()
         statusCode: 200
       }
 
-      agents.getAgent.returns('01011');
-      va.query.returns(res_body);
-			
+      let error =
+      {
+        statusCode: 412
+      }
+      agents.get.returns('01011');
 			describe('query', function()
 			{
-				it('Se la richiesta HTTP ad api.ai va a buon fine allora lo status code, result.fulfillment.data.status e status.code sono uguali a 200.', function()
+				it('Se la richiesta HTTP ad api.ai va a buon fine allora lo status code della risposta deve essere uguale a 200.', function()
         {
+          va.query.returns(Promise.resolve(JSON.stringify(res_body)));
           service.query({ body: JSON.stringify(req_body) }, context);
-          expect(agents.getAgent.callCount).to.equal(1);
-					expect(context.succeed.callCount).to.equal(1);
+          expect(context.succeed.callCount).to.equal(1);
+          expect(agents.get.callCount).to.equal(1);
+          expect(agents.get.calledWith('test'));
           let result = context.succeed.getCall(0).args[0];
+
           expect(result).to.not.be.null;
           expect(result.statusCode).to.equal(200);
         });
-				
-				it('Se la richiesta HTTP ad api.ai genera un errore, nel caso in cui lo status code oppure status.code sia diverso da 200, il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.', function()
+				it('Se la chiamata al modulo VAModule genera un\'errore, lo status code della risposta deve essere uguale al codice di errore ricevuto.', function()
         {
-          res_body.statusCode = 403;
+          va.query.returns(Promise.resolve(JSON.stringify(error)));
           service.query({ body: JSON.stringify(req_body) }, context);
-					expect(agents.getAgent.callCount).to.equal(1);
-					expect(context.succeed.callCount).to.equal(1);
-					let result = context.succeed.getCall(0).args[0];
+          expect(context.succeed.callCount).to.equal(1);
+          let result = context.succeed.getCall(0).args[0];
           expect(result).to.not.be.null;
-          expect(result.statusCode).to.equal(500);
-        });
-				
-				it('Se la richiesta HTTP ad api.ai genera un errore, nel caso in cui result.fulfillment.data.status sia impostato ad un valore diverso da 200, il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è uguale allo status di result.fulfillment.data.status.', function()
-        {
-          res_body.statusCode = 1234; //codice che non corrisponde a niente, per testare che sia uguale
-          service.query({ body: JSON.stringify(req_body) }, context);
-					expect(agents.getAgent.callCount).to.equal(1);
-					expect(context.succeed.callCount).to.equal(1);
-					let result = context.succeed.getCall(0).args[0];
-          expect(result).to.not.be.null;
-          expect(result.statusCode).to.equal(1234);
+          expect(result.statusCode).to.equal(412);
+
         });
 			});
 		});
