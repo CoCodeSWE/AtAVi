@@ -3,7 +3,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const STTWatsonAdapter = require('../Back-end/STT/STTWatsonAdapter');
 const STT = require('./stubs/STT');
-const streamBuffers = require('./stubs/streamBuffers');
+const streamBuffers = require('./stubs/StreamBuffers');
 
 describe('Back-end', function()
 {
