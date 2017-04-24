@@ -127,7 +127,7 @@ describe('Back-end', function(done)
   					});
 
             dynamo_client.scan.yield(null, {Items: [{ session_id : "conv", guest_id : "mauro" }], LastEvaluatedKey: 'conv1'});
-  					dynamo_client.scan.yield(null, {Items: [{ session_id : "conv1", guest_id : "piero" }]);
+  					dynamo_client.scan.yield(null, {Items: [{ session_id : "conv1", guest_id : "piero" }]});
 
   					expect(error.callCount).to.equal(0);
 
