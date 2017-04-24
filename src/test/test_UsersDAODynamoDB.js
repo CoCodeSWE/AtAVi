@@ -144,7 +144,7 @@ describe('Back-end', function()
 					});
 
 					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'piero'});
-					dynamo_client.scan.yield(null, {Items: [{name: "piero", username: "sun"}]}); //ultimo elemento da ottenere
+					dynamo_client.scan.yield(null, {Items: [{name: "piero", username: "sun"}]}); // Ultimo elemento da ottenere
 
 					expect(error.callCount).to.equal(0);
 
@@ -173,7 +173,7 @@ describe('Back-end', function()
 						complete: complete
           });
 
-					dynamo_client.delete.yield({statusCode: 500, message:"error removing user"});
+					dynamo_client.delete.yield({statusCode: 500, message: "error removing user"});
 
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
@@ -209,7 +209,7 @@ describe('Back-end', function()
 						complete: complete
 					});
 
-					dynamo_client.update.yield({statusCode: 500, message:"error updating user"});
+					dynamo_client.put.yield({statusCode: 500, message: "error updating user"});
 
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
@@ -222,21 +222,13 @@ describe('Back-end', function()
 
 				it("Nel caso in cui l'utente sia modificato correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function()
 				{
-					/* Valore di data in caso l'utente sia stato modificato correttamente
-					"Attributes": {
-						1 parametro modificato: nuovo valore 1 parametro,
-						2 parametro modificato: nuovo valore 2 parametro,
-						...
-						n parametro modificato: nuovo valore n parametro
-					}
-					*/
 					users.updateUser('mou').subscribe(
 					{
 						next: next,
 						error: error,
 						complete: complete
 					});
-					dynamo_client.update.yield(null, {"Attributes": {"name": "Mauro"}});
+					dynamo_client.put.yield(null, {});
 					expect(error.callCount).to.equal(0);
 					expect(complete.callCount).to.equal(1);
 				});
