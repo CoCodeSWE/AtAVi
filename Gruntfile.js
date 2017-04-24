@@ -8,7 +8,7 @@ module.exports = function(grunt) {
       options:
       {
         sourceMap: true,
-        presets: ['babel-preset-es2015']
+        presets: ['babel-preset-es2015', 'babel-preset-react'] 
       },
       dist:
       {
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
         [{
           expand: true,
 				  cwd: 'src',
-				  src: ['**/*.js'],
+				  src: ['**/*.js', '**/*.jsx' ],
 				  dest: 'dist/'
         }]
       }
