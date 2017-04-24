@@ -10,6 +10,8 @@ beforeEach(function()
   adapter = new ApiAiVAAdapter('agent', RequestPromise);
 });
 
+
+
 describe('Back-end', function(done)
 {
   describe('VirtualAssistant', function(done)
@@ -22,7 +24,7 @@ describe('Back-end', function(done)
         {
           request_promise.returns(Promise.resolve(JSON.stringify(response)));
           adapter.query(query)
-            .then(function()
+            .then(function(data)
             {
               done();
             }).catch(done);
@@ -32,7 +34,7 @@ describe('Back-end', function(done)
         {
           //sarebbero da aggiungere i singoli casi (status code, data.statusCode, ecc)
           request_promise.returns(Promise.resolve(JSON.stringify(error)));
-          adapter.query(query).then(done).catch(function(){done();});
+          adapter.query(query).then(done).catch(function(err){done();});
         });
       });
     });
