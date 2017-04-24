@@ -1,11 +1,18 @@
 const Rx = require('rxjs/Rx');
+var AWS = require("aws-sdk");
+var fs = require('fs');
+
+AWS.config.update({
+    region: "us-west-2",
+    endpoint: "http://localhost:8000"
+});
 
 class AgentsDAODynamoDB
 {
   constructor(client)
   {
     this.client = client;
-    this.table = 'Agents';
+    this.table = 'Movies';
   }
 
   addAgent(agent)
@@ -51,19 +58,25 @@ class AgentsDAODynamoDB
   getAgentList()
   {
     let self = this;
+    console.log("nisba");
     return new Rx.Observable(function(observer)
     {
       let params = {TableName: self.table};
-      self.client.scan(params, function(err, data)
-      {
-        if(err)
-          observer.error(err);
-        else
-        {
-          observer.next(data);
-          observer.complete();
-        }
-      });
+      console.log("nisba2");
+      self.client.scan(params, onScan);
+      function onScan(err, data){
+          if(err)
+              observer.error(err);
+          else
+          {
+              observer.next(data);
+              if (typeof data.LastEvaluatedKey != "undefined") {
+                  params.ExclusiveStartKey = data.LastEvaluatedKey;
+                  self.client.scan(params, onScan);
+              }else
+                  observer.complete();
+          }
+      }
     });
   }
 
@@ -116,5 +129,12 @@ class AgentsDAODynamoDB
     });
   }
 }
+
+var a = new AgentsDAODynamoDB(new AWS.DynamoDB.DocumentClient());
+a.getAgentList().subscribe(
+  x => console.log('onNext: '+ x),
+  e => console.log('onError: '+ e),
+  () => console.log('onCompleted')
+);
 
 module.exports = AgentsDAODynamoDB;
