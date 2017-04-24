@@ -2,6 +2,7 @@ const AdministrationWebhookService = require('../Back-end/AdministrationWebhookS
 const chai = require('chai');
 const expect = chai.expect;
 const jwt = require('./stubs/jwt');
+const sinon = require('sinon')
 
 
 beforeEach(function()

@@ -1,5 +1,4 @@
 const Rx = require('rxjs/Rx');
-var AWS = require("aws-sdk");
 
 // configurazione di prova
 /*// #####

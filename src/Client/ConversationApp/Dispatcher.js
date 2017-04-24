@@ -1,3 +1,5 @@
+const Rx = require('rxjs/Rx');
+
 class CmdDispatcher
 {
   constructor()
@@ -15,3 +17,5 @@ class CmdDispatcher
     this.subject.next({cmd: cmd, params: params});
   }
 }
+
+module.exports = CmdDispatcher

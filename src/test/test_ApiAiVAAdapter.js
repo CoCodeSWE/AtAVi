@@ -1,7 +1,7 @@
 const ApiAiVAAdapter = require('../Back-end/VirtualAssistant/ApiAiVAAdapter');
 const chai = require('chai');
 const expect = chai.expect;
-const RequestPromise = require('./stubs/request-promise');
+const RequestPromise = require('./stubs/RequestPromise');
 const Promise = require('bluebird');
 let adapter;
 
@@ -10,15 +10,12 @@ beforeEach(function()
   adapter = new ApiAiVAAdapter('agent', RequestPromise);
 });
 
-
-
 describe('Back-end', function(done)
 {
   describe('VirtualAssistant', function(done)
   {
     describe('ApiAiVAAdapter', function()
     {
-			let adapter = new ApiAiVAAdapter(agent);
       describe('query', function()
       {
         it('Nel caso in cui la richiesta HTTP vada a buon fine, la Promise restituita deve essere risolta con i dati relativi alla risposta dell\'assistente virtuale', function(done)

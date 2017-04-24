@@ -152,7 +152,7 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal( body : {}, statusCode: 400 });
+          expect(call.args[0]).to.be.deep.equal({body : {}, statusCode: 400 });
         });
       });
       describe('updateUser', function()
