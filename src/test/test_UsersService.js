@@ -26,7 +26,7 @@ describe('Back-end', function()
             name: "Mauro",
             username: "mou"
           };
-          let ev = { body: JSON.stringfy(user); }
+          let ev = { body: JSON.stringfy(user) };
           service.addUser(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
@@ -41,7 +41,7 @@ describe('Back-end', function()
             name: "Mauro",
             username: "mou"
           };
-          let ev = { body: JSON.stringfy(user); }
+          let ev = { body: JSON.stringfy(user) };
           service.addUser(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
