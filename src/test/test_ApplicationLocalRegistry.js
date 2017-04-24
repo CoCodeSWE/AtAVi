@@ -25,7 +25,7 @@ describe('Client', function()
       });
       describe('register, remove', function()
       {
-        it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere eliminato tramite il metodo remove."),function()
+        it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere eliminato tramite il metodo remove.", function()
         {
           let name_app_pack = 'ConversationApp';
           registry.register('conv', { name:'Conversation' });
