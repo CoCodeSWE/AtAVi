@@ -44,11 +44,12 @@ describe('Back-end', function()
         it("Nel caso in cui la chiamata al microservizio \\file{Notification} non vada a buon fine, la funzione di callback deve essere chiamata con un solo parametro diverso da null.", function()
 				{
 					let context = { body: '' };
-					listener.onMessage(event, context, callback);
 					
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(rules_response)));
 					promise.onCall(1).returns(Promise.reject(JSON.stringify(notifications_error)));
 					
+					listener.onMessage(event, context, callback);
+									
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.not.be.null;
 					expect(callback.getCall(0).args[1]).to.be.undefined;
@@ -57,9 +58,10 @@ describe('Back-end', function()
 				it("Nel caso in cui la chiamata al microservizio \\file{Rules} non vada a buon fine, la funzione di callback deve essere chiamata con un solo parametro diverso da null.", function()
 				{
 					let context = { body: '' };
-					listener.onMessage(event, context, callback);
-	
+		
 					promise.onCall(0).returns(Promise.reject(JSON.stringify(rules_error)));
+					
+					listener.onMessage(event, context, callback);
 					
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.not.be.null;
@@ -93,12 +95,14 @@ describe('Back-end', function()
 				it("Nel caso in cui non ci siano errori, la funzione di callback deve essere chiamata con due parametri, il primo dei quali uguale a null.", function()
 				{
 					let context = { body: '' };
+					
+					promise.onCall(0).returns(Promise.resolve(JSON.stringify(rules_response)));
+					promise.onCall(1).returns(Promise.resolve(JSON.stringify(notifications_response)));
+					
 					listener.onMessage(event, context, callback);
 
 					guests.getGuest.yield(null, { 'type': 'example' });
 					conversations.addConversation.yield(null, {});	
-					promise.onCall(0).returns(Promise.resolve(JSON.stringify(rules_response)));
-					promise.onCall(1).returns(Promise.resolve(JSON.stringify(notifications_response)));
 
 					expect(callback.callCount).to.equal(1);
 					expect(callback.getCall(0).args[0]).to.be.null;
@@ -111,11 +115,13 @@ describe('Back-end', function()
 
 let notifications_response =
 {
+	statusCode: 200,
 	'message': 'success'
 };
 
 let rules_response =
 {
+	statusCode: 200,
 	rules : [
 	{
 		'enabled': true,
@@ -141,10 +147,12 @@ let rules_response =
 
 let notifications_error =
 {
+	statusCode: 500,
 	'message': 'Errore'
 };
 
 let rules_error =
 {
+	statusCode: 500,
 	'message': 'Errore'
 };
