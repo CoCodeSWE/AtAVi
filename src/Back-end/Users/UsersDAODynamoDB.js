@@ -13,7 +13,7 @@ class UsersDAODynamoDB
     let self = this;
     return new Rx.Observable(function(observer)
 		{
-      let params = 
+      let params =
 			{
 				TableName: self.table,
 				Item: user
@@ -38,7 +38,7 @@ class UsersDAODynamoDB
         TableName: self.table,
         Key:
         {
-          "username": username
+          'username': username
         }
       };
       self.client.get(params, function(err, data)
@@ -54,19 +54,74 @@ class UsersDAODynamoDB
     });
   }
 
+	//Da rivedere 
   getUserList()
   {
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
 
+		});
   }
-
+	
   removeUser(username)
   {
-
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
+			let params = 
+			{
+				TableName: self.table,
+				Key:
+				{
+					'username': username
+				}
+			}
+			self.client.delete(params, function(err, data)
+			{
+				if(err)
+					observer.error(err);
+				else
+					observer.complete();
+			});
+		});
   }
 
+	//Da rivedere (alcuni campi sono opzionali quindi bisogna stare attenti al set)
   updateUser(user)
   {
-
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
+			let params =
+			{
+				TableName: self.table,
+				Key:
+				{
+					'username': user.username
+				},
+				UpdateExpression: 'set name = :name, password = :password, slack_channel = :slack_channel, sr_id = :sr_id',
+				ExpressionAttributeValues:
+				{
+					':name': user.name,
+					':password': user.password,
+					':slack_channel': user.slack_channel,
+					':sr_id': user.sr_id
+				},
+				ReturnValues: 'UPDATED_NEW'
+			}
+									
+			self.client.update(params, function(err, data)
+			{
+				if(err)
+					observer.error(err);
+				else
+				{
+					observer.next(data);
+					observer.complete();
+				}
+			});
+		});
   }
 }
 

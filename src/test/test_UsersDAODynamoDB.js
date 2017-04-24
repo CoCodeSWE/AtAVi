@@ -22,7 +22,7 @@ describe('Back-end', function()
       let users = new dao(dynamo_client);
       describe('addUser', function()
       {
-        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
+        it("Nel caso in cui l'utente non venga aggiunto a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function()
         {
           users.addUser('mou').subscribe(
 					{
@@ -43,7 +43,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
         });
 
-				it("Nel caso in cui l'utente sia aggiunto correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
+				it("Nel caso in cui l'utente sia aggiunto correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function()
 				{
 					users.addUser('mou').subscribe(
 					{
@@ -59,7 +59,7 @@ describe('Back-end', function()
 
       describe('getUser', function()
       {
-        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
+        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function()
 				{
 					users.getUser('mou').subscribe(
 					{
@@ -79,7 +79,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
 				});
 
-				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function()
+				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
         {
           let observable = users.getUser('mou');
           observable.subscribe(
@@ -104,7 +104,7 @@ describe('Back-end', function()
 
       describe('getUserList', function()
       {
-        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
+        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function()
 				{
 					users.getUserList().subscribe(
 					{
@@ -134,7 +134,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
 				});
 
-				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function()
+				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
 				{
 					users.getUserList().subscribe(
 					{
@@ -164,7 +164,7 @@ describe('Back-end', function()
 
       describe('removeUser', function()
       {
-        it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
+        it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function()
         {
           users.removeUser('mou').subscribe(
           {
@@ -184,7 +184,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
         });
 
-				it("Nel caso in cui l'utente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
+				it("Nel caso in cui l'utente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function()
         {
           users.removeUser('mou').subscribe(
           {
@@ -200,7 +200,7 @@ describe('Back-end', function()
 
       describe('updateUser', function()
       {
-        it("Nel caso in cui l'utente non venga modificato a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function()
+        it("Nel caso in cui l'utente non venga modificato a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function()
 				{
 					users.updateUser('mou').subscribe(
 					{
@@ -220,7 +220,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
 				});
 
-				it("Nel caso in cui l'utente sia modificato correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
+				it("Nel caso in cui l'utente sia modificato correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function()
 				{
 					/* Valore di data in caso l'utente sia stato modificato correttamente
 					"Attributes": {
