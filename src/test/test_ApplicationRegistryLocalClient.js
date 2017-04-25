@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const app_local_reg_client = require('../Client/ApplicationManager/ApplicationRegistryLocalClient');
-const app_local_reg = require('stubs/ApplicationLocalRegistry');
+const app_local_reg = require('./stubs/ApplicationLocalRegistry');
 
 beforeEach(function()
 {

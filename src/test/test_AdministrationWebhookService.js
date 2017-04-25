@@ -4,6 +4,7 @@ const expect = chai.expect;
 const jwt = require('./stubs/jwt');
 
 
+
 beforeEach(function()
 {
   service = new AdministrationWebhookService(jwt);

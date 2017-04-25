@@ -1,7 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 const vocal = require('../Back-end/Users/VocalLoginMicrosoftModule');
-const promise = require ('stubs/RequestPromise')
+const promise = require ('./stubs/RequestPromise');
+const sinon = require('sinon');
 
 let microsoft_login, next, error, complete;
 beforeEach(function()
@@ -23,11 +24,13 @@ describe('Back-end', function(done)
         it("Se la chiamata al servizio di Speaker Recognition per aggiungere un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
           promise.returns(Promise.reject(
-            "error" : {
+          {
+            "error" :
+            {
               "code" : "InternalServerError",
               "message" : "SpeakerInvalid"
             }
-          ));
+          }));
           microsoft.addEnrollment().subscribe(
           {
             next: next,
@@ -44,11 +47,13 @@ describe('Back-end', function(done)
         it("Se la chiamata al servizio di Speaker Recognition per creare un utente ritorna uno statusCode diverso da 200, StringObservable deve notificare lo StringObserver chiamando il suo metodo error.", function()
         {
           promise.returns(Promise.reject(
-            "error" : {
+          {
+            "error" :
+            {
               "code" : "InternalServerError",
               "message" : "SpeakerInvalid"
             }
-          ));
+          }));
           microsoft.createUser().subscribe(
           {
             next: next,
@@ -65,11 +70,13 @@ describe('Back-end', function(done)
         it("Se la chiamata al servizio di Speaker Recognition per eliminare un utente ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
           promise.returns(Promise.reject(
-            "error" : {
+          {
+            "error" :
+            {
               "code" : "InternalServerError",
               "message" : "SpeakerInvalid"
             }
-          ));
+          }));
           microsoft.deleteUser().subscribe(
           {
             next: next,
@@ -85,9 +92,7 @@ describe('Back-end', function(done)
       {
         it("Se la chiamata al servizio di Speaker Recognition per effettuare il login ritorna un oggetto con campo 'result' pari a 'Reject', l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
-          promise.returns(Promise.reject(
-            { "result" : "Reject" }
-          ));
+          promise.returns(Promise.reject({ "result" : "Reject" }));
           microsoft.doLogin().subscribe(
           {
             next: next,
@@ -104,11 +109,13 @@ describe('Back-end', function(done)
         it("Se la chiamata al servizio di Speaker Recognition per ottenere la lista degli utenti ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function()
         {
           promise.returns(Promise.reject(
-            "error" : {
+          {
+            "error" :
+            {
               "code" : "InternalServerError",
               "message" : "SpeakerInvalid"
             }
-          ));
+          }));
           microsoft.getList().subscribe(
           {
             next: next,
@@ -125,11 +132,13 @@ describe('Back-end', function(done)
         it("Se la chiamata al servizio di Speaker Recognition per ottenere un utente ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function()
         {
           promise.returns(Promise.reject(
-            "error" : {
+            {
+            "error" :
+            {
               "code" : "InternalServerError",
               "message" : "SpeakerInvalid"
             }
-          ));
+          }));
           microsoft.getUser().subscribe(
           {
             next: next,
@@ -146,11 +155,13 @@ describe('Back-end', function(done)
         it("Se la chiamata al servizio di Speaker Recognition per resettare un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
           promise.returns(Promise.reject(
-            "error" : {
+          {
+            "error" :
+            {
               "code" : "InternalServerError",
               "message" : "SpeakerInvalid"
             }
-          ));
+          }));
           microsoft.resetEnrollment().subscribe(
           {
             next: next,

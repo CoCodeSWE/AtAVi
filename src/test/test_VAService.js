@@ -49,7 +49,7 @@ describe('Back-end', function()
       {
         statusCode: 412
       }
-      agents.get.returns('01011');
+      agents.getAgent.returns('01011');
 			describe('query', function()
 			{
 				it('Se la richiesta HTTP ad api.ai va a buon fine allora lo status code della risposta deve essere uguale a 200.', function()
@@ -57,8 +57,8 @@ describe('Back-end', function()
           va.query.returns(Promise.resolve(JSON.stringify(res_body)));
           service.query({ body: JSON.stringify(req_body) }, context);
           expect(context.succeed.callCount).to.equal(1);
-          expect(agents.get.callCount).to.equal(1);
-          expect(agents.get.calledWith('test'));
+          expect(agents.getAgent.callCount).to.equal(1);
+          expect(agents.getAgent.calledWith('test'));
           let result = context.succeed.getCall(0).args[0];
 
           expect(result).to.not.be.null;

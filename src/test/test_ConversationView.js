@@ -5,7 +5,7 @@ const react = require('react');
 
 describe('Client', function()
 {
-	describe('ConversationApp', function() 
+	describe('ConversationApp', function()
 	{
 		describe('ConversationView', function()
 		{
