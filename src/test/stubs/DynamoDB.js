@@ -16,7 +16,7 @@ let stub =
       scan.cb(...args);
     }
   },
- put: sinon.stub()
+	put: sinon.stub()
 };
 
 module.exports = stub;
