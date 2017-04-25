@@ -1,0 +1,15 @@
+{
+  "setup": [
+    "views/*.js",
+    "stores/*.js",
+    "Dispatcher.js",
+    "Container.js"
+  ],
+  "libs":[
+    "https://unpkg.com/react@15/dist/react.js",
+    "https://unpkg.com/react-dom@15/dist/react-dom.js",
+    "https://unpkg.com/rxjs/bundles/Rx.min.js"
+  ],
+  "ui":
+    "index.htm"
+}
