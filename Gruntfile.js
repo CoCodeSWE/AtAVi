@@ -8,7 +8,7 @@ module.exports = function(grunt) {
       options:
       {
         sourceMap: true,
-        presets: ['babel-preset-es2015', 'babel-preset-react']
+        presets: ['babel-preset-react']
       },
       dist:
       {
@@ -16,8 +16,19 @@ module.exports = function(grunt) {
         [{
           expand: true,
 				  cwd: 'src',
-				  src: ['**/*.js', '**/*.jsx' ],
+				  src: ['**/*.js' ],
 				  dest: 'dist/'
+        }]
+      },
+      react:
+      {
+        files:[
+        {
+          expand: true,
+          cwd: 'src/Client/ConversationApp',
+          src: ['**/*.jsx'],
+          dest: 'src/Client/ConversationApp',
+          ext:'.js'
         }]
       }
     },
@@ -35,6 +46,16 @@ module.exports = function(grunt) {
         },
         src: ['src/test/*.js']
       }
+    },
+
+    'atavi-client-bundle-application':
+    {
+      conversation:
+      {
+        src: 'src/Client/ConversationApp/setup.json',
+        out: 'temp',
+        name: 'ConversationApp'
+      }
     }
 
   });
@@ -43,8 +64,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-mocha-test');
-
+  grunt.loadNpmTasks('atavi-client-bundle-application');
   // Default task(s).
-  grunt.registerTask('default', ['babel','mochaTest']);
+  grunt.registerTask('default', ['babel:react','babel:dist','mochaTest']);
+  grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
+  grunt.registerTask('react', ['babel:react']);
+
 
 };

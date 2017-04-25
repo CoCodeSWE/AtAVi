@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/CoCodeSWE/AtAVi#readme",
   "devDependencies": {
+    "atavi-client-bundle-application": "0.0.1",
     "babel-preset-es2015": "6.24.1",
     "babel-preset-react": "^6.24.1",
     "bluebird": "^3.5.0",
