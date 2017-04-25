@@ -58,7 +58,7 @@ class UsersDAODynamoDB
     });
   }
 
-	// Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (massimo da 1MB)
+	// Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
   getUserList()
   {
 		let self = this;
