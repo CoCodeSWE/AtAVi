@@ -2,5 +2,6 @@ const sinon = require('sinon');
 
 module.exports =
 {
-  publish: sinon.stub()
+  query: sinon.stub(),
+  agent: ''
 }

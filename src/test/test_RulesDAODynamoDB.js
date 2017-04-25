@@ -33,7 +33,7 @@ describe('Back-end', function(done)
 					});
 					dynamo_client.put.yield({code:400, msg:"Requested resource not found"});
           expect(error.callCount).to.equal(1);
-        //  expect(error.getCall(0).args[0].statusCode).to.equal(400);
+          expect(error.getCall(0).args[0].statusCode).to.equal(400);
           done();
         });
 
@@ -53,7 +53,7 @@ describe('Back-end', function(done)
 
       describe('getRule',function(done)
       {
-        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto", function(done)
+        it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function(done)
   			{
   				rules.getRule(1).subscribe(
           {
@@ -63,10 +63,11 @@ describe('Back-end', function(done)
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
   			});
 
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function(done)
         {
           let observable = rules.getRule(1);
           observable.subscribe(
@@ -94,10 +95,11 @@ describe('Back-end', function(done)
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
         });
 
-		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function(done)
+		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function(done)
         {
           rules.getRuleList().subscribe(
           {
@@ -123,6 +125,7 @@ describe('Back-end', function(done)
           });
           dynamo_client.delete.yield({code: 500, msg:"error removing rule"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
         });
 		    it("Nel caso in cui una direttiva sia rimossa correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)
@@ -151,6 +154,7 @@ describe('Back-end', function(done)
 					});
 					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
           expect(error.callCount).to.equal(1);
+					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
 				});
 		    it("Nel caso in cui una direttiva sia aggiornata correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function(done)

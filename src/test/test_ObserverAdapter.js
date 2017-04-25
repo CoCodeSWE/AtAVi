@@ -35,7 +35,7 @@ describe('Libs', function()
 				expect(success.callCount).to.equal(0);
 			});
 
-			it('Deve chiamare complete_cb dopo che l\'observer è stato ripreso se, mentre era in pausa, il metodo è stato chiamato', function()
+			it('Deve chiamare complete_cb dopo che l\'observer è stato ripreso se, mentre era in pausa, il metodo è stato chiamato.', function()
 			{
 				obs.onComplete(success);
 				obs.complete();
@@ -69,7 +69,7 @@ describe('Libs', function()
         expect(success.callCount).to.equal(0);
 			});
 
-      it('Deve chiamare error_cb dopo che l\'observer è stato ripreso se, mentre era in pausa, il metodo è stato chiamato', function()
+      it('Deve chiamare error_cb dopo che l\'observer è stato ripreso se, mentre era in pausa, il metodo è stato chiamato.', function()
 			{
 				let err = new Error('Errore');
 				obs.onError(success);
@@ -87,7 +87,7 @@ describe('Libs', function()
 
     describe('next', function(done)
     {
-      it('Deve chiamare next_cb, inoltrandogli il parametro ricevuto, se l\'observer non è in pausa', function()
+      it('Deve chiamare next_cb, inoltrandogli il parametro ricevuto, se l\'observer non è in pausa.', function()
       {
         obs.onNext(success);
         obs.next('data');
@@ -104,7 +104,7 @@ describe('Libs', function()
         expect(success.callCount).to.equal(0);
       });
 
-      it('Deve chiamare next_cb, inoltrandogli il parametro ricevuto, dopo che l\'observer ha ripreso', function()
+      it('Deve chiamare next_cb, inoltrandogli il parametro ricevuto, dopo che l\'observer ha ripreso.', function()
       {
         obs.onNext(success);
         obs.next('data');

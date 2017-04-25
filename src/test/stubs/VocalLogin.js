@@ -1,3 +1,5 @@
+const sinon = require('sinon');
+
 module.exports =
 {
   addEnrollment: sinon.stub(),

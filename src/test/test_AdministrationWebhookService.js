@@ -4,6 +4,7 @@ const expect = chai.expect;
 const jwt = require('./stubs/jwt');
 
 
+
 beforeEach(function()
 {
   service = new AdministrationWebhookService(jwt);
@@ -65,13 +66,13 @@ describe('Back-end', function(done)
             }
         }
      `};
-      it('La risposte dovrebbe avere il campo statusCode impostato a 200 nel caso in cui venga passato un JWT corretto', function(done)
+      it('La risposte dovrebbe avere il campo statusCode impostato a 200 nel caso in cui venga passato un JWT corretto.', function(done)
       {
         jwt.verify.returns(1);
         service.webhook(ev, { success: function(res) { expect(res.statusCode).to.equal(200); done(); }});
       });
 
-      it('La risposta dovrebbe avere il campo statusCode impostato a 403 nel caso in cui la richiesta contenga un JWT non valido', function(done)
+      it('La risposta dovrebbe avere il campo statusCode impostato a 403 nel caso in cui la richiesta contenga un JWT non valido.', function(done)
       {
         jwt.verify.throws();
         service.webhook(ev, { success: function(res) { expect(res.statusCode).to.equal(403); done(); }});
