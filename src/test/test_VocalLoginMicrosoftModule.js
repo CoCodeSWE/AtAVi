@@ -1,8 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
+const Rx = require('rxjs/Rx');
+const sinon = require('sinon');
 const vocal = require('../Back-end/Users/VocalLoginMicrosoftModule');
 const promise = require ('./stubs/RequestPromise');
-const sinon = require('sinon');
 
 let microsoft_login, next, error, complete;
 beforeEach(function()
@@ -31,7 +32,7 @@ describe('Back-end', function(done)
               "message" : "SpeakerInvalid"
             }
           }));
-          microsoft.addEnrollment().subscribe(
+          microsoft_login.addEnrollment().subscribe(
           {
             next: next,
             error: error,
@@ -54,7 +55,7 @@ describe('Back-end', function(done)
               "message" : "SpeakerInvalid"
             }
           }));
-          microsoft.createUser().subscribe(
+          microsoft_login.createUser().subscribe(
           {
             next: next,
             error: error,
@@ -77,7 +78,7 @@ describe('Back-end', function(done)
               "message" : "SpeakerInvalid"
             }
           }));
-          microsoft.deleteUser().subscribe(
+          microsoft_login.deleteUser().subscribe(
           {
             next: next,
             error: error,
@@ -93,7 +94,7 @@ describe('Back-end', function(done)
         it("Se la chiamata al servizio di Speaker Recognition per effettuare il login ritorna un oggetto con campo 'result' pari a 'Reject', l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
         {
           promise.returns(Promise.reject({ "result" : "Reject" }));
-          microsoft.doLogin().subscribe(
+          microsoft_login.doLogin().subscribe(
           {
             next: next,
             error: error,
@@ -116,7 +117,7 @@ describe('Back-end', function(done)
               "message" : "SpeakerInvalid"
             }
           }));
-          microsoft.getList().subscribe(
+          microsoft_login.getList().subscribe(
           {
             next: next,
             error: error,
@@ -139,7 +140,7 @@ describe('Back-end', function(done)
               "message" : "SpeakerInvalid"
             }
           }));
-          microsoft.getUser().subscribe(
+          microsoft_login.getUser().subscribe(
           {
             next: next,
             error: error,
@@ -162,7 +163,7 @@ describe('Back-end', function(done)
               "message" : "SpeakerInvalid"
             }
           }));
-          microsoft.resetEnrollment().subscribe(
+          microsoft_login.resetEnrollment().subscribe(
           {
             next: next,
             error: error,
