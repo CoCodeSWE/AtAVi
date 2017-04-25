@@ -8,7 +8,7 @@ class Player
     this.options = conf;
     this.subject = new Rx.Subject();
   }
-  
+
   cancel()
   {
     tts.cancel();
@@ -46,13 +46,13 @@ class Player
 
   speak(text)
   {
-    var toSpeak = new SpeechSynthesisUtterance(text);
-    toSpeak.lang = options.lang;
-    toSpeak.pitch = options.pitch;
-    toSpeak.rate = options.rate;
-    toSpeak.voice = options.voice;
-    toSpeak.volume = options.volume;
-    tts.speak(toSpeak);
+    var to_speak = new SpeechSynthesisUtterance(text);
+    to_speak.lang = options.lang;
+    to_speak.pitch = options.pitch;
+    to_speak.rate = options.rate;
+    to_speak.voice = options.voice;
+    to_speak.volume = options.volume;
+    tts.speak(to_speak);
   }
 }
 

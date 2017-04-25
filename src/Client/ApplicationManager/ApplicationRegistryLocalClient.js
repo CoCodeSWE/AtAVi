@@ -12,7 +12,7 @@ class ApplicationRegistryLocalClient
 
   query(name)
   {
-    var app_pkg = registry.query(name);
+    return registry.query(name);
   }
 
 }
