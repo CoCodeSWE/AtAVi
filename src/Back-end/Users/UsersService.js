@@ -1,5 +1,6 @@
 class UsersService
 {
+	// Costruttore della classe
 	constructor(user)
 	{
 		this.users = user; // UsersDAODynamoDB
@@ -72,7 +73,7 @@ class UsersService
 		let username;
 		if(event.pathParameters)
 		{
-			let username = event.pathParameters;
+			username = event.pathParameters;
 			this.users.deleteUser(username).subscribe(
 			{
 				next: function(data)
@@ -80,7 +81,25 @@ class UsersService
 					// Il metodo next dell'Observer non riceve nessun tipo di dato
 				},
 				
-				error: internalServerError(context),
+				error: function(err)
+				{
+					if(err.code === 'ConditionalCheckFailedException')
+					{
+						context.succeed(
+						{
+							statusCode: 404,
+							body: JSON.stringify({ message: 'Not found' })
+						});
+					}
+					else
+					{
+						context.succeed(
+						{
+							statusCode: 500,
+							body: JSON.stringify({ message: 'Internal server error' })
+						});
+					}
+				},
 				
 				complete: function()
 				{
@@ -94,6 +113,7 @@ class UsersService
 		}
 		else
 		{
+			// Event non contiene i dati attesi: Bad Request(400)
 			badRequest(context);
 		}
 	}
@@ -101,34 +121,44 @@ class UsersService
 	// Metodo che implementa la Lambda Function per ottenere uno user
 	getUser(event, context)
 	{
-		let username;
-		if(event.pathParameters)
-		{
-			username = event.pathParameters;
-			let user; // Conterrà i dati relativi all'user
-			this.users.getUser(username).subscribe(
-			{	
-				next: function(data)
-				{
-					user = data;
-				},
-				
-				error: internalServerError(context),
-				
-				complete: function()
+		let username = event.pathParameters;
+		let user; // Conterrà i dati relativi all'user
+		this.users.getUser(username).subscribe(
+		{	
+			next: function(data)
+			{
+				user = data;
+			},
+			
+			error: function(err)
+			{
+				if(err === 'Not found')
 				{
 					context.succeed(
 					{
-						statusCode: 200,
-						body: JSON.stringify(user)
+						statusCode: 404,
+						body: JSON.stringify({ message: 'Not found' })
 					});
 				}
-			});
-		}
-		else
-		{
-			badRequest(context);
-		}
+				else
+				{
+					context.succeed(
+					{
+						statusCode: 500,
+						body: JSON.stringify({ message: 'Internal server error' })
+					});
+				}
+			},
+			
+			complete: function()
+			{
+				context.succeed(
+				{
+					statusCode: 200,
+					body: JSON.stringify(user)
+				});
+			}
+		});
 	}
 	
 	// Metodo che implementa la Lambda Function per ottenere la lista degli users
@@ -179,6 +209,7 @@ class UsersService
 				username: event.pathParameters
 			};
 			
+			// Controllo eventuali campi opzionali da aggiungere a params
 			if(user.name)
 				params.name = user.name;
 			

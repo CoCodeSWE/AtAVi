@@ -34,7 +34,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Internal server error' }), statusCode: 500 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
@@ -50,7 +51,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'success' }), statusCode: 200 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400",function()
@@ -61,7 +63,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Bad Request' }), statusCode: 400 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 400);
         });
       });
       describe('deleteUser', function()
@@ -74,7 +77,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body : JSON.stringify({ message: 'Internal server error' }), statusCode : 500 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
@@ -85,7 +89,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body: JSON.stringify({ message: 'success' }), statusCode : 200 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
@@ -95,7 +100,20 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Bad Request' }), statusCode : 400 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 400);
+        });
+				
+				it("Nel caso in cui sia passato uno username non esistente, il campo \\file{statusCode} della risposta deve essere impostato a 404", function()
+        {
+					users_DAO.deleteUser.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
+					let ev = { pathParameters: "pippo" };
+					service.deleteUser(ev, context);
+					let call = context.succeed.getCall(0);
+					expect(context.succeed.calledOnce).to.be.true;
+          expect(call.args[0]).not.to.be.null;
+					expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Not found' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 404);
         });
       });
       describe('getUser', function()
@@ -108,7 +126,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Internal server error' }), statusCode : 500 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere l'utente richiesto", function()
@@ -119,17 +138,20 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ name : 'Mauro', username : 'mou' }), statusCode : 200 });
+					expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ name : 'Mauro', username : 'mou' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
-        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
+        it("Nel caso in cui sia passato uno username non esistente, il campo \\file{statusCode} della risposta deve essere impostato a 404", function()
         {
+					users_DAO.getUser.returns(Rx.Observable.throw('Not found'));
           let ev = { pathParameters: "" };
           service.getUser(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Bad Request' }), statusCode: 400 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Not found' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 404);
         });
       });
       describe('getUserList', function()
@@ -141,8 +163,8 @@ describe('Back-end', function()
           service.getUserList(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
-          expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Internal server error' }), statusCode : 500 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista degli utenti", function()
@@ -153,7 +175,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body : JSON.stringify({ users: [{ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }] }), statusCode : 200 });
+					expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ users: [{ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }] }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
       });
       describe('updateUser', function()
@@ -170,7 +193,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Internal server error' }), statusCode : 500 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
@@ -185,7 +209,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message : 'success' }), statusCode : 200 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
@@ -194,8 +219,8 @@ describe('Back-end', function()
           service.updateUser(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
-          expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify({ message: 'Bad Request' }), statusCode: 400 });
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 400);
         });
       });
     });

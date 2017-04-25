@@ -47,6 +47,8 @@ class UsersDAODynamoDB
       {
         if(err)
           observer.error(err);
+				else if(!data.username)
+					observer.error('Not found');
         else
         {
           observer.next(data);
@@ -82,7 +84,8 @@ class UsersDAODynamoDB
 				'Key':
 				{
 					'username': username
-				}
+				},
+				ConditionExpression: 'attribute_exists(username)'
 			}
 			self.client.delete(params, function(err, data)
 			{
