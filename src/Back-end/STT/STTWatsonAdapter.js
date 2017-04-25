@@ -1,4 +1,5 @@
 /*
+
 Diario
 
  Versione        Programmatore         Data
