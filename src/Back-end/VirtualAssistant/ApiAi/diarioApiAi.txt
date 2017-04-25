@@ -1,0 +1,26 @@
+In questo file sono contenuti avanzamenti, ragionamenti e considerazioni sullo sviluppo dell'assistente virtuale in api.ai .
+
+-------- 2017-04-24 --------
+Implementata l'interzione basilarissima dell'ospite.
+Il flusso del discorso è stato leggermente cambiato: ora viene chiesta la conferma anche dopo l'azienda di provenienza.
+
+Autore: Mattia Bottaro
+----------------------------
+
+-------- 2017-04-25 --------
+Bisogna organizzarsi per il discorso context e webhook. La conversazione prende diversi flussi in base a ciò che comunica l'utente.
+Scenario A : quando un ospite comunica il proprio nome e cognome, il VA chiede conferma (ti chiami pinco pallo?).
+          --> Se l'ospite risponde di sì, allora deve essere invocato il webhook di conversazione. Tra i campi del fulfillment che esso ritorna,
+              dovrà esserci il campo speech che contiene il responso della query che può essere:
+                1 - "sei l'amministratore pinco pallo e vuoi fare il login?" nel caso venga trovato pinco pallo nella tabella degli user (in questo caso non viene fatto il controllo sui guest nel punto 2).
+                2 - "sei l'ospite conosciuto pinco pallo da google" nel caso pinco pallo non venga trovato nella table user ma in quella guest.
+                3 - "da che compagnia provieni?" nel caso pinco pallo non venga trovato ne in user ne in guest.
+          --> Se l'ospite sostiene di non essere l'amministratore pinco pallo, allora deve essere invocato il webhook di conversazione per verificare se l'ospite è conosciuto.
+              Tra i campi del fulfillment che esso ritorna, dovrà esserci il campo speech che contiene il responso della query che può essere:
+                1 - "sei l'ospite conosciuto pinco pallo da google?" nel caso pinco pallo venga trovato nella tabella dei guest.
+                2 - "da che compagnia provieni?" nel caso pinco pallo non venga trovato guest.
+          --> Se l'ospite conferma di essere l'ospite conosciuto pinco pallo, deve essere invocato il webhook di conversazione per ottenere la persona che più è stata desiderata da lui.
+
+
+Autore: Mattia Bottaro
+----------------------------

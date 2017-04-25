@@ -10,9 +10,9 @@ Diario
 Codificati gran parte dei comportamenti che il metodo onMessage deve assumere.
 Mancano da capire le seguenti cose:
 	1 -	Da che paramentri capisco chi è l'ospite con il quale interagisco? In event non
-	 		c'è nulla del genere.
+	 		c'è nulla del genere. R: Forse in event o data.
 	2 - Dato il target, come ottengo la relativa Rules? Avrei bisogno di RulesDAO
-			o di un nuovo endpoint
+			o di un nuovo endpoint. R : Endpoint
 	3 - come si stabilisce che testo inviare alla persona desiderata? Bisognerebbe capire
 			le intenzioni dell'ospite ...
 	4 - farebbe comodo un metodo guests.addConversation
