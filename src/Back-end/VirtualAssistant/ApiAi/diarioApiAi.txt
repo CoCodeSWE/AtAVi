@@ -19,8 +19,76 @@ Scenario A : quando un ospite comunica il proprio nome e cognome, il VA chiede c
               Tra i campi del fulfillment che esso ritorna, dovrà esserci il campo speech che contiene il responso della query che può essere:
                 1 - "sei l'ospite conosciuto pinco pallo da google?" nel caso pinco pallo venga trovato nella tabella dei guest.
                 2 - "da che compagnia provieni?" nel caso pinco pallo non venga trovato guest.
-          --> Se l'ospite conferma di essere l'ospite conosciuto pinco pallo, deve essere invocato il webhook di conversazione per ottenere la persona che più è stata 			desiderata da lui.
+          --> Se l'ospite conferma di essere l'ospite conosciuto pinco pallo, deve essere invocato il webhook di conversazione per ottenere la persona che più è stata desiderata da lui.
 
+Autore: Mattia Bottaro
+----------------------------
+
+-------- 2017-04-26 --------
+####
+Nel caso sia riconosciuto come potenziale admin, il conversationsWebhook dovrà ritornare una cosa del genere
+{
+  'fulfillment':
+  {
+      'speech':'It looks like you're an administrator with name #is_admin_question.parameters.admin_name and username #is_admin_question.parameters.username, is that right?',
+      'source': 'conversation-webhook',
+      'displayText':'It looks like you're an administratore with name $namesurname and username $username, is that right?'
+  }
+}
+
+Con il seguente context da impostare
+{
+  'name':'confirm_is_admin_question',
+  'lifespan':1,
+  'parameters':
+  {
+    // magari qui potrebbe starci un oggetto di tipo Back-end::Users::User
+    'admin_name':'DB query result',
+    'username':'Come sopra'
+  }
+}
+
+####
+Nel caso sia riconosciuto come potenziale ospite, il conversationsWebhook dovrà ritornare una cosa del genere
+{
+  'fulfillment':
+  {
+      'speech':'Looks like you've been here already. Are you #is_known_guest_question.parameters.guest_name from #is_known_guest_question.parameters.company?',
+      'source': 'conversation-webhook',
+      'displayText':'Looks like you've been here already. Are you #is_known_guest_question.parameters.guest_name from #is_known_guest_question.parameters.company?'
+  }
+}
+
+Con il seguente context da impostare
+{
+  'name':'confirm_is_known_guest_question',
+  'lifespan':1,
+  'parameters':
+  {
+    // magari qui potrebbe starci un oggetto di tipo Back-end::Guests::Guest
+    'guest_name':'DB query result',
+    'company':'Come sopra'
+    'required_person':'persona più desiderata'
+  }
+}
+
+Nel caso sia una persona sconosciuta, il conversationsWebhook dovrà ritornare una cosa del genere
+{
+  'fulfillment':
+  {
+      'speech':'Hi, wich company are you from?',
+      'source': 'conversation-webhook',
+      'displayText':'Hi, wich company are you from?'
+  }
+}
+
+Con il seguente context da impostare
+{
+  'name':'company_question',
+  'lifespan':1
+}
+
+Quasi completa l'interazione con l'ospite. Non funzionano i prompt finali (vuoi qualcos'altro da bere? hai bisogno di altro?).
 
 Autore: Mattia Bottaro
 ----------------------------
