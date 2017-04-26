@@ -93,7 +93,7 @@ class RulesDAODynamoDB
     });
   }
 
-  query(targets)
+  query(target,stringarray = null)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -101,7 +101,11 @@ class RulesDAODynamoDB
       let params =
       {
         'TableName': self.table
-        //FilterExpression: da terminare 
+        FilterExpression: 'target CONTAINS :target_value'
+        ExpressionAttributeValues:
+        {
+          ':target_value': target
+        }
       };
       self.client.scan(params, onScan(observer, self));
     });

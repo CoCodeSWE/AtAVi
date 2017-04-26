@@ -201,21 +201,21 @@ class RulesService
   //metodo che implementa la lambda fucntion per ottenere le rule applicate a dei target
   queryRule(event,context)
   {
-    let targets;                //conterrà la lista dei target
+    let target;                //conterrà la lista dei target
     let list = {                //conterrà la lista delle rule
       rule_items: []
     };
 
     try
     {
-      targets = JSON.parse(event.body);
+      target = JSON.parse(event.body);
     }
     catch(exception)
     {
       badRequest(context);
       return;
     }
-    this.rules.query(targets).subscribe(
+    this.rules.query(target).subscribe(
     {
       next: function(data)
       {
