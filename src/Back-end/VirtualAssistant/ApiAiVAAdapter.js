@@ -1,6 +1,6 @@
 class ApiAiVAAdapter
 {
-	constructor(agent, rp)
+	constructor(rp, agent)
 	{
 		this.agent = agent;
 		this.request_promise = rp;
@@ -9,14 +9,17 @@ class ApiAiVAAdapter
 	
 	query(str)
 	{
+		if(this.agent === null)
+			return Promise.reject({'error': 'Agent not defined'});
+		
 		let options =
 		{
 			method: 'POST',
 			uri: `https://api.api.ai/v1/query?v=${this.VERSION}`,
 			headers:
 			{
-				'authorization': this.agent,
-				'content-type': 'application/json'
+				'Authorization': this.agent.token,
+				'Content-Type': 'application/json'
 			},
 			body: str,
 			json: true
@@ -44,6 +47,11 @@ class ApiAiVAAdapter
 			
 			return va_response;
 		});
+	}
+	
+	setAgent(agent)
+	{
+		this.agent = agent;
 	}
 }
 

@@ -7,7 +7,7 @@ let adapter;
 
 beforeEach(function()
 {
-  adapter = new ApiAiVAAdapter('agent', RequestPromise);
+  adapter = new ApiAiVAAdapter(RequestPromise, 'agent');
 });
 
 describe('Back-end', function(done)

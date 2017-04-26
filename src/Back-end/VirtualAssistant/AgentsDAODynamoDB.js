@@ -5,7 +5,7 @@ class AgentsDAODynamoDB
 	constructor(client)
 	{
 		this.client = client;
-		this.table = 'Agent';
+		this.table = 'Agents';
 	}
 	
 	// Aggiunge un nuovo agente in DynamoDB

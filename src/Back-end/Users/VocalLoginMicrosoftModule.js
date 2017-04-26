@@ -23,10 +23,7 @@ class VocalLoginMicrosoftModule
 				{
 					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
-				body:
-				{
-					audio // Enrollment
-				},
+				body: audio,
 				json: true // Automaticamente passa un JSON come risposta (non serve fare JSON.parse)
 			};
 			
@@ -116,10 +113,7 @@ class VocalLoginMicrosoftModule
 				{
 					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
-				body:
-				{
-					audio // Enrollment
-				},
+				body: audio,
 				json: true
 			};
 			
