@@ -34,9 +34,7 @@ describe('Client', function()
       {
         it('Se la richiesta va a buon fine, viene chiamato il metodo then', function(done)
         {
-          httppromise.then(
-            done();
-          ).catch(done);
+          httppromise.then(done).catch(done);
 
           expect(requests.length).to.equal(1);
           requests[0].respond(200,'funziona','prova');
