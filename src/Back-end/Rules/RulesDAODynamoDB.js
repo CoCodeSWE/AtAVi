@@ -36,8 +36,8 @@ class RulesDAODynamoDB
     {
       let params =
       {
-        'TableName': self.table,
-        'Key':
+        TableName: self.table,
+        Key:
         {
           'HashKey': id
         }
@@ -76,8 +76,8 @@ class RulesDAODynamoDB
     {
       let params =
       {
-        'TableName': self.table,
-        'Key':
+        TableName: self.table,
+        Key:
         {
           'HashKey': id
         },
@@ -100,7 +100,7 @@ class RulesDAODynamoDB
     {
       let params =
       {
-        'TableName': self.table
+        TableName: self.table
         FilterExpression: 'target CONTAINS :target_value'
         ExpressionAttributeValues:
         {
@@ -119,8 +119,8 @@ class RulesDAODynamoDB
     {
       let params =
       {
-        'TableName': self.table,
-        'Key':
+        TableName: self.table,
+        Key:
         {
           'HashKey': rule.id
         }
@@ -153,8 +153,8 @@ function onScan(observer, rules)
 			{
 				let params =
 				{
-					'TableName': rules.table,
-					'ExclusiveStartKey': data.LastEvaluatedKey
+					TableName: rules.table,
+					ExclusiveStartKey: data.LastEvaluatedKey
 				};
 				rules.client.scan(params, onScan(observer, rules));
 			}

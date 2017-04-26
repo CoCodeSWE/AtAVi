@@ -130,8 +130,8 @@ function onScan(observer, tasks)
 			{
 				let params =
 				{
-					'TableName': tasks.table,
-					'ExclusiveStartKey': data.LastEvaluatedKey
+					TableName: tasks.table,
+					ExclusiveStartKey: data.LastEvaluatedKey
 				};
 				rules.client.scan(params, onScan(observer, tasks));
 			}

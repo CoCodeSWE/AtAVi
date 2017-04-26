@@ -23,7 +23,7 @@ class RulesService
     }
 
     // controllo che rule abbia tutti i campi definiti
-    if(rule.enabled && rule.id && rule.name && rule.targets[0].company && rule.targets[0].member && rule.targets[0].name && rule.task.type)
+    if(rule.enabled && rule.id && rule.name && rule.targets[0].company && rule.targets[0].member && rule.targets[0].name && rule.task.type && rule.task.params)
     {
       this.rules.addRule(rule).subscribe(
       {
