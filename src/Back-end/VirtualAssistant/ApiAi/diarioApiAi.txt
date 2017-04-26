@@ -19,7 +19,7 @@ Scenario A : quando un ospite comunica il proprio nome e cognome, il VA chiede c
               Tra i campi del fulfillment che esso ritorna, dovrà esserci il campo speech che contiene il responso della query che può essere:
                 1 - "sei l'ospite conosciuto pinco pallo da google?" nel caso pinco pallo venga trovato nella tabella dei guest.
                 2 - "da che compagnia provieni?" nel caso pinco pallo non venga trovato guest.
-          --> Se l'ospite conferma di essere l'ospite conosciuto pinco pallo, deve essere invocato il webhook di conversazione per ottenere la persona che più è stata desiderata da lui.
+          --> Se l'ospite conferma di essere l'ospite conosciuto pinco pallo, deve essere invocato il webhook di conversazione per ottenere la persona che più è stata 			desiderata da lui.
 
 
 Autore: Mattia Bottaro
