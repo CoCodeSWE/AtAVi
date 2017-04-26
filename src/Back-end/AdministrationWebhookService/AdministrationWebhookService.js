@@ -19,7 +19,7 @@ class AdministrationWebhookService
     let body;
     try //controllo che il body della richiesta ricevuta sia effettivamente in json
     {
-      body = JSON.decode(event.body);
+      body = JSON.parse(event.body);
     }
     catch(err)
     {
@@ -32,11 +32,11 @@ class AdministrationWebhookService
         }
       };
       console.log(err);
-      context.succeed({ statusCode: 200, body: JSON.strigify(error_body) });
+      context.succeed({ statusCode: 200, body: JSON.stringify(error_body) });
     }
     if(body.originalRequest.data.token && this._checkToken(body.originalRequest.data.token))
     {
-      let success_body = { speech: body.fulfillment.speech, data: body.originalRequest.data };
+      let success_body = { speech: body.result.fulfillment.speech, data: body.originalRequest.data };
       context.succeed({ statusCode: 200, body: JSON.stringify(success_body) }); //token verificato, rispondo normalmente
     }
     else

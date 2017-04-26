@@ -1,0 +1,11 @@
+{
+  "name": "administration-webhook-service",
+  "version": "0.0.1",
+  "description": "Webhook for administration agent",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jsonwebtoken": "^7.4.0"
+  }
+}
