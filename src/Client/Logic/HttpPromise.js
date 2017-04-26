@@ -1,10 +1,28 @@
 class HttpPromise
 {
-  HttpPromise = function(method, url, headers, data)
+  constructor(method, url, headers, data)
   {
-    return new Promise(function(resolve, reject)
+    this.method = method;
+    this.url = url;
+    this.headers = headers;
+    this.data = data;
+  }
+
+  then(fulfill,reject)
+  {
+    var xhr = new XMLHttpRequest();
+    return new Promise(function(resolve, rej)
     {
-      //codice che fa richiesta http utilizzando XMLHttpRequest
+      xhr.onreadystatechange = function()
+      {
+        if (xhr.readyState == XMLHttpRequest.DONE)
+        { resolve(); }
+        else
+        { rej(); }
+      }
+      xhr.open(this.method, this.url, true);
+      xhr.send(this.data);
+
     });
   }
 }
