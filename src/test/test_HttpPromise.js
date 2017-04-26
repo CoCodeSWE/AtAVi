@@ -40,7 +40,7 @@ describe('Client', function()
 
           expect(requests.length).to.equal(1);
           requests[0].respond(200,'funziona','prova');
-        }
+        });
 
         it('Se la richiesta fallisce, viene chiamato il metodo catch.',function()
         {
@@ -52,7 +52,7 @@ describe('Client', function()
               done();
             });
           expect(request.length).to.equal(1);
-          request[0].error();  
+          request[0].error();
         });
       });
     });
