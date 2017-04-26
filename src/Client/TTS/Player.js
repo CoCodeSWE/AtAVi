@@ -11,32 +11,32 @@ class Player
 
   cancel()
   {
-    tts.cancel();
+    this.tts.cancel();
   }
 
   getObservable()
   {
-    return tts.subject.asObservable();
+    return this.tts.subject.asObservable();
   }
 
   getVoices()
   {
-    return tts.getVoices();
+    return this.tts.getVoices();
   }
 
   isPlaying()
   {
-    return tts.speaking;
+    return this.tts.speaking;
   }
 
   pause()
   {
-    tts.pause();
+    this.tts.pause();
   }
 
   resume()
   {
-    tts.resume();
+    this.tts.resume();
   }
 
   setConfig(conf)
