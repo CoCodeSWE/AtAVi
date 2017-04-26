@@ -37,7 +37,6 @@ class VocalLoginMicrosoftModule
 			.catch(function(err)
 			{
 				observer.error(err);
-				console.log('ci sono');
 			});
 		});
 	}
