@@ -1,28 +1,24 @@
-class HttpPromise
+var HttpPromise = function(method, url, headers, data)
 {
-  constructor(method, url, headers, data)
-  {
-    this.method = method;
-    this.url = url;
-    this.headers = headers;
-    this.data = data;
-  }
-
-  then(fulfill,reject)
+  return new Promise(function(resolve, reject)
   {
     var xhr = new XMLHttpRequest();
-    return new Promise(function(resolve, rej)
+    xhr.onreadystatechange = function()
     {
-      xhr.onreadystatechange = function()
+      console.log(xhr);
+      if (xhr.readyState === 4)
       {
-        if (xhr.readyState == XMLHttpRequest.DONE)
-        { resolve(); }
+        if (xhr.status === 200)
+          resolve(xhr.responseText);
         else
-        { rej(); }
+          reject(
+          {
+            status: xhr.status,
+            status_text: xhr.statusText
+          });
       }
-      xhr.open(this.method, this.url, true);
-      xhr.send(this.data);
-
-    });
-  }
+    }
+    xhr.open(method, url, true);
+    xhr.send(data);
+  });
 }
