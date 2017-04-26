@@ -9,9 +9,9 @@ class ConversationView extends React.Component {
     return React.createElement(
       'ul',
       null,
-      this.props.msgs.map(msg => React.createElement(
+      this.props.msgs.map((msg, index) => React.createElement(
         'li',
-        null,
+        { key: index, 'data-sender': msg.sender },
         msg.text
       ))
     );

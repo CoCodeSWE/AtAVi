@@ -6,14 +6,15 @@ class Application
   */
   constructor(pkg)
   {
+    let self = this;
     this.ui = document.createElement('div');
     this.ui.innerHTML = pkg.ui;
     this._loadLibs(pkg.libs);
     this.onload = []; //array di callback da chiamare quando l'applicazione è istanziata
     this.onload.push(function()
     {
-      ((new Function(pkg.setup)).apply(this)); //creo funzione costruttore, faccio binding con this e la chiamo
-      this.runCmd = (new Function("cmd", "params", pkg.cmdHandler)).bind(this);
+      ((new Function(pkg.setup)).apply(self)); //creo funzione costruttore, faccio binding con this e la chiamo
+      self.runCmd = (new Function("cmd", "params", pkg.cmdHandler)).bind(self);
     });
   }
 

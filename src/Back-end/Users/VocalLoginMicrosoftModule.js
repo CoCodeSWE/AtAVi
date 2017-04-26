@@ -7,16 +7,17 @@ class VocalLoginMicrosoftModule
 		this.key = conf.key;
 		this.min_confidence = conf.min_confidence;
 		this.request_promise = rp;
+    console.log(this.request_promise);
 	}
-	
+
 	// Verification Profile - Create Enrollment (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549c)
 	addEnrollment(id, audio)
 	{
 		return new Rx.Observable(function(observer)
 		{
-			let options = 
+			let options =
 			{
-				method: 'POST', 
+				method: 'POST',
 				uri: `https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles/${id}/enroll`,
 				headers:
 				{
@@ -28,7 +29,7 @@ class VocalLoginMicrosoftModule
 				},
 				json: true // Automaticamente passa un JSON come risposta (non serve fare JSON.parse)
 			};
-			
+
 			this.request_promise(options).then(function()
 			{
 				observer.complete();
@@ -39,13 +40,13 @@ class VocalLoginMicrosoftModule
 			});
 		});
 	}
-	
+
 	// Verification Profile - Create Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9652)
 	createUser()
 	{
 		return new Rx.Observable(function(observer)
 		{
-			let options = 
+			let options =
 			{
 				method: 'POST',
 				uri: 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles',
@@ -59,7 +60,7 @@ class VocalLoginMicrosoftModule
 				},
 				json: true
 			};
-			
+
 			this.request_promise(options).then(function(data)
 			{
 				observer.next(data);
@@ -71,7 +72,7 @@ class VocalLoginMicrosoftModule
 			});
 		});
 	}
-	
+
 	// Verification Profile - Delete Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9655)
 	deleteUser(id)
 	{
@@ -87,9 +88,9 @@ class VocalLoginMicrosoftModule
 				},
 				json: true
 			};
-			
+
 			this.request_promise(options).then(function()
-			{	
+			{
 				observer.complete();
 			})
 			.catch(function(err)
@@ -98,7 +99,7 @@ class VocalLoginMicrosoftModule
 			});
 		});
 	}
-	
+
 	// Speaker Recognition - Verification (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549d)
 	doLogin(id, audio)
 	{
@@ -118,13 +119,13 @@ class VocalLoginMicrosoftModule
 				},
 				json: true
 			};
-			
+
 			this.request_promise(options).then(function(data)
 			{
 				if(data.result === 'Accept' && mapConfidence(data.confidence) >= mapConfidence(this.min_confidence))
 					observer.complete();
 				else
-					observer.error('Error recognizing user');				
+					observer.error('Error recognizing user');
 			})
 			.catch(function(err)
 			{
@@ -132,7 +133,7 @@ class VocalLoginMicrosoftModule
 			});
 		});
 	}
-	
+
 	// Verification Profile - Get All Profiles (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9653)
 	getList()
 	{
@@ -148,7 +149,7 @@ class VocalLoginMicrosoftModule
 				},
 				json: true
 			};
-			
+
 			this.request_promise(options).then(function(data)
 			{
 				observer.next(data);
@@ -160,7 +161,7 @@ class VocalLoginMicrosoftModule
 			});
 		});
 	}
-	
+
 	// Verification Profile - Get Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56409ee2778daf19706420de)
 	getUser(id)
 	{
@@ -176,7 +177,7 @@ class VocalLoginMicrosoftModule
 				},
 				json: true
 			};
-			
+
 			this.request_promise(options).then(function(data)
 			{
 				observer.next(data);
@@ -188,7 +189,7 @@ class VocalLoginMicrosoftModule
 			});
 		});
 	}
-	
+
 	// Verification Profile - Reset Enrollments (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549b)
 	resetEnrollment(id)
 	{
@@ -204,7 +205,7 @@ class VocalLoginMicrosoftModule
 				},
 				json: true
 			};
-			
+
 			this.request_promise(options).then(function()
 			{
 				observer.complete();
@@ -222,13 +223,13 @@ class VocalLoginMicrosoftModule
 	 * 0: Low
 	 * 1: Normal
 	 * 2: High
-	 Ritorna -1 nel caso confidence non sia uno dei tre valori sopra descritti 
+	 Ritorna -1 nel caso confidence non sia uno dei tre valori sopra descritti
 */
-	 
+
 function mapConfidence(confidence)
 {
 	let value; // Contiene il valore di ritorno della funzione
-	
+
 	switch(confidence)
 	{
 		case 'Low':
@@ -244,7 +245,7 @@ function mapConfidence(confidence)
 			value = -1;
 			break;
 	}
-	
+
 	return value;
 }
 
