@@ -81,7 +81,6 @@ describe('Back-end', function()
 
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					console.log(callNext.args);
 					expect(callNext.args[0].id).to.equal(res.user.id);
 					expect(callNext.args[0].name).to.equal(res.user.name);
 
