@@ -12,6 +12,7 @@ class VocalLoginMicrosoftModule
 	// Verification Profile - Create Enrollment (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549c)
 	addEnrollment(id, audio)
 	{
+		let self = this;
 		return new Rx.Observable(function(observer)
 		{
 			let options = 
@@ -20,7 +21,7 @@ class VocalLoginMicrosoftModule
 				uri: `https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles/${id}/enroll`,
 				headers:
 				{
-					'Ocp-Apim-Subscription-Key': this.key	// Credenziali per accedere al servizio
+					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
 				body:
 				{
@@ -29,13 +30,14 @@ class VocalLoginMicrosoftModule
 				json: true // Automaticamente passa un JSON come risposta (non serve fare JSON.parse)
 			};
 			
-			this.request_promise(options).then(function()
+			self.request_promise(options).then(function()
 			{
 				observer.complete();
 			})
 			.catch(function(err)
 			{
 				observer.error(err);
+				console.log('ci sono');
 			});
 		});
 	}
@@ -43,6 +45,7 @@ class VocalLoginMicrosoftModule
 	// Verification Profile - Create Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9652)
 	createUser()
 	{
+		let self = this;
 		return new Rx.Observable(function(observer)
 		{
 			let options = 
@@ -51,7 +54,7 @@ class VocalLoginMicrosoftModule
 				uri: 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles',
 				headers:
 				{
-					'Ocp-Apim-Subscription-Key': this.key	// Credenziali per accedere al servizio
+					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
 				body:
 				{
@@ -60,7 +63,7 @@ class VocalLoginMicrosoftModule
 				json: true
 			};
 			
-			this.request_promise(options).then(function(data)
+			self.request_promise(options).then(function(data)
 			{
 				observer.next(data);
 				observer.complete();
@@ -75,6 +78,7 @@ class VocalLoginMicrosoftModule
 	// Verification Profile - Delete Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9655)
 	deleteUser(id)
 	{
+		let self = this;
 		return new Rx.Observable(function(observer)
 		{
 			let options =
@@ -83,12 +87,12 @@ class VocalLoginMicrosoftModule
 				uri: `https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles/${id}`,
 				headers:
 				{
-					'Ocp-Apim-Subscription-Key': this.key	// Credenziali per accedere al servizio
+					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
 				json: true
 			};
 			
-			this.request_promise(options).then(function()
+			self.request_promise(options).then(function()
 			{	
 				observer.complete();
 			})
@@ -102,6 +106,7 @@ class VocalLoginMicrosoftModule
 	// Speaker Recognition - Verification (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549d)
 	doLogin(id, audio)
 	{
+		let self = this;
 		return new Rx.Observable(function(observer)
 		{
 			let options =
@@ -110,7 +115,7 @@ class VocalLoginMicrosoftModule
 				uri: `https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=${id}`,
 				headers:
 				{
-					'Ocp-Apim-Subscription-Key': this.key	// Credenziali per accedere al servizio
+					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
 				body:
 				{
@@ -119,7 +124,7 @@ class VocalLoginMicrosoftModule
 				json: true
 			};
 			
-			this.request_promise(options).then(function(data)
+			self.request_promise(options).then(function(data)
 			{
 				if(data.result === 'Accept' && mapConfidence(data.confidence) >= mapConfidence(this.min_confidence))
 					observer.complete();
@@ -136,6 +141,7 @@ class VocalLoginMicrosoftModule
 	// Verification Profile - Get All Profiles (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9653)
 	getList()
 	{
+		let self = this;
 		return new Rx.Observable(function(observer)
 		{
 			let options =
@@ -144,12 +150,12 @@ class VocalLoginMicrosoftModule
 				uri: 'https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles',
 				headers:
 				{
-					'Ocp-Apim-Subscription-Key': this.key	// Credenziali per accedere al servizio
+					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
 				json: true
 			};
 			
-			this.request_promise(options).then(function(data)
+			self.request_promise(options).then(function(data)
 			{
 				observer.next(data);
 				observer.complete();
@@ -164,6 +170,7 @@ class VocalLoginMicrosoftModule
 	// Verification Profile - Get Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56409ee2778daf19706420de)
 	getUser(id)
 	{
+		let self = this;
 		return new Rx.Observable(function(observer)
 		{
 			let options =
@@ -172,12 +179,12 @@ class VocalLoginMicrosoftModule
 				uri: `https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles/${id}`,
 				headers:
 				{
-					'Ocp-Apim-Subscription-Key': this.key	// Credenziali per accedere al servizio
+					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
 				json: true
 			};
 			
-			this.request_promise(options).then(function(data)
+			self.request_promise(options).then(function(data)
 			{
 				observer.next(data);
 				observer.complete();
@@ -192,6 +199,7 @@ class VocalLoginMicrosoftModule
 	// Verification Profile - Reset Enrollments (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549b)
 	resetEnrollment(id)
 	{
+		let self = this;
 		return new Rx.Observable(function(observer)
 		{
 			let options =
@@ -200,12 +208,12 @@ class VocalLoginMicrosoftModule
 				uri: `https://westus.api.cognitive.microsoft.com/spid/v1.0/verificationProfiles/${id}/reset`,
 				headers:
 				{
-					'Ocp-Apim-Subscription-Key': this.key	// Credenziali per accedere al servizio
+					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
 				json: true
 			};
 			
-			this.request_promise(options).then(function()
+			self.request_promise(options).then(function()
 			{
 				observer.complete();
 			})
