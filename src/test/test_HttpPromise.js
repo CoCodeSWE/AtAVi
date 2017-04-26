@@ -42,7 +42,7 @@ describe('Client', function()
           requests[0].respond(200,'funziona','prova');
         });
 
-        it('Se la richiesta fallisce, viene chiamato il metodo catch.',function()
+        it('Se la richiesta fallisce, viene chiamato il metodo catch.',function(done)
         {
 
           httppromise.then(done)
