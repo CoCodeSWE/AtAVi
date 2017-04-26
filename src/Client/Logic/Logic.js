@@ -11,6 +11,11 @@ class Logic
   {
     return this.subject.asObservable();
   }
+
+  sendData()
+  {
+
+  }
 }
 
 module.exports = Logic;
