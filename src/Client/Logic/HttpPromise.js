@@ -4,16 +4,21 @@ var HttpPromise = function(method, url, headers, data)
   {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function()
-    { alert("ciao");
+    {
+      console.log(xhr);
       if (xhr.readyState === 4)
       {
-        if (xhr.readyState == XMLHttpRequest.DONE)
-        { resolve();}
+        if (xhr.status === 200)
+          resolve(xhr.responseText);
         else
-        { rej(); }
+          reject(
+          {
+            status: xhr.status,
+            status_text: xhr.statusText
+          });
       }
+    }
     xhr.open(method, url, true);
     xhr.send(data);
-    }
   });
 }
