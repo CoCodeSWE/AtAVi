@@ -28,7 +28,11 @@ class MembersDAOSlack
 						observer.error('User not found');
 				else
 				{
-					observer.next(data);
+					observer.next(
+					{
+						id: data.user.id,
+						name: data.user.name
+					});
 					observer.complete();
 				}
 			});
@@ -45,7 +49,7 @@ class MembersDAOSlack
 				if (err)
 					observer.error(err);
 				else if (!data.members)
-					observer.error('Members not found');
+					observer.error('Not found');
 				else
 				{
 						observer.next(data);
