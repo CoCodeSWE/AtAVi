@@ -11,11 +11,12 @@ class Manager
   //metodo che permette di invocare un comando sull'applicazione passata come parametro
   runApplication(app, cmd, params)
   {
-    //se l'applicazione instanziata non è quella desiderata, devo cambiarla salvando nello state quella attuale e instanziando l'applicazione richiesta
+    //se l'applicazione istanziata non è quella desiderata, devo cambiarla salvando nello state quella attuale e istanziando l'applicazione richiesta
     if (this.application.name !== app)
     {
       var new_app = state.getApp(app);
 
+      //se non si trova nello state devo recuperarla dall'ApplicationRegistryLocalClient tramite il metodo query()
       if (new_app === undefined)
         new_app = new Application(registry_client.query(app));
 
@@ -25,7 +26,7 @@ class Manager
       frame.appendChild(new_app.getUi());
     }
 
-    //eseguo il comando nell'applicazione instanziata
+    //eseguo il comando nell'applicazione istanziata
     this.application.runCmd(cmd, params);
   }
 

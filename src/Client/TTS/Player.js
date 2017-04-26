@@ -44,6 +44,7 @@ class Player
     this.options = conf;
   }
 
+  //metodo che passa al player il testo che deve essere pronunciato
   speak(text)
   {
     var to_speak = new SpeechSynthesisUtterance(text);
