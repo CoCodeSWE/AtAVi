@@ -4,3 +4,4 @@ coverage
 .serverless
 dist
 mochawesome-reports
+*.map

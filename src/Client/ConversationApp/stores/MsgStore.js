@@ -4,7 +4,7 @@ class MsgStore
 {
   constructor()
   {
-    this.msgs = [{text:"prova"},{text: "mandato"}];
+    this.msgs = [];
     this.subject = new Rx.Subject();
   }
 
@@ -21,14 +21,25 @@ class MsgStore
         this.msgs.push({text: action.params[0], sender:0}, {text: action.params[1], sender:1});
         break;
       case 'clear':
-        //this.onClear();
+        this._onClear();
         break;
       case 'sendMsg':
+        this.msgs.push({text: action.params[0], sender:0});
+        break;
       case 'receiveMsg':
+        this.msgs.push({text: action.params[0], sender:1});
+        break;
       default: return;
     }
     this.subject.next();
   }
+
+  _onClear()
+  {
+    this.msgs = [];
+    this.subject.next();
+  }
+
 }
 
 module.exports = MsgStore;
