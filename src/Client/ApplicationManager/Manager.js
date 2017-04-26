@@ -23,7 +23,7 @@ class Manager
       state.addApp(this.application, application.name);
 
       this.application = new_app;
-      frame.appendChild(new_app.getUi());
+      frame.appendChild(new_app.getUI());
     }
 
     //eseguo il comando nell'applicazione istanziata

@@ -7,7 +7,12 @@ class ApplicationRegistryLocalClient
 
   register(name, pkg)
   {
-    registry.register(name, pkg);
+    let self = this;
+    return new Rx.Observable(function(observer)
+    {
+      self.registry.register(name, pkg);
+      observer.complete();
+    });
   }
 
   query(name)

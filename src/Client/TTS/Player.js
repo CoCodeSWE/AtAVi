@@ -48,12 +48,12 @@ class Player
   speak(text)
   {
     var to_speak = new SpeechSynthesisUtterance(text);
-    to_speak.lang = options.lang;
-    to_speak.pitch = options.pitch;
-    to_speak.rate = options.rate;
-    to_speak.voice = options.voice;
-    to_speak.volume = options.volume;
-    tts.speak(to_speak);
+    to_speak.lang = this.options.lang;
+    to_speak.pitch = this.options.pitch;
+    to_speak.rate = this.options.rate;
+    to_speak.voice = this.options.voice;
+    to_speak.volume = this.options.volume;
+    this.tts.speak(to_speak);
   }
 }
 
