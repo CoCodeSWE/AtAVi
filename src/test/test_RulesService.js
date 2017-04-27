@@ -29,7 +29,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 400});
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+          expect(call.args[0]).to.have.deep.property('statusCode', 400);
         });
         it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
         {
@@ -58,7 +59,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 500});
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+          expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
         it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200.", function()
         {
@@ -87,7 +89,8 @@ describe('Back-end', function()
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
           expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 200});
+          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
         describe('deleteRule', function()
         {
@@ -99,7 +102,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 400});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 400);
           });
           it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
           {
@@ -109,7 +113,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 500});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 500);
           });
           it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200.", function()
           {
@@ -119,18 +124,20 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 200});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+  					expect(call.args[0]).to.have.deep.property('statusCode', 200);
           });
           it("Nel caso in cui la \file{Rule} richiesta non sia disponibile, il campo \file{statusCode} della risposta deve essere impostato a 404.", function()
           {
             {
-              rulesDAO.removeRule.returns(Rx.Observable.empty());
+              rulesDAO.removeRule.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
               let ev = {pathParameters: 1};
               rules.deleteRule(ev, context);
               let call = context.succeed.getCall(0);
               expect(context.succeed.calledOnce).to.be.true;
               expect(call.args[0]).not.to.be.null;
-              expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 404});
+    					expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Not found' }));
+    					expect(call.args[0]).to.have.deep.property('statusCode', 404);
             };
           });
         });
@@ -163,7 +170,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body: JSON.stringfy(rule),statusCode: 200});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+  					expect(call.args[0]).to.have.deep.property('statusCode', 200);
           });
           it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
           {
@@ -175,7 +183,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 400});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 400);
           });
           it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
           {
@@ -185,7 +194,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 500});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 500);
           });
           it("Nel caso in cui la \file{Rule} richiesta non sia disponibile, il campo \file{statusCode} della risposta deve essere impostato a 404.", function()
           {
@@ -208,13 +218,14 @@ describe('Back-end', function()
                 "task": "testTask"
               }
             };
-            rulesDAO.getRule.returns(Rx.Observable.of(rule));
+            rulesDAO.getRule.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
             let ev = {pathParameters: 1};
             rules.getRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 404});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Not found' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 404);
 
           });
         });
@@ -247,7 +258,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body: JSON.stringfy(rule),statusCode: 200});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+  					expect(call.args[0]).to.have.deep.property('statusCode', 200);
 
           });
           it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
@@ -258,7 +270,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 400});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 400);
           });
           it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
           {
@@ -268,7 +281,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 500});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 500);
           });
         });
         describe('getTaskList', function()
@@ -281,20 +295,19 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 500});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 500);
           });
         });
         describe('queryRule', function()
         {
           it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200 e il campo \file{body} deve contenere la lista delle \file{Rule} da applicare ad un determinato caso.", function()
           {
-            let targets = {
-              "targets": [
-              {
+            let target =
+            {
                 "company": "testCompany",
                 "member": "testMember",
                 "name": "testName"
-              }]
             };
             let rule = {
               "enabled": false,
@@ -321,7 +334,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body: JSON.stringfy(rule),statusCode: 200});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+  					expect(call.args[0]).to.have.deep.property('statusCode', 200);
           });
           it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
           {
@@ -339,7 +353,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 400});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 400);
           });
           it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
           {
@@ -357,7 +372,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 500});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 500);
           });
         });
         describe('updateRule', function()
@@ -389,7 +405,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 200});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+  					expect(call.args[0]).to.have.deep.property('statusCode', 200);
           });
           it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
           {
@@ -418,7 +435,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 400});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 400);
           });
           it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
           {
@@ -447,7 +465,8 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.be.deep.equal({body:{},statusCode: 500});
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
+            expect(call.args[0]).to.have.deep.property('statusCode', 500);
           });
         });
       });

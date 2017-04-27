@@ -28,7 +28,7 @@ class guestsDAODynamoDB
     });
   }
   // ottiene una guest da DynamoDB
-  getGuest(name)
+  getGuest(name,company)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -36,7 +36,8 @@ class guestsDAODynamoDB
       let params = {
         TableName: self.table,
         Key: {
-          "name": name
+          "name": name,
+          "company": company
         }
       };
       self.client.get(params, function(err, data)
@@ -49,7 +50,7 @@ class guestsDAODynamoDB
     });
   }
   // rimuove una guest da DynamoDB
-  removeGuest(name)
+  removeGuest(name,company)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -57,7 +58,8 @@ class guestsDAODynamoDB
       let params = {
         TableName: self.table,
         Key: {
-          "name": name
+          "name": name,
+          "company": company
         }
       };
       self.client.delete(params, function(err, data)
@@ -67,6 +69,23 @@ class guestsDAODynamoDB
         else
           observer.complete();
       });
+    });
+  }
+  //ottiene le guest aventi un determinato nome
+  query(name)
+  {
+    let self = this;
+    return new Rx.Observable(function(observer)
+    {
+      let params = {
+        TableName: self.table,
+        ExpressionAttributeValues:
+        {
+          ":name_guest":name
+        },
+        FilterExpression: "name = :name_guest"
+      };
+      self.client.scan(params, onScan(observer, self));
     });
   }
 
