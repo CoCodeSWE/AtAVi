@@ -7,17 +7,17 @@ class ApplicationLocalRegistry
 
   query(name)
   {
-    return pkgs[name];
+    return this.pkgs[name];
   }
 
   register(name, pkg)
   {
-    pkgs[name] = pkg;
+    this.pkgs[name] = pkg;
   }
 
   remove(name)
   {
-    delete pkgs[name];
+    delete this.pkgs[name];
   }
 
 }
