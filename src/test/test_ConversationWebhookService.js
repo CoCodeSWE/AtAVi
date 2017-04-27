@@ -1,13 +1,22 @@
-const AdministrationWebhookService = require('../Back-end/AdministrationWebhookService');
+const ConversationWebhookService = require('../Back-end/ConversationWebhookService/ConversationWebhookService');
 const chai = require('chai');
 const expect = chai.expect;
+const Rx = require('rxjs/Rx');
 const conv_DAO = require('./stubs/ConversationsDAO');
 const guests_DAO = require('./stubs/GuestsDAO');
 const users_DAO = require('./stubs/UsersDAO');
 
+let context;
+let service;
+beforeEach(function()
+{
+  context = require('./stubs/LambdaContext');
+  service = new ConversationWebhookService(conv_DAO, guests_DAO, users_DAO);
+});
+
 describe('Back-end', function()
 {
-  describe('AdministrationWebhookService', function()
+  describe('ConversationWebhookService', function()
   {
     describe('webhook', function()
     {
@@ -54,11 +63,12 @@ describe('Back-end', function()
             "originalRequest": ""
         }
      `};
-      it("La risposta deve avere il campo -name del context uguale a 'admin' nel caso in cui l'utente sia stato riconosciuto come possibile amministratore.", function()
+      it("La risposta deve avere il campo name del context uguale a 'admin' nel caso in cui l'utente sia stato riconosciuto come possibile amministratore.", function()
       {
-        users_DAO.getUsername.returns(RxObservable.of({ name : "Mauro Carlin", username : "mou"}));
+        users_DAO.getUser.returns(Rx.Observable.of({ name : "Mauro Carlin", username : "mou"}));
+        service.webhook(ev, context);
+        expect(context.succeed.callCount).to.equal(1);
         let call = context.succeed.getCall(0);
-        expect(context.succeed.calledOnce).to.be.true;
         expect(call.args[0]).not.to.be.null;
         let resp =
         {
@@ -69,13 +79,14 @@ describe('Back-end', function()
             "username" : "Mou"
           }
         }
-        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(resp) });
+        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify(resp) });
       });
       it("La risposta deve avere il campo -name del context uguale a 'welcome' nel caso in cui l'utente sia stato riconosciuto come ospite che ha avuto interazioni passate con il sistema.", function()
       {
-        guests_DAO.getGuest.returns(RxObservable.of({ name : "Mauro Carlin", username : "mou", company : "Google"}));
+        guests_DAO.getGuest.returns(Rx.Observable.of({ name : "Mauro Carlin", username : "mou", company : "Google"}));
+        service.webhook(ev, context);
+        expect(context.succeed.callCount).to.equal(1);
         let call = context.succeed.getCall(0);
-        expect(context.succeed.calledOnce).to.be.true;
         expect(call.args[0]).not.to.be.null;
         let resp =
         {
@@ -87,7 +98,7 @@ describe('Back-end', function()
             "name" : "Stefano Dindo"
           }
         }
-        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringfy(resp) });
+        expect(call.args[0]).to.be.deep.equal({ body : JSON.stringify(resp) });
       });
     });
   });

@@ -1,0 +1,36 @@
+service: users
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: eu-central-1
+  environment:
+    
+  profile: default
+  apiKeys:
+    
+
+functions:
+  query:
+    handler: handler.query
+    events:
+      - http:
+          path: query
+          method: post
+          private: true
+          
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Agents
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5

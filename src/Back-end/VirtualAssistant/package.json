@@ -1,0 +1,12 @@
+{
+  "name": "va-service",
+  "version": "0.0.1",
+  "description": "Microservice for managing user's queries",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0"
+  }
+}

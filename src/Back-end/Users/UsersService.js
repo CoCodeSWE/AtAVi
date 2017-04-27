@@ -1,16 +1,16 @@
 class UsersService
 {
 	// Costruttore della classe
-	constructor(user)
+	constructor(users)
 	{
-		this.users = user; // UsersDAODynamoDB
+		this.users = users; // UsersDAODynamoDB
 	}
-	
+
 	// Metodo che implementa la Lambda Function per inserire uno user
 	addUser(event, context)
 	{
 		let user; // Conterrà l'user del body dell'event
-		
+
 		try
 		{
 			user = JSON.parse(event.body);
@@ -21,12 +21,12 @@ class UsersService
 			badRequest(context);
 			return;
 		}
-		
+
 		// Controllo che user abbia almeno i campi obbligatori (name e username)
 		if(user.username && user.name)
 		{
 			// Parametro contenente i dati relativi all'user da aggiungere
-			let params = 
+			let params =
 			{
 				username: user.username,
 				name: user.name
@@ -35,10 +35,10 @@ class UsersService
 			// Controllo se ci sono eventuali campi opzionali
 			if(user.sr_id)
 				params.sr_id = user.sr_id;
-			
+
 			if(user.password)
 				params.password = user.password;
-				
+
 			if(user.slack_channel)
 				params.slack_channel = user.slack_channel;
 
@@ -48,9 +48,9 @@ class UsersService
 				{
 					// Il metodo next dell'Observer non riceve nessun tipo di dato
 				},
-				
+
 				error: internalServerError(context),
-				
+
 				complete: function()
 				{
 					context.succeed(
@@ -66,7 +66,7 @@ class UsersService
 			badRequest(context);
 		}
 	}
-	
+
 	// Metodo che implementa la Lambda Function per eliminare uno user
 	deleteUser(event, context)
 	{
@@ -80,7 +80,7 @@ class UsersService
 				{
 					// Il metodo next dell'Observer non riceve nessun tipo di dato
 				},
-				
+
 				error: function(err)
 				{
 					if(err.code === 'ConditionalCheckFailedException')
@@ -100,7 +100,7 @@ class UsersService
 						});
 					}
 				},
-				
+
 				complete: function()
 				{
 					context.succeed(
@@ -117,19 +117,19 @@ class UsersService
 			badRequest(context);
 		}
 	}
-	
+
 	// Metodo che implementa la Lambda Function per ottenere uno user
 	getUser(event, context)
 	{
 		let username = event.pathParameters;
 		let user; // Conterrà i dati relativi all'user
 		this.users.getUser(username).subscribe(
-		{	
+		{
 			next: function(data)
 			{
 				user = data;
 			},
-			
+
 			error: function(err)
 			{
 				if(err === 'Not found')
@@ -149,7 +149,7 @@ class UsersService
 					});
 				}
 			},
-			
+
 			complete: function()
 			{
 				context.succeed(
@@ -160,7 +160,7 @@ class UsersService
 			}
 		});
 	}
-	
+
 	// Metodo che implementa la Lambda Function per ottenere la lista degli users
 	getUserList(event, context)
 	{
@@ -173,9 +173,9 @@ class UsersService
 			{
 				data.Items.forEach((user) => { list.users.push(user); });
 			},
-			
+
 			error: internalServerError(context),
-			
+
 			complete: function()
 			{
 				context.succeed(
@@ -186,7 +186,7 @@ class UsersService
 			}
 		});
 	}
-	
+
 	// Metodo che implementa la Lambda Function per aggiornare uno user
 	updateUser(event, context)
 	{
@@ -202,35 +202,35 @@ class UsersService
 				badRequest(context);
 				return;
 			}
-			
+
 			// Parametro contenente i dati relativi all'user da aggiungere
 			let params =
 			{
 				username: event.pathParameters
 			};
-			
+
 			// Controllo eventuali campi opzionali da aggiungere a params
 			if(user.name)
 				params.name = user.name;
-			
+
 			if(user.sr_id)
 				params.sr_id = user.sr_id;
-			
+
 			if(user.password)
 				params.password = user.password;
-				
+
 			if(user.slack_channel)
 				params.slack_channel = user.slack_channel;
-			
+
 			this.users.updateUser(params).subscribe(
 			{
 				next: function(data)
 				{
 					// Il metodo next dell'Observer non riceve nessun tipo di dato
 				},
-				
+
 				error: internalServerError(context),
-				
+
 				complete: function()
 				{
 					context.succeed(
@@ -245,7 +245,7 @@ class UsersService
 		{
 			badRequest(context);
 		}
-	}	
+	}
 }
 
 // Funzione per gestire lo status code 500 (error)
