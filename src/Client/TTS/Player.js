@@ -11,32 +11,32 @@ class Player
 
   cancel()
   {
-    tts.cancel();
+    this.tts.cancel();
   }
 
   getObservable()
   {
-    return tts.subject.asObservable();
+    return this.tts.subject.asObservable();
   }
 
   getVoices()
   {
-    return tts.getVoices();
+    return this.tts.getVoices();
   }
 
   isPlaying()
   {
-    return tts.speaking;
+    return this.tts.speaking;
   }
 
   pause()
   {
-    tts.pause();
+    this.tts.pause();
   }
 
   resume()
   {
-    tts.resume();
+    this.tts.resume();
   }
 
   setConfig(conf)
@@ -44,10 +44,10 @@ class Player
     this.options = conf;
   }
 
-  //metodo che passa al player il testo che deve essere pronunciato
+  //metodo che passa al player il testo che deve essere riprodotto
   speak(text)
   {
-    var to_speak = new SpeechSynthesisUtterance(text);
+    let to_speak = new SpeechSynthesisUtterance(text);
     to_speak.lang = this.options.lang;
     to_speak.pitch = this.options.pitch;
     to_speak.rate = this.options.rate;
