@@ -365,22 +365,24 @@ describe('Back-end', function()
           let rule = {
             Items:
             [
-              "enabled": false,
-              "id": 1,
-              "name": "testRule",
-              "targets": [
               {
-                "company": "testCompany",
-                "member": "testMember",
-                "name": "testName"
-              }],
-              "task":
-              {
-                "params":
+                "enabled": false,
+                "id": 1,
+                "name": "testRule",
+                "targets": [
                 {
-                  "param": "testParam"
-                },
-                "task": "testTask"
+                  "company": "testCompany",
+                  "member": "testMember",
+                  "name": "testName"
+                }],
+                "task":
+                {
+                  "params":
+                  {
+                    "param": "testParam"
+                  },
+                  "task": "testTask"
+                }
               }
           ]};
           rulesDAO.query.returns(Rx.Observable.of(rule));
