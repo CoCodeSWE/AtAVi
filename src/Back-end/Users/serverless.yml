@@ -16,7 +16,10 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:PutItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+
 functions:
   addUser:
     handler: addUser.addUser
@@ -25,6 +28,10 @@ functions:
           path: users
           method: post
           private: true
+          request:
+            parameters:
+              paths:
+                username: true
   deleteUser:
     handler: deleteUser.deleteUser
     events:
@@ -32,6 +39,10 @@ functions:
           path: users/{username}
           method: delete
           private: true
+          request:
+            parameters:
+              paths:
+                username: true
   getUser:
     handler: getUser.getUser
     events:
@@ -39,6 +50,10 @@ functions:
           path: users/{username}
           method: get
           private: true
+          request:
+            parameters:
+              paths:
+                username: true
   getUserList:
     handler: getUserList.getUserList
     events:
@@ -46,6 +61,11 @@ functions:
           path: users
           method: get
           private: true
+          request:
+            parameters:
+              querystring:
+                name: false
+                slack_channel: false
   updateUser:
     handler: updateUser.updateUser
     events:
@@ -53,6 +73,10 @@ functions:
           path: users/{username}
           method: put
           private: true
+          request:
+            parameters:
+              paths:
+                username: true
 
 resources:
   Resources:
@@ -67,5 +91,5 @@ resources:
           - AttributeName: username
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

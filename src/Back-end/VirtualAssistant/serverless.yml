@@ -1,14 +1,24 @@
-service: users
+service: vocal-assistant-service
 
 provider:
   name: aws
   runtime: nodejs6.10
   region: eu-central-1
   environment:
-    
+    AGENTS_TABLE: Agents-${opt:stage, self:provider.stage}
   profile: default
   apiKeys:
-    
+    virtual-assistant-key
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.AGENTS_TABLE}"
 
 functions:
   query:
@@ -18,13 +28,13 @@ functions:
           path: query
           method: post
           private: true
-          
+
 resources:
   Resources:
-    usersTable:
+    agentsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Agents
+        TableName: ${self:provider.environment.AGENTS_TABLE}
         AttributeDefinitions:
           - AttributeName: name
             AttributeType: S
@@ -32,5 +42,5 @@ resources:
           - AttributeName: name
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

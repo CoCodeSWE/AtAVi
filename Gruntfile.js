@@ -8,7 +8,8 @@ module.exports = function(grunt) {
       options:
       {
         sourceMap: true,
-        presets: ['babel-preset-react']
+        presets: ['babel-preset-react'],
+        ignore: ['node_modules/**/*']
       },
       dist:
       {

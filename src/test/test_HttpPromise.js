@@ -34,25 +34,25 @@ describe('Client', function()
       {
         it('Se la richiesta va a buon fine, viene chiamato il metodo then', function(done)
         {
-          httppromise.then(
+          httppromise.then(function(data)
+          {
             done();
-          ).catch(done);
+          }).catch(done);
 
           expect(requests.length).to.equal(1);
           requests[0].respond(200,'funziona','prova');
-        }
+        });
 
-        it('Se la richiesta fallisce, viene chiamato il metodo catch.',function()
+        it('Se la richiesta fallisce, viene chiamato il metodo catch.', function(done)
         {
 
           httppromise.then(done)
-          .catch(
-            function(err)
-            {
-              done();
-            });
+          .catch(function(err)
+          {
+            done();
+          });
           expect(request.length).to.equal(1);
-          request[0].error();  
+          request[0].error();
         });
       });
     });
