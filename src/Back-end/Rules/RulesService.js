@@ -38,7 +38,7 @@ class RulesService
         {
           context.succeed(
           {
-            statusCode:200;
+            statusCode:200,
             body: JSON.stringify({ message: 'success' })
           })
         }
