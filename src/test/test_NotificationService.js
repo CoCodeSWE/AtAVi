@@ -3,6 +3,15 @@ const chai = require('chai');
 const expect = chai.expect;
 const client = require('./stubs/SlackWebClient');
 const context = require('./stubs/LambdaContext');
+const sinon = require('sinon');
+
+let service;
+
+beforeEach(function()
+{
+  service = new NotificationService(client);
+  context.succeed = sinon.stub();
+});
 
 describe('Back-end', function()
 {
@@ -12,7 +21,6 @@ describe('Back-end', function()
     {
       describe('getChannelList', function()
       {
-        let service = new NotificationService(client);
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui canali a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
         {
           let ev = {body: ''};
@@ -20,9 +28,8 @@ describe('Back-end', function()
           client.users.list.yield(null, users);
           client.channels.list.yield('errore');
           client.groups.list.yield(null, groups);
-
-          expect(context.succeed.callCount).to.equal(1);
           let call = context.succeed.getCall(0);
+          expect(context.succeed.callCount).to.equal(1);
           expect(call.args[0]).to.have.property('statusCode', 500);
         });
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
@@ -41,7 +48,7 @@ describe('Back-end', function()
         {
 					let ev = {body: ''};
           service.getChannelList(ev, context);
-          client.users.list.yield(null, groups);
+          client.users.list.yield(null, users);
           client.channels.list.yield(null, channels);
           client.groups.list.yield('errore');
 
@@ -71,22 +78,22 @@ describe('Back-end', function()
 					let ev = {body: ''};
 					service.sendMsg(ev, context);
 					client.chat.postMessage('errore');
-					
+
 					expect(context.succeed.callCount).to.equal(1);
 					let call = context.succeed.getCall(0);
-					
+
 					expect(call.args[0]).to.have.property('statusCode', 500);
 				});
-				
+
         it("Nel caso in cui non si verifichi alcun errore, il campo statusCode della risposta deve essere impostato a 200.", function()
 				{
 					let ev = {body: ''};
 					service.sendMsg(ev, context);
 					client.chat.postMessage(null, responseSendMsg);
-					
+
 					expect(context.succeed.callCount).to.equal(1);
 					let call = context.succeed.getCall(0);
-					
+
 					expect(call.args[0]).to.have.property('statusCode', 200);
 				});
       });
@@ -140,13 +147,13 @@ var channels =
 			"is_archived": false,
 			"is_member": false,
 			"num_members": 6,
-			"topic": 
+			"topic":
 			{
 				"value": "Fun times",
 				"creator": "U024BE7LV",
 				"last_set": 1369677212
 			},
-			"purpose": 
+			"purpose":
 			{
 				"value": "This channel is for fun",
 				"creator": "U024BE7LH",
@@ -186,7 +193,7 @@ var groups =
 };
 
 
-var responseSendMsg = 
+var responseSendMsg =
 {
 	"ok": true,
 	"ts": "1405895017.000506",
