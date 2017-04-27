@@ -16,19 +16,20 @@ describe('Client', function()
     {
       describe('register', function()
       {
-        it('Vogliamo testare che venga aggiunto correttamente l’\\file{ApplicationPackage} passato come parametro, se è un \\file{ApplicationPackage} completo.', function()
+        it("Nel caso in cui una applicazione venga registrata corretamente, l'\\file{Observable} ritornato deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto.", function()
         {
           let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };
-          let bool = registry.register('conv', app_pckg);
-          let call = registry.register.getCall(0);
-          expect(call.args[1]).to.include.keys('name');
-          expect(call.args[1].name).to.not.be.null;
-          expect(call.args[1]).to.include.keys('cmdHandler');
-          expect(call.args[1].cmdHandler).to.not.be.null;
-          expect(call.args[1]).to.include.keys('setup');
-          expect(call.args[1].setup).to.not.be.null;
-          expect(call.args[1]).to.include.keys('ui');
-          expect(call.args[1].ui).to.not.be.null;
+
+          let bool = registry.register('conv', app_pckg).subscribe(
+          {
+						next: next,
+						error: error,
+						complete: complete
+					});
+
+          expect(next.callCount).to.equal(0);
+          expect(error.callCount).to.equal(0);
+          expect(complete.callCount).to.equal(1);
           expect(bool).to.be.true;
         });
       });
