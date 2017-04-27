@@ -1,4 +1,5 @@
 const Rx = require('rxjs/Rx');
+const URL = 'www.google.it'
 
 class Logic
 {
@@ -12,9 +13,9 @@ class Logic
     return this.subject.asObservable();
   }
 
-  sendData()
+  sendData(blob)
   {
-
+    return new HttpPromise('POST', URL, 'test', blob);
   }
 }
 
