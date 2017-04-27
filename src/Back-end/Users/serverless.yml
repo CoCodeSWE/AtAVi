@@ -5,11 +5,18 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   environment:
-    
+    USERS_TABLE: Users-${opt:stage, self:provider.stage}
   profile: default
   apiKeys:
-    
-
+    - users-service
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
 functions:
   addUser:
     handler: addUser.addUser
@@ -46,7 +53,7 @@ functions:
           path: users/{username}
           method: put
           private: true
-          
+
 resources:
   Resources:
     usersTable:
