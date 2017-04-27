@@ -23,15 +23,15 @@ class NotificationService
       }
       else
       {
-          data.members.forEach(function(item)
+        data.members.forEach(function(item)
+        {
+          list.push(
           {
-            list.push(
-            {
-              name: item.name,
-              id: item.id,
-              type: 'user'
-            });
+            name: item.name,
+            id: item.id,
+            type: 'user'
           });
+        });
       }
     });
     if (control === true)
@@ -49,15 +49,15 @@ class NotificationService
         }
         else
         {
-            data.channels.forEach(function(item)
+          data.channels.forEach(function(item)
+          {
+            list.push(
             {
-              list.push(
-              {
-                name: item.name,
-                id: item.id,
-                type: 'channel'
-              });
+              name: item.name,
+              id: item.id,
+              type: 'channel'
             });
+          });
         }
       });
     }
@@ -76,15 +76,15 @@ class NotificationService
         }
         else
         {
-            data.groups.forEach(function(item)
+          data.groups.forEach(function(item)
+          {
+            list.push(
             {
-              list.push(
-              {
-                name: item.name,
-                id: item.id,
-                type: 'group'
-              });
+              name: item.name,
+              id: item.id,
+              type: 'group'
             });
+          });
         }
       });
       if (control === true)
@@ -101,7 +101,16 @@ class NotificationService
   sendMsg(event, context)
   {
     let self = this;
-    self.client.chat.postMessage(event.send_to, event.msg.text, event.msg.attachments, function(err,data)
+    let body;
+    try
+    {
+      body = JSON.parse(event.body);
+    }
+    catch (err)
+    {
+      //uso succeed per ritornare errore 400
+    }
+    self.client.chat.postMessage(body.send_to, body.msg.text, body.msg.attachments, function(err,data)
     {
       if (err)
       {

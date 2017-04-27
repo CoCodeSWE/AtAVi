@@ -75,7 +75,7 @@ describe('Back-end', function()
       {
         it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500.", function()
 				{
-					let ev = {body: ''};
+					let ev = {body: JSON.stringify(request_event)};
 					service.sendMsg(ev, context);
 					client.chat.postMessage('errore');
 
@@ -87,7 +87,7 @@ describe('Back-end', function()
 
         it("Nel caso in cui non si verifichi alcun errore, il campo statusCode della risposta deve essere impostato a 200.", function()
 				{
-					let ev = {body: ''};
+					let ev = {body: JSON.stringify(request_event)};
 					service.sendMsg(ev, context);
 					client.chat.postMessage(null, responseSendMsg);
 
@@ -102,40 +102,40 @@ describe('Back-end', function()
 });
 
 //VARIABILI UTILIZZATE
-var users =
+const users =
 {
   "ok": true,
   "members": [
-      {
-          "id": "U023BECGF",
-          "team_id": "T021F9ZE2",
-          "name": "bobby",
-          "deleted": false,
-          "status": null,
-          "color": "9f69e7",
-          "real_name": "Bobby Tables",
-          "tz": "America\/Los_Angeles",
-          "tz_label": "Pacific Daylight Time",
-          "tz_offset": -25200,
-          "profile": {
-              "avatar_hash": "ge3b51ca72de",
-              "current_status": ":mountain_railway: riding a train",
-              "first_name": "Bobby",
-              "last_name": "Tables",
-              "real_name": "Bobby Tables",
-              "email": "bobby@slack.com",
-              "skype": "my-skype-name",
-              "phone": "+1 (123) 456 7890"
-          },
-          "is_admin": true,
-          "is_owner": true,
-          "updated": 1490054400,
-          "has_2fa": false
-      }
-  ]
+  {
+    "id": "U023BECGF",
+    "team_id": "T021F9ZE2",
+    "name": "bobby",
+    "deleted": false,
+    "status": null,
+    "color": "9f69e7",
+    "real_name": "Bobby Tables",
+    "tz": "America\/Los_Angeles",
+    "tz_label": "Pacific Daylight Time",
+    "tz_offset": -25200,
+    "profile":
+    {
+      "avatar_hash": "ge3b51ca72de",
+      "current_status": ":mountain_railway: riding a train",
+      "first_name": "Bobby",
+      "last_name": "Tables",
+      "real_name": "Bobby Tables",
+      "email": "bobby@slack.com",
+      "skype": "my-skype-name",
+      "phone": "+1 (123) 456 7890"
+    },
+    "is_admin": true,
+    "is_owner": true,
+    "updated": 1490054400,
+    "has_2fa": false
+  }]
 };
 
-var channels =
+const channels =
 {
   "ok": true,
   "channels": [
@@ -163,37 +163,35 @@ var channels =
   ]
 };
 
-var groups =
+const groups =
 {
 	"ok": true,
   "groups": [
+	{
+		"id": "G024BE91L",
+		"name": "secretplans",
+		"created": 1360782804,
+		"creator": "U024BE7LH",
+		"is_archived": false,
+		"members": [
+				"U024BE7LH"
+		],
+		"topic":
 		{
-			"id": "G024BE91L",
-			"name": "secretplans",
-			"created": 1360782804,
+			"value": "Secret plans on hold",
+			"creator": "U024BE7LV",
+			"last_set": 1369677212
+		},
+		"purpose":
+		{
+			"value": "Discuss secret plans that no-one else should know",
 			"creator": "U024BE7LH",
-			"is_archived": false,
-			"members": [
-					"U024BE7LH"
-			],
-			"topic":
-			{
-				"value": "Secret plans on hold",
-				"creator": "U024BE7LV",
-				"last_set": 1369677212
-			},
-			"purpose":
-			{
-				"value": "Discuss secret plans that no-one else should know",
-				"creator": "U024BE7LH",
-				"last_set": 1360782804
-			}
+			"last_set": 1360782804
 		}
-  ]
+	}]
 };
 
-
-var responseSendMsg =
+const responseSendMsg =
 {
 	"ok": true,
 	"ts": "1405895017.000506",
@@ -202,4 +200,13 @@ var responseSendMsg =
 	{
 		//info posted message
 	}
+}
+
+const request_event =
+{
+  send_to: 'mou',
+  msg:
+  {
+
+  }
 }
