@@ -151,13 +151,13 @@ class RulesService
   getRuleList(event,context)
   {
     let list = {        //conterrà la lista delle rules
-      rule_items: []
+      Items: []
     };
     this.rules.getRuleList().subscribe(
     {
       next: function(data)
       {
-        data.Items.forEach((rule) => { list.rule_items.push(rule); });
+        data.Items.forEach((rule) => { list.Items.push(rule); });
       },
 
       error: internalServerError(context),
@@ -176,13 +176,13 @@ class RulesService
   getTaskList(event,context)
   {
     let list = {                  //conterrà la lista dei task
-      task_items: []
+      Items: []
     };
     this.task.getTaskList().subscribe(
     {
       next: function(data)
       {
-        data.Items.forEach((task) => { list.task_items.push(task); });
+        data.Items.forEach((task) => { list.Items.push(task); });
       },
 
       error: internalServerError(context),
@@ -202,7 +202,7 @@ class RulesService
   {
     let target;                //conterrà la lista dei target
     let list = {                //conterrà la lista delle rule
-      rule_items: []
+      Items: []
     };
 
     try
@@ -219,8 +219,8 @@ class RulesService
       this.rules.query(target).subscribe(
       {
         next: function(data)
-        { 
-          data.Items.forEach((rule) => { list.rule_items.push(rule); });
+        {
+          data.Items.forEach((rule) => { list.Items.push(rule); });
         },
 
         error: internalServerError(context),

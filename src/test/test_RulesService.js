@@ -219,44 +219,6 @@ describe('Back-end', function()
       {
         it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200 e il campo \file{body} deve contenere la lista delle \file{Rule}.", function()
         {
-          let rule1 = {
-            "enabled": false,
-            "id": 1,
-            "name": "testRule",
-            "targets": [
-            {
-              "company": "testCompany",
-              "member": "testMember",
-              "name": "testName"
-            }],
-            "task":
-            {
-              "params":
-              {
-                "param": "testParam"
-              },
-              "task": "testTask"
-            }
-          };
-          let rule2 = {
-            "enabled": false,
-            "id": 2,
-            "name": "testRule2",
-            "targets": [
-            {
-              "company": "testCompany2",
-              "member": "testMember2",
-              "name": "testName2"
-            }],
-            "task":
-            {
-              "params":
-              {
-                "param": "testParam2"
-              },
-              "task": "testTask2"
-            }
-          };
           rulesDAO.getRuleList.returns(Rx.Observable.of(
             {
               Items:
@@ -308,7 +270,7 @@ describe('Back-end', function()
           expect(call.args[0]).not.to.be.null;
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify(
             {
-              rules:
+              Items:
               [
                 {
                   "enabled": false,
@@ -401,46 +363,27 @@ describe('Back-end', function()
               "name": "testName"
           };
           let rule = {
-            "enabled": false,
-            "id": 1,
-            "name": "testRule",
-            "targets": [
-            {
-              "company": "testCompany",
-              "member": "testMember",
-              "name": "testName"
-            }],
-            "task":
-            {
-              "params":
+            Items:
+            [
+              "enabled": false,
+              "id": 1,
+              "name": "testRule",
+              "targets": [
               {
-                "param": "testParam"
-              },
-              "task": "testTask"
-            }
-          };
-          rulesDAO.query.returns(Rx.Observable.of
-            (
+                "company": "testCompany",
+                "member": "testMember",
+                "name": "testName"
+              }],
+              "task":
               {
-                "enabled": false,
-                "id": 1,
-                "name": "testRule",
-                "targets": [
+                "params":
                 {
-                  "company": "testCompany",
-                  "member": "testMember",
-                  "name": "testName"
-                }],
-                "task":
-                {
-                  "params":
-                  {
-                    "param": "testParam"
-                  },
-                  "task": "testTask"
-                }
+                  "param": "testParam"
+                },
+                "task": "testTask"
               }
-            ));
+          ]};
+          rulesDAO.query.returns(Rx.Observable.of(rule));
           let ev = {body: JSON.stringify(target)};
           rules.queryRule(ev, context);
           let call = context.succeed.getCall(0);
