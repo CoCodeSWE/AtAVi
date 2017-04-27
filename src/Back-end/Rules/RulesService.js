@@ -23,7 +23,7 @@ class RulesService
     }
 
     // controllo che rule abbia tutti i campi definiti
-    if(rule.enabled && rule.id && rule.name && rule.targets[0].company && rule.targets[0].member && rule.targets[0].name && rule.task.type && rule.task.params)
+    if(isDefined(rule.enabled) && isDefined(rule.id) && isDefined(rule.name) && isDefined(rule.targets[0].company) && isDefined(rule.targets[0].member) && isDefined(rule.targets[0].name) && isDefined(rule.task.type) && isDefined(rule.task.params))
     {
       this.rules.addRule(rule).subscribe(
       {
@@ -303,6 +303,10 @@ function badRequest(context)
 		statusCode: 400,
 		body: JSON.stringify({ message: 'Bad Request' })
 	});
+}
+// funzione che controlla se una variabile è definita
+function isDefined(prop){
+   return (prop === 'undefined') ? false : true;
 }
 
 module.exports = RulesService;
