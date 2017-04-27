@@ -44,10 +44,10 @@ class Player
     this.options = conf;
   }
 
-  //metodo che passa al player il testo che deve essere pronunciato
+  //metodo che passa al player il testo che deve essere riprodotto
   speak(text)
   {
-    var to_speak = new SpeechSynthesisUtterance(text);
+    let to_speak = new SpeechSynthesisUtterance(text);
     to_speak.lang = this.options.lang;
     to_speak.pitch = this.options.pitch;
     to_speak.rate = this.options.rate;

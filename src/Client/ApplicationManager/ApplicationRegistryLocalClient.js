@@ -17,7 +17,19 @@ class ApplicationRegistryLocalClient
 
   query(name)
   {
-    return registry.query(name);
+    let self = this;
+    return new Rx.Observable(function(observer)
+    {
+      let app = self.registry.query(name);
+      
+      if (app === null)
+        observer.error();
+      else
+      {
+        observer.next(app);
+        observer.complete();
+      }
+    });
   }
 
 }

@@ -1,11 +1,13 @@
 class Manager
 {
+  //aggiungere ui per togliere e aggiungere, arlc è asincrono, cambiare anche test
   constructor(rc, frame)
   {
     this.registry_client = rc;
     this.frame = frame;
     this.state = new State();
-    this.application = new Application();
+    this.application = null;
+    this.ui = null;
   }
 
   //metodo che permette di invocare un comando sull'applicazione passata come parametro
@@ -14,16 +16,26 @@ class Manager
     //se l'applicazione istanziata non è quella desiderata, devo cambiarla salvando nello state quella attuale e istanziando l'applicazione richiesta
     if (this.application.name !== app)
     {
-      var new_app = state.getApp(app);
+      let new_app = state.getApp(app);
 
       //se non si trova nello state devo recuperarla dall'ApplicationRegistryLocalClient tramite il metodo query()
       if (new_app === undefined)
-        new_app = new Application(registry_client.query(app));
+      {
+        registry_client.query(app).subscribe(
+        {
+          next: (data) => { new_app = new Application(data); },
+          error: (err) => { error(err); },
+          complete: () => {}
+        });
+      }
 
       state.addApp(this.application, application.name);
 
+      frame.removeChild(this.ui);
       this.application = new_app;
-      frame.appendChild(new_app.getUI());
+      let new_ui = this.application.getUI();
+      this.ui = new_ui;
+      frame.appendChild(this.ui);
     }
 
     //eseguo il comando nell'applicazione istanziata
@@ -32,7 +44,8 @@ class Manager
 
   setFrame(frame)
   {
-    this.frame.removeChild(this.frame.lastChild);
+    this.frame.removeChild(this.ui);
+    this.ui = frame;
     this.frame.appendChild(frame);
   }
 
