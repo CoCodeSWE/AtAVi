@@ -1,0 +1,64 @@
+service: users
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: eu-central-1
+  environment:
+    
+  profile: default
+  apiKeys:
+    
+
+functions:
+  addUser:
+    handler: addUser.addUser
+    events:
+      - http:
+          path: users
+          method: post
+          private: true
+  deleteUser:
+    handler: deleteUser.deleteUser
+    events:
+      - http:
+          path: users/{username}
+          method: delete
+          private: true
+  getUser:
+    handler: getUser.getUser
+    events:
+      - http:
+          path: users/{username}
+          method: get
+          private: true
+  getUserList:
+    handler: getUserList.getUserList
+    events:
+      - http:
+          path: users
+          method: get
+          private: true
+  updateUser:
+    handler: updateUser.updateUser
+    events:
+      - http:
+          path: users/{username}
+          method: put
+          private: true
+          
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Users
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5

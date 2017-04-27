@@ -1,0 +1,11 @@
+{
+  "name": "users-service",
+  "version": "0.0.1",
+  "description": "Microservice for managing users",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "": ""
+  }
+}
