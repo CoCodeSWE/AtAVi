@@ -137,7 +137,7 @@ class RulesService
           context.succeed(
           {
             statusCode: 200,
-            body: JSON.stringify(user)
+            body: JSON.stringify(rule)
           });
         }
       });
@@ -195,7 +195,6 @@ class RulesService
           body: JSON.stringify(list)
         });
       }
-
     });
   }
   //metodo che implementa la lambda fucntion per ottenere le rule applicate a dei target
@@ -215,25 +214,31 @@ class RulesService
       badRequest(context);
       return;
     }
-    this.rules.query(target).subscribe(
+    if(isDefined(target.company) && isDefined(target.member) && isDefined(target.name))
     {
-      next: function(data)
+      this.rules.query(target).subscribe(
       {
-        data.Items.forEach((rule) => { list.rule_items.push(rule); });
-      },
-
-      error: internalServerError(context),
-
-      complete: function()
-      {
-        context.succeed(
+        next: function(data)
         {
-          statusCode: 200,
-          body: JSON.stringify(list)
-        });
-      }
+          data.Items.forEach((rule) => { list.rule_items.push(rule); });
+        },
 
-    });
+        error: internalServerError(context),
+
+        complete: function()
+        {
+          context.succeed(
+          {
+            statusCode: 200,
+            body: JSON.stringify(list)
+          });
+        }
+      });
+    }	else
+  		{
+  			// Event non contiene i dati attesi: Bad Request(400)
+  			badRequest(context);
+  		}
   }
   //metodo che implementa la lambda function per modificare una rule
   updateRule(event,context)
