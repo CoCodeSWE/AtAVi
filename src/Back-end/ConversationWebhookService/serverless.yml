@@ -5,13 +5,28 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   environment:
-    JWT_SECRET: SECRET
+    JWT_SECRET: SECRET #process.env.JWT_SECRET
     GUESTS_TABLE: Guests-${opt:stage, self:provider.stage}
     USERS_TABLE: Users-${opt:stage, self:provider.stage}
     CONVERSATIONS_TABLE: Conversations-${opt:stage, self:provider.stage}
   profile: default
   apiKeys:
     - conversation-webhook-key
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.GUESTS_TABLE}"
 
 functions:
   webhook:

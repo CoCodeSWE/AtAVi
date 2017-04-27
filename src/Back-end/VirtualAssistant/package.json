@@ -6,6 +6,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "": ""
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0"
   }
 }
