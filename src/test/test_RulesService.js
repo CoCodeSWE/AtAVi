@@ -315,17 +315,6 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
 
         });
-        it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
-        {
-          rulesDAO.getRuleList.returns(Rx.Observable.throw(new Error()));
-          let ev = {};
-          rules.getRuleList(ev, context);
-          let call = context.succeed.getCall(0);
-          expect(context.succeed.calledOnce).to.be.true;
-          expect(call.args[0]).not.to.be.null;
-          expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
-          expect(call.args[0]).to.have.deep.property('statusCode', 400);
-        });
         it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
         {
           rulesDAO.getRuleList.returns(Rx.Observable.throw(new Error()));

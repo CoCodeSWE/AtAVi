@@ -100,8 +100,8 @@ class RulesDAODynamoDB
     {
       let params =
       {
-        TableName: self.table
-        FilterExpression: 'target CONTAINS :target_value'
+        TableName: self.table,
+        FilterExpression: 'target CONTAINS :target_value',
         ExpressionAttributeValues:
         {
           ':target_value': target
