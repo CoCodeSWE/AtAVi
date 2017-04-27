@@ -9,11 +9,12 @@ const context = require('./stubs/LambdaContext');
 
 
 
+
 beforeEach(function()
 {
   let rules = new RulesService(taskDAO, rulesDAO);
+  context.succeed = sinon.stub();
 });
-
 describe('Back-end', function()
 {
   describe('Rules', function()
@@ -55,7 +56,7 @@ describe('Back-end', function()
               "task": "testTask"
             }
           };
-          let ev = {body: JSON.stringfy(rule)};
+          let ev = {body: JSON.stringify(rule)};
           rules.addRule(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
@@ -85,7 +86,7 @@ describe('Back-end', function()
               "task": "testTask"
             }
           };
-          let ev = {body: JSON.stringfy(rule)};
+          let ev = {body: JSON.stringify(rule)};
           rules.addRule(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
@@ -171,7 +172,7 @@ describe('Back-end', function()
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify(rule));
   					expect(call.args[0]).to.have.deep.property('statusCode', 200);
           });
           it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
@@ -200,27 +201,8 @@ describe('Back-end', function()
           });
           it("Nel caso in cui la \file{Rule} richiesta non sia disponibile, il campo \file{statusCode} della risposta deve essere impostato a 404.", function()
           {
-            let rule = {
-              "enabled": false,
-              "id": 1,
-              "name": "testRule",
-              "targets": [
-              {
-                "company": "testCompany",
-                "member": "testMember",
-                "name": "testName"
-              }],
-              "task":
-              {
-                "params":
-                {
-                  "param": "testParam"
-                },
-                "task": "testTask"
-              }
-            };
             rulesDAO.getRule.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
-            let ev = {pathParameters: 1};
+            let ev = {pathParameters: ""};
             rules.getRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
@@ -234,7 +216,7 @@ describe('Back-end', function()
         {
           it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200 e il campo \file{body} deve contenere la lista delle \file{Rule}.", function()
           {
-            let rule = {
+            let rule1 = {
               "enabled": false,
               "id": 1,
               "name": "testRule",
@@ -253,13 +235,117 @@ describe('Back-end', function()
                 "task": "testTask"
               }
             };
-            rulesDAO.getRulesList.returns(Rx.Observable.of(rule));
+            let rule2 = {
+              "enabled": false,
+              "id": 2,
+              "name": "testRule2",
+              "targets": [
+              {
+                "company": "testCompany2",
+                "member": "testMember2",
+                "name": "testName2"
+              }],
+              "task":
+              {
+                "params":
+                {
+                  "param": "testParam2"
+                },
+                "task": "testTask2"
+              }
+            };
+            rulesDAO.getRulesList.returns(Rx.Observable.of(
+              {
+                Items:
+                [
+                  {
+                    "enabled": false,
+                    "id": 1,
+                    "name": "testRule",
+                    "targets": [
+                    {
+                      "company": "testCompany",
+                      "member": "testMember",
+                      "name": "testName"
+                    }],
+                    "task":
+                    {
+                      "params":
+                      {
+                        "param": "testParam"
+                      },
+                      "task": "testTask"
+                    }
+                  },
+                  {
+                    "enabled": false,
+                    "id": 2,
+                    "name": "testRule2",
+                    "targets": [
+                    {
+                      "company": "testCompany2",
+                      "member": "testMember2",
+                      "name": "testName2"
+                    }],
+                    "task":
+                    {
+                      "params":
+                      {
+                        "param": "testParam2"
+                      },
+                      "task": "testTask2"
+                    }
+                  }
+                ]
+              }));
             let ev = {};
             rules.getRuleList(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify(
+              rules:
+              [
+                {
+                  "enabled": false,
+                  "id": 1,
+                  "name": "testRule",
+                  "targets": [
+                  {
+                    "company": "testCompany",
+                    "member": "testMember",
+                    "name": "testName"
+                  }],
+                  "task":
+                  {
+                    "params":
+                    {
+                      "param": "testParam"
+                    },
+                    "task": "testTask"
+                  }
+                },
+                {
+                  "enabled": false,
+                  "id": 2,
+                  "name": "testRule2",
+                  "targets": [
+                  {
+                    "company": "testCompany2",
+                    "member": "testMember2",
+                    "name": "testName2"
+                  }],
+                  "task":
+                  {
+                    "params":
+                    {
+                      "param": "testParam2"
+                    },
+                    "task": "testTask2"
+                  }
+                }
+              ]
+            ));
   					expect(call.args[0]).to.have.deep.property('statusCode', 200);
 
           });
@@ -330,26 +416,24 @@ describe('Back-end', function()
               }
             };
             rulesDAO.query.returns(Rx.Observable.of(rule));
-            let ev = {body: JSON.stringfy(targets)};
+            let ev = {body: JSON.stringify(targets)};
             rules.queryRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
-            expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
+            expect(call.args[0]).to.have.deep.property('body', JSON.stringify(rule));
   					expect(call.args[0]).to.have.deep.property('statusCode', 200);
           });
           it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
           {
-            let targets = {
-              "targets": [
-              {
+            let targets =
+            {
                 "company": "testCompany",
                 "member": "testMember",
                 "name": "testName"
-              }]
             };
             rulesDAO.query.returns(Rx.Observable.throw(new Error()));
-            let ev = {body: JSON.stringfy(targets)};
+            let ev = {body: JSON.stringify(targets)};
             rules.queryRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
@@ -360,15 +444,12 @@ describe('Back-end', function()
           it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \file{statusCode} della risposta deve essere impostato a 500.", function()
           {
             let targets = {
-              "targets": [
-              {
                 "company": "testCompany",
                 "member": "testMember",
                 "name": "testName"
-              }]
             };
             rulesDAO.query.returns(Rx.Observable.throw(new Error()));
-            let ev = {body: JSON.stringfy(targets)};
+            let ev = {body: JSON.stringify(targets)};
             rules.queryRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
@@ -401,7 +482,7 @@ describe('Back-end', function()
                 "task": "testTask"
               }
             };
-            let ev = {body: JSON.stringfy(rule)};
+            let ev = {pathParameters:1 , body: JSON.stringify(rule)};
             rules.updateRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
@@ -412,26 +493,7 @@ describe('Back-end', function()
           it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
           {
             rulesDAO.updateRule.returns(Rx.Observable.throw(new Error));
-            let rule = {
-              "enabled": false,
-              "id": 1,
-              "name": "testRule",
-              "targets": [
-              {
-                "company": "testCompany",
-                "member": "testMember",
-                "name": "testName"
-              }],
-              "task":
-              {
-                "params":
-                {
-                  "param": "testParam"
-                },
-                "task": "testTask"
-              }
-            };
-            let ev = {body: JSON.stringfy(rule)};
+            let ev = {pathParameters: "" , body: ""};
             rules.updateRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
@@ -461,7 +523,7 @@ describe('Back-end', function()
                 "task": "testTask"
               }
             };
-            let ev = {body: JSON.stringfy(rule)};
+            let ev = {pathParameters:1 , body: JSON.stringify(rule)};
             rules.updateRule(ev, context);
             let call = context.succeed.getCall(0);
             expect(context.succeed.calledOnce).to.be.true;
