@@ -41,9 +41,9 @@ describe('Back-end', function(done)
 				{
 					rules.addRule(mock_rule).subscribe(
 					{
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
 					});
 					dynamo_client.put.yield(null, {});
           expect(complete.callCount).to.equal(1);
@@ -57,9 +57,9 @@ describe('Back-end', function(done)
   			{
   				rules.getRule(1).subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.get.yield({statusCode:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
@@ -72,9 +72,9 @@ describe('Back-end', function(done)
           let observable = rules.getRule(1);
           observable.subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.get.yield(null, mock_rule);
           expect(next.callCount).to.be.above(0);
@@ -89,9 +89,9 @@ describe('Back-end', function(done)
         {
           rules.getRuleList().subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.get.yield({statusCode:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
@@ -103,9 +103,9 @@ describe('Back-end', function(done)
         {
           rules.getRuleList().subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
           });
           expect(next.callCount).to.be.above(0);
           expect(complete.callCount).to.equal(1);
@@ -119,9 +119,9 @@ describe('Back-end', function(done)
         {
           rules.removeRule(1).subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.delete.yield({statusCode: 500, msg:"error removing rule"});
           expect(error.callCount).to.equal(1);
@@ -132,9 +132,9 @@ describe('Back-end', function(done)
         {
           rules.removeRule(1).subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.delete.yield(null, {statusCode: 200, msg:"success"});
           expect(complete.callCount).to.equal(1);
@@ -148,9 +148,9 @@ describe('Back-end', function(done)
 				{
 					rules.updateRule(1).subscribe(
 					{
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
 					});
 					dynamo_client.update.yield({statusCode: 500, msg:"error updating rule"});
           expect(error.callCount).to.equal(1);
@@ -161,9 +161,9 @@ describe('Back-end', function(done)
 				{
 					rules.updateRule(1).subscribe(
 					{
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
 					});
 
 					dynamo_client.update.yield(null, mock_rule);
