@@ -27,9 +27,9 @@ describe('Back-end', function(done)
         {
           tasks.addTask(mock_task).subscribe(
 					{
-            next: (data) => {next(data)},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+            next: next,
+						error: error,
+						complete: complete
 					});
 					dynamo_client.put.yield({code:400, msg:"Requested resource not found"});
           expect(error.callCount).to.equal(1);
@@ -40,9 +40,9 @@ describe('Back-end', function(done)
 				{
 					tasks.addTask(mock_task).subscribe(
 					{
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
 					});
 					dynamo_client.put.yield(null, {});
           expect(complete.callCount).to.equal(1);
@@ -56,9 +56,9 @@ describe('Back-end', function(done)
   			{
   				tasks.getTask('mock_type').subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
@@ -71,9 +71,9 @@ describe('Back-end', function(done)
           let observable = tasks.getTask('mock_type');
           observable.subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.get.yield(null, mock_task);
           expect(next.callCount).to.be.above(0);
@@ -88,9 +88,9 @@ describe('Back-end', function(done)
         {
           tasks.getTaskList().subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.get.yield({code:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
@@ -101,9 +101,9 @@ describe('Back-end', function(done)
         {
           tasks.getTaskList().subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
           });
           expect(next.callCount).to.be.above(0);
           expect(complete.callCount).to.equal(1);
@@ -117,9 +117,9 @@ describe('Back-end', function(done)
         {
           tasks.removeTask('mock_type').subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.delete.yield({code: 500, msg:"error removing rule"});
           expect(error.callCount).to.equal(1);
@@ -130,9 +130,9 @@ describe('Back-end', function(done)
         {
           tasks.removeTask('mock_type').subscribe(
           {
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
           });
           dynamo_client.delete.yield(null, {code: 200, msg:"success"});
           expect(complete.callCount).to.equal(1);
@@ -146,9 +146,9 @@ describe('Back-end', function(done)
 				{
 					tasks.updateTask('mock_type').subscribe(
 					{
-            next: (data) => {next(data);},
-  					error: (err) => {error(error)},
-  					complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
   				});
   					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
             expect(error.callCount).to.equal(1);
@@ -160,9 +160,9 @@ describe('Back-end', function(done)
 				{
 					tasks.updateTask('mock_type').subscribe(
 					{
-            next: (data) => {next(data);},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
 					});
 
 					dynamo_client.update.yield(null, mock_task);
