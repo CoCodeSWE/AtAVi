@@ -164,6 +164,7 @@ class UsersService
 	// Metodo che implementa la Lambda Function per ottenere la lista degli users
 	getUserList(event, context)
 	{
+		console.log(event);
 		let list = {
 			users: []
 		};
@@ -253,6 +254,7 @@ function internalServerError(context)
 {
 	return function(err)
 	{
+		console.log('internalServerError ', err);
 		context.succeed(
 		{
 			statusCode: 500,
@@ -264,6 +266,7 @@ function internalServerError(context)
 // Funzione per gestire lo status code 400
 function badRequest(context)
 {
+	console.log('badRequest');
 	context.succeed(
 	{
 		statusCode: 400,

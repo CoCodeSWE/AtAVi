@@ -5,7 +5,7 @@ class UsersDAODynamoDB
   constructor(client)
   {
     this.client = client;
-    this.table = 'Users';
+    this.table = process.env.USERS_TABLE;
   }
 
 	// Aggiunge un nuovo user in DynamoDB
@@ -71,14 +71,14 @@ class UsersDAODynamoDB
 			self.client.scan(params, onScan(observer, self));
 		});
   }
-	
+
 	// Elimina l'user avente l'username passato come parametro
   removeUser(username)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			let params = 
+			let params =
 			{
 				'TableName': self.table,
 				'Key':
@@ -125,13 +125,15 @@ function onScan(observer, users)
 	return function(err, data)
 	{
 		if(err)
+    {
 			observer.error(err);
-		else
+    }
+    else
 		{
 			observer.next(data);
 			if(data.LastEvaluatedKey)
 			{
-				let params = 
+				let params =
 				{
 					'TableName': users.table,
 					'ExclusiveStartKey': data.LastEvaluatedKey

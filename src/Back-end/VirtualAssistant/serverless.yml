@@ -8,7 +8,7 @@ provider:
     AGENTS_TABLE: Agents-${opt:stage, self:provider.stage}
   profile: default
   apiKeys:
-    virtual-assistant-key
+    - virtual-assistant-key
   iamRoleStatements:
     - Effect: Allow
       Action:
