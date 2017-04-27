@@ -27,9 +27,9 @@ describe('Back-end', function(done)
         {
           rules.addRule(mock_rule).subscribe(
 					{
-						next: (data) => {next(data)},
-						error: (err) => {error(error)},
-						complete: () => {complete()}
+						next: next,
+						error: error,
+						complete: complete
 					});
 					dynamo_client.put.yield({statusCode:400, msg:"Requested resource not found"});
           expect(error.callCount).to.equal(1);
