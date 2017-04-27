@@ -304,48 +304,49 @@ describe('Back-end', function()
             expect(context.succeed.calledOnce).to.be.true;
             expect(call.args[0]).not.to.be.null;
             expect(call.args[0]).to.have.deep.property('body', JSON.stringify(
-              rules:
-              [
-                {
-                  "enabled": false,
-                  "id": 1,
-                  "name": "testRule",
-                  "targets": [
+              {
+                rules:
+                [
                   {
-                    "company": "testCompany",
-                    "member": "testMember",
-                    "name": "testName"
-                  }],
-                  "task":
-                  {
-                    "params":
+                    "enabled": false,
+                    "id": 1,
+                    "name": "testRule",
+                    "targets": [
                     {
-                      "param": "testParam"
-                    },
-                    "task": "testTask"
-                  }
-                },
-                {
-                  "enabled": false,
-                  "id": 2,
-                  "name": "testRule2",
-                  "targets": [
-                  {
-                    "company": "testCompany2",
-                    "member": "testMember2",
-                    "name": "testName2"
-                  }],
-                  "task":
-                  {
-                    "params":
+                      "company": "testCompany",
+                      "member": "testMember",
+                      "name": "testName"
+                    }],
+                    "task":
                     {
-                      "param": "testParam2"
-                    },
-                    "task": "testTask2"
+                      "params":
+                      {
+                        "param": "testParam"
+                      },
+                      "task": "testTask"
+                    }
+                  },
+                  {
+                    "enabled": false,
+                    "id": 2,
+                    "name": "testRule2",
+                    "targets": [
+                    {
+                      "company": "testCompany2",
+                      "member": "testMember2",
+                      "name": "testName2"
+                    }],
+                    "task":
+                    {
+                      "params":
+                      {
+                        "param": "testParam2"
+                      },
+                      "task": "testTask2"
+                    }
                   }
-                }
-              ]
-            ));
+                ]
+            }));
   					expect(call.args[0]).to.have.deep.property('statusCode', 200);
 
           });
