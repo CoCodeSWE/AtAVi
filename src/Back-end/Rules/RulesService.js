@@ -219,7 +219,7 @@ class RulesService
       this.rules.query(target).subscribe(
       {
         next: function(data)
-        {
+        { 
           data.Items.forEach((rule) => { list.rule_items.push(rule); });
         },
 

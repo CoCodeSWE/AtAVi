@@ -419,7 +419,28 @@ describe('Back-end', function()
               "task": "testTask"
             }
           };
-          rulesDAO.query.returns(Rx.Observable.of(rule));
+          rulesDAO.query.returns(Rx.Observable.of
+            (
+              {
+                "enabled": false,
+                "id": 1,
+                "name": "testRule",
+                "targets": [
+                {
+                  "company": "testCompany",
+                  "member": "testMember",
+                  "name": "testName"
+                }],
+                "task":
+                {
+                  "params":
+                  {
+                    "param": "testParam"
+                  },
+                  "task": "testTask"
+                }
+              }
+            ));
           let ev = {body: JSON.stringify(target)};
           rules.queryRule(ev, context);
           let call = context.succeed.getCall(0);
