@@ -19,7 +19,7 @@ describe('Back-end', function()
     {
       beforeEach(function()
       {
-        let rules = new RulesService(taskDAO, rulesDAO);
+        let rules = new RulesService(rulesDAO,taskDAO);
         context.succeed = sinon.stub();
       });
       describe('addRule', function()
