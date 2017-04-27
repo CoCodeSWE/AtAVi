@@ -121,9 +121,9 @@ describe('Back-end', function(done)
         {
           conv.getConversationList().subscribe(
   					{
-  						next: next,
-  						error: error,
-  						complete: complete
+  						next: sinon.stub(),
+  						error: sinon.stub(),
+  						complete: sinon.stub()
   					});
 
             dynamo_client.scan.yield(null, {Items: [{ session_id : "conv", guest_id : "mauro" }], LastEvaluatedKey: 'conv1'});
