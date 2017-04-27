@@ -119,7 +119,7 @@ describe('Back-end', function(done)
 				});
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte le conversazioni ottenute dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function()
         {
-          users.getUserList().subscribe(
+          conv.getConversationList().subscribe(
   					{
   						next: next,
   						error: error,
@@ -164,7 +164,7 @@ describe('Back-end', function(done)
             error: (err) => {done(err);},
             complete: () => {done();}
           });
-          dynamo_client.get.yield(null, { code : 200, msg : "success" });
+          dynamo_client.delete.yield(null, { code : 200, msg : "success" });
         });
       });
     });

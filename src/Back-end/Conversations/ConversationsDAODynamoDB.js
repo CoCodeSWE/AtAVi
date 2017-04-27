@@ -42,7 +42,7 @@ class ConversationsDAODynamoDB
         },
         ExpressionAttributeNames:
         {
-          "#messages":messages
+          "#messages": 'messages'
         },
         UpdateExpression: "set #messages= list_append(#messages, :msg)"
       };
