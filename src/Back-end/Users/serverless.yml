@@ -5,10 +5,10 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   environment:
-    
+    USERS_TABLE: Users-${opt:stage, self:provider.stage}
   profile: default
   apiKeys:
-    
+    - users-service
 
 functions:
   addUser:
@@ -46,7 +46,7 @@ functions:
           path: users/{username}
           method: put
           private: true
-          
+
 resources:
   Resources:
     usersTable:
