@@ -2,6 +2,7 @@ const RulesService = require('../Back-end/Rules/RulesService');
 const chai = require('chai');
 const expect = chai.expect;
 const Rx = require('rxjs');
+const sinon = require('sinon');
 const taskDAO = require('./stubs/TasksDAO');
 const rulesDAO = require('./stubs/RulesDAO');
 const context = require('./stubs/LambdaContext');
