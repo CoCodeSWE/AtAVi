@@ -31,7 +31,7 @@ describe('Back-end', function(done)
 						error: (err) => {error(error)},
 						complete: () => {complete()}
 					});
-					dynamo_client.put.yield({code:400, msg:"Requested resource not found"});
+					dynamo_client.put.yield({statusCode:400, msg:"Requested resource not found"});
           expect(error.callCount).to.equal(1);
           expect(error.getCall(0).args[0].statusCode).to.equal(400);
           done();
@@ -61,7 +61,7 @@ describe('Back-end', function(done)
 						error: (err) => {error(error)},
 						complete: () => {complete()}
           });
-          dynamo_client.get.yield({code:500, msg:"error getting data"});
+          dynamo_client.get.yield({statusCode:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
 					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
@@ -93,7 +93,7 @@ describe('Back-end', function(done)
 						error: (err) => {error(error)},
 						complete: () => {complete()}
           });
-          dynamo_client.get.yield({code:500, msg:"error getting data"});
+          dynamo_client.get.yield({statusCode:500, msg:"error getting data"});
           expect(error.callCount).to.equal(1);
 					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
@@ -123,7 +123,7 @@ describe('Back-end', function(done)
 						error: (err) => {error(error)},
 						complete: () => {complete()}
           });
-          dynamo_client.delete.yield({code: 500, msg:"error removing rule"});
+          dynamo_client.delete.yield({statusCode: 500, msg:"error removing rule"});
           expect(error.callCount).to.equal(1);
 					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
@@ -136,7 +136,7 @@ describe('Back-end', function(done)
 						error: (err) => {error(error)},
 						complete: () => {complete()}
           });
-          dynamo_client.delete.yield(null, {code: 200, msg:"success"});
+          dynamo_client.delete.yield(null, {statusCode: 200, msg:"success"});
           expect(complete.callCount).to.equal(1);
           done();
         });
@@ -152,7 +152,7 @@ describe('Back-end', function(done)
 						error: (err) => {error(error)},
 						complete: () => {complete()}
 					});
-					dynamo_client.update.yield({code: 500, msg:"error updating rule"});
+					dynamo_client.update.yield({statusCode: 500, msg:"error updating rule"});
           expect(error.callCount).to.equal(1);
 					expect(error.getCall(0).args[0].statusCode).to.equal(500);
           done();
