@@ -10,17 +10,18 @@ const context = require('./stubs/LambdaContext');
 
 
 
-beforeEach(function()
-{
-  let rules = new RulesService(taskDAO, rulesDAO);
-  context.succeed = sinon.stub();
-});
+
 describe('Back-end', function()
 {
   describe('Rules', function()
   {
     describe('RulesService', function()
     {
+      beforeEach(function()
+      {
+        let rules = new RulesService(taskDAO, rulesDAO);
+        context.succeed = sinon.stub();
+      });
       describe('addRule', function()
       {
         it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \file{statusCode} della risposta deve essere impostato a 400.", function()
