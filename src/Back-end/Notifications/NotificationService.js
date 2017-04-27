@@ -109,8 +109,33 @@ class NotificationService
     catch (err)
     {
       //uso succeed per ritornare errore 400
+      context.succeed(
+      {
+        statusCode: 400,
+        body: ''
+      });
+      return;
     }
-    self.client.chat.postMessage(body.send_to, body.msg.text, body.msg.attachments, function(err,data)
+
+
+    const allowed = ['actions','callback_id','color','fallback','title'];
+    let attachments_filtered = [];
+    body.msg.attachments.forEach(function(item){
+      let filtered = Object.keys(item)
+                      .filter(key => allowed.includes(key))
+                      .reduce((obj,key) =>
+                      {
+                        obj[key] = item[key];
+                        return obj;
+                      }, {});
+
+
+      attachments_filtered.push(filtered);
+
+    });
+
+
+    self.client.chat.postMessage(body.send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
     {
       if (err)
       {
@@ -132,4 +157,4 @@ class NotificationService
   }
 }
 
-module.exports = NotificationService
+module.exports = NotificationService;

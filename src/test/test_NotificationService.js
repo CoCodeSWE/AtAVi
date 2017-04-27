@@ -77,7 +77,7 @@ describe('Back-end', function()
 				{
 					let ev = {body: JSON.stringify(request_event)};
 					service.sendMsg(ev, context);
-					client.chat.postMessage('errore');
+					client.chat.postMessage.yield('errore');
 
 					expect(context.succeed.callCount).to.equal(1);
 					let call = context.succeed.getCall(0);
@@ -89,7 +89,7 @@ describe('Back-end', function()
 				{
 					let ev = {body: JSON.stringify(request_event)};
 					service.sendMsg(ev, context);
-					client.chat.postMessage(null, responseSendMsg);
+					client.chat.postMessage.yield(null, responseSendMsg);
 
 					expect(context.succeed.callCount).to.equal(1);
 					let call = context.succeed.getCall(0);
@@ -207,6 +207,28 @@ const request_event =
   send_to: 'mou',
   msg:
   {
-
+    attachments: [
+    {
+      actions: [
+      {
+        confirm:
+        {
+          dismiss_text: 'dismiss',
+          ok_text: 'ok',
+          text: 'text',
+          title: 'title'
+        },
+        name: 'nome',
+        style: 'stile',
+        text: 'testo',
+        type: 'tipo',
+        value: 'valore'
+      }],
+      callback_id: 'callback',
+      color: 'blue',
+      fallback: 'fallback',
+      title: 'example'
+    }],
+    text : 'ciao'
   }
 }
