@@ -135,7 +135,7 @@ function onScan(observer, conversations)
 					TableName: conversations.table,
 					ExclusiveStartKey: data.LastEvaluatedKey
 				};
-				rules.client.scan(params, onScan(observer, conversations));
+				conversations.client.scan(params, onScan(observer, conversations));
 			}
 			else
 			{

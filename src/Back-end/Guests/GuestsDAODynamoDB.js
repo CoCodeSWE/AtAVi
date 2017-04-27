@@ -142,7 +142,7 @@ function onScan(observer, guests)
 					TableName: guests.table,
 					ExclusiveStartKey: data.LastEvaluatedKey
 				};
-				rules.client.scan(params, onScan(observer, guests));
+				guests.client.scan(params, onScan(observer, guests));
 			}
 			else
 			{
