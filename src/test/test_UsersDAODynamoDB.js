@@ -179,8 +179,8 @@ describe('Back-end', function()
 					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "sun"}]}); // Ultimo elemento da ottenere
 
 					let callScan = dynamo_client.scan.getCall(0);
-          expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'name = :name');
-					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues', { ':name': 'mauro' });
+          expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'full_name = :full_name');
+					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues.:full_name', 'mauro' );
 
 					expect(error.callCount).to.equal(0);
 
