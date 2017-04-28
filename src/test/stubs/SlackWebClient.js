@@ -1,6 +1,8 @@
 const sinon = require('sinon');
 
+
 module.exports =
+
 let stub =
 {
   _reset: function()
@@ -9,16 +11,17 @@ let stub =
     {
       test: sinon.stub()
     };
-    auth:
+
+    stub.auth =
     {
       revoke: sinon.stub(),
       test: sinon.stub()
-    },
-    bots:
+    };
+    stub.bots =
     {
       info: sinon.stub()
-    },
-    channels:
+    };
+    stub.channels =
     {
       archive: sinon.stub(),
       create: sinon.stub(),
@@ -35,28 +38,29 @@ let stub =
       setPurpose: sinon.stub(),
       setTopic: sinon.stub(),
       unarchive: sinon.stub()
-    },
-    chat:
+
+    };
+    stub.chat =
     {
       delete: sinon.stub(),
       meMessage: sinon.stub(),
       postMessage: sinon.stub(),
       unfurl: sinon.stub(),
       update: sinon.stub()
-    },
-    dnd:
+    };
+    stub.dnd =
     {
       endDnd: sinon.stub(),
       endSnooze: sinon.stub(),
       info: sinon.stub(),
       setSnooze: sinon.stub(),
       teamInfo: sinon.stub()
-    },
-    emoji:
+    };
+    stub.emoji =
     {
       list: sinon.stub()
-    },
-    files:
+    };
+    stub.files =
     {
       comments:
       {
@@ -70,8 +74,8 @@ let stub =
       revokePublicURL: sinon.stub(),
       sharedPublicURL: sinon.stub(),
       upload: sinon.stub()
-    },
-    groups:
+    };
+    stub.groups =
     {
       archive: sinon.stub(),
       close: sinon.stub(),
@@ -90,8 +94,8 @@ let stub =
       setPurpose: sinon.stub(),
       setTopic: sinon.stub(),
       unarchive: sinon.stub()
-    },
-    im:
+    };
+    stub.im =
     {
       close: sinon.stub(),
       history: sinon.stub(),
@@ -99,8 +103,8 @@ let stub =
       mark: sinon.stub(),
       open: sinon.stub(),
       replies: sinon.stub()
-    },
-    mpim:
+    };
+    stub.mpim =
     {
       close: sinon.stub(),
       history: sinon.stub(),
@@ -108,49 +112,49 @@ let stub =
       mark: sinon.stub(),
       open: sinon.stub(),
       replies: sinon.stub(),
-    },
-    oauth:
+    };
+    stub.oauth =
     {
       access: sinon.stub()
-    },
-    pins:
+    };
+    stub.pins =
     {
       add: sinon.stub(),
       list: sinon.stub(),
       remove: sinon.stub()
-    },
-    reactions:
+    };
+    stub.reactions =
     {
       add: sinon.stub(),
       get: sinon.stub(),
       list: sinon.stub(),
       remove: sinon.stub()
-    },
-    reminders:
+    };
+    stub.reminders =
     {
       add: sinon.stub(),
       complete: sinon.stub(),
       delete: sinon.stub(),
       info: sinon.stub(),
       list: sinon.stub()
-    },
-    rtm:
+    };
+    stub.rtm =
     {
       start: sinon.stub()
-    },
-    search:
+    };
+    stub.search =
     {
       all: sinon.stub(),
       files: sinon.stub(),
       messages: sinon.stub()
-    },
-    stars:
+    };
+    stub.stars =
     {
       add: sinon.stub(),
       list: sinon.stub(),
       remove: sinon.stub()
-    },
-    team:
+    };
+    stub.team =
     {
       accessLogs: sinon.stub(),
       billableInfo: sinon.stub(),
@@ -160,8 +164,8 @@ let stub =
       {
         get: sinon.stub()
       }
-    },
-    usergroups:
+    };
+    stub.usergroups =
     {
       create: sinon.stub(),
       disable: sinon.stub(),
@@ -173,8 +177,8 @@ let stub =
         list: sinon.stub(),
         update: sinon.stub()
       }
-    },
-    users:
+    };
+    stub.users =
     {
       deletePhoto: sinon.stub(),
       getPresence: sinon.stub(),

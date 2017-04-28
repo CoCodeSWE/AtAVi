@@ -21,7 +21,7 @@ describe('Back-end', function()
     {
       describe('addEnrollment', function()
       {
-        it("Se la chiamata al servizio di Speaker Recognition per aggiungere un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per aggiungere un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function(done)
         {
           promise.returns(Promise.reject(
           {
@@ -37,14 +37,18 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          expect(next.callCount).to.equal(0);
-          expect(complete.callCount).to.equal(0);
-          expect(error.callCount).to.equal(1);
+          setTimeout(function()
+					{	
+						expect(next.callCount).to.equal(0);
+						expect(complete.callCount).to.equal(0);
+						expect(error.callCount).to.equal(1);
+						done();
+					});
 				});
       });
       describe('createUser', function()
       {
-        it("Se la chiamata al servizio di Speaker Recognition per creare un utente ritorna uno statusCode diverso da 200, StringObservable deve notificare lo StringObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per creare un utente ritorna uno statusCode diverso da 200, StringObservable deve notificare lo StringObserver chiamando il suo metodo error.", function(done)
         {
           promise.returns(Promise.reject(
           {
@@ -60,14 +64,18 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          expect(next.callCount).to.equal(0);
-          expect(complete.callCount).to.equal(0);
-          expect(error.callCount).to.equal(1);
+          setTimeout(function()
+					{	
+						expect(next.callCount).to.equal(0);
+						expect(complete.callCount).to.equal(0);
+						expect(error.callCount).to.equal(1);
+						done();
+					})
         });
       });
       describe('deleteUser', function()
       {
-        it("Se la chiamata al servizio di Speaker Recognition per eliminare un utente ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per eliminare un utente ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function(done)
         {
           promise.returns(Promise.reject(
           {
@@ -83,14 +91,18 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          expect(next.callCount).to.equal(0);
-          expect(complete.callCount).to.equal(0);
-          expect(error.callCount).to.equal(1);
+          setTimeout(function()
+					{	
+						expect(next.callCount).to.equal(0);
+						expect(complete.callCount).to.equal(0);
+						expect(error.callCount).to.equal(1);
+						done();
+					})
         });
       });
       describe('doLogin', function()
       {
-        it("Se la chiamata al servizio di Speaker Recognition per effettuare il login ritorna un oggetto con campo 'result' pari a 'Reject', l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per effettuare il login ritorna un oggetto con campo 'result' pari a 'Reject', l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function(done)
         {
           promise.returns(Promise.reject({ "result" : "Reject" }));
           microsoft_login.doLogin().subscribe(
@@ -99,14 +111,18 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          expect(next.callCount).to.equal(0);
-          expect(complete.callCount).to.equal(0);
-          expect(error.callCount).to.equal(1);
+          setTimeout(function()
+					{	
+						expect(next.callCount).to.equal(0);
+						expect(complete.callCount).to.equal(0);
+						expect(error.callCount).to.equal(1);
+						done();
+					})
         });
       });
       describe('getList', function()
       {
-        it("Se la chiamata al servizio di Speaker Recognition per ottenere la lista degli utenti ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per ottenere la lista degli utenti ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function(done)
         {
           promise.returns(Promise.reject(
           {
@@ -122,14 +138,18 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          expect(next.callCount).to.equal(0);
-          expect(complete.callCount).to.equal(0);
-          expect(error.callCount).to.equal(1);
+          setTimeout(function()
+					{	
+						expect(next.callCount).to.equal(0);
+						expect(complete.callCount).to.equal(0);
+						expect(error.callCount).to.equal(1);
+						done();
+					})
         });
       });
       describe('getUser', function()
       {
-        it("Se la chiamata al servizio di Speaker Recognition per ottenere un utente ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per ottenere un utente ritorna uno statusCode diverso da 200, SRUserObservable deve notificare l'SRUserObserver chiamando il suo metodo error.", function(done)
         {
           promise.returns(Promise.reject(
             {
@@ -145,14 +165,18 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          expect(next.callCount).to.equal(0);
-          expect(complete.callCount).to.equal(0);
-          expect(error.callCount).to.equal(1);
+          setTimeout(function()
+					{	
+						expect(next.callCount).to.equal(0);
+						expect(complete.callCount).to.equal(0);
+						expect(error.callCount).to.equal(1);
+						done();
+					})
         });
       });
       describe('resetEnrollment', function()
       {
-        it("Se la chiamata al servizio di Speaker Recognition per resettare un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function()
+        it("Se la chiamata al servizio di Speaker Recognition per resettare un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function(done)
         {
           promise.returns(Promise.reject(
           {
@@ -168,9 +192,13 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          expect(next.callCount).to.equal(0);
-          expect(complete.callCount).to.equal(0);
-          expect(error.callCount).to.equal(1);
+          setTimeout(function()
+					{	
+						expect(next.callCount).to.equal(0);
+						expect(complete.callCount).to.equal(0);
+						expect(error.callCount).to.equal(1);
+						done();
+					})
         });
       });
     });

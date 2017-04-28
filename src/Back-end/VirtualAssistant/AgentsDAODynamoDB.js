@@ -1,13 +1,13 @@
 const Rx = require('rxjs/Rx');
 
-class AgentsDAODynamoDB 
+class AgentsDAODynamoDB
 {
 	constructor(client)
 	{
 		this.client = client;
-		this.table = 'Agent';
+		this.table = process.env.AGENTS_TABLE;
 	}
-	
+
 	// Aggiunge un nuovo agente in DynamoDB
 	addAgent(agent)
 	{
@@ -28,7 +28,7 @@ class AgentsDAODynamoDB
 			});
 		});
 	}
-	
+
 	// Ottiene l'agente avente il nome passato come parametro
 	getAgent(name)
 	{
@@ -57,7 +57,7 @@ class AgentsDAODynamoDB
 			});
 		});
 	}
-	
+
 	// Ottiene la lista degli agenti in DynamoDB, suddivisi in blocchi (da massimo 1MB)
 	getAgentList()
 	{
@@ -71,14 +71,14 @@ class AgentsDAODynamoDB
 			self.client.scan(params, onScan(observer, self));
 		});
 	}
-	
+
 	// Elimina l'agente avente il nome passato come parametro
 	removeAgent(name)
 	{
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			let params = 
+			let params =
 			{
 				TableName: self.table,
 				Key:
@@ -96,14 +96,14 @@ class AgentsDAODynamoDB
 			});
 		});
 	}
-	
+
 	// Aggiorna un agente passato come parametro (se non c'è lo crea)
 	updateAgent(agent)
 	{
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			let params = 
+			let params =
 			{
 				TableName: self.table,
 				Item: agent

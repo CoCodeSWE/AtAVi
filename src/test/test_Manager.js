@@ -22,12 +22,11 @@ describe('Client', function()
       {
         it('Nel caso in cui l’applicazione sia presente all\'interno di \file{State}, non viene interrogato il Client.',function()
         {
-
           //testo con applicazione che ho aggiunto io
           state.getApp.returns(Application);
           manager.runApplication('app', 'cmd', {});
           expect(applicationRegistryClient.query.callCount).to.equal(0);
-        };
+        });
 
         it('Nel caso in cui l’applicazione non sia presente all\'interno di \file{State}, viene interrogato il Client per ottenerla e la vecchia applicazione viene salvata nello \file{State}.',function()
         {
@@ -37,9 +36,7 @@ describe('Client', function()
           expect(applicationRegistryClient.query.callCount).to.equal(1);
           manager.runApplication('app2', 'cmd', {});
           expect(state.addApp.callCount).to.equal(1);
-
         });
-
       });
 
       describe('setFrame', function()

@@ -3,20 +3,24 @@ const sinon = require('sinon');
 
 let stub =
 {
-  cb: {},
-  get: sinon.stub(),
-  delete: sinon.stub(),
-  update: sinon.stub(),
-  scan: function(params, cb)
+  _reset: function()
   {
-    let scan = stub.scan;
-    scan.cb = cb;
-    scan.yield = function(...args)
+    stub.cb = {},
+    stub.get = sinon.stub(),
+    stub.delete = sinon.stub(),
+    stub.update = sinon.stub(),
+    stub._scan = function(params, cb)
     {
-      scan.cb(...args);
+  		let scan = stub._scan;
+      scan.cb = cb;
+    },
+  	stub.scan = sinon.spy(stub._scan),
+    stub.scan.yield = function(...args)
+    {
+      stub._scan.cb(...args);
     }
-  },
-	put: sinon.stub()
+    stub.put = sinon.stub()
+  }
 };
 
 module.exports = stub;
