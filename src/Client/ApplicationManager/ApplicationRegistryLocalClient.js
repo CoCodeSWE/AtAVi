@@ -1,3 +1,5 @@
+const Rx = require('rxjs/Rx');
+
 class ApplicationRegistryLocalClient
 {
   constructor(client)
@@ -21,7 +23,7 @@ class ApplicationRegistryLocalClient
     return new Rx.Observable(function(observer)
     {
       let app = self.registry.query(name);
-      
+
       if (app === null)
         observer.error();
       else

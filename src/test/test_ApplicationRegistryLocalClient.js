@@ -38,7 +38,7 @@ describe('Client', function()
         it('Vogliamo testare che venga ritornato correttamente l’\\file{ApplicationPackage} a partire dal suo nome passato come parametro.', function()
         {
           app_local_reg.query.returns({ name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' });
-          let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };
+          let app_pckg = {name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };
           let pckg_ret = registry.query('conv');
           expect(pckg_ret).to.be.deep.equal(app_pckg);
         });

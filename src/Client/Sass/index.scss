@@ -1,0 +1,110 @@
+$colSfondo: #464646;
+
+@font-face {
+    font-family: Atavi;
+    src: url('../Font/heroesassemble2.ttf');
+}
+
+*
+{
+	margin: 0em;
+	padding: 0em;
+}
+
+html
+{
+	font-family: "Palatino Linotype", "Courier New", "Verdana", "Sans-Serif";
+}
+
+.hide
+{
+  text-indent:100%;
+	white-space:nowrap;
+	overflow:hidden;
+}
+
+body
+{
+  background-color: $colSfondo;
+}
+
+ #mainFrame
+{
+  border-top-left-radius: 2em;
+  border-top-right-radius: 2em;
+  margin: 3em auto;
+  height: 40em;
+  width: 40%;
+  border: 0.3em solid #000000;
+  background-color: #ffffff;
+}
+
+#startStop
+{
+	text-align: center;
+  margin: 0 auto;
+  width: 40%;
+	height: 13em;
+	display: flex;
+}
+
+.buttonSS
+{
+  margin: 0 auto;
+  display: block;
+  width: 25%;
+  height: 60%;
+  background-size: 100% 100%;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+#start
+{
+  background-image: url("../Image/start.png");
+}
+
+#start:active
+{
+  border: 0;
+}
+
+#stop
+{
+ background-image: url("../Image/stop.png");
+}
+
+#stop:active
+{
+  border: 0;
+}
+
+#logoApp
+{
+	color: #ffffff;
+	font-family: Atavi;
+	font-size: 4em;
+
+}
+
+#nomeApp
+{
+	color: #ffffff;
+	font-family: Atavi;
+	font-size: 2.6em;
+}
+
+
+
+li[data-sender="0"]
+{
+	color:red;
+}
+
+li[data-sender="1"]
+{
+	color:green;
+}

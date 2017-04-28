@@ -19,7 +19,7 @@ describe('Client', function()
         {
           registry.register('conv', { name:'Conversation' });
           let app_pckg = registry.query('conv');
-          expect(app_pckg.name).to.not.be.null;
+          expect(app_pckg).to.not.be.undefined;
           expect(app_pckg.name).to.equal('Conversation');
         });
       });
@@ -30,7 +30,7 @@ describe('Client', function()
           let name_app_pack = 'ConversationApp';
           registry.register('conv', { name:'Conversation' });
           registry.remove(name_app_pack);
-          expect(registry.query(name_app_pack)).to.be.null;
+          expect(registry.query(name_app_pack)).to.be.undefined;
         });
       });
     });
