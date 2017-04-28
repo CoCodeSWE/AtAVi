@@ -1,7 +1,7 @@
 # Welcome to Serverless!
 #
 
-service: nineatavi
+service: VocalAPI-atavi
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -12,7 +12,9 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   profile: default
-
+  environment:
+    AWS_ACCESS_KEY_ID: 'SECRET'
+    AWS_SECRET_ACCESS_KEY: 'SECRET'
 functions:
   query:
     handler: handler.queryLambda

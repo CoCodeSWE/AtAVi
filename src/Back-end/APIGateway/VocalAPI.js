@@ -1,7 +1,18 @@
 class VocalAPI
 {
+  /**
+  * Costruttore della classe che implementa la logica dell'api gateway
+  * @param vocal {VocalLoginModule} - Modulo utilizzato per effettuare il login vocale degli amministratori
+  * @param jwt {JsonWebTokenModule} - Modulo utilizzato per la creazione di JWT
+  * @param rp {RequestPromisModule} - Modulo utilizzato per effettuare richieste http ai microservizi utilizzando le Promise
+  * @param stt {STTModule} - Modulo utilizzato per la conversione di un file audio in testo
+  * @param sns {AWS.SNS} - Modulo utilizzato per pubblicare i dati della interazione su un topic SNS
+  */
   constructor(vocal, jwt, rp, stt, sns)
   {
+    this.USERS_SERVICE_URL = process.env.USERS_SERVICE_URL;
+    this.RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
+    this.VA_SERVICE_URL = process.env.VA_SERVICE_URL;
     this.vocal = vocal;
     this.request_promise = rp;
     this.sns = sns;
