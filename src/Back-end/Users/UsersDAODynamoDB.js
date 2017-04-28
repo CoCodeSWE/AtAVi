@@ -79,8 +79,7 @@ class UsersDAODynamoDB
 					params.ExpressionAttributeValues = filter_expression.ExpressionAttributeValues;
 				}
 			}
-
-			self.client.scan(params, onScan(observer, self));
+			self.client.scan(params, self._onScan(observer, params));
 		});
   }
 
@@ -129,40 +128,35 @@ class UsersDAODynamoDB
       });
     });
   }
-}
 
-// Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
-function onScan(observer, users)
-{
-	return function(err, data)
+	// Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
+	_onScan(observer, params)
 	{
-		if(err)
-    {
-			observer.error(err);
-    }
-    else
+		let self = this;
+    return function(err, data)
 		{
-			observer.next(data);
-			if(data.LastEvaluatedKey)
+      if(err)
 			{
-				let params =
-				{
-					'TableName': users.table,
-					'ExclusiveStartKey': data.LastEvaluatedKey
-				};
-				users.client.scan(params, onScan(observer, users));
+				observer.error(err);
 			}
 			else
 			{
-				observer.complete();
+				observer.next(data);
+				if(data.LastEvaluatedKey)
+				{
+					params.ExclusiveStartKey = data.LastEvaluatedKey;
+					self.client.scan(params, self._onScan(observer, params));
+				}
+				else
+				{
+					observer.complete();
+				}
 			}
 		}
 	}
 }
 
-/*
-Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object).
-*/
+// Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object).
 function filterExpression(obj)
 {
 	let filter_expression =
@@ -170,6 +164,7 @@ function filterExpression(obj)
 		FilterExpression: '',
 		ExpressionAttributeValues: {}
 	};
+
   let new_obj = {};
 
   for(let i in obj)
@@ -184,9 +179,8 @@ function filterExpression(obj)
 		filter_expression.ExpressionAttributeValues[`:${key}`] = new_obj[key];
   }
 
-	// Tolgo la virgola finale dal FilterExpression
+	// Tolgo l'and finale dal FilterExpression
 	filter_expression.FilterExpression = filter_expression.FilterExpression.slice(0,-5);
-  console.log(filter_expression);
   return filter_expression;
 }
 
