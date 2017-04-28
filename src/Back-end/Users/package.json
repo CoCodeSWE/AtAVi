@@ -4,5 +4,8 @@
   "description": "Microservice for managing users",
   "main": "",
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "rxjs": "^5.3.0"
+  }
 }

@@ -1,4 +1,4 @@
-const objectFilter = require('../Utility/object-filter');
+const objectFilter = require('./object-filter');
 
 class UsersService
 {
@@ -26,7 +26,7 @@ class UsersService
 
 		// Parametro contenente i dati relativi all'user da aggiungere
 		let params = objectFilter(user, ['username', 'name', 'sr_id', 'password', 'slack_channel']);
-		
+
 		// Controllo che user abbia almeno i campi obbligatori (name e username)
 		if(user.username && user.name)
 		{
@@ -152,7 +152,7 @@ class UsersService
 	// Metodo che implementa la Lambda Function per ottenere la lista degli users
 	getUserList(event, context)
 	{
-		let list = 
+		let list =
 		{
 			users: []
 		};
@@ -161,7 +161,7 @@ class UsersService
 		let query = objectFilter(event.queryStringParameters, ['name', 'slack_channel']);
 		if(Object.keys(query).length === 0)
 			query = null;
-		
+
 		this.users.getUserList(query).subscribe(
 		{
 			next: function(data)
@@ -248,6 +248,7 @@ function internalServerError(context)
 {
 	return function(err)
 	{
+		console.log('internalServerError ', err);
 		context.succeed(
 		{
 			statusCode: 500,
@@ -259,6 +260,7 @@ function internalServerError(context)
 // Funzione per gestire lo status code 400
 function badRequest(context)
 {
+	console.log('badRequest');
 	context.succeed(
 	{
 		statusCode: 400,
