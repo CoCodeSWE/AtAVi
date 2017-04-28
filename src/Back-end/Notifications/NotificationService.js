@@ -8,94 +8,122 @@ class NotificationService
   getChannelList(event, context)
   {
     let self = this;
-    var control = true;
     let list = [];
-    self.client.users.list(function(err,data)
+    let types;
+    if (event.queryStringParameters.type)
+      types = event.queryStringParameters.type.split(',');
+    else
+      types = ['groups', 'users', 'channels'];
+
+    let promise  = Promise.resolve('');
+    let result = [];
+
+
+    const type_functions =
     {
-      if (err)
+      'channels': function(d)
       {
-        control = false; //ho avuto un errore, non vado avanti col creare la lista
-        context.succeed(
-				{
-					statusCode: 500,
-					body: JSON.stringify({ message: 'Internal server error' })
-				});
-      }
-      else
-      {
-        data.members.forEach(function(item)
+        self.client.channels.list(function(err,data)
         {
-          list.push(
+          if (err)
           {
-            name: item.name,
-            id: item.id,
-            type: 'user'
-          });
+            context.succeed(
+    				{
+    					statusCode: 500,
+    					body: JSON.stringify({ message: 'Internal server error' })
+    				});
+          }
+          else
+          {
+            data.channels.forEach(function(item)
+            {
+              result.push(
+              {
+                name: item.name,
+                id: item.id,
+                type: 'channel'
+              });
+            });
+          }
+        });
+      },
+      'groups': function(d)
+      {
+        self.client.groups.list(function(err,data)
+        {
+          if (err)
+          {
+            context.succeed(
+    				{
+    					statusCode: 500,
+    					body: JSON.stringify({ message: 'Internal server error' })
+    				});
+          }
+          else
+          {
+            data.groups.forEach(function(item)
+            {
+              result.push(
+              {
+                name: item.name,
+                id: item.id,
+                type: 'group'
+              });
+            });
+          }
+        });
+      },
+      'users': function(d)
+      {
+        self.client.users.list(function(err,data)
+        {
+          if (err)
+          {
+            context.succeed(
+            {
+              statusCode: 500,
+              body: JSON.stringify({ message: 'Internal server error' })
+            });
+          }
+          else
+          {
+            data.members.forEach(function(item)
+            {
+              result.push(
+              {
+                name: item.name,
+                id: item.id,
+                type: 'user'
+              });
+            });
+          }
         });
       }
+    };
+
+
+    types.forEach( function(type)
+    {
+      promise = promise.then(type_functions[type]);
     });
-    if (control === true)
+
+    promise = promise.then(function(d)
     {
-      self.client.channels.list(function(err,data)
+      context.succeed(
       {
-        if (err)
-        {
-          context.succeed(
-  				{
-  					statusCode: 500,
-  					body: JSON.stringify({ message: 'Internal server error' })
-  				});
-          control = false; //ho avuto un errore, non vado avanti col creare la lista
-        }
-        else
-        {
-          data.channels.forEach(function(item)
-          {
-            list.push(
-            {
-              name: item.name,
-              id: item.id,
-              type: 'channel'
-            });
-          });
-        }
+        statusCode: 200,
+        body: JSON.stringify(list)
       });
-    }
-    if (control === true)
+    });
+
+    promise.catch(function(err)
     {
-      self.client.groups.list(function(err,data)
+      context.succeed(
       {
-        if (err)
-        {
-          context.succeed(
-  				{
-  					statusCode: 500,
-  					body: JSON.stringify({ message: 'Internal server error' })
-  				});
-          control = false; //ho avuto un errore, non vado avanti col creare la lista
-        }
-        else
-        {
-          data.groups.forEach(function(item)
-          {
-            list.push(
-            {
-              name: item.name,
-              id: item.id,
-              type: 'group'
-            });
-          });
-        }
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal server error' })
       });
-      if (control === true)
-      {
-        context.succeed(
-        {
-          statusCode: 200,
-          body: JSON.stringify(list)
-        });
-      }
-    }
+    });
   }
 
   sendMsg(event, context)
@@ -120,7 +148,8 @@ class NotificationService
 
     const allowed = ['actions','callback_id','color','fallback','title'];
     let attachments_filtered = [];
-    body.msg.attachments.forEach(function(item){
+    body.msg.attachments.forEach(function(item)
+    {
       let filtered = Object.keys(item)
                       .filter(key => allowed.includes(key))
                       .reduce((obj,key) =>
@@ -129,9 +158,7 @@ class NotificationService
                         return obj;
                       }, {});
 
-
       attachments_filtered.push(filtered);
-
     });
 
 
@@ -151,7 +178,7 @@ class NotificationService
         {
           body: '',
           statusCode: 200
-        })
+        });
       }
     });
   }

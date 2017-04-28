@@ -9,6 +9,7 @@ let service;
 
 beforeEach(function()
 {
+  client._reset();
   service = new NotificationService(client);
   context.succeed = sinon.stub();
 });
@@ -23,7 +24,7 @@ describe('Back-end', function()
       {
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui canali a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
         {
-          let ev = {body: ''};
+          let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
           client.users.list.yield(null, users);
           client.channels.list.yield('errore');
@@ -34,7 +35,7 @@ describe('Back-end', function()
         });
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
         {
-					let ev = {body: ''};
+					let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
           client.users.list.yield('errore');
           client.channels.list.yield(null, channels);
@@ -46,7 +47,7 @@ describe('Back-end', function()
         });
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
         {
-					let ev = {body: ''};
+					let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
           client.users.list.yield(null, users);
           client.channels.list.yield(null, channels);
@@ -58,7 +59,7 @@ describe('Back-end', function()
         });
         it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista dei canali Slack (utenti, canali pubblici e gruppi privati) in formato JSON.", function()
         {
-          let ev = {body: ''};
+          let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
           client.users.list.yield(null, users);
           client.channels.list.yield(null, channels);
