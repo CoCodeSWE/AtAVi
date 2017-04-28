@@ -4,6 +4,7 @@ const expect = chai.expect;
 const client = require('./stubs/SlackWebClient');
 const context = require('./stubs/LambdaContext');
 const sinon = require('sinon');
+const promise = require ('./stubs/RequestPromise');
 
 let service;
 
@@ -22,53 +23,68 @@ describe('Back-end', function()
     {
       describe('getChannelList', function()
       {
-        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui canali a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui canali a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
           let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          client.users.list.yield(null, users);
-          client.channels.list.yield('errore');
-          client.groups.list.yield(null, groups);
-          let call = context.succeed.getCall(0);
-          expect(context.succeed.callCount).to.equal(1);
-          expect(call.args[0]).to.have.property('statusCode', 500);
+          setTimeout(function()
+					{
+            client.users.list.yield(null, users);
+            client.channels.list.yield('errore');
+            client.groups.list.yield(null, groups);
+            let call = context.succeed.getCall(0);
+            expect(context.succeed.callCount).to.equal(1);
+            expect(call.args[0]).to.have.property('statusCode', 500);
+            done();
+          });
         });
-        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
 					let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          client.users.list.yield('errore');
-          client.channels.list.yield(null, channels);
-          client.groups.list.yield(null, groups);
+          setTimeout(function()
+					{
+            client.users.list.yield('errore');
+            client.channels.list.yield(null, channels);
+            client.groups.list.yield(null, groups);
 
-          expect(context.succeed.callCount).to.equal(1);
-          let call = context.succeed.getCall(0);
-          expect(call.args[0]).to.have.property('statusCode', 500);
+            expect(context.succeed.callCount).to.equal(1);
+            let call = context.succeed.getCall(0);
+            expect(call.args[0]).to.have.property('statusCode', 500);
+            done();
+          });
         });
-        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a Slack, il campo statusCode della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
 					let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          client.users.list.yield(null, users);
-          client.channels.list.yield(null, channels);
-          client.groups.list.yield('errore');
+          setTimeout(function()
+					{
+            client.users.list.yield(null, users);
+            client.channels.list.yield(null, channels);
+            client.groups.list.yield('errore');
 
-          expect(context.succeed.callCount).to.equal(1);
-          let call = context.succeed.getCall(0);
-          expect(call.args[0]).to.have.property('statusCode', 500);
+            expect(context.succeed.callCount).to.equal(1);
+            let call = context.succeed.getCall(0);
+            expect(call.args[0]).to.have.property('statusCode', 500);
+            done();
+          });
         });
-        it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista dei canali Slack (utenti, canali pubblici e gruppi privati) in formato JSON.", function()
+        it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista dei canali Slack (utenti, canali pubblici e gruppi privati) in formato JSON.", function(done)
         {
           let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          client.users.list.yield(null, users);
-          client.channels.list.yield(null, channels);
-          client.groups.list.yield(null, groups);
+          setTimeout(function()
+					{
+            client.users.list.yield(null, users);
+            client.channels.list.yield(null, channels);
+            client.groups.list.yield(null, groups);
 
-          expect(context.succeed.callCount).to.equal(1);
-          let call = context.succeed.getCall(0);
-
-          expect(call.args[0]).to.have.property('statusCode', 200);
+            expect(context.succeed.callCount).to.equal(1);
+            let call = context.succeed.getCall(0);
+            expect(call.args[0]).to.have.property('statusCode', 200);
+            done();
+          });
         });
       });
 

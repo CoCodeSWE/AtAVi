@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+
 class NotificationService
 {
   constructor(client)
@@ -15,9 +17,9 @@ class NotificationService
     else
       types = ['groups', 'users', 'channels'];
 
-    let promise  = Promise.resolve('');
+    let promise  = new Promise(function(resolve,reject){resolve(1);});
     let result = [];
-
+    let trovato = true;
 
     const type_functions =
     {
@@ -32,9 +34,11 @@ class NotificationService
     					statusCode: 500,
     					body: JSON.stringify({ message: 'Internal server error' })
     				});
+
           }
           else
           {
+            console.log('channel',d);
             data.channels.forEach(function(item)
             {
               result.push(
@@ -45,6 +49,7 @@ class NotificationService
               });
             });
           }
+          return result;
         });
       },
       'groups': function(d)
@@ -58,9 +63,11 @@ class NotificationService
     					statusCode: 500,
     					body: JSON.stringify({ message: 'Internal server error' })
     				});
+
           }
           else
           {
+            console.log('group',d);
             data.groups.forEach(function(item)
             {
               result.push(
@@ -71,22 +78,27 @@ class NotificationService
               });
             });
           }
+          return result;
         });
       },
       'users': function(d)
       {
+
         self.client.users.list(function(err,data)
         {
           if (err)
           {
-            context.succeed(
+            throw new Error();
+            /*context.succeed(
             {
               statusCode: 500,
               body: JSON.stringify({ message: 'Internal server error' })
             });
+*/
           }
           else
           {
+            console.log('user',d);
             data.members.forEach(function(item)
             {
               result.push(
@@ -97,27 +109,32 @@ class NotificationService
               });
             });
           }
+          return result;
         });
       }
     };
 
 
+
     types.forEach( function(type)
     {
       promise = promise.then(type_functions[type]);
+      console.log(type);
     });
 
-    promise = promise.then(function(d)
+    promise.then(function(d)
     {
+      console.log('last');
       context.succeed(
       {
         statusCode: 200,
-        body: JSON.stringify(list)
+        body: JSON.stringify(result)
       });
-    });
 
-    promise.catch(function(err)
+    })
+    .catch(function(err)
     {
+      console.log('err');
       context.succeed(
       {
         statusCode: 500,
