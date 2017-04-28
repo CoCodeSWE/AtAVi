@@ -59,8 +59,8 @@ class UsersDAODynamoDB
   }
 
 	// Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-  getUserList()
-  {
+  getUserList(query)
+  {	
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
@@ -68,6 +68,18 @@ class UsersDAODynamoDB
 			{
 				TableName: self.table
 			};
+			
+			// Controllo se gli user da restituire hanno dei filtri (contenuti in query)
+			if(query)
+			{
+				let filter_expression = filterExpression(query);
+				if(Object.keys(filter_expression) > 0)
+				{
+					params.FilterExpression = filter_expression.FilterExpression;
+					params.ExpressionAttributeValues = filter_expression.ExpressionAttributeValues;
+				}
+			}
+				
 			self.client.scan(params, onScan(observer, self));
 		});
   }
@@ -144,6 +156,27 @@ function onScan(observer, users)
 			}
 		}
 	}
+}
+
+/*
+Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object).
+*/
+function filterExpression(obj)
+{
+	let init =
+	{
+		FilterExpression: '',
+		ExpressionAttributeValues: {}
+	}
+	
+	let filter_expression = Object.keys(obj).reduce(function(expression, key)
+	{
+		expression.FilterExpression += `${key} = :${key},`;
+		expression.ExpressionAttributeValues[`:${key}`] = obj[key];
+	}, init);
+	
+	// Tolgo la virgola finale dal FilterExpression
+	filter_expression.FilterExpression = filter_expression.FilterExpression.splice(0,-1);
 }
 
 module.exports = UsersDAODynamoDB;

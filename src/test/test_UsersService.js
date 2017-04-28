@@ -159,7 +159,7 @@ describe('Back-end', function()
         it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
         {
           users_DAO.getUserList.returns(Rx.Observable.throw(new Error()));
-          let ev = {};
+          let ev = { queryStringParameters: {} };
           service.getUserList(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
@@ -170,7 +170,7 @@ describe('Back-end', function()
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista degli utenti", function()
         {
           users_DAO.getUserList.returns(Rx.Observable.of({ Items: [ { name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' } ] }));
-          let ev = {};
+          let ev = { queryStringParameters: {} };
           service.getUserList(ev, context);
           let call = context.succeed.getCall(0);
           expect(context.succeed.calledOnce).to.be.true;
