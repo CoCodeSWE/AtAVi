@@ -68,20 +68,17 @@ class UsersDAODynamoDB
 			{
 				TableName: self.table
 			};
-			
+
 			// Controllo se gli user da restituire hanno dei filtri (contenuti in query)
 			if(query)
 			{
-				console.log('query');
 				let filter_expression = filterExpression(query);
-				console.log(filter_expression);
 				if(Object.keys(filter_expression).length > 0)
 				{
 					params.FilterExpression = filter_expression.FilterExpression;
 					params.ExpressionAttributeValues = filter_expression.ExpressionAttributeValues;
 				}
 			}
-			console.log(params);
 			self.client.scan(params, self._onScan(observer, params));
 		});
   }
@@ -131,14 +128,14 @@ class UsersDAODynamoDB
       });
     });
   }
-	
+
 	// Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
 	_onScan(observer, params)
 	{
 		let self = this;
-		return function(err, data)
+    return function(err, data)
 		{
-			if(err)
+      if(err)
 			{
 				observer.error(err);
 			}
@@ -167,7 +164,7 @@ function filterExpression(obj)
 		FilterExpression: '',
 		ExpressionAttributeValues: {}
 	};
-	
+
   let new_obj = {};
 
   for(let i in obj)

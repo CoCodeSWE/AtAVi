@@ -10,6 +10,7 @@ beforeEach(function()
 	next = sinon.stub();
 	error = sinon.stub();
 	complete = sinon.stub();
+  dynamo_client._reset();
 });
 
 describe('Back-end', function()
@@ -120,7 +121,7 @@ describe('Back-end', function()
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
 
-					expect(next.callCount).to.equal(2);
+          expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
 					expect(callNext.args[0].Items[0].name).to.equal('mauro');
@@ -159,33 +160,32 @@ describe('Back-end', function()
 
 					expect(complete.callCount).to.equal(1);
 				});
-				
+
 				it("Nel caso in cui il metodo venga chiamato con queryStringParameters con un solo attributo, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati filtrati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
 				{
 					let query =
 					{
 						name: 'mauro'
 					};
-					
+
 					users.getUserList(query).subscribe(
 					{
 						next: next,
 						error: error,
 						complete: complete
 					});
-					
+
 					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'sun'});
 					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "sun"}]}); // Ultimo elemento da ottenere
-					
+
 					let callScan = dynamo_client.scan.getCall(0);
-					console.log('callScan', callScan.args);
 					expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'name = :name');
 					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues', { ':name': 'mauro' });
-					
+
 					expect(error.callCount).to.equal(0);
-					
+
 					expect(next.callCount).to.equal(2);
-					
+
 					let callNext = next.getCall(0);
 					expect(callNext.args[0].Items[0].name).to.equal('mauro');
 					expect(callNext.args[0].Items[0].username).to.equal('mou');
@@ -194,7 +194,7 @@ describe('Back-end', function()
 					expect(callNext.args[0].Items[0].name).to.equal('mauro');
 					expect(callNext.args[0].Items[0].username).to.equal('sun');
 				});
-			
+
 				it("Nel caso in cui il metodo venga chiamato con queryStringParameters con due attributi, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati filtrati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
 				{
 					let query =
@@ -202,18 +202,18 @@ describe('Back-end', function()
 						name: 'mauro',
 						slack_channel: 'channel'
 					};
-					
+
 					users.getUserList(query).subscribe(
 					{
 						next: next,
 						error: error,
 						complete: complete
 					});
-					
+
 					// Da fare
 				});
       });
-			
+
       describe('removeUser', function()
       {
         it("Nel caso in cui l'utente non venga rimosso a causa di un'errore del DB, l'Observable ritornato deve chiamare il metodo error dell'observer iscritto.", function()
@@ -235,7 +235,7 @@ describe('Back-end', function()
 
 					expect(complete.callCount).to.equal(0);
         });
-        
+
 				it("Nel caso in cui l'utente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
         {
           users.removeUser('mou').subscribe(
