@@ -141,6 +141,7 @@ class UsersDAODynamoDB
 			}
 			else
 			{
+        //console.log(data, params);
 				observer.next(data);
 				if(data.LastEvaluatedKey)
 				{

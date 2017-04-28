@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
 const dao = require('../Back-end/Users/UsersDAODynamoDB');
-const dynamo_client = require('./stubs/DynamoDB');
+const dynamo_client = require('./stubs/DynamoDB-v2');
 
 let next, error, complete;
 beforeEach(function()
@@ -179,7 +179,7 @@ describe('Back-end', function()
 					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "sun"}]}); // Ultimo elemento da ottenere
 
 					let callScan = dynamo_client.scan.getCall(0);
-					expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'name = :name');
+          expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'name = :name');
 					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues', { ':name': 'mauro' });
 
 					expect(error.callCount).to.equal(0);
