@@ -1,8 +1,6 @@
 const sinon = require('sinon');
 
 
-module.exports =
-
 let stub =
 {
   _reset: function()
@@ -194,4 +192,8 @@ let stub =
         set: sinon.stub()
       }
     }
+  }
 };
+
+
+module.exports = stub;
