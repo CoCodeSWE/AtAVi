@@ -8,6 +8,7 @@ class ApplicationRegistryLocalClient
   register(name, pkg)
   {
     let self = this;
+    //ritorno un Observable che registra l'applicazione nel ApplicationLocalRegistry e successivamente chiama la complete dell'Observer iscritto
     return new Rx.Observable(function(observer)
     {
       self.registry.register(name, pkg);
@@ -18,17 +19,13 @@ class ApplicationRegistryLocalClient
   query(name)
   {
     let self = this;
+    //ritorno un Observable che interroga l'ApplicationLocalRegistry e successivamente chiama la next dell'Observer iscritto con i dati ottenuti.
     return new Rx.Observable(function(observer)
     {
       let app = self.registry.query(name);
-      
-      if (app === null)
-        observer.error();
-      else
-      {
-        observer.next(app);
-        observer.complete();
-      }
+
+      observer.next(app);
+      observer.complete();
     });
   }
 
