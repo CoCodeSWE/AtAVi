@@ -173,10 +173,13 @@ function filterExpression(obj)
 	{
 		expression.FilterExpression += `${key} = :${key},`;
 		expression.ExpressionAttributeValues[`:${key}`] = obj[key];
+		return expression;
 	}, init);
 	
 	// Tolgo la virgola finale dal FilterExpression
-	filter_expression.FilterExpression = filter_expression.FilterExpression.splice(0,-1);
+	filter_expression.FilterExpression = filter_expression.FilterExpression.slice(0,-1);
+	
+	return filter_expression;
 }
 
 module.exports = UsersDAODynamoDB;
