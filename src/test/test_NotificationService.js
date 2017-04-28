@@ -40,49 +40,40 @@ describe('Back-end', function()
         {
 					let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          setTimeout(function()
-					{
-            client.users.list.yield('errore');
-            client.channels.list.yield(null, channels);
-            client.groups.list.yield(null, groups);
-
-            expect(context.succeed.callCount).to.equal(1);
-            let call = context.succeed.getCall(0);
-            expect(call.args[0]).to.have.property('statusCode', 500);
+          client.groups.list.yields(null, groups);
+          client.users.list.yields('errore');
+          client.channels.list.yields(null, channels);
+          context.succeed = function(args)
+          {
+            expect(args).to.have.property('statusCode', 500);
             done();
-          });
+          }
         });
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
 					let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          setTimeout(function()
-					{
-            client.users.list.yield(null, users);
-            client.channels.list.yield(null, channels);
-            client.groups.list.yield('errore');
-
-            expect(context.succeed.callCount).to.equal(1);
-            let call = context.succeed.getCall(0);
-            expect(call.args[0]).to.have.property('statusCode', 500);
+          client.groups.list.yields('errore');
+          client.users.list.yields(null, users);
+          client.channels.list.yields(null, channels);
+          context.succeed = function(args)
+          {
+            expect(args).to.have.property('statusCode', 500);
             done();
-          });
+          }
         });
         it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista dei canali Slack (utenti, canali pubblici e gruppi privati) in formato JSON.", function(done)
         {
           let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          setTimeout(function()
-					{
-            client.users.list.yield(null, users);
-            client.channels.list.yield(null, channels);
-            client.groups.list.yield(null, groups);
-
-            expect(context.succeed.callCount).to.equal(1);
-            let call = context.succeed.getCall(0);
-            expect(call.args[0]).to.have.property('statusCode', 200);
+          client.groups.list.yields(null, groups);
+          client.users.list.yields(null, users);
+          client.channels.list.yields(null, channels);
+          context.succeed = function(args)
+          {
+            expect(args).to.have.property('statusCode', 200);
             done();
-          });
+          }
         });
       });
 

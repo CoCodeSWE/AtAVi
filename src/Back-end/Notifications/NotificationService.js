@@ -22,18 +22,14 @@ class NotificationService
 
     const type_functions =
     {
-      'channels':
-      function(result)
+      'channels': function(result)
       {
-        console.log('channels');
         return new Promise(function(resolve, reject)
         {
           self.client.channels.list(function(err,data)
           {
-            console.log('callback');
             if (err)
             {
-              console.log('reject');
               reject(
       				{
       					statusCode: 500,
@@ -51,7 +47,6 @@ class NotificationService
                   type: 'channel'
                 });
               });
-              console.log('resolve');
               resolve(result);
             }
           });
@@ -61,13 +56,10 @@ class NotificationService
       {
         return new Promise(function(resolve, reject)
         {
-          console.log('groups');
           self.client.groups.list(function(err,data)
           {
-            console.log('callback');
             if (err)
             {
-              console.log('reject');
               reject(
       				{
       					statusCode: 500,
@@ -85,7 +77,6 @@ class NotificationService
                   type: 'group'
                 });
               });
-              console.log('resolve');
               resolve(result);
             }
           });
@@ -93,15 +84,12 @@ class NotificationService
       },
       'users': function(result)
       {
-        console.log('users');
         return new Promise(function(resolve, reject)
         {
           self.client.users.list(function(err,data)
           {
-            console.log('callback');
             if (err)
             {
-              console.log('reject');
               reject(
               {
                 statusCode: 500,
@@ -110,7 +98,6 @@ class NotificationService
             }
             else
             {
-              console.log('user');
               data.members.forEach(function(item)
               {
                 result.push(
@@ -120,7 +107,6 @@ class NotificationService
                   type: 'user'
                 });
               });
-              console.log('resolve');
               resolve(result);
             }
           });
@@ -138,17 +124,14 @@ class NotificationService
 
     promise.then(function(result)
     {
-      console.log('last', d);
       context.succeed(
       {
         statusCode: 200,
         body: JSON.stringify(result)
       });
-
     })
     .catch(function(err)
     {
-      console.log('err');
       context.succeed(
       {
         statusCode: 500,
