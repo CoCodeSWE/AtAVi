@@ -17,99 +17,113 @@ class NotificationService
     else
       types = ['groups', 'users', 'channels'];
 
-    let promise  = new Promise(function(resolve,reject){resolve(1);});
-    let result = [];
+    let promise  = new Promise(function(resolve,reject){resolve([]);});
     let trovato = true;
 
     const type_functions =
     {
-      'channels': function(d)
+      'channels':
+      function(result)
       {
-        self.client.channels.list(function(err,data)
+        console.log('channels');
+        return new Promise(function(resolve, reject)
         {
-          if (err)
+          self.client.channels.list(function(err,data)
           {
-            context.succeed(
-    				{
-    					statusCode: 500,
-    					body: JSON.stringify({ message: 'Internal server error' })
-    				});
-
-          }
-          else
-          {
-            console.log('channel',d);
-            data.channels.forEach(function(item)
+            console.log('callback');
+            if (err)
             {
-              result.push(
+              console.log('reject');
+              reject(
+      				{
+      					statusCode: 500,
+      					body: JSON.stringify({ message: 'Internal server error' })
+      				});
+            }
+            else
+            {
+              data.channels.forEach(function(item)
               {
-                name: item.name,
-                id: item.id,
-                type: 'channel'
+                result.push(
+                {
+                  name: item.name,
+                  id: item.id,
+                  type: 'channel'
+                });
               });
-            });
-          }
-          return result;
+              console.log('resolve');
+              resolve(result);
+            }
+          });
         });
       },
-      'groups': function(d)
+      'groups': function(result)
       {
-        self.client.groups.list(function(err,data)
+        return new Promise(function(resolve, reject)
         {
-          if (err)
+          console.log('groups');
+          self.client.groups.list(function(err,data)
           {
-            context.succeed(
-    				{
-    					statusCode: 500,
-    					body: JSON.stringify({ message: 'Internal server error' })
-    				});
-
-          }
-          else
-          {
-            console.log('group',d);
-            data.groups.forEach(function(item)
+            console.log('callback');
+            if (err)
             {
-              result.push(
+              console.log('reject');
+              reject(
+      				{
+      					statusCode: 500,
+      					body: JSON.stringify({ message: 'Internal server error' })
+      				});
+            }
+            else
+            {
+              data.groups.forEach(function(item)
               {
-                name: item.name,
-                id: item.id,
-                type: 'group'
+                result.push(
+                {
+                  name: item.name,
+                  id: item.id,
+                  type: 'group'
+                });
               });
-            });
-          }
-          return result;
+              console.log('resolve');
+              resolve(result);
+            }
+          });
         });
       },
-      'users': function(d)
+      'users': function(result)
       {
-
-        self.client.users.list(function(err,data)
+        console.log('users');
+        return new Promise(function(resolve, reject)
         {
-          if (err)
+          self.client.users.list(function(err,data)
           {
-            throw new Error();
-            /*context.succeed(
+            console.log('callback');
+            if (err)
             {
-              statusCode: 500,
-              body: JSON.stringify({ message: 'Internal server error' })
-            });
-*/
-          }
-          else
-          {
-            console.log('user',d);
-            data.members.forEach(function(item)
-            {
-              result.push(
+              console.log('reject');
+              reject(
               {
-                name: item.name,
-                id: item.id,
-                type: 'user'
+                statusCode: 500,
+                body: JSON.stringify({ message: 'Internal server error' })
               });
-            });
-          }
-          return result;
+            }
+            else
+            {
+              console.log('user');
+              data.members.forEach(function(item)
+              {
+                result.push(
+                {
+                  name: item.name,
+                  id: item.id,
+                  type: 'user'
+                });
+              });
+              console.log('resolve');
+              resolve(result);
+            }
+          });
         });
       }
     };
@@ -119,12 +133,12 @@ class NotificationService
     types.forEach( function(type)
     {
       promise = promise.then(type_functions[type]);
-      console.log(type);
+      //console.log(type, promise);
     });
 
-    promise.then(function(d)
+    promise.then(function(result)
     {
-      console.log('last');
+      console.log('last', d);
       context.succeed(
       {
         statusCode: 200,

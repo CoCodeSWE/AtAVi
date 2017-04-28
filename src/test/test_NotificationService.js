@@ -27,16 +27,14 @@ describe('Back-end', function()
         {
           let ev = {body: '', queryStringParameters: ''};
           service.getChannelList(ev, context);
-          setTimeout(function()
-					{
-            client.users.list.yield(null, users);
-            client.channels.list.yield('errore');
-            client.groups.list.yield(null, groups);
-            let call = context.succeed.getCall(0);
-            expect(context.succeed.callCount).to.equal(1);
-            expect(call.args[0]).to.have.property('statusCode', 500);
+          client.groups.list.yields(null, groups);
+          client.users.list.yields(null, users);
+          client.channels.list.yields('errore');
+          context.succeed = function(args)
+          {
+            expect(args).to.have.property('statusCode', 500);
             done();
-          });
+          }
         });
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
