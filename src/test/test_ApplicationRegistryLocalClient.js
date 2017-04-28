@@ -16,10 +16,10 @@ describe('Client', function()
     {
       describe('register', function()
       {
-        it("Nel caso in cui una applicazione venga registrata corretamente, l'\\file{Observable} ritornato deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui una applicazione venga registrata correttamente, l'\\file{Observable} ritornato deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto.", function()
         {
           let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };
-          
+
           let bool = registry.register('conv', app_pckg).subscribe(
           {
 						next: next,
@@ -35,12 +35,29 @@ describe('Client', function()
       });
       describe('query', function()
       {
-        it('Vogliamo testare che venga ritornato correttamente l’\\file{ApplicationPackage} a partire dal suo nome passato come parametro.', function()
+        it("Nel caso in cui l'interrogazione del ApplicationLocalRegistry vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
         {
+
           app_local_reg.query.returns({ name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' });
-          let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };
-          let pckg_ret = registry.query('conv');
-          expect(pckg_ret).to.be.deep.equal(app_pckg);
+
+          let observable = registry.query('conv');
+          observable.subscribe(
+          {
+            next: next,
+						error: error,
+						complete: complete
+          });
+
+					expect(error.callCount).to.equal(0);
+
+					expect(next.callCount).to.equal(1);
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].name).to.equal('Conversation');
+					expect(callNext.args[0].cmdHandler).to.equal('test');
+          expect(callNext.args[0].setup).to.equal('test');
+          expect(callNext.args[0].ui).to.equal('test');
+
+					expect(complete.callCount).to.equal(1);
         });
       });
     });

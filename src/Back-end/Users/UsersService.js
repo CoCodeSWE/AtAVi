@@ -1,3 +1,5 @@
+const objectFilter = require('../Utility/object-filter');
+
 class UsersService
 {
 	// Costruttore della classe
@@ -22,26 +24,12 @@ class UsersService
 			return;
 		}
 
+		// Parametro contenente i dati relativi all'user da aggiungere
+		let params = objectFilter(user, ['username', 'name', 'sr_id', 'password', 'slack_channel']);
+
 		// Controllo che user abbia almeno i campi obbligatori (name e username)
 		if(user.username && user.name)
 		{
-			// Parametro contenente i dati relativi all'user da aggiungere
-			let params =
-			{
-				username: user.username,
-				name: user.name
-			};
-
-			// Controllo se ci sono eventuali campi opzionali
-			if(user.sr_id)
-				params.sr_id = user.sr_id;
-
-			if(user.password)
-				params.password = user.password;
-
-			if(user.slack_channel)
-				params.slack_channel = user.slack_channel;
-
 			this.users.addUser(params).subscribe(
 			{
 				next: function(data)
@@ -164,11 +152,17 @@ class UsersService
 	// Metodo che implementa la Lambda Function per ottenere la lista degli users
 	getUserList(event, context)
 	{
-		console.log(event);
-		let list = {
+		let list = 
+		{
 			users: []
 		};
-		this.users.getUserList().subscribe(
+
+		// Controllo se ci sono filtri da applicare nell'ottenimento degli utenti
+		let query = objectFilter(event.queryStringParameters, ['name', 'slack_channel']);
+		if(Object.keys(query).length === 0)
+			query = null;
+
+		this.users.getUserList(query).subscribe(
 		{
 			next: function(data)
 			{
