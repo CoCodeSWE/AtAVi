@@ -7,7 +7,6 @@ class VocalLoginMicrosoftModule
 		this.key = conf.key;
 		this.min_confidence = conf.min_confidence;
 		this.request_promise = rp;
-    console.log(this.request_promise);
 	}
 
 	// Verification Profile - Create Enrollment (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549c)
