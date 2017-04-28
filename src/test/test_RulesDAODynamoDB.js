@@ -201,7 +201,7 @@ describe('Back-end', function()
 					});
 
 					dynamo_client.update.yield(null, {});
-          expect(next.callCount).to.be.above(0);
+          expect(error.callCount).to.equal(0);
           expect(complete.callCount).to.equal(1);
 
 				});

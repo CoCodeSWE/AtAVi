@@ -66,7 +66,7 @@ describe('Back-end', function()
 						complete: complete
           });
           dynamo_client.get.yield({statusCode:500, message:"error getting data"});
-					pect(error.callCount).to.equal(1);
+					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
 					expect(next.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].name).to.equal(mock_task);
+					expect(callNext.args[0]).to.equal(mock_task);
 					expect(complete.callCount).to.equal(1);
 
         });
