@@ -1,3 +1,4 @@
+const objectFilter = require('./object-filter');
 class RulesService
 {
   //costruttore della classe
@@ -21,11 +22,12 @@ class RulesService
         badRequest(context);
         return;
     }
-
+    // Parametro contenente i dati relativi alla rule da aggiungere
+		let params = objectFilter(rule , ['enabled', 'id', 'name', 'targets', 'task']);
     // controllo che rule abbia tutti i campi definiti
     if(isDefined(rule.enabled) && isDefined(rule.id) && isDefined(rule.name) && isDefined(rule.targets[0].company) && isDefined(rule.targets[0].member) && isDefined(rule.targets[0].name) && isDefined(rule.task.type) && isDefined(rule.task.params))
     {
-      this.rules.addRule(rule).subscribe(
+      this.rules.addRule(params).subscribe(
       {
         next:function(data)
         {
@@ -114,7 +116,7 @@ class RulesService
 
         error: function(err)
         {
-          if(err.code === 'ConditionalCheckFailedException')
+          if(err.code === 'Not Found')
           {
             context.succeed(
             {
@@ -153,7 +155,14 @@ class RulesService
     let list = {        //conterrà la lista delle rules
       Items: []
     };
-    this.rules.getRuleList().subscribe(
+
+
+    // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
+		let query = objectFilter(event.queryStringParameters, ['id', 'name']);
+		if(Object.keys(query).length === 0)
+			query = null;
+
+    this.rules.getRuleList(query).subscribe(
     {
       next: function(data)
       {
@@ -178,7 +187,11 @@ class RulesService
     let list = {                  //conterrà la lista dei task
       Items: []
     };
-    this.task.getTaskList().subscribe(
+    // Controllo se ci sono filtri da applicare nell'ottenimento degli utenti
+		let query = objectFilter(event.queryStringParameters, ['task']);
+		if(Object.keys(query).length === 0)
+			query = null;
+    this.task.getTaskList(query).subscribe(
     {
       next: function(data)
       {
@@ -197,49 +210,7 @@ class RulesService
       }
     });
   }
-  //metodo che implementa la lambda fucntion per ottenere le rule applicate a dei target
-  queryRule(event,context)
-  {
-    let target;                //conterrà la lista dei target
-    let list = {                //conterrà la lista delle rule
-      Items: []
-    };
 
-    try
-    {
-      target = JSON.parse(event.body);
-    }
-    catch(exception)
-    {
-      badRequest(context);
-      return;
-    }
-    if(isDefined(target.company) && isDefined(target.member) && isDefined(target.name))
-    {
-      this.rules.query(target).subscribe(
-      {
-        next: function(data)
-        {
-          data.Items.forEach((rule) => { list.Items.push(rule); });
-        },
-
-        error: internalServerError(context),
-
-        complete: function()
-        {
-          context.succeed(
-          {
-            statusCode: 200,
-            body: JSON.stringify(list)
-          });
-        }
-      });
-    }	else
-  		{
-  			// Event non contiene i dati attesi: Bad Request(400)
-  			badRequest(context);
-  		}
-  }
   //metodo che implementa la lambda function per modificare una rule
   updateRule(event,context)
   {
