@@ -2,13 +2,20 @@ const objectFilter = require('./object-filter');
 
 class UsersService
 {
-	// Costruttore della classe
+	/**
+		* Costruttore della classe
+		* @param users {UsersDAO} - Attributo contenente lo UsersDAO
+		*/
 	constructor(users)
 	{
 		this.users = users; // UsersDAODynamoDB
 	}
 
-	// Metodo che implementa la Lambda Function per inserire uno user
+	/**
+		* Metodo che implementa la Lambda Function per inserire uno user
+		* @param event {LambdaEvent} - All'interno del campo body, sotto forma di stringa in formato JSON, un oggetto User contenente tutti i dati relativi ad un utente da inserire
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
 	addUser(event, context)
 	{
 		let user; // Conterrà l'user del body dell'event
@@ -55,7 +62,11 @@ class UsersService
 		}
 	}
 
-	// Metodo che implementa la Lambda Function per eliminare uno user
+	/**
+		* Metodo che implementa la Lambda Function per eliminare uno user
+		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'username dell'utente registrato che si vuole eliminare
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
 	deleteUser(event, context)
 	{
 		let username;
@@ -106,7 +117,11 @@ class UsersService
 		}
 	}
 
-	// Metodo che implementa la Lambda Function per ottenere uno user
+	/**
+		* Metodo che implementa la Lambda Function per ottenere uno user
+		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'username dell'utente registrato del quale si vogliono ottenere i dati
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
 	getUser(event, context)
 	{
 		let username = event.pathParameters;
@@ -149,7 +164,11 @@ class UsersService
 		});
 	}
 
-	// Metodo che implementa la Lambda Function per ottenere la lista degli users
+	/**
+		* Metodo che implementa la Lambda Function per ottenere la lista degli users
+		* @param event {LambdaUserListEvent} - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
 	getUserList(event, context)
 	{
 		let list =
@@ -182,7 +201,11 @@ class UsersService
 		});
 	}
 
-	// Metodo che implementa la Lambda Function per aggiornare uno user
+	/**
+		* Metodo che implementa la Lambda Function per aggiornare uno user
+		* @param event {LambdaIdEvent} - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo User contenente i dati da aggiornare e, all'interno del campo pathParameters, l'username dell'utente da modificare.
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
 	updateUser(event, context)
 	{
 		if(event.pathParameters)
@@ -197,25 +220,10 @@ class UsersService
 				badRequest(context);
 				return;
 			}
-
-			// Parametro contenente i dati relativi all'user da aggiungere
-			let params =
-			{
-				username: event.pathParameters
-			};
-
-			// Controllo eventuali campi opzionali da aggiungere a params
-			if(user.name)
-				params.name = user.name;
-
-			if(user.sr_id)
-				params.sr_id = user.sr_id;
-
-			if(user.password)
-				params.password = user.password;
-
-			if(user.slack_channel)
-				params.slack_channel = user.slack_channel;
+			
+			// Parametro contenente i dati relativi all'user da aggiornare
+			let params = objectFilter(user, ['name', 'sr_id', 'password', 'slack_channel']);
+			params.username = event.pathParameters;
 
 			this.users.updateUser(params).subscribe(
 			{

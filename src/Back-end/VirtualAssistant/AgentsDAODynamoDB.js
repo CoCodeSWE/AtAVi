@@ -2,13 +2,20 @@ const Rx = require('rxjs/Rx');
 
 class AgentsDAODynamoDB
 {
+	/**
+		* Costruttore della classes
+		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli agenti
+		*/
 	constructor(client)
 	{
 		this.client = client;
 		this.table = process.env.AGENTS_TABLE;
 	}
 
-	// Aggiunge un nuovo agente in DynamoDB
+	/**
+		* Aggiunge un nuovo agente in DynamoDB
+		* @param agent {Agent} - Parametro contenente l'agente da aggiungere al database
+		*/
 	addAgent(agent)
 	{
 		let self = this;
@@ -29,7 +36,10 @@ class AgentsDAODynamoDB
 		});
 	}
 
-	// Ottiene l'agente avente il nome passato come parametro
+	/**
+		* Ottiene l'agente avente il nome passato come parametro
+		* @param name {String} - Parametro contenente il nome dell'agente da ottenere
+		*/
 	getAgent(name)
 	{
 		let self = this;
@@ -58,7 +68,9 @@ class AgentsDAODynamoDB
 		});
 	}
 
-	// Ottiene la lista degli agenti in DynamoDB, suddivisi in blocchi (da massimo 1MB)
+	/**
+		* Ottiene la lista degli agenti in DynamoDB, suddivisi in blocchi (da massimo 1MB)
+		*/
 	getAgentList()
 	{
 		let self = this;
@@ -72,7 +84,10 @@ class AgentsDAODynamoDB
 		});
 	}
 
-	// Elimina l'agente avente il nome passato come parametro
+	/**
+		* Elimina l'agente avente il nome passato come parametro
+		* @param name {String} - Parametro contenente il nome dell'agente da rimuovere
+		*/
 	removeAgent(name)
 	{
 		let self = this;
@@ -97,7 +112,10 @@ class AgentsDAODynamoDB
 		});
 	}
 
-	// Aggiorna un agente passato come parametro (se non c'è lo crea)
+	/**
+		* Aggiorna un agente passato come parametro (se non c'è lo crea)
+		* @param agent {Agent} - Parametro contenente l'agente da aggiornare.
+		*/
 	updateAgent(agent)
 	{
 		let self = this;

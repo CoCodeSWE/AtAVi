@@ -1,5 +1,10 @@
 class ApiAiVAAdapter
 {
+	/**
+		* Costruttore della classe
+		* @param rp {RequestPromiseModule} - Modulo per poter fare richieste HTTP ai microservizi
+		* @param agent {Agent} - contiene l'Agent interrogato. Può essere null
+		*/
 	constructor(rp, agent)
 	{
 		this.agent = agent;
@@ -7,6 +12,10 @@ class ApiAiVAAdapter
 		this.VERSION = '20150910';
 	}
 	
+	/**
+		* Metodo che permette di interrogare l'Agent in api.ai
+		* @param str {VAQuery} - Attributo contenente i dati relativi all'interrogazione
+		*/
 	query(str)
 	{
 		if(this.agent === null)
@@ -49,6 +58,10 @@ class ApiAiVAAdapter
 		});
 	}
 	
+	/**
+		* Metodo setter di agent
+		* @param agent {Agent} - Nuovo agent 
+		*/
 	setAgent(agent)
 	{
 		this.agent = agent;

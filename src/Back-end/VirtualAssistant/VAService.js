@@ -1,13 +1,21 @@
 class VAService
 {
-	// Costruttore del metodo
+	/**
+		* Costruttore del metodo
+		* @param agents {AgentsDAO} - Fornisce i meccanismi d'accesso al database degli Agent disponibili
+		* @param va {VAModule} - Permette di interrogare un Agent di api.ai
+		*/
 	constructor(agents, va)
 	{
 		this.agents = agents;
 		this.va_module = va;
 	}
 	
-	// Implementa la Lambda Function che si occupa di interrogare l'assistente virtuale
+	/**
+		* Implementa la Lambda Function che si occupa di interrogare l'assistente virtuale
+		* @param event {LambdaEvent} - Contiene l'evento con i dati relativi alla richiesta di API Gateway
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
 	query(event, context)
 	{
 		let self = this;

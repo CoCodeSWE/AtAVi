@@ -2,14 +2,21 @@ const Rx = require('rxjs/Rx');
 
 class UsersDAODynamoDB
 {
+	/**
+		* Costruttore della classes
+		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli utenti
+		*/
   constructor(client)
   {
     this.client = client;
     this.table = process.env.USERS_TABLE;
   }
 
-	// Aggiunge un nuovo user in DynamoDB
-  addUser(user)
+	/**
+		* Aggiunge un nuovo user in DynamoDB
+		* @param user {User} - Utente che si vuole aggiungere al sistema
+		*/
+	addUser(user)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -29,8 +36,11 @@ class UsersDAODynamoDB
     });
   }
 
-	// Ottiene l'user avente l'username passato come parametro
-  getUser(username)
+	/**
+		* Ottiene l'user avente l'username passato come parametro
+		* @param username {String} - Parametro contenente l'username dello User che si vuole ottenere.
+		*/
+	getUser(username)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -58,8 +68,11 @@ class UsersDAODynamoDB
     });
   }
 
-	// Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-  getUserList(query)
+	/**
+		* Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
+		* @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+		*/
+	getUserList(query)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -83,8 +96,11 @@ class UsersDAODynamoDB
 		});
   }
 
-	// Elimina l'user avente l'username passato come parametro
-  removeUser(username)
+	/**
+		* Elimina l'user avente l'username passato come parametro
+		* @param username {String} - Parametro contenente l'username dello User che si vuole rimuovere 
+		*/
+	removeUser(username)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -108,8 +124,11 @@ class UsersDAODynamoDB
 		});
   }
 
-	// Aggiorna l'user passato come parametro (se non c'è lo crea)
-  updateUser(user)
+	/**
+		* Aggiorna l'user passato come parametro (se non c'è lo crea)
+		* @param user {User} - Parametro contenente i dati relativi all'utente che si vuole modificare
+		*/
+	updateUser(user)
   {
 		let self = this;
     return new Rx.Observable(function(observer)
@@ -129,7 +148,11 @@ class UsersDAODynamoDB
     });
   }
 
-	// Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
+	/**
+		* Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
+		* @param observer {UserObserver} - Observer da notificare
+		* @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+		*/
 	_onScan(observer, params)
 	{
 		let self = this;
@@ -156,7 +179,10 @@ class UsersDAODynamoDB
 	}
 }
 
-// Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object).
+/**
+	* Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object)
+	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	*/
 function filterExpression(obj)
 {
 	let filter_expression =
