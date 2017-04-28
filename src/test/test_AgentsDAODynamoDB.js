@@ -12,6 +12,7 @@ beforeEach(function()
 	next = sinon.stub();
 	error = sinon.stub();
 	complete = sinon.stub();
+	dynamo_client._reset();
 });
 
 describe('Back-end', function()

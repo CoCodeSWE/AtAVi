@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
 const dao = require('../Back-end/Users/UsersDAODynamoDB');
-const dynamo_client = require('./stubs/DynamoDB-v2');
+const dynamo_client = require('./stubs/DynamoDB');
 
 let next, error, complete;
 beforeEach(function()
@@ -210,7 +210,25 @@ describe('Back-end', function()
 						complete: complete
 					});
 
-					// Da fare
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'sun'});
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "sun"}]}); // Ultimo elemento da ottenere
+
+					let callScan = dynamo_client.scan.getCall(0);
+          expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'full_name = :full_name and slack_channel = :slack_channel');
+					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues.:full_name', 'mauro' );
+					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues.:slack_channel', 'channel' );
+
+					expect(error.callCount).to.equal(0);
+
+					expect(next.callCount).to.equal(2);
+
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].Items[0].name).to.equal('mauro');
+					expect(callNext.args[0].Items[0].username).to.equal('mou');
+
+					callNext = next.getCall(1);
+					expect(callNext.args[0].Items[0].name).to.equal('mauro');
+					expect(callNext.args[0].Items[0].username).to.equal('sun');
 				});
       });
 
