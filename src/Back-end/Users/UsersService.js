@@ -1,4 +1,4 @@
-const objectFilter = require('../Utility/object-filter');
+const objectFilter = require('./object-filter');
 
 class UsersService
 {
@@ -152,7 +152,7 @@ class UsersService
 	// Metodo che implementa la Lambda Function per ottenere la lista degli users
 	getUserList(event, context)
 	{
-		let list = 
+		let list =
 		{
 			users: []
 		};
