@@ -2,11 +2,20 @@ const Rx = require('rxjs/Rx');
 
 class ApplicationRegistryLocalClient
 {
+  /**
+  * Costruttore del registro che interroga l'ApplicationLocalRegistry.
+  * @param client {ApplicationLocalRegistry} registro contenente i package delle applicazioni diponibili. Ne facciamo qui la dependency injection.
+  */
   constructor(client)
   {
     this.registry = client;
   }
 
+  /**
+  * Metodo utilizzato per aggiungere o aggiornare il package di una applicazione.
+  * @param name {String} nome del package dell'applicazione.
+  * @param pkg {ApplicationPackage} package dell'applicazione da aggiungere.
+  */
   register(name, pkg)
   {
     let self = this;
@@ -18,6 +27,10 @@ class ApplicationRegistryLocalClient
     });
   }
 
+  /**
+  * Metodo utilizzato per ottenere il package di un'applicazione.
+  * @param name {String} nome del package dell'applicazione da ottenere.
+  */
   query(name)
   {
     let self = this;
