@@ -18,5 +18,3 @@ class Logic
     return new HttpPromise('POST', URL, 'test', blob);
   }
 }
-
-module.exports = Logic;

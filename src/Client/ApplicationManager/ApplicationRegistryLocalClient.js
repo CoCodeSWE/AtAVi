@@ -21,16 +21,13 @@ class ApplicationRegistryLocalClient
   query(name)
   {
     let self = this;
-    //ritorno un Observable che interroga l'ApplicationLocalRegistry e successivamente chiama la next dell'Observer iscritto con i dati ottenuti.
+    //ritorno un Observable che interroga l'ApplicationLocalRegistry, successivamente chiama la next dell'Observer iscritto con i dati ottenuti e la complete.
     return new Rx.Observable(function(observer)
     {
       let app = self.registry.query(name);
-      
+
       observer.next(app);
       observer.complete();
     });
   }
-
 }
-
-module.exports = ApplicationRegistryLocalClient;

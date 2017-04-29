@@ -48,13 +48,13 @@ class Player
   speak(text)
   {
     let to_speak = new SpeechSynthesisUtterance(text);
+    //imposto le configurazione del oggetto da riprodurre
     to_speak.lang = this.options.lang;
     to_speak.pitch = this.options.pitch;
     to_speak.rate = this.options.rate;
     to_speak.voice = this.options.voice;
     to_speak.volume = this.options.volume;
+
     this.tts.speak(to_speak);
   }
 }
-
-module.exports = Player;
