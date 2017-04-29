@@ -4,6 +4,9 @@
 'use strict';
 
 const sns = require('aws-sdk').SNS;
+const rp = require('request-promise');
+const conversations = require('../Conversations/ConversationsDAODynamoDB');
+const guests = require('../Guests/GuestsDAODynamoDB');
 
 let VAMessageListener = new VAMessageListener(conversations, guests, rp);
 

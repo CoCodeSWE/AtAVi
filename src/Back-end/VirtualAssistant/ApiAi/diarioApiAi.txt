@@ -92,3 +92,7 @@ Quasi completa l'interazione con l'ospite. Non funzionano i prompt finali (vuoi 
 
 Autore: Mattia Bottaro
 ----------------------------
+
+
+
+-------- 2017-04-27 --------

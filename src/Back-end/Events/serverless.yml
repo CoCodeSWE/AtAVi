@@ -17,4 +17,4 @@ functions:
   dispatcher:
     handler: handler.onMessage
     events:
-      - sns: atavifirst
+      - sns: atavi_SECOND

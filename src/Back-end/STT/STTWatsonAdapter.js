@@ -13,7 +13,7 @@ implementata la classe
 */
 const http = require("http");
 var promise = require('bluebird');
-var fs = require('fs');
+//var fs = require('fs');
 //var SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 
@@ -23,7 +23,7 @@ class STTWatsonAdapter
 	{
 		this.stream_buffer = sb;
 		this.stt = stt;
-		
+
 	}
 
 	speechToText(audio, type)
@@ -41,7 +41,6 @@ class STTWatsonAdapter
 		    				reject(err);
 		      	else
 		          	fulfill(res.results[0].alternatives[0].transcript);
-						//console.log(pro);
 		    	});
 			});
 	 }
