@@ -26,7 +26,8 @@ body {
   height: 40em;
   width: 40%;
   border: 0.2em solid #000000;
-  background-color: #ffffff; }
+  background-color: #ffffff;
+  overflow-y: scroll; }
 
 #startStop {
   text-align: center;
