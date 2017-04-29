@@ -37,7 +37,7 @@ describe('Back-end', function()
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(400);
 					expect(next.callCount).to.equal(0);
-					expect(complete.callCount).to.equal(0););
+					expect(complete.callCount).to.equal(0);
         });
 		    it("Nel caso in cui un ospite sia aggiunto correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function()
         {

@@ -37,7 +37,7 @@ describe('Back-end', function()
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(400);
 					expect(next.callCount).to.equal(0);
-					expect(complete.callCount).to.equal(0););
+					expect(complete.callCount).to.equal(0);
 
         });
 
