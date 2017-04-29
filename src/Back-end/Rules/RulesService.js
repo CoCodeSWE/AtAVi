@@ -67,7 +67,7 @@ class RulesService
 
         error: function(err)
         {
-          if(err.code === 'ConditionalCheckFailedException')
+          if(err.code === 'Not found')
           {
             context.succeed(
             {

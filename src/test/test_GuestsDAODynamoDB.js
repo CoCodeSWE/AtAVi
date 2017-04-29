@@ -1,4 +1,3 @@
-const Rx = require('rxjs/Rx');
 const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
@@ -81,7 +80,8 @@ describe('Back-end', function()
           expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0]).to.equal({ name : "Mauro", company : "Zero12" });
+					expect(callNext.args[0].name).to.equal( "Mauro");
+					expect(callNext.args[0].company).to.equal("Zero12");
 					expect(complete.callCount).to.equal(1);
         });
       });
@@ -126,7 +126,7 @@ describe('Back-end', function()
           });
 
           dynamo_client.scan.yield(null, {Items: [{ name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
-          dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }], LastEvaluatedKey: 'Luca'});
+          dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }]});
 
 					expect(error.callCount).to.equal(0);
 

@@ -103,14 +103,14 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.get.yield(null, mock_task);
+          dynamo_client.get.yield(null, {Items:[{type:"mock_type"}]});
 					dynamo_client.scan.yield({statusCode: 500});
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0]).to.equal(mock_task);
+					expect(callNext.args[0].Items[0].type).to.equal(mock_task.type);
 					expect(complete.callCount).to.equal(0);
 
         });
@@ -122,11 +122,11 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-					dynamo_client.get.yield(null, mock_task);
+					dynamo_client.get.yield(null, {Items:[{type:"mock_type"}]});
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0]).to.equal(mock_task);
+					expect(callNext.args[0].Items[0].type).to.equal(mock_task.type);
 					expect(complete.callCount).to.equal(1);
 
         });
