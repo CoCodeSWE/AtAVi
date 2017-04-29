@@ -127,15 +127,12 @@ describe('Back-end', function()
 
           dynamo_client.scan.yield(null, {Items: [{ name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
           dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }], LastEvaluatedKey: 'Luca'});
-          dynamo_client.scan.yield({ statusCode : 500 });
 
-          expect(error.callCount).to.equal(1);
-          let callError = error.getCall(0);
-          expect(callError.args[0].statusCode).to.equal(500);
+					expect(error.callCount).to.equal(0);
 
-          expect(error.callCount).to.equal(0);
+					expect(next.callCount).to.equal(2);
 
-          expect(next.callCount).to.equal(2);
+					let callNext = next.getCall(0);
 
           expect(callNext.args[0].Items[0].name).to.equal('Mauro');
           expect(callNext.args[0].Items[0].company).to.equal('Zero12');
@@ -198,10 +195,7 @@ describe('Back-end', function()
         {
           guests.updateGuest('mou','Zero12').subscribe(
           {
-            next: (data) =>
-            {
-              expect(data.name).to.equal("Paolo")
-            },
+            next: next,
             error: error,
             complete: complete
           });
