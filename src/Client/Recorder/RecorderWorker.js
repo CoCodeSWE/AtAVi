@@ -36,8 +36,22 @@ function init(config)
 
 function record(inputBuffer)
 {
-  recBuffersL.push(inputBuffer[0]);
-  recBuffersR.push(inputBuffer[1]);
+  resampler(inputBuffer[0], 16000, function(data)
+  {
+    data.getAudioBuffer(function(buffer)
+    {
+      recBuffersL.push(buffer);// passarli a resampler a 16000, callback fa push
+
+    });
+  });
+  resampler(inputBuffer[1], 16000, function(data)
+  {
+    data.getAudioBuffer(function(buffer)
+    {
+      recBuffersR.push(buffer);// passarli a resampler a 16000, callback fa push
+
+    });
+  });
   recLength += inputBuffer[0].length;
 }
 
@@ -55,14 +69,14 @@ function exportMonoWAV(type)
 {
   var bufferL = mergeBuffers(recBuffersL, recLength);
   //chiamo downsample su bufferL per portarlo a 16000Hz
-  var downsampled = downsampleBuffer(bufferL, 16000);
+  //var downsampled = downsampleBuffer(bufferL, 16000);
   var dataview = encodeWAV(downsampled, true);
   var audioBlob = new Blob([dataview], { type: type });
 
   this.postMessage(audioBlob);
 }
 
-function downsampleBuffer(buffer, rate) {
+/*function downsampleBuffer(buffer, rate) {
     if (rate == sampleRate) {
         return buffer;
     }
@@ -86,7 +100,7 @@ function downsampleBuffer(buffer, rate) {
         offsetBuffer = nextOffsetBuffer;
     }
     return result;
-}
+}*/
 
 function getBuffers()
 {
