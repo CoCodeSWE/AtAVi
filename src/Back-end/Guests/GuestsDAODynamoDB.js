@@ -2,12 +2,19 @@ const Rx = require('rxjs/Rx');
 
 class guestsDAODynamoDB
 {
+  /**
+		* Costruttore della classes
+		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella dei Guests
+		*/
   constructor(client)
   {
     this.client = client;
-    this.table = 'Guests';
+    this.table = process.env.GUESTS_TABLE;
   }
-  // aggiunge una guest a DynamoDB
+  /**
+		* Aggiunge un nuovo Guest in DynamoDB
+		* @param guest {Guest} - Guest che si vuole aggiungere al sistema
+		*/
   addGuest(guest)
   {
     let self = this;
@@ -27,7 +34,11 @@ class guestsDAODynamoDB
       });
     });
   }
-  // ottiene una guest da DynamoDB
+  /**
+		* Ottiene il guest avente name e company passato come parametro
+		* @param name {String} -  nome del Guest
+    * @param company {String} - azienda di provenienza del Guest
+		*/
   getGuest(name,company)
   {
     let self = this;
@@ -50,7 +61,11 @@ class guestsDAODynamoDB
       });
     });
   }
-  // rimuove una guest da DynamoDB
+  /**
+    * Elimina il Guest avente name e company passati come parametro
+    * @param name {String} -  nome del Guest
+    * @param company {String} - azienda di provenienza del Guest
+    */
   removeGuest(name,company)
   {
     let self = this;
@@ -72,7 +87,10 @@ class guestsDAODynamoDB
       });
     });
   }
-  //ottiene le guest aventi un determinato nome
+  /**
+    * Ottiene la lista dei Guest avente name come parametro, suddivisi in blocchi (da massimo da 1MB)
+    * @param name {String} -  nome del Guest
+    */
   query(name)
   {
     let self = this;
@@ -90,7 +108,9 @@ class guestsDAODynamoDB
     });
   }
 
-  //ottiene la lista delle guest da DynamoDB
+  /**
+		* Ottiene la lista dei Guest in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
+		*/
   getGuestList()
   {
     let self = this;
@@ -101,7 +121,10 @@ class guestsDAODynamoDB
     });
   }
 
-  //aggiorna una guest su DynamoDB
+  /**
+		* Aggiorna il Guest passato come parametro (se non c'è lo crea)
+		* @param guest {Guest} - Parametro contenente i dati relativi al Guest che si vuole modificare
+		*/
   updateGuest(guest)
   {
     let self = this;
@@ -126,7 +149,11 @@ class guestsDAODynamoDB
   }
 }
 
-// Viene ritornata la funzione di callback per la gesitone dei blocchi di getGuestList
+/**
+  * Viene ritornata la funzione di callback per la gesitone dei blocchi di getGuestList e query
+  * @param observer {GuestObserver} - Observer da notificare
+  * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+  */
 function onScan(observer, guests)
 {
 	return function(err, data)

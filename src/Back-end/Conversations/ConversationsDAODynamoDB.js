@@ -2,12 +2,19 @@ const Rx = require('rxjs/Rx');
 
 class ConversationsDAODynamoDB
 {
+  /**
+		* Costruttore della classes
+		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle conversazioni
+		*/
   constructor(client)
   {
     this.client = client;
-    this.table = 'Conversations';
+    this.table = process.env.CONVERSATIONS_TABLE;
   }
-  // aggiunge una conversazione a DynamoDB
+  /**
+		* Aggiunge una nuova conversazione in DynamoDB
+		* @param conversation {Conversation} - Conversazione che si vuole aggiungere al sistema
+		*/
   addConversation(conversation)
   {
     let self = this;
@@ -27,7 +34,11 @@ class ConversationsDAODynamoDB
       });
     });
   }
-  //aggiunge un messaggio ad una conversazione su DynamoDB
+  /**
+    * Aggiunge un nuovo messaggio ad una conversazione in DynamoDB
+    * @param msg {ConversationMsg} - messaggio che si vuole aggiungere alla conversazione
+    * @param session_id {String} - id della sessione della conversazione dove aggiungere il messaggio
+    */
   addMessage(msg, session_id)
   {
     let self = this;
@@ -57,7 +68,10 @@ class ConversationsDAODynamoDB
     });
   };
 
-  //ottiene una conversazione da DynamoDB
+  /**
+		* Ottiene la conversazione avente l'id della sessione passato come parametro
+		* @param session_id {String} - id della sessione della conversazione che si vuole ottenere
+		*/
   getConversation(session_id)
   {
     let self = this;
@@ -79,7 +93,10 @@ class ConversationsDAODynamoDB
       });
     });
   }
-  //ottiene la lista delle conversazioni su DynamoDB
+  /**
+		* Ottiene la lista delle conversazioni aventi l'd del Guest come parametro, suddivisi in blocchi (da massimo da 1MB)
+		* @param guest_id {String} - id del Guest della lista di conversazioni che si vuole ottenere
+		*/
   getConversationList(guest_id)
   {
     let self = this;
@@ -97,7 +114,11 @@ class ConversationsDAODynamoDB
     });
   }
 
-  //rimouve una conversazione da DynamoDB
+  /**
+    * Elimina la conversazione avente l'id della sessione  passato come parametro
+    * @param session_id {String} - Parametro contenente l'id dello sessione della conversazione che si vuole rimuovere
+    */
+
   removeConversation(session_id)
   {
     let self = this;
@@ -120,7 +141,11 @@ class ConversationsDAODynamoDB
   }
 }
 
-// Viene ritornata la funzione di callback per la gesitone dei blocchi di getConversationList
+/**
+  * Viene ritornata la funzione di callback per la gesitone dei blocchi di getConversationList
+  * @param observer {ConversationObserver} - Observer da notificare
+  * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+  */
 function onScan(observer, conversations)
 {
 	return function(err, data)

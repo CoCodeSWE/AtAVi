@@ -2,13 +2,20 @@ const Rx = require('rxjs/Rx');
 
 class RulesDAODynamoDB
 {
+  /**
+    * Costruttore della classes
+    * @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle rules
+    */
   constructor(client)
   {
     this.client = client;
     this.table = process.env.RULES_TABLE;
   }
 
-  //aggiunge una nuova rule in DynamoDB
+  /**
+		* Aggiunge una nuova rule in DynamoDB
+		* @param rule {Rule} - Rule che si vuole aggiungere al sistema
+		*/
   addRule(rule)
   {
     let self = this;
@@ -28,7 +35,10 @@ class RulesDAODynamoDB
     });
   }
 
-  //ottine una rule in DynamoDB tramite l'id
+  /**
+		* Ottiene la rule avente l'id passato come parametro
+		* @param id {String} - Parametro contenente l'id della Rule che si vuole ottenere.
+		*/
   getRule(id)
   {
     let self = this;
@@ -57,7 +67,10 @@ class RulesDAODynamoDB
     });
   }
 
-  //ottiene la lista delle rule in DynamoDB, suddivisi in blocchi da massimo 1 MB
+  /**
+    * Ottiene la lista delle rule in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
+    * @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+    */
   getRuleList(query)
   {
 		let self = this;
@@ -82,7 +95,10 @@ class RulesDAODynamoDB
 		});
   }
 
-  //rimuove una rule da DynamoDB
+  /**
+		* Elimina la rule avente l'id passato come parametro
+		* @param id {String} - Parametro contenente l'id della Rule che si vuole rimuovere
+		*/
   removeRule(id)
   {
     let self = this;
@@ -106,7 +122,10 @@ class RulesDAODynamoDB
       });
     });
   }
-  //aggiorna una rule su DynamoDB
+  /**
+		* Aggiorna la Rule passata come parametro (se non c'è lo crea)
+		* @param rule {Rule} - Parametro contenente i dati relativi alla Rule che si vuole modificare
+		*/
   updateRule(rule)
   {
     let self = this;
@@ -134,7 +153,11 @@ class RulesDAODynamoDB
   }
 
 
-  // Viene ritornata la funzione di callback per la gesitone dei blocchi di getRuleList e query
+  /**
+    * Viene ritornata la funzione di callback per la gesitone dei blocchi di getRuleList
+    * @param observer {RuleObserver} - Observer da notificare
+    * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+    */
   _onScan(observer, rules)
   {
   	return function(err, data)
@@ -161,7 +184,10 @@ class RulesDAODynamoDB
   	}
   }
 }
-// Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object).
+/**
+	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
+	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	*/
 function filterExpression(obj)
 {
 	let filter_expression =

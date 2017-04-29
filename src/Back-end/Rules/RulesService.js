@@ -1,14 +1,22 @@
 const objectFilter = require('./object-filter');
 class RulesService
 {
-  //costruttore della classe
+  /**
+		* Costruttore della classe
+		* @param rules {RulesDAO} - Attributo contenente il RulesDAO
+    * @param task {TasksDAO} - Attributo contenente il TasksDAO
+		*/
   constructor(rules,task)
   {
     this.rules = rules     //RulesDAODynamoDB
     this.task = task;      //TaskDAODynamoDB
   }
 
-  // metodo che implementa la lambda function per aggiungere una rule
+  /**
+		* Metodo che implementa la Lambda Function per inserire una rule
+		* @param event {LambdaEvent} - All'interno del campo body, sotto forma di stringa in formato JSON, un oggetto Rule contenente tutti i dati relativi ad una Rule da inserire
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
   addRule(event,context)
   {
     let rule; //conterrà la rule da aggiungere
@@ -51,7 +59,11 @@ class RulesService
     }
   }
 
-  //metodo che implementa la lambda function per l'eliminazione di una rule
+  /**
+		* Metodo che implementa la Lambda Function per eliminare una rule
+		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole eliminare
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
   deleteRule(event,context)
   {
     let rule_id;
@@ -100,6 +112,11 @@ class RulesService
   			badRequest(context);
   		}
   }
+  /**
+		* Metodo che implementa la Lambda Function per eliminare una rule
+		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole ottenere
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
   getRule(event,context)
   {
     let rule_id;
@@ -149,7 +166,11 @@ class RulesService
   			badRequest(context);
   		}
   }
-  //metodo che implementa la lambda function per ottenere la lista delle rule
+  /**
+		* Metodo che implementa la Lambda Function per ottenere la lista delle rules
+		* @param event {LambdaRuleListEvent} - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
   getRuleList(event,context)
   {
     let list = {        //conterrà la lista delle rules
@@ -181,7 +202,11 @@ class RulesService
       }
     });
   }
-  //metodo che implementa la lambda function per ottenere la lista dei task
+  /**
+		* Metodo che implementa la Lambda Function per ottenere la lista dei tasks
+		* @param event {LambdaTaskListEvent} - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
   getTaskList(event,context)
   {
     let list = {                  //conterrà la lista dei task
@@ -211,7 +236,11 @@ class RulesService
     });
   }
 
-  //metodo che implementa la lambda function per modificare una rule
+  /**
+		* Metodo che implementa la Lambda Function per aggiornare una rule
+		* @param event {LambdaIdEvent} - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo Rule contenente i dati da aggiornare e, all'interno del campo pathParameters, l'id della rule da modificare.
+		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		*/
   updateRule(event,context)
   {
     if(event.pathParameters)
