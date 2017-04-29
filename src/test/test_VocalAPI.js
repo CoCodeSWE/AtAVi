@@ -9,12 +9,13 @@ const stt = require('./stubs/STT');
 const sns = require('./stubs/SNS');
 const context = require('./stubs/LambdaContext');
 
-let next, error, complete;
+let next, error, complete, api;
 beforeEach(function()
 {
 	next = sinon.stub();
 	error = sinon.stub();
 	complete = sinon.stub();
+	api = new VocalAPI(vocalLogin, jwt, promise, stt, sns);
 });
 
 describe('Back-end', function()
@@ -23,7 +24,6 @@ describe('Back-end', function()
 	{
 		describe('VocalAPI', function() 
 		{
-			let api = new VocalAPI(vocalLogin, jwt, promise, stt, sns);
 			describe('_addRule', function ()
 			{
 				it('Se la risposta ricevuta dal microservizio Rules ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
@@ -495,12 +495,12 @@ describe('Back-end', function()
 				it('Se la risposta ricevuta dal microservizio Rules ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
 					promise.returns(Promise.reject(JSON.stringify(errore)));
-					api._removeRule(5).subscribe(
+					api._removeRule(rule).subscribe(
 					{
 						next: next,
 						error: error,
 						complete: complete
-					});
+					});	
 					
 					setTimeout(function()
 					{
