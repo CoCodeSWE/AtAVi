@@ -5,7 +5,7 @@ const expect = chai.expect;
 const dao = require('../Back-end/Conversations/ConversationsDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
-var mock_conv = {guest_id:1, session_id: 2, messages:[{sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}};
+var mock_conv = {guest_id:1, session_id: 2, messages:[{sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}]};
 
 let next, error, complete;
 beforeEach(function()
