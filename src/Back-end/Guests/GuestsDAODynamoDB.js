@@ -45,6 +45,7 @@ class guestsDAODynamoDB
         if(err)
           observer.error(err);
         else
+          observer.next();
           observer.complete();
       });
     });

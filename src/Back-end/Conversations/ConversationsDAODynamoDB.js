@@ -52,12 +52,13 @@ class ConversationsDAODynamoDB
       if(err)
         observer.error(err);
       else
+        observer.next(data);
         observer.complete();
     });
   };
 
   //ottiene una conversazione da DynamoDB
-  getConversation(sessionId)
+  getConversation(session_id)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -65,7 +66,7 @@ class ConversationsDAODynamoDB
       let params = {
         TableName: self.table,
         Key: {
-          "session_id": sessionId
+          "session_id": session_id
         }
       };
       self.client.get(params, function(err, data)
@@ -73,6 +74,7 @@ class ConversationsDAODynamoDB
         if(err)
           observer.error(err);
         else
+          observer.next();
           observer.complete();
       });
     });
