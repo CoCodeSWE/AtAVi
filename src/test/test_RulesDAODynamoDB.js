@@ -84,11 +84,11 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.get.yield(null, mock_rule);
+          dynamo_client.get.yield(null, {enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}});
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0]).to.equal(mock_rule);
+					expect(callNext.args[0].id).to.equal(mock_rule.id);
 					expect(complete.callCount).to.equal(1);
 
         });
@@ -104,7 +104,7 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.scan.yield(null, mock_rule);
+          dynamo_client.scan.yield(null, {Items:[{enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}}]});
 					dynamo_client.scan.yield({statusCode: 500});
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
@@ -126,11 +126,11 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.scan.yield(null, mock_rule);
+          dynamo_client.scan.yield(null, {Items:[{enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}}]} );
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0]).to.equal(mock_rule);
+					expect(callNext.args[0].Items[0].id).to.equal(mock_rule.id);
 					expect(complete.callCount).to.equal(1);
 
         });
