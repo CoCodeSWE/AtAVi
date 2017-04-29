@@ -125,7 +125,6 @@ class NotificationService
     promise.then(function(result)
     {
       var final_result = [];
-      console.log(event.queryStringParameters.name);
       if (event.queryStringParameters.name)
       {
           final_result = result.filter(item => item.name === event.queryStringParameters.name);
@@ -134,7 +133,6 @@ class NotificationService
       {
           final_result = result;
       }
-      console.log(final_result);
       context.succeed(
       {
         statusCode: 200,
