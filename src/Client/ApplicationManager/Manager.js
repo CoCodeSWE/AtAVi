@@ -45,8 +45,9 @@ class Manager
 
   setFrame(frame)
   {
-    ????
-    this.frame.appendChild(frame);
+    this.frame.removeChild(this.ui);
+    this.frame = frame;
+    this.frame.appendChild(this.ui);
   }
 
   _changeApplication(app)
