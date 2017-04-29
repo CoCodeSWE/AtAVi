@@ -1,12 +1,10 @@
-const Rx = require('rxjs/Rx')
-
 class Player
 {
   constructor(conf, speech_syntesis)
   {
     this.tts = speech_syntesis;
     this.options = conf;
-    this.subject = new Rx.Subject();
+    //this.subject = new Rx.Subject();
   }
 
   cancel()
@@ -14,10 +12,10 @@ class Player
     this.tts.cancel();
   }
 
-  getObservable()
+  /*getObservable()
   {
     return this.tts.subject.asObservable();
-  }
+  }*/
 
   getVoices()
   {
@@ -56,5 +54,3 @@ class Player
     this.tts.speak(to_speak);
   }
 }
-
-module.exports = Player;
