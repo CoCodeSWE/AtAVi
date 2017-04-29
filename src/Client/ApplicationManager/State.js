@@ -7,13 +7,11 @@ class State
 
   addApp(app, name)
   {
-    apps[name] = app;
+    this.apps[name] = app;
   }
 
   getApp(name)
   {
-    return apps[name];
+    return this.apps[name];
   }
 }
-
-module.exports = State;

@@ -18,7 +18,7 @@ class Manager
       let new_app = this.state.getApp(app);
 
       //se non si trova nello state devo recuperarla dall'ApplicationRegistryLocalClient tramite il metodo query()
-      if (new_app === null)
+      if (new_app === undefined)
       {
         registry_client.query(app).subscribe(
         {
@@ -40,15 +40,14 @@ class Manager
       }
     }
     else
-      //eseguo il comando nell'applicazione istanziata
       this.application.runCmd(cmd, params);
   }
 
   setFrame(frame)
   {
-    let list=document.getElementById("mainFrame");
-    list.parentNode.removeChild(list);
-    this.frame.appendChild(frame);
+    this.frame.removeChild(this.ui);
+    this.frame = frame;
+    this.frame.appendChild(this.ui);
   }
 
   _changeApplication(app)
@@ -59,10 +58,8 @@ class Manager
     this.frame.removeChild(this.ui);
 
     this.application = app;
-    //aggiungo un div con la nuova applicazione da istanziare
-    let new_ui = this.application.getUI();
-    this.ui = new_ui;
-
+    //aggiungo la nuova applicazione da istanziare al frame HTML
+    this.ui = this.application.getUI();
     this.frame.appendChild(this.ui);
   }
 
