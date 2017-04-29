@@ -1,5 +1,3 @@
-const Rx = require('rxjs/Rx')
-
 class Player
 {
   /**
@@ -11,8 +9,9 @@ class Player
   {
     this.tts = speech_syntesis;
     this.options = conf;
-    this.subject = new Rx.Subject();
+    //this.subject = new Rx.Subject();
   }
+
   /**
   * Metodo utilizzato per rimuovere tutte le utterance dalla coda.
   */
@@ -23,7 +22,6 @@ class Player
 
   /**
   * Metodo utilizzato per ritornare l'Observable relativo all'attributo subject.
-  * @return {BoolObservable} .
   */
   getObservable()
   {

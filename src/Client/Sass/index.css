@@ -1,6 +1,9 @@
 @font-face {
   font-family: Atavi;
   src: url("../Font/heroesassemble2.ttf"); }
+@font-face {
+  font-family: AtaviMessage;
+  src: url("../Font/TakeItOrLeaveItBold.ttf"); }
 * {
   margin: 0em;
   padding: 0em; }
@@ -14,7 +17,7 @@ html {
   overflow: hidden; }
 
 body {
-  background-color: #464646; }
+  background-color: #3d323e; }
 
 #mainFrame {
   border-top-left-radius: 2em;
@@ -22,8 +25,9 @@ body {
   margin: 3em auto;
   height: 40em;
   width: 40%;
-  border: 0.3em solid #000000;
-  background-color: #ffffff; }
+  border: 0.2em solid #000000;
+  background-color: #ffffff;
+  overflow-y: scroll; }
 
 #startStop {
   text-align: center;
@@ -40,6 +44,7 @@ body {
   background-size: 100% 100%;
   background-color: transparent;
   background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
   border: 0;
   cursor: pointer;
   overflow: hidden; }
@@ -47,14 +52,8 @@ body {
 #start {
   background-image: url("../Image/start.png"); }
 
-#start:active {
-  border: 0; }
-
 #stop {
   background-image: url("../Image/stop.png"); }
-
-#stop:active {
-  border: 0; }
 
 #logoApp {
   color: #ffffff;
@@ -66,10 +65,31 @@ body {
   font-family: Atavi;
   font-size: 2.6em; }
 
+#listMessages {
+  list-style: none;
+  background: none;
+  margin: 0;
+  margin-top: 1em;
+  margin-bottom: 1em; }
+
+#listMessages li {
+  padding: 0.5em;
+  border: 0.2em;
+  max-width: 40%;
+  font-size: 1.8em;
+  word-wrap: break-word;
+  box-shadow: 0.04em 0.04em 0.04em 0.04em #888888;
+  font-family: AtaviMessage; }
+
 li[data-sender="0"] {
-  color: red; }
+  background-color: #9adb99;
+  margin-left: 0.5em;
+  border-radius: 0.6em 0.6em 0.6em 0; }
 
 li[data-sender="1"] {
-  color: green; }
+  background-color: #99dbdb;
+  margin-right: 0.5em;
+  margin-left: 55%;
+  border-radius: 0.6em 0.6em 0 0.6em; }
 
 /*# sourceMappingURL=index.css.map */
