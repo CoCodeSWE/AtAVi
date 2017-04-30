@@ -10,7 +10,6 @@ describe('Client', function()
       {
         it("Nel caso in cui una applicazione venga registrata correttamente, l'\\file{Observable} ritornato deve chiamare il metodo \\file{complete} dell'\\file{Observer} iscritto.", function()
         {
-          let app_local_reg = new ApplicationLocalRegistry();
           let registry = new ApplicationRegistryLocalClient(app_local_reg);
 
           let app_pckg = { name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };
