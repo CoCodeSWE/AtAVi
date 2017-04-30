@@ -1,0 +1,13 @@
+{
+  "name": "administration-webhook-service",
+  "version": "0.0.1",
+  "description": "Webhook for administration agent",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "ConversationsDAODynamoDB": "^0.0.1",
+    "UsersDAODynamoDB": "^0.0.1",
+    "GuestsDAODynamoDB": "^0.0.1"
+  }
+}

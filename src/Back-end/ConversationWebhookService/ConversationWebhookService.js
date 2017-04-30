@@ -9,12 +9,11 @@ class ConversationWebhookService
    * @param guests {GuestsDAO} - DAO utilizzato per l'accesso ai dati relativi agli ospiti che hanno già visitato l'azienda
    * @param users {UsersDAO} - DAO utilizzato per l'accesso ai dati relativi agli utenti (amministratori)
    */
-  constructor(conversations, guests, users, jwt)
+  constructor(conversations, guests, users)
   {
     this.users = users;
     this.guests = guests;
     this.users = users;
-    this.jwt = jwt;
   }
 
   /**
@@ -79,7 +78,7 @@ class ConversationWebhookService
               //forse i dati che metto nel context posso metterli direttamente in data di event, senza creare il context
               //cosi eviterei anche di avere più di un context attivo nello stesso momento
               //forse però ho bisogno di settare il context per attivare la richista di conferma
-              contextOut: [
+/*              contextOut: [
               {
                 name: 'admin',
                 lifespan: 0,  //dura solo un'interazione e poi sparisce
@@ -87,14 +86,15 @@ class ConversationWebhookService
                 {
                   username: users[0].username //metto come possibile username il primo. Nel caso l'utente dirà di cambiare username
                 }
-              }],
+              }],*/
               data: body.originalRequest.data,
               followupEvent:
               {
-                name: "eventoAdminRiconosciuto",
+                name: "RecognizeAdminEvent",
                 data:
                 {
-                  //metto username qua?
+                  name: users[0].name,
+                  username: users[0].username
                 }
               }
             })
@@ -159,7 +159,7 @@ class ConversationWebhookService
 
   /**
   * metodo privato utilizzato per mandare la risposta di default nel caso in cui la persona con cui sta avvenendo la conversazione
-  * non sia né un amministratore né un ospite chje ha visitato precedentemente l'azienda 
+  * non sia né un amministratore né un ospite chje ha visitato precedentemente l'azienda
   * @param body {ApiAiRequestBody} - contiene i dati della richiesta fatta da api.ai al webhook
   * @param context {lambdaContext} - permette di inviare una risposta ad api gateway
   */
