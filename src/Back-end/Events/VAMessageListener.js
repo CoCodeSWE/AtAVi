@@ -43,6 +43,13 @@ class VAMessageListener
     this.NOTIFICATIONS_SERVICE_URL = process.env.NOTIFICATIONS_SERVICE_URL;
 	}
 
+	/**
+	* Metodo
+	* @param event {type} -
+	* @param context {type} -
+	* @param callback {function} -
+	*/
+
 	onMessage(event, context, callback)
 	{
 		let self = this;
@@ -63,61 +70,97 @@ class VAMessageListener
 			json: true
 		};
 		let text = ''; // testo da inviare alla persona desiderata
+		if(message.action === 'guest.warnedRequiredPerson') // notificare la persona desiderata dell'arrivo dell'ospite
+			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" is arrived and looking for ' + message.res.contexts[0].parameters.required_person + '.';
+		else if(message.action === 'guest.coffee') // l'ospite vuole un caffè
+			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" wants a coffee.';
+		else if(message.action === 'guest.drink') // l'ospite vuole qualcos'altro da bere
+			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" wants \"' + message.res.contexts[0].parameters.another_drink + '\"';
+		else if(message.action === 'guest.need') // l'ospite ha bisogno di qualcosa
+			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" needs \"' + message.res.contexts[0].parameters.need + '\"';
 
-		rp(rules_options).then(function(parsed_body) // occhio che quando esisteranno più tipi di task, parsed_body potrebbe contenere un vettore
+		if(text) // se text è non vuoto => bisogna notifica qualcuno di qualcosa
 		{
-			// parametri per la richiesta HTTP POST al microservizio Notifications
-			// if(direttiva === send_to_slack)
-			if(parsed_body.task === 'notifications_slack') // nome improvvisato, NON da considerare reale.
+			rp(rules_options).then(function(parsed_body) // occhio che quando esisteranno più tipi di task, parsed_body potrebbe contenere un vettore
 			{
-				if(message.action === 'guest.warnedRequiredPerson') // notificare la persona desiderata dell'arrivo dell'ospite
-					text = message.res.contexts[0].parameters.name + ' from ' + message.res.contexts[0].parameters.company + ' is looking for ' + message.res.contexts[0].parameters.required_person + '.';
-				else if(message.action === 'guest.coffee') // l'ospite vuole un caffè
-					text = message.res.contexts[0].parameters.name + ' from ' + message.res.contexts[0].parameters.company + ' wants a coffee.';
-				else if(message.action === 'guest.drink') // l'ospite vuole qualcos'altro da bere
-					text = message.res.contexts[0].parameters.name + ' from ' + message.res.contexts[0].parameters.company + ' wants \"' + message.res.contexts[0].parameters.another_drink + '\"';
-				else if(message.action === 'guest.need') // l'ospite ha bisogno di qualcosa
-					text = message.res.contexts[0].parameters.name + ' from ' + message.res.contexts[0].parameters.company + ' needs \"' + message.res.contexts[0].parameters.another_drink + '\"';
-
-				let notifications_param =
+				if(parsed_body.messages[0].task) // notifico la persona desiderata
 				{
-					msg:
+					if(parsed_body.messages[0].task === 'send_to_slack') // notifico il member della rule
 					{
-						attachments_array:[],
-						text: text
-					},
-					send_to: // event.Records[0].Sns.Message.res.data.something... ci vuole il canale slack! 0.0.2 - 2
-				};
-				let notifications_options =
-				{
-					method: 'POST',
-					uri: self.NOTIFICATIONS_SERVICE_URL,
-					body: notifications_param
-					json: true
-				};
-				rp(notifications_options).then(function(parsed_body){}).catch(callback);
-		  }
-		}).catch(callback);
+						// #################### Ottengo il canale slack del member ########################
+						let notifications_options = // dato il nome del member, ottengo il canale slack grazie alla chiamata HTTP al microservizio Notifications
+						{
+							method: 'GET',
+							uri: self.NOTIFICATIONS_SERVICE_URL+'?name='+parsed_body.member,
+							json: true
+						};
+						rp(notifications_options).then(function(parsed_body)
+						{
+							// parametri per la richiesta HTTP POST al microservizio Notifications
+							let notifications_param_member =
+							{
+								msg:
+								{
+									attachments_array:[],
+									text: text
+								},
+								send_to: parsed_body.messages[0].id;
+							};
+							let notifications_send_to_slack = // mando il messaggio a slack con la chiamata HTTP al microservizio Notifications
+							{
+								method: 'POST',
+								uri: self.NOTIFICATIONS_SERVICE_URL,
+								body: notifications_param_member,
+								json: true
+							};
+							rp(notifications_send_to_slack).then().catch(callback);
+						}).catch(callback);
+					}
+					// ##################### Messaggio inviato al member ######################################
+
+					// #################### Ottengo il canale slack della persona desiderata ########################
+					let notifications_options = // dato il nome della persona desiderata, ottengo il canale slack grazie alla chiamata HTTP al microservizio Notifications
+					{
+						method: 'GET',
+						uri: self.NOTIFICATIONS_SERVICE_URL+'?name='+message.res.contexts[0].parameters.required_person,
+						json: true
+					};
+					rp(notifications_options).then(function(parsed_body)
+					{
+						// notifico la persona desiderata
+						let notifications_param_required_person =
+						{
+							msg:
+							{
+								attachments_array:[],
+								text: text
+							},
+							send_to: parsed_body.messages[0].id;
+						};
+						let notifications_send_to_slack = // mando il messaggio a slack con la chiamata HTTP al microservizio Notifications
+						{
+							method: 'POST',
+							uri: self.NOTIFICATIONS_SERVICE_URL,
+							body: notifications_param_required_person,
+							json: true
+						};
+						rp(notifications_send_to_slack).then().catch(callback);
+					}).catch(callback);
+			  }
+			}).catch(callback);
+		}
 
 		// MESSAGGIO INVIATO DALL'UTENTE
 		let user_conversation_message =
 		{
 			'text': event.Records[0].Sns.Message.text_request,
-			'sender': , // dovrebbe essere presente in event, forse all'interno di event.MessageAttributes.
+			'sender': 'User',
 			'timestamp': event.Records[0].Timestamp
 		};
 		self.conversations.addMessage(user_conversation_message, session_id).subscribe(
 			{
-				next:  (data) => {},
-				error: (err) =>
-				{
-					callback(
-						{
-							statusCode: err.statusCode,
-							body: JSON.stringify(err.message)
-						});
-				},
-				complete:  () => {}
+				error: callback,
+				complete:  () => {callback(null);}
 			});
 
 	 	// MESSAGGIO INVIATO DA VA
@@ -129,31 +172,15 @@ class VAMessageListener
 		};
 		self.conversations.addMessage(VA_conversation_message, session_id).subscribe(
 			{
-				next:  (data) => {},
-				error: (err) =>
-				{
-					callback(
-						{
-							statusCode: err.statusCode,
-							body: JSON.stringify(err.message)
-						});
-				},
-				complete:  () => {}
+				error: callback,
+				complete:  () => {callback(null);}
 			});
 /*
 		self.guests.addConversation(name, company, session_id).subscribe(
-			{
-				next:  (data) => {},
-				error: (err) =>
-				{
-					callback(
-						{
-							statusCode: err.statusCode,
-							body: JSON.stringify(err.message)
-						});
-				},
-				complete:  () => {}
-			});
+		{
+			error: callback,
+			complete:  () => {callback(null);}
+		});
 */
 	}
 

@@ -26,6 +26,13 @@ class STTWatsonAdapter
 
 	}
 
+	/**
+	* Metodo
+	* @param event {type} -
+	* @param context {type} -
+	* @param callback {function} -
+	*/
+	
 	speechToText(audio, type)
 	{
 		var self = this;
