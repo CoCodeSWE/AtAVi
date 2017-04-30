@@ -8,6 +8,7 @@ const web_client = require('./stubs/SlackWebClient');
 let next, error, complete;
 beforeEach(function()
 {
+	web_client._reset();
 	next = sinon.stub();
 	error = sinon.stub();
 	complete = sinon.stub();
@@ -117,7 +118,7 @@ describe('Back-end', function()
 
 			describe('getMemberList', function()
 			{
-				it('L\'Observable deve notificare l\'Observer con il metodo complete solo dopo aver inviato tutti i blocchi di Member tramite il metodo next.', function()
+				it('L\'Observable deve notificare l\'Observer con il metodo complete solo dopo aver inviato tutti i Member tramite il metodo next.', function()
 				{
 					members.getMemberList().subscribe(
 					{

@@ -39,7 +39,7 @@ class MembersDAOSlack
 		});
 	}
 
-	getMemberList()
+	getMemberList(query)
 	{
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -52,6 +52,15 @@ class MembersDAOSlack
 					observer.error('Not found');
 				else
 				{
+					let final_result = [];
+						if (query && query.name)
+							{
+								final_result = data.members.filter(item => item.name === query.name);
+								data.members= final_result;
+							}
+
+						console.log(final_result);
+
 						observer.next(data);
 						observer.complete();
 				}
