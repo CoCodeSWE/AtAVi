@@ -56,11 +56,11 @@ class RulesDAODynamoDB
       {
         if(err)
           observer.error(err);
-        else if(!data.id)
+        else if(!data.Item.id)
   				observer.error('Not found');
         else
         {
-          observer.next(data);
+          observer.next(data.Item);
           observer.complete();
         }
       });
@@ -145,7 +145,7 @@ class RulesDAODynamoDB
           observer.error(err);
         else
         {
-          observer.next(data);
+          observer.next(data.Item);
           observer.complete();
         }
       });
@@ -169,7 +169,7 @@ class RulesDAODynamoDB
       }
   		else
   		{
-  			observer.next(data);
+  			data.Items.forEach((rule) => observer.next(rule));
   			if(data.LastEvaluatedKey)
   			{
   				params.ExclusiveStartKey= data.LastEvaluatedKey;

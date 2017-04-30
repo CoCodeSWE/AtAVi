@@ -79,7 +79,7 @@ class RulesService
 
         error: function(err)
         {
-          if(err.code === 'Not found')
+          if(err.code === 'ConditionalCheckFailedException')
           {
             context.succeed(
             {
@@ -179,17 +179,13 @@ class RulesService
 
 
     // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
-		let query = objectFilter(event.queryStringParameters, ['company', 'member','name']);
+		let query = objectFilter(event.queryStringParameters, ['enabled', 'name', 'targets', 'task']);
 		if(Object.keys(query).length === 0)
 			query = null;
 
     this.rules.getRuleList(query).subscribe(
     {
-      next: function(data)
-      {
-        data.Items.forEach((rule) => { list.Items.push(rule); });
-      },
-
+      next: (rule) => { list.Items.push(rule);}),
       error: internalServerError(context),
 
       complete: function()
@@ -213,7 +209,7 @@ class RulesService
       Items: []
     };
     // Controllo se ci sono filtri da applicare nell'ottenimento degli utenti
-		let query = objectFilter(event.queryStringParameters, ['task']);
+		let query = objectFilter(event.queryStringParameters);
 		if(Object.keys(query).length === 0)
 			query = null;
     this.task.getTaskList(query).subscribe(
@@ -292,6 +288,7 @@ function internalServerError(context)
 {
 	return function(err)
 	{
+    console.log('internalServerError ', err);
 		context.succeed(
 		{
 			statusCode: 500,
@@ -303,6 +300,7 @@ function internalServerError(context)
 // Funzione per gestire lo status code 400
 function badRequest(context)
 {
+  console.log('badRequest');
 	context.succeed(
 	{
 		statusCode: 400,

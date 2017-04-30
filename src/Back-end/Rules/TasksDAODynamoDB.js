@@ -56,7 +56,7 @@ class TasksDAODynamoDB
           observer.error(err);
         else
         {
-          observer.next(data);
+          observer.next(data.Item);
           observer.complete();
         }
       });
@@ -138,7 +138,7 @@ class TasksDAODynamoDB
           observer.error(err);
         else
         {
-          observer.next(data);
+          observer.next(data.Item);
           observer.complete();
         }
       });
@@ -163,7 +163,7 @@ class TasksDAODynamoDB
   			observer.error(err);
   		else
   		{
-  			observer.next(data);
+  			data.Items.forEach((task) => observer.next(task));
   			if(data.LastEvaluatedKey)
   			{
 
