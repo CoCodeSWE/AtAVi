@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body></body>
+<div id="frame"></div>
+<script src="HttpPromise.js"></script>
+<script>
+  window.onload = function()
+  {
+    var promise = new HttpPromise('GET', 'http://www.facebook.it');
+    promise
+      .then(console.log)
+      .catch((err) => {console.log("error!", err);});
+  }
+</script>
+</html>
