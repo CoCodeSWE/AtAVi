@@ -60,11 +60,13 @@ class ConversationsDAODynamoDB
     });
     self.client.update(params, function(err, data)
     {
-      if(err)
-        observer.error(err);
-      else
-        observer.next(data);
-        observer.complete();
+        if(err)
+          observer.error(err);
+        else
+        {
+          observer.next(data);
+          observer.complete();
+        }
     });
   };
 
@@ -88,7 +90,7 @@ class ConversationsDAODynamoDB
         if(err)
           observer.error(err);
         else
-          observer.next();
+          observer.next(data);
           observer.complete();
       });
     });
@@ -110,7 +112,7 @@ class ConversationsDAODynamoDB
         },
         FilterExpression: "guest_id = :id_guest"
       };
-      self.client.scan(params, onScan(observer, self));
+      self.client.scan(params, self._onScan(observer, params));
     });
   }
 
@@ -139,37 +141,35 @@ class ConversationsDAODynamoDB
       });
     });
   }
-}
+
 
 /**
   * Viene ritornata la funzione di callback per la gesitone dei blocchi di getConversationList
   * @param observer {ConversationObserver} - Observer da notificare
   * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
   */
-function onScan(observer, conversations)
-{
-	return function(err, data)
-	{
-		if(err)
-			observer.error(err);
-		else
-		{
-			observer.next(data);
-			if(data.LastEvaluatedKey)
-			{
-				let params =
-				{
-					TableName: conversations.table,
-					ExclusiveStartKey: data.LastEvaluatedKey
-				};
-				conversations.client.scan(params, onScan(observer, conversations));
-			}
-			else
-			{
-				observer.complete();
-			}
-		}
-	}
+  _onScan(observer, params)
+  {
+    let self = this;
+  	return function(err, data)
+  	{
+  		if(err)
+  			observer.error(err);
+  		else
+  		{
+  			observer.next(data);
+  			if(data.LastEvaluatedKey)
+  			{
+  				params.ExclusiveStartKey = data.LastEvaluatedKey;
+  				self.client.scan(params, self._onScan(observer, params));
+  			}
+  			else
+  			{
+  				observer.complete();
+  			}
+  		}
+  	}
+  }
 }
 
 module.exports = ConversationsDAODynamoDB;

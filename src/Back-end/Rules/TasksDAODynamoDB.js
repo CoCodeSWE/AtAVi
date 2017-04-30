@@ -154,8 +154,9 @@ class TasksDAODynamoDB
     * @param observer {TaskObserver} - Observer da notificare
     * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
     */
-  _onScan(observer, tasks)
+  _onScan(observer, params)
   {
+    let self = this;
   	return function(err, data)
   	{
   		if(err)
@@ -165,12 +166,9 @@ class TasksDAODynamoDB
   			observer.next(data);
   			if(data.LastEvaluatedKey)
   			{
-  				let params =
-  				{
-  					TableName: tasks.table,
-  					ExclusiveStartKey: data.LastEvaluatedKey
-  				};
-  				rules.client.scan(params, onScan(observer, tasks));
+
+  				params.ExclusiveStartKey= data.LastEvaluatedKey;
+  				self.client.scan(params, self._onScan(observer, params));
   			}
   			else
   			{

@@ -60,7 +60,7 @@ class RulesDAODynamoDB
   				observer.error('Not found');
         else
         {
-          observer.next();
+          observer.next(data);
           observer.complete();
         }
       });
@@ -158,23 +158,22 @@ class RulesDAODynamoDB
     * @param observer {RuleObserver} - Observer da notificare
     * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
     */
-  _onScan(observer, rules)
+  _onScan(observer, params)
   {
+    let self = this;
   	return function(err, data)
   	{
   		if(err)
+      {
   			observer.error(err);
+      }
   		else
   		{
   			observer.next(data);
   			if(data.LastEvaluatedKey)
   			{
-  				let params =
-  				{
-  					TableName: rules.table,
-  					ExclusiveStartKey: data.LastEvaluatedKey
-  				};
-  				rules.client.scan(params, onScan(observer, rules));
+  				params.ExclusiveStartKey= data.LastEvaluatedKey;
+  				self.client.scan(params, self._onScan(observer, params));
   			}
   			else
   			{

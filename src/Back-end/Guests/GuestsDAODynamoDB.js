@@ -56,7 +56,7 @@ class guestsDAODynamoDB
         if(err)
           observer.error(err);
         else
-          observer.next();
+          observer.next(data);
           observer.complete();
       });
     });
@@ -104,7 +104,7 @@ class guestsDAODynamoDB
         },
         FilterExpression: "name = :name_guest"
       };
-      self.client.scan(params, onScan(observer, self));
+      self.client.scan(params, _onScan(observer, params));
     });
   }
 
@@ -117,7 +117,7 @@ class guestsDAODynamoDB
     return new Rx.Observable(function(observer)
     {
       let params = {TableName: self.table};
-      self.client.scan(params, onScan(observer, self));
+      self.client.scan(params, self._onScan(observer, params));
     });
   }
 
@@ -147,37 +147,34 @@ class guestsDAODynamoDB
       });
     });
   }
-}
+
 
 /**
   * Viene ritornata la funzione di callback per la gesitone dei blocchi di getGuestList e query
   * @param observer {GuestObserver} - Observer da notificare
   * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
   */
-function onScan(observer, guests)
-{
-	return function(err, data)
-	{
-		if(err)
-			observer.error(err);
-		else
-		{
-			observer.next(data);
-			if(data.LastEvaluatedKey)
-			{
-				let params =
-				{
-					TableName: guests.table,
-					ExclusiveStartKey: data.LastEvaluatedKey
-				};
-				guests.client.scan(params, onScan(observer, guests));
-			}
-			else
-			{
-				observer.complete();
-			}
-		}
-	}
+  _onScan(observer, params)
+  {
+      let self = this;
+    	return function(err, data)
+    	{
+    		if(err)
+    			 observer.error(err);
+    		else
+    		{
+    		  observer.next(data);
+    			if(data.LastEvaluatedKey)
+    			{
+    				params.ExclusiveStartKey = data.LastEvaluatedKey;
+    				self.client.scan(params, self._onScan(observer, params));
+    			}
+    			else
+    			{
+  				  observer.complete();
+  			  }
+  		  }
+  	 }
+  }
 }
-
 module.exports = guestsDAODynamoDB;

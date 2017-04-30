@@ -6,6 +6,7 @@ const dao = require('../Back-end/Conversations/ConversationsDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
 var mock_conv = {guest_id:1, session_id: 2, messages:[{sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}]};
+var mock_conv2 = {guest_id:3, session_id: 4, messages:[{sender:'mock_sender2',text: 'mock_text2', timestamp: '2000-20-20'}]};
 
 let next, error, complete;
 beforeEach(function()
@@ -58,7 +59,7 @@ describe('Back-end', function()
       {
         it("Nel caso in cui un messaggio non venga aggiunta alla conversazione a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
         {
-          conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}).subscribe(
+          conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
           {
             next: next,
             error: error,
@@ -73,7 +74,7 @@ describe('Back-end', function()
         });
         it("Nel caso in cui un messaggio venga aggiunto correttamente alla conversazione, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.", function()
         {
-          conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}).subscribe(
+          conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
           {
             next: next,
             error: error,
@@ -128,14 +129,17 @@ describe('Back-end', function()
 						complete: complete
 					});
 
-          dynamo_client.get.yield(null, {Items:[{guest_id:1, session_id: 2, messages:[{sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}]}]});
+          dynamo_client.scan.yield(null, {Items:[mock_conv],LastEvaluatedKey:3});
+					dynamo_client.scan.yield(null, {Items:[mock_conv2],LastEvaluatedKey:5});
           dynamo_client.scan.yield({statusCode: 500});
           expect(error.callCount).to.equal(1);
           let callError = error.getCall(0);
           expect(callError.args[0].statusCode).to.equal(500);
-          expect(next.callCount).to.equal(1);
+          expect(next.callCount).to.equal(2);
           let callNext = next.getCall(0);
           expect(callNext.args[0].Items[0]).to.equal(mock_conv);
+					callNext = next.getCall(1);
+          expect(callNext.args[0].Items[0]).to.equal(mock_conv2);
           expect(complete.callCount).to.equal(0);
 				});
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte le conversazioni ottenute dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function()
@@ -147,11 +151,14 @@ describe('Back-end', function()
   						complete: complete
   					});
 
-            dynamo_client.get.yield(null, {Items:[{guest_id:1, session_id: 2, messages:[{sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}]}]});
+            dynamo_client.scan.yield(null, {Items:[mock_conv],LastEvaluatedKey:3});
+						dynamo_client.scan.yield(null, {Items:[mock_conv2]});
             expect(error.callCount).to.equal(0);
-            expect(next.callCount).to.equal(1);
-            let callNext = next.getCall(0);
-            expect(callNext.args[0].Items[0]).to.equal(mock_conv);
+            expect(next.callCount).to.equal(2);
+						let callNext = next.getCall(0);
+						expect(callNext.args[0].Items[0]).to.equal(mock_conv);
+						callNext = next.getCall(1);
+						expect(callNext.args[0].Items[0]).to.equal(mock_conv2);
             expect(complete.callCount).to.equal(1);
         });
       });

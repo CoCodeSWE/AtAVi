@@ -6,6 +6,8 @@ const dao = require('../Back-end/Rules/RulesDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
 var mock_rule = {enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}};
+var mock_rule2 = {enabled:true, id:2, name:'testing_rule2', targets:[], task:{params:['first1','second2'], task: 'task_name2'}};
+
 
 let next, error, complete;
 beforeEach(function()
@@ -84,7 +86,7 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.get.yield(null, {enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}});
+          dynamo_client.get.yield(null, mock_rule);
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
@@ -104,16 +106,20 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.scan.yield(null, {Items:[{enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}}]});
+          dynamo_client.scan.yield(null, {Items:[mock_rule],LastEvaluatedKey:2});
+					dynamo_client.scan.yield(null, {Items:[mock_rule2],LastEvaluatedKey:3});
 					dynamo_client.scan.yield({statusCode: 500});
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
 
-					expect(next.callCount).to.equal(1);
+					expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0]).to.equal(mock_rule);
+					expect(callNext.args[0].Items[0].id).to.equal(mock_rule.id);
+
+					callNext = next.getCall(1);
+					expect(callNext.args[0].Items[0].id).to.equal(mock_rule2.id);
 					expect(complete.callCount).to.equal(0);
 
         });
@@ -126,11 +132,14 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.scan.yield(null, {Items:[{enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}}]} );
+					dynamo_client.scan.yield(null, {Items:[mock_rule],LastEvaluatedKey:2});
+					dynamo_client.scan.yield(null, {Items:[mock_rule2]});
 					expect(error.callCount).to.equal(0);
-					expect(next.callCount).to.equal(1);
+					expect(next.callCount).to.equal(2);
 					let callNext = next.getCall(0);
 					expect(callNext.args[0].Items[0].id).to.equal(mock_rule.id);
+					callNext = next.getCall(1);
+					expect(callNext.args[0].Items[0].id).to.equal(mock_rule2.id);
 					expect(complete.callCount).to.equal(1);
 
         });
