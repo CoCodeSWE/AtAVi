@@ -10,30 +10,47 @@ class ApiAiVAAdapter
 		this.agent = agent;
 		this.request_promise = rp;
 		this.VERSION = '20150910';
+    this.LANG = 'en';
 	}
-	
+
 	/**
 		* Metodo che permette di interrogare l'Agent in api.ai
 		* @param str {VAQuery} - Attributo contenente i dati relativi all'interrogazione
 		*/
-	query(str)
+	query(data)
 	{
 		if(this.agent === null)
 			return Promise.reject({'error': 'Agent not defined'});
-		
+
 		let options =
 		{
 			method: 'POST',
 			uri: `https://api.api.ai/v1/query?v=${this.VERSION}`,
 			headers:
 			{
-				'Authorization': this.agent.token,
-				'Content-Type': 'application/json'
+				'Authorization': "Bearer " + this.agent.token,
+				'Content-Type': 'application/json; charset=utf-8'
 			},
-			body: str,
+			body:
+      {
+        sessionId: data.session_id,
+        originalRequest:
+        {
+          source: "AtAVi",
+          data: data.data
+        },
+        lang: this.LANG
+      },
 			json: true
 		};
-		
+    if(data.event)
+    {
+      //inserisco dati evento in options
+    }
+    else if(data.text)
+    {
+      options.body.query = data.text;
+    }
 		return this.request_promise(options).then(function(response)
 		{
 			// Creo va_response per mappare la risposta di api.ai in un oggetto VAResponse
@@ -47,20 +64,20 @@ class ApiAiVAAdapter
 				},
 				session_id: response.sessionId
 			};
-			
+
 			if(response.result.contexts)
 				va_response.res.contexts = response.result.contexts;
-			
+
 			if(response.result.fulfillment.data)
 				va_response.res.data = response.result.fulfillment.data;
-			
+
 			return va_response;
 		});
 	}
-	
+
 	/**
 		* Metodo setter di agent
-		* @param agent {Agent} - Nuovo agent 
+		* @param agent {Agent} - Nuovo agent
 		*/
 	setAgent(agent)
 	{

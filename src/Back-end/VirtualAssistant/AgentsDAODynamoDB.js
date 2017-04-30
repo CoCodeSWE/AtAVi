@@ -53,15 +53,17 @@ class AgentsDAODynamoDB
 					'name': name
 				}
 			};
+      console.log(params);
 			self.client.get(params, function(err, data)
 			{
+        console.log(err, data);
 				if(err)
 					observer.error(err);
-				else if(!data.name)
+				else if(!data.Item.name)
 					observer.error('Not found');
 				else
 				{
-					observer.next(data);
+					observer.next(data.Item);
 					observer.complete();
 				}
 			});

@@ -183,11 +183,7 @@ class UsersService
 
 		this.users.getUserList(query).subscribe(
 		{
-			next: function(data)
-			{
-				data.Items.forEach((user) => { list.users.push(user); });
-			},
-
+			next: (user) => { list.users.push(user); }),
 			error: internalServerError(context),
 
 			complete: function()
@@ -220,7 +216,7 @@ class UsersService
 				badRequest(context);
 				return;
 			}
-			
+
 			// Parametro contenente i dati relativi all'user da aggiornare
 			let params = objectFilter(user, ['name', 'sr_id', 'password', 'slack_channel']);
 			params.username = event.pathParameters;

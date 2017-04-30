@@ -59,12 +59,13 @@ class ConversationWebhookService
   */
   _checkUser(body, context)
   {
+    console.log(body);
     let self = this;
     let observable = this.users.getUserList({name: body.result.parameters.name});
     let users = [];
     observable.subscribe(
     {
-      next: (user) => {users.push(user);},
+      next: (user) => {console.log("new user!", user); users.push(user);},
       error: (err) => {context.succeed(error500);},
       complete: () =>
       {
@@ -87,10 +88,10 @@ class ConversationWebhookService
                   username: users[0].username //metto come possibile username il primo. Nel caso l'utente dirà di cambiare username
                 }
               }],*/
-              data: body.originalRequest.data,
+              data: body.originalRequest ? body.originalRequest.data : {},
               followupEvent:
               {
-                name: "RecognizeAdminEvent",
+                name: "recognizeAdminEvent",
                 data:
                 {
                   name: users[0].name,
@@ -172,7 +173,7 @@ class ConversationWebhookService
       {
         speech: body.result.fulfillment.speech,
         displayText: body.result.fulfillment.displayText,
-        data: body.originalRequest.data
+        data: body.originalRequest ? body.originalRequest.data : {}
       })
     });
   }

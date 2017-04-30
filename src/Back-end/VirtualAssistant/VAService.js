@@ -10,7 +10,7 @@ class VAService
 		this.agents = agents;
 		this.va_module = va;
 	}
-	
+
 	/**
 		* Implementa la Lambda Function che si occupa di interrogare l'assistente virtuale
 		* @param event {LambdaEvent} - Contiene l'evento con i dati relativi alla richiesta di API Gateway
@@ -18,6 +18,7 @@ class VAService
 		*/
 	query(event, context)
 	{
+    console.log(event);
 		let self = this;
 		let request;	// Conterrà i dati relativi alla richiesta
 		try
@@ -30,7 +31,7 @@ class VAService
 			badRequest(context);
 			return;
 		}
-		
+
 		// Controllo che ci siano i campi necessari a effettuare la richiesta
 		if(request.app && request.query)
 		{
@@ -43,12 +44,13 @@ class VAService
 				},
 				error: function(err)
 				{
+          console.log("error: ", err);
 					context.succeed(
 					{
 						statusCode: err.statusCode,
 						body: JSON.stringify(err.message)
 					});
-				},	
+				},
 				complete: function()
 				{
 					self.va_module.query(request.query).then(function(data)
@@ -57,6 +59,7 @@ class VAService
 					})
 					.catch(function(err)
 					{
+            console.log(err);
 						internalServerError(context);
 					});
 				}
@@ -92,6 +95,7 @@ function internalServerError(context)
 // Funzione per gestire lo status code 200
 function success(context, data)
 {
+  console.log("success: ",data);
 	context.succeed(
 	{
 		statusCode: 200,

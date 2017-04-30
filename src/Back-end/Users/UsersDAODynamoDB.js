@@ -57,11 +57,11 @@ class UsersDAODynamoDB
       {
         if(err)
           observer.error(err);
-				else if(!data.username)
+				else if(!data.Item.username)
 					observer.error('Not found');
         else
         {
-          observer.next(data);
+          observer.next(data.Item);
           observer.complete();
         }
       });
@@ -98,7 +98,7 @@ class UsersDAODynamoDB
 
 	/**
 		* Elimina l'user avente l'username passato come parametro
-		* @param username {String} - Parametro contenente l'username dello User che si vuole rimuovere 
+		* @param username {String} - Parametro contenente l'username dello User che si vuole rimuovere
 		*/
 	removeUser(username)
   {
@@ -164,7 +164,7 @@ class UsersDAODynamoDB
 			}
 			else
 			{
-				observer.next(data);
+        data.Items.forEach((user) => observer.next(user));
 				if(data.LastEvaluatedKey)
 				{
 					params.ExclusiveStartKey = data.LastEvaluatedKey;
