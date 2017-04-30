@@ -1,3 +1,6 @@
+//TODO: aggiungere session_id e data a tutte le richieste
+// nel file dd indica parametri che bisogna definire dove si trovino all'interno
+//della risposta dell'assistente virtuale.
 const Rx = require('rxjs/Rx');
 
 class VocalAPI
@@ -23,48 +26,33 @@ class VocalAPI
   }
   queryLambda(event, context)
   {
-    switch(action)
+    let self = this;
+    let body;
+    try
     {
-      case 'rule.add':
-        this._addRule();
-        break;
-      case 'rule.get':
-        this._getRule();
-        break;
-      case 'rule.getList':
-        this._getRuleList();
-        break;
-      case 'rule.remove':
-        this._removeRule();
-        break;
-      case 'rule.update':
-        this._updateRule();
-        break;
-      case 'user.add':
-        this._addUser();
-        break;
-      case 'user.addEnrollment':
-        this._addUserEnrollment();
-        break;
-      case 'user.get':
-        this._getUser();
-        break;
-      case 'user.getList':
-        this._getUserList();
-        break;
-      case 'user.login':
-        this._loginUser();
-        break;
-      case 'user.remove':
-        this._removeUser();
-        break;
-      case 'user.resetEnrollment':
-        this._resetUserEnrollment();
-        break;
-      case 'user.update':
-        this._updateUser();
-        break;
+      body = JSON.parse(event.body);
     }
+    catch(err)  //non è un JSON valido, quindi la richiesta non è conforme
+    {
+      context.succeed(statusCode: 400, body: '{"message": "Bad Request"}');
+      return;
+    }
+    let audio_buffer = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
+    self.stt.speechToText(audio_buffer, 'audio/l16').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
+    {
+      let req_options =
+      {
+        method: 'POST',
+        uri: VA_SERVICE_URL,
+        body:
+        {
+          text: text,
+          session_id: body.session_id
+        },
+        json: true
+      }
+      return self.request_promise(req_options); //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
+    }).then(self._onVaResponse(context, audio_buffer));
   }
   //context.succeed(response);
 
@@ -79,18 +67,18 @@ class VocalAPI
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			let options = 
+			let options =
 			{
 				method: 'POST',
 				uri: self.RULES_SERVICE_URL,
 				body: rule,
 				json: true
 			};
-		
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
-			})		
+			})
 			.catch(function(err)
 			{
 				observer.error(
@@ -115,13 +103,14 @@ class VocalAPI
 			{
 				method: 'GET',
 				uri: `${self.RULES_SERVICE_URL}/${id}`,
-				json: true			
+				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
+        observer.next(data);
 				observer.complete();
-			})		
+			})
 			.catch(function(err)
 			{
 				observer.error(
@@ -147,7 +136,7 @@ class VocalAPI
 				uri: self.RULES_SERVICE_URL,
 				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
@@ -178,7 +167,7 @@ class VocalAPI
 				uri: `${self.RULES_SERVICE_URL}/${id}`,
 				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
@@ -210,7 +199,7 @@ class VocalAPI
 				body: rule,
 				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
@@ -244,7 +233,7 @@ class VocalAPI
 				body: user,
 				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
@@ -266,7 +255,7 @@ class VocalAPI
   */
   _addUserEnrollment(enr)
   {
-		
+
   }
 
 	/**
@@ -284,7 +273,7 @@ class VocalAPI
 				uri: `${self.USERS_SERVICE_URL}/${username}`,
 				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
@@ -302,7 +291,7 @@ class VocalAPI
 
 	/**
 	* Metodo che permette di ottenere una lista degli utenti del sistema
-	* @param query {} - 
+	* @param query {} -
 	*/
   _getUserList(query)
   {
@@ -315,7 +304,7 @@ class VocalAPI
 	*/
   _loginUser(enr)
   {
-		
+
   }
 
 	/**
@@ -333,7 +322,7 @@ class VocalAPI
 				uri: `${self.USERS_SERVICE_URL}/${username}`,
 				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
@@ -355,7 +344,7 @@ class VocalAPI
 	*/
   _resetUserEnrollment(username)
   {
-		
+
   }
 
 	/**
@@ -374,7 +363,7 @@ class VocalAPI
 				body: user,
 				json: true
 			};
-			
+
 			self.request_promise(options).then(function(data)
 			{
 				observer.complete();
@@ -388,6 +377,219 @@ class VocalAPI
 				});
 			});
 		});
+  }
+
+  /**
+  * metodo che viene chiamato ogni volta viene ricevuta una risposta dall'assitente virtuale
+  * @param context {LambdaContext} - oggetto utilizzato per mandare l'eventuale risposta ad API gateway
+  * @param audio_buffer {Buffer} - Buffer contenente l'audio ricevuto
+  * @return {function(VAResponse)} - funzione utilizzata come callback, che accetta come parametro la risposta dell'assistente viruale
+  */
+  _onVaResponse(context, audio_buffer)
+  {
+    let self = this;
+    return function(response) //resti
+    {
+      let options =
+      {
+        method: 'POST',
+        uri: self.VA_SERVICE_URL,
+        json: true,
+        body:
+        {
+          data: response.data,
+          session_id: response.session_id
+        }
+      }
+
+      switch(response.action)
+      {
+        case 'rule.add':
+          options.body.event =
+          {
+            name: 'rule.add.success',  // da definire il vero event come anche i parametri necessari
+            data: {}
+          }
+          self._addRule(/*da definire*/).subscribe(
+          {
+            complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+            error: error(context)
+          });
+          break;
+        case 'rule.getList':
+          let rules;
+          options.body.event = {name: 'rule.get.success'};
+          self._getRuleList(/*dd*/).subscribe(
+          {
+            next: (data) => {rules = data};
+            error: error(context),
+            complete: function()
+            {
+              options.body.event.data = { rules: rules };
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            }
+          });
+          break;
+        case 'rule.get':
+          let rule;
+          options.body.event = {name: 'rule.get.success'};
+          self._getRule(/*dd*/).subscribe(
+          {
+            next: (data) => {rule = data;},
+            error: error(context),
+            complete: function()
+            {
+              options.body.event.data = { rule: rule };
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            }
+          });
+          break;
+        case 'rule.remove':
+          options.body.event =
+          {
+            name: 'rule.remove.success',
+            data: {}
+          }
+          self._removeRule(/*da definire*/).subscribe(
+          {
+            complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+            error: error(context)
+          });
+          break;
+        case 'rule.update':
+          options.body.event =
+          {
+            name: 'rule.update.success',
+            data: {}
+          }
+          this._updateRule(/*dd*/).subscribe(
+          {
+            complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+            error: error(context)
+          });
+          break;
+        case 'user.add':
+          options.body.event =
+          {
+            name: 'user.add.success',  // da definire il vero event come anche i parametri necessari
+            data: {}
+          }
+          self._addUser(/*da definire*/).subscribe(
+          {
+            complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+            error: error(context)
+          });
+          break;
+        case 'user.addEnrollment':
+          options.body.event = {name: "user.addEnrollment.success"}
+          this._addUserEnrollment({audio: audio_buffer, username: /**/}).subscribe(
+          {
+            complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+            error: error(context)
+          });
+          break;
+        case 'user.get':
+          let user;
+          options.body.event = {name: 'user.get.success'};
+          self._getUser(/*dd*/).subscribe(
+          {
+            next: (data) => {user = data;},
+            error: error(context),
+            complete: function()
+            {
+              options.body.event.data = { user: user };
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            }
+          });
+          break;
+        case 'user.getList':
+          let users;
+          options.body.event = {name: 'user.getList.success'};
+          self._getUserList(/*dd*/).subscribe(
+          {
+            next: (data) => {users = data};
+            error: error(context),
+            complete: function()
+            {
+              options.body.event.data = { users: users };
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            }
+          });
+          break;
+        case 'user.login':
+          this._loginUser({audio: audio_buffer, username: /*da definire dove si trova*/}).subscribe(
+          {
+            next: function(token)
+            {
+              options.body.data.token = token;
+              options.body.event = {name: 'user.login.success'};
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            },
+            error: function(err)
+            {
+              options.body.event = {name: 'user.login.failure'};
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            }
+          });
+          break;
+        case 'user.remove':
+          options.body.event =
+          {
+            name: 'user.remove.success',
+            data: {}
+          }
+          self._removeUser(/*da definire*/).subscribe(
+          {
+            complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+            error: error(context)
+          });
+          break;
+        case 'user.resetEnrollment':
+        options.body.event = {name: "user.resetEnrollment.success"}
+        this._resetUserEnrollment(/*dd*/}).subscribe(
+        {
+          complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+          error: error(context)
+        });
+        break;
+        case 'user.update':
+          options.body.event =
+          {
+            name: 'user.update.success',
+            data: {}
+          }
+          this._updateuser(/*dd*/).subscribe(
+          {
+            complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
+            error: error(context)
+          });
+          break;
+        default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
+          context.succeed(statusCode: 200, body: response);
+      }
+    }
+  }
+}
+
+/**
+* funzione di utilità utilizzata per restituire un codice d'errore nel caso in cui
+* ci sia qualche problema. Forse dovrebbe essere modificata per utilizzare un
+* evento dell'assistente virtuale??
+* @param context {LambdaContext} - oggetto utilizzato per ritornare la risposta
+* contenente il codice d'errore
+*/
+function error(context)
+{
+  return function(err)
+  {
+    context.succeed(
+    {
+      statusCode: err.code,
+      message: JSON.stringify(
+      {
+        message: err.msg
+      });
+    });
   }
 }
 
