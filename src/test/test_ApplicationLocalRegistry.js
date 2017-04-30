@@ -1,11 +1,4 @@
-const chai = require('chai');
 const expect = chai.expect;
-const application_local_registry = require('../Client/ApplicationManager/ApplicationLocalRegistry');
-
-beforeEach(function()
-{
-  registry = new application_local_registry();
-});
 
 describe('Client', function()
 {
@@ -17,6 +10,7 @@ describe('Client', function()
       {
         it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere ritornato tramite il metodo query. ", function()
         {
+          let registry = new ApplicationLocalRegistry();
           registry.register('conv', { name:'Conversation' });
           let app_pckg = registry.query('conv');
           expect(app_pckg).to.not.be.undefined;
@@ -27,6 +21,7 @@ describe('Client', function()
       {
         it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere eliminato tramite il metodo remove.", function()
         {
+          let registry = new ApplicationLocalRegistry();
           let name_app_pack = 'ConversationApp';
           registry.register('conv', { name:'Conversation' });
           registry.remove(name_app_pack);
