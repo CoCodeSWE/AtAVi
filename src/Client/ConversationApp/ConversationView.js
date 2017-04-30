@@ -6,16 +6,10 @@ class ConversationView extends React.Component {
   }
 
   render() {
-    return React.createElement(
-      'ul',
-      null,
-      this.props.msgs.map(msg => React.createElement(
-        'li',
-        null,
-        msg.text
-      ))
-    );
+    return React.createElement('ul', null, this.props.msgs.map(msg => React.createElement('li', null, msg.text)));
   }
 }
 
 module.exports = ConversationView;
+//# sourceMappingURL=ConversationView.js.map
+//# sourceMappingURL=ConversationView.js.map

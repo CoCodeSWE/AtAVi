@@ -1,7 +1,7 @@
 # Welcome to Serverless!
 #
 
-service: nineatavi
+service: VocalAPI-atavi
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -12,7 +12,9 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   profile: default
-
+  environment:
+    USERS_SERVICE_URL:
+    VA_SERVICE_URL:
 functions:
   query:
     handler: handler.queryLambda

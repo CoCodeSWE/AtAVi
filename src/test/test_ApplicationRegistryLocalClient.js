@@ -26,7 +26,6 @@ describe('Client', function()
 						error: error,
 						complete: complete
 					});
-
           expect(next.callCount).to.equal(0);
           expect(error.callCount).to.equal(0);
           expect(complete.callCount).to.equal(1);
@@ -35,7 +34,7 @@ describe('Client', function()
       });
       describe('query', function()
       {
-        it('Vogliamo testare che venga ritornato correttamente l’\\file{ApplicationPackage} a partire dal suo nome passato come parametro.', function()
+        it("Nel caso in cui l'interrogazione del ApplicationLocalRegistry vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
         {
           app_local_reg.query.returns({ name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' });
           let app_pckg = {name : 'Conversation', cmdHandler : 'test', setup : 'test', ui : 'test' };

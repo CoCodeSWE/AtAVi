@@ -1,0 +1,95 @@
+service: users
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: eu-central-1
+  environment:
+    USERS_TABLE: Users-${opt:stage, self:provider.stage}
+  profile: default
+  apiKeys:
+    - users-service
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+
+functions:
+  addUser:
+    handler: addUser.addUser
+    events:
+      - http:
+          path: users
+          method: post
+          private: true
+          request:
+            parameters:
+              paths:
+                username: true
+  deleteUser:
+    handler: deleteUser.deleteUser
+    events:
+      - http:
+          path: users/{username}
+          method: delete
+          private: true
+          request:
+            parameters:
+              paths:
+                username: true
+  getUser:
+    handler: getUser.getUser
+    events:
+      - http:
+          path: users/{username}
+          method: get
+          private: true
+          request:
+            parameters:
+              paths:
+                username: true
+  getUserList:
+    handler: getUserList.getUserList
+    events:
+      - http:
+          path: users
+          method: get
+          private: true
+          request:
+            parameters:
+              querystring:
+                name: false
+                slack_channel: false
+  updateUser:
+    handler: updateUser.updateUser
+    events:
+      - http:
+          path: users/{username}
+          method: put
+          private: true
+          request:
+            parameters:
+              paths:
+                username: true
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.USERS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

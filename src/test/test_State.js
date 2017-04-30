@@ -1,5 +1,6 @@
-const Manager = require('../Client/ApplicationManager/State');
+const State = require('../Client/ApplicationManager/State');
 const chai = require('chai');
+const Application = require('./stubs/Application');
 
 describe('Client', function()
 {
@@ -7,14 +8,17 @@ describe('Client', function()
   {
     describe('State', function()
     {
-      describe('addApp', function()
+      describe('addApp e getApp', function()
       {
-        it('Il metodo aggiunge correttamente l’\file{Application} passata come parametro.');
-        });
+        it('Il metodo aggiunge correttamente l’\file{Application} passata come parametro e restituisce l’\file{Application} a partire dal suo nome passato come parametro.', function()
+        {
 
-      describe('getApp', function()
-      {
-        it('Il metodo restituisce l’\file{Application} a partire dal suo nome passato come parametro.');
+          state = new State();
+          state.addApp(Application, 'app');
+          let temp_app = state.getApp('app');
+          expect(Application).to.deep.equal(temp_app);
+
+        });
       });
     });
   });
