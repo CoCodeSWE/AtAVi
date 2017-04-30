@@ -24,6 +24,12 @@ class VocalAPI
     this.stt = stt;
     this.jwt = jwt;
   }
+
+	/**
+	* Questa classe si occupa di implementare l'endpoint dell'API Gateway utilizzato dal client vocale
+	* @param event {LambdaEven} - Parametro contenente, all'interno del campo body sotto forma di stringa in formato JSON, un oggetto contenente tutti i dati relativi ad un messaggio ricevuto da API Gateway
+	* @param context {LambdaContext} - Parametro utilizzato dalle lambda function per inviare la risposta
+	*/
   queryLambda(event, context)
   {
     let self = this;
@@ -255,7 +261,54 @@ class VocalAPI
   */
   _addUserEnrollment(enr)
   {
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
+			let id_user = null;	// Contiene l'id del servizio di Speaker Recognition dell'utente avente username uguale a enr.username
+			self._getUser(enr.username).subscribe(
+			{
+				next: function(user)
+				{
+					if(user.sr_id)
+						id_user = user.sr_id;
+					else
+					{
+						observer.error(
+						{
+							code: 1,
+							msg: 'Not found'
+						});
+					}
+				},
 
+				error: function(err)
+				{
+					observer.error(err);
+				},
+
+				complete: function()
+				{
+					// Sono sicuro che l'utente abbia un sr_id, altrimenti verrebbe chiamato observer.error all'interno del metodo next
+					vocal.addEnrollment(id_user, enr.audio).subscribe(
+					{
+						next: function()
+						{
+							// Non deve fare nulla
+						},
+
+						error: function(err)
+						{
+							observer.error(err);
+						},
+
+						complete: function()
+						{
+							observer.complete();
+						}
+					});
+				}
+			});
+		});
   }
 
 	/**
@@ -291,10 +344,11 @@ class VocalAPI
 
 	/**
 	* Metodo che permette di ottenere una lista degli utenti del sistema
-	* @param query {} -
+	* @param query {UserListQueryParameters} - Parametro che indica quali utenti devono essere inclusi nella lista restituita
 	*/
   _getUserList(query)
   {
+		//Costruisco la query string a partire da un oggetto contenente i valori da mettere nella query string stessa
 
   }
 
@@ -344,7 +398,54 @@ class VocalAPI
 	*/
   _resetUserEnrollment(username)
   {
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
+			let id_user = null;	// Contiene l'id del servizio di Speaker Recognition dell'utente avente username uguale a enr.username
+			self._getUser(username).subscribe(
+			{
+				next: function(user)
+				{
+					if(user.sr_id)
+						id_user = user.sr_id;
+					else
+					{
+						observer.error(
+						{
+							code: 1,
+							msg: 'Not found'
+						});
+					}
+				},
 
+				error: function(err)
+				{
+					observer.error(err);
+				},
+
+				complete: function()
+				{
+					// Sono sicuro che l'utente abbia un sr_id, altrimenti verrebbe chiamato observer.error all'interno del metodo next
+					vocal.addEnrollment(id_user).subscribe(
+					{
+						next: function()
+						{
+							// Non deve fare nulla
+						},
+
+						error: function(err)
+						{
+							observer.error(err);
+						},
+
+						complete: function()
+						{
+							observer.complete();
+						}
+					});
+				}
+			});
+		});
   }
 
 	/**
