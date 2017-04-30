@@ -57,16 +57,17 @@ class ConversationsDAODynamoDB
         },
         UpdateExpression: "set #messages= list_append(#messages, :msg)"
       };
-    });
-    self.client.update(params, function(err, data)
-    {
-        if(err)
-          observer.error(err);
-        else
-        {
-          observer.next(data);
-          observer.complete();
-        }
+
+      self.client.update(params, function(err, data)
+      {
+          if(err)
+            observer.error(err);
+          else
+          {
+            observer.next(data);
+            observer.complete();
+          }
+      });
     });
   };
 

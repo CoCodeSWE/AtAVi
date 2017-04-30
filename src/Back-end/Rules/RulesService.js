@@ -179,7 +179,7 @@ class RulesService
 
 
     // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
-		let query = objectFilter(event.queryStringParameters, ['id', 'name']);
+		let query = objectFilter(event.queryStringParameters, ['company', 'member','name']);
 		if(Object.keys(query).length === 0)
 			query = null;
 
