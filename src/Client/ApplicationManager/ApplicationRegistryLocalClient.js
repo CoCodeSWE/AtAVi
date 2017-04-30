@@ -1,5 +1,3 @@
-const Rx = require('rxjs/Rx');
-
 class ApplicationRegistryLocalClient
 {
   /**

@@ -1,7 +1,5 @@
-const  Rx = require('rxjs');
-const sinon = require('sinon');
-
-module.exports = {
+var app_local_reg =
+{
   remove: sinon.stub(),
   register: sinon.stub(),
   query: sinon.stub()
