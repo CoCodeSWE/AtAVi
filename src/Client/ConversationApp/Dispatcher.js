@@ -1,5 +1,3 @@
-const Rx = require('rxjs/Rx');
-
 class CmdDispatcher {
   constructor() {
     this.subject = new Rx.Subject();
@@ -13,6 +11,3 @@ class CmdDispatcher {
     this.subject.next({ cmd: cmd, params: params });
   }
 }
-
-module.exports = CmdDispatcher;
-//# sourceMappingURL=Dispatcher.js.map

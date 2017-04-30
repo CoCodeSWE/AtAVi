@@ -1,7 +1,4 @@
-const ConversationView = require('../Client/ConversationApp/ConversationView');
-const chai = require('chai');
 const expect = chai.expect;
-const react = require('react');
 
 describe('Client', function()
 {
