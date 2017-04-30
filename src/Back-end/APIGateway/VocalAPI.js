@@ -40,7 +40,11 @@ class VocalAPI
     }
     catch(err)  //non è un JSON valido, quindi la richiesta non è conforme
     {
-      context.succeed(statusCode: 400, body: '{"message": "Bad Request"}');
+      context.succeed(
+			{
+				statusCode: 400,
+				body: JSON.stringify({ "message": "Bad Request" })
+			});
       return;
     }
     let audio_buffer = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
@@ -89,8 +93,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -121,8 +125,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -151,8 +155,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -182,8 +186,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -214,8 +218,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -248,8 +252,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -283,7 +287,11 @@ class VocalAPI
 
 				error: function(err)
 				{
-					observer.error(err);
+					observer.error(
+					{
+						code: err.statusCode,
+						msg: err.message
+					});
 				},
 
 				complete: function()
@@ -298,7 +306,11 @@ class VocalAPI
 
 						error: function(err)
 						{
-							observer.error(err);
+							observer.error(
+							{
+								code: err.statusCode,
+								msg: err.message
+							});
 						},
 
 						complete: function()
@@ -335,8 +347,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -349,7 +361,32 @@ class VocalAPI
   _getUserList(query)
   {
 		//Costruisco la query string a partire da un oggetto contenente i valori da mettere nella query string stessa
+		let query_string = queryString(query);
+		
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
+			let options =
+			{
+				method: 'GET',
+				uri: `${self.USERS_SERVICE_URL}?${query_string}`,
+				json: true
+			};
 
+			self.request_promise(options).then(function(data)
+			{
+				observer.next(data);
+				observer.complete();
+			})
+			.catch(function(err)
+			{
+				observer.error(
+				{
+					code: err.statusCode,
+					msg: err.message
+				});
+			});
+		});
   }
 
 	/**
@@ -358,7 +395,62 @@ class VocalAPI
 	*/
   _loginUser(enr)
   {
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
+			let id_user = null;	// Contiene l'id del servizio di Speaker Recognition dell'utente avente username uguale a enr.username
+			self._getUser(enr.username).subscribe(
+			{
+				next: function(user)
+				{
+					if(user.sr_id)
+						id_user = user.sr_id;
+					else
+					{
+						observer.error(
+						{
+							code: 1,
+							msg: 'Not found'
+						});
+					}
+				},
 
+				error: function(err)
+				{
+					observer.error(
+					{
+						code: err.statusCode,
+						msg: err.message
+					});
+				},
+
+				complete: function()
+				{
+					// Sono sicuro che l'utente abbia un sr_id, altrimenti verrebbe chiamato observer.error all'interno del metodo next
+					vocal.doLogin(id_user, enr.audio).subscribe(
+					{
+						next: function()
+						{
+							// Non deve fare nulla
+						},
+
+						error: function(err)
+						{
+							observer.error(
+							{
+								code: err.statusCode,
+								msg: err.message
+							});
+						},
+
+						complete: function()
+						{
+							observer.complete();
+						}
+					});
+				}
+			});
+		});
   }
 
 	/**
@@ -385,8 +477,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -420,7 +512,11 @@ class VocalAPI
 
 				error: function(err)
 				{
-					observer.error(err);
+					observer.error(
+					{
+						code: err.statusCode,
+						msg: err.message
+					});
 				},
 
 				complete: function()
@@ -435,7 +531,11 @@ class VocalAPI
 
 						error: function(err)
 						{
-							observer.error(err);
+							observer.error(
+							{
+								code: err.statusCode,
+								msg: err.message
+							});
 						},
 
 						complete: function()
@@ -473,8 +573,8 @@ class VocalAPI
 			{
 				observer.error(
 				{
-					code: 500,
-					msg: 'Internal server error'
+					code: err.statusCode,
+					msg: err.message
 				});
 			});
 		});
@@ -510,7 +610,7 @@ class VocalAPI
           {
             name: 'rule.add.success',  // da definire il vero event come anche i parametri necessari
             data: {}
-          }
+          };
           self._addRule(/*da definire*/).subscribe(
           {
             complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
@@ -522,7 +622,7 @@ class VocalAPI
           options.body.event = {name: 'rule.get.success'};
           self._getRuleList(/*dd*/).subscribe(
           {
-            next: (data) => {rules = data};
+            next: (data) => {rules = data},
             error: error(context),
             complete: function()
             {
@@ -550,7 +650,7 @@ class VocalAPI
           {
             name: 'rule.remove.success',
             data: {}
-          }
+          };
           self._removeRule(/*da definire*/).subscribe(
           {
             complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
@@ -562,7 +662,7 @@ class VocalAPI
           {
             name: 'rule.update.success',
             data: {}
-          }
+          };
           this._updateRule(/*dd*/).subscribe(
           {
             complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
@@ -574,7 +674,7 @@ class VocalAPI
           {
             name: 'user.add.success',  // da definire il vero event come anche i parametri necessari
             data: {}
-          }
+          };
           self._addUser(/*da definire*/).subscribe(
           {
             complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
@@ -582,8 +682,8 @@ class VocalAPI
           });
           break;
         case 'user.addEnrollment':
-          options.body.event = {name: "user.addEnrollment.success"}
-          this._addUserEnrollment({audio: audio_buffer, username: /**/}).subscribe(
+          options.body.event = { name: "user.addEnrollment.success" };
+          this._addUserEnrollment({ audio: audio_buffer, username: 'username' }).subscribe(
           {
             complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
             error: error(context)
@@ -608,7 +708,7 @@ class VocalAPI
           options.body.event = {name: 'user.getList.success'};
           self._getUserList(/*dd*/).subscribe(
           {
-            next: (data) => {users = data};
+            next: (data) => {users = data},
             error: error(context),
             complete: function()
             {
@@ -618,7 +718,7 @@ class VocalAPI
           });
           break;
         case 'user.login':
-          this._loginUser({audio: audio_buffer, username: /*da definire dove si trova*/}).subscribe(
+          this._loginUser({audio: audio_buffer, username: 'username' /*da definire dove si trova*/}).subscribe(
           {
             next: function(token)
             {
@@ -638,7 +738,7 @@ class VocalAPI
           {
             name: 'user.remove.success',
             data: {}
-          }
+          };
           self._removeUser(/*da definire*/).subscribe(
           {
             complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
@@ -647,7 +747,7 @@ class VocalAPI
           break;
         case 'user.resetEnrollment':
         options.body.event = {name: "user.resetEnrollment.success"}
-        this._resetUserEnrollment(/*dd*/}).subscribe(
+        this._resetUserEnrollment(/*dd*/).subscribe(
         {
           complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
           error: error(context)
@@ -658,7 +758,7 @@ class VocalAPI
           {
             name: 'user.update.success',
             data: {}
-          }
+          };
           this._updateuser(/*dd*/).subscribe(
           {
             complete: () => self.request_promise(options).then(self._onVaResponse(context, audio_buffer)),
@@ -666,7 +766,7 @@ class VocalAPI
           });
           break;
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
-          context.succeed(statusCode: 200, body: response);
+          context.succeed({ statusCode: 200, body: JSON.stringify(response) });
       }
     }
   }
@@ -686,12 +786,18 @@ function error(context)
     context.succeed(
     {
       statusCode: err.code,
-      message: JSON.stringify(
-      {
-        message: err.msg
-      });
+      message: JSON.stringify({ message: err.msg })
     });
   }
+}
+
+// Viene ritornata una query string contenente i dati dell'oggetto obj
+function queryString(obj)
+{
+	let str = [];
+  for(let p in obj)
+		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+  return str.join("&");
 }
 
 module.exports = VocalAPI;
