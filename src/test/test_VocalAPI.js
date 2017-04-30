@@ -16,6 +16,7 @@ beforeEach(function()
 	error = sinon.stub();
 	complete = sinon.stub();
 	api = new VocalAPI(vocalLogin, jwt, promise, stt, sns);
+	context.succeed = sinon.stub();
 });
 
 describe('Back-end', function()
@@ -28,7 +29,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Rules ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._addRule(rule).subscribe(
 					{
 						next: next,
@@ -51,7 +52,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._addUser(user).subscribe(
 					{
 						next: next,
@@ -72,32 +73,14 @@ describe('Back-end', function()
 			
 			describe('_addUserEnrollment', function ()
 			{
-				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
-				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
-					api._addUserEnrollment(enrollment).subscribe(
-					{
-						next: next,
-						error: error,
-						complete: complete
-					});
-					
-					setTimeout(function()
-					{
-						expect(error.callCount).to.equal(1);
-						expect(error.getCall(0).args[0]).to.have.property('code', 500);
-						expect(next.callCount).to.equal(0);
-						expect(complete.callCount).to.equal(0);
-						done();
-					});
-				});
+				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.');
 			});
 			
 			describe('_getRule', function ()
 			{
 				it('Se la risposta ricevuta dal microservizio Rules ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._getRule(5).subscribe(
 					{
 						next: next,
@@ -120,7 +103,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Rules ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._getRuleList().subscribe(
 					{
 						next: next,
@@ -143,7 +126,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._getUser('mou').subscribe(
 					{
 						next: next,
@@ -166,7 +149,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._getUserList().subscribe(
 					{
 						next: next,
@@ -187,25 +170,19 @@ describe('Back-end', function()
 			
 			describe('_loginUser', function ()
 			{
-				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora la Promise deve essere rigettata.', function(done)
-				{
-					let promise = api._loginUser(enrollment);
-					promise.then(function()
-					{
-						done(errore);
-					})
-					.catch(function()
-					{
-						done();
-					});
-				});
+				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora la Promise deve essere rigettata.');
 			});
 			
 			describe('queryLambda', function ()
 			{
 				it('Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.', function()
 				{
-					promise.onCall(0).returns(Promise.reject(JSON.stringify(errore)));
+					let event = 
+					{
+						body: JSON.stringify();
+					};
+					
+					promise.onCall(0).returns(Promise.reject(errore));
 					promise.onCall(1).returns(Promise.reject(JSON.stringify(errore_VA)));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
@@ -331,7 +308,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'rule.add' })));
 					api._addRule = sinon.stub();
-					api._addRule.returns(Promise.reject(JSON.stringify(errore)));
+					api._addRule.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -342,7 +319,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.add' })));
 					api._addUser = sinon.stub();
-					api._addUser.returns(Promise.reject(JSON.stringify(errore)));
+					api._addUser.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -353,7 +330,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.addEnrollment' })));
 					api._addUserEnrollment = sinon.stub();
-					api._addUserEnrollment.returns(Promise.reject(JSON.stringify(errore)));
+					api._addUserEnrollment.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -364,7 +341,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'rule.get' })));
 					api._getRule = sinon.stub();
-					api._getRule.returns(Promise.reject(JSON.stringify(errore)));
+					api._getRule.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -375,7 +352,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'rule.getList' })));
 					api._getRuleList = sinon.stub();
-					api._getRuleList.returns(Promise.reject(JSON.stringify(errore)));
+					api._getRuleList.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -386,7 +363,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.get' })));
 					api._getUser = sinon.stub();
-					api._getUser.returns(Promise.reject(JSON.stringify(errore)));
+					api._getUser.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -397,7 +374,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.getList' })));
 					api._getUserList = sinon.stub();
-					api._getUserList.returns(Promise.reject(JSON.stringify(errore)));
+					api._getUserList.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -408,7 +385,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.login' })));
 					api._loginUser = sinon.stub();
-					api._loginUser.returns(Promise.reject(JSON.stringify(errore)));
+					api._loginUser.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -419,7 +396,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'rule.remove' })));
 					api._removeRule = sinon.stub();
-					api._removeRule.returns(Promise.reject(JSON.stringify(errore)));
+					api._removeRule.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -430,7 +407,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.remove' })));
 					api._removeUser = sinon.stub();
-					api._removeUser.returns(Promise.reject(JSON.stringify(errore)));
+					api._removeUser.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -441,7 +418,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.resetEnrollment' })));
 					api._resetUserEnrollment = sinon.stub();
-					api._resetUserEnrollment.returns(Promise.reject(JSON.stringify(errore)));
+					api._resetUserEnrollment.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -452,7 +429,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'rule.update' })));
 					api._updateRule = sinon.stub();
-					api._updateRule.returns(Promise.reject(JSON.stringify(errore)));
+					api._updateRule.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -463,7 +440,7 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.resolve(JSON.stringify(stt_ok)));
 					promise.onCall(1).returns(Promise.resolve(JSON.stringify({ action: 'user.update' })));
 					api._updateUser = sinon.stub();
-					api._updateUser.returns(Promise.reject(JSON.stringify(errore)));
+					api._updateUser.returns(Promise.reject(errore));
 					api.queryLambda(event, context);
 					expect(context.succeed.callCount).to.equal(1);
 					expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
@@ -494,7 +471,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Rules ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._removeRule(rule).subscribe(
 					{
 						next: next,
@@ -517,7 +494,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._removeUser('mou').subscribe(
 					{
 						next: next,
@@ -538,32 +515,14 @@ describe('Back-end', function()
 			
 			describe('_resetUserEnrollment', function ()
 			{
-				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
-				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
-					api._resetUserEnrollment('mou').subscribe(
-					{
-						next: next,
-						error: error,
-						complete: complete
-					});
-					
-					setTimeout(function()
-					{
-						expect(error.callCount).to.equal(1);
-						expect(error.getCall(0).args[0]).to.have.property('code', 500);
-						expect(next.callCount).to.equal(0);
-						expect(complete.callCount).to.equal(0);
-						done();
-					});
-				});
+				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.');
 			});
 			
 			describe('_updateRule', function ()
 			{
 				it('Se la risposta ricevuta dal microservizio Rules ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._updateRule(rule).subscribe(
 					{
 						next: next,
@@ -586,7 +545,7 @@ describe('Back-end', function()
 			{
 				it('Se la risposta ricevuta dal microservizio Users ha uno status code diverso da 200 allora l\'Observable ritornato deve chiamare il metodo error dell\'Observer iscritto passandogli come parametro un oggetto di tipo Exception con campo code pari allo status code della risposta.', function(done)
 				{
-					promise.returns(Promise.reject(JSON.stringify(errore)));
+					promise.returns(Promise.reject(errore));
 					api._updateUser(user).subscribe(
 					{
 						next: next,
@@ -637,11 +596,6 @@ let enrollment =
 {
 	audio: 'audio',
 	username: 'mou'
-}
-
-let event =
-{
-	body: ''
 }
 
 let stt_ok =
