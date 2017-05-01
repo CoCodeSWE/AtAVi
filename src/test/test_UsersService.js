@@ -37,7 +37,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
-				
+
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
         {
           users_DAO.addUser.returns(Rx.Observable.empty());
@@ -54,7 +54,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
-				
+
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400",function()
         {
 	        users_DAO.addUser.returns(Rx.Observable.throw(new Error()));
@@ -80,7 +80,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
-				
+
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
         {
           users_DAO.deleteUser.returns(Rx.Observable.empty());
@@ -92,7 +92,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
-				
+
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
         {
           let ev = { pathParameters: "" };
@@ -103,7 +103,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Bad Request' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 400);
         });
-				
+
 				it("Nel caso in cui sia passato uno username non esistente, il campo \\file{statusCode} della risposta deve essere impostato a 404", function()
         {
 					users_DAO.deleteUser.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
@@ -129,7 +129,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
-				
+
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere l'utente richiesto", function()
         {
           users_DAO.getUser.returns(Rx.Observable.of({ name : 'Mauro', username : 'mou' }));
@@ -141,7 +141,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ name : 'Mauro', username : 'mou' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
-				
+
         it("Nel caso in cui sia passato uno username non esistente, il campo \\file{statusCode} della risposta deve essere impostato a 404", function()
         {
 					users_DAO.getUser.returns(Rx.Observable.throw('Not found'));
@@ -166,10 +166,10 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
-				
+
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista degli utenti", function()
         {
-          users_DAO.getUserList.returns(Rx.Observable.of({ Items: [ { name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' } ] }));
+          users_DAO.getUserList.returns(Rx.Observable.of({ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }));
           let ev = { queryStringParameters: {} };
           service.getUserList(ev, context);
           let call = context.succeed.getCall(0);
@@ -196,7 +196,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'Internal server error' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
-				
+
         it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
         {
           users_DAO.updateUser.returns(Rx.Observable.empty());
@@ -212,7 +212,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('body', JSON.stringify({ message: 'success' }));
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
-				
+
         it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
         {
           let ev = { pathParameters: "", body: "" };
