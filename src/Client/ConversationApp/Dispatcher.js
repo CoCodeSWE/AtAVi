@@ -1,4 +1,4 @@
-class CmdDispatcher {
+class Dispatcher {
   constructor() {
     this.subject = new Rx.Subject();
   }

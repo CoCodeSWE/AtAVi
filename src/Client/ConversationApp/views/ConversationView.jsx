@@ -1,5 +1,3 @@
-const React = require('react');
-
 class ConversationView extends React.Component
 {
   constructor(props)
@@ -16,5 +14,3 @@ class ConversationView extends React.Component
     );
   }
 }
-
-module.exports = ConversationView;
