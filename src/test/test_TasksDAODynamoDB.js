@@ -88,7 +88,7 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0]).to.equal(mock_task.Item);
+					expect(callNext.args[0].type).to.equal(mock_task.Item.type);
 					expect(complete.callCount).to.equal(1);
 
         });

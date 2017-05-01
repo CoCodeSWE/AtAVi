@@ -56,7 +56,7 @@ class guestsDAODynamoDB
         if(err)
           observer.error(err);
         else
-          observer.next(data.Item);
+          observer.next(mapProperties(data.Item, reverse_attr_map));
           observer.complete();
       });
     });
@@ -158,7 +158,7 @@ class guestsDAODynamoDB
     			 observer.error(err);
     		else
     		{
-    		  data.Items.forEach((guest) => { observer.next(guest.Item);});
+    		  data.Items.forEach((guest) => observer.next(mapProperties(guest.Item, reverse_attr_map)));
     			if(data.LastEvaluatedKey)
     			{
     				params.ExclusiveStartKey = data.LastEvaluatedKey;
@@ -185,7 +185,7 @@ function filterExpression(obj)
 		ExpressionAttributeValues: {}
 	};
 
-  let new_obj = {};
+  let new_obj = mapProperties(obj, attr_map);
 
   for(let i in obj)
   {
@@ -204,9 +204,23 @@ function filterExpression(obj)
   return filter_expression;
 }
 
-// probabilmente da modificare
+function mapProperties(object, map)
+{
+  let new_obj = {};
+  for(let i in object)
+  {
+    let key = map[i] ? map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
+    new_obj[key] = object[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
+  }
+  return new_obj;
+}
+
 const attr_map =
 {
   name: 'full_name'
+}
+const reverse_attr_map =
+{
+  full_name: 'name'
 }
 module.exports = guestsDAODynamoDB;
