@@ -220,49 +220,45 @@ describe('Back-end', function()
         it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \file{statusCode} della risposta deve essere impostato a 200 e il campo \file{body} deve contenere la lista delle \file{Rule}.", function()
         {
           rulesDAO.getRuleList.returns(Rx.Observable.of(
-            {
-              Items:
-              [
+              {
+                "enabled": false,
+                "id": 1,
+                "name": "testRule",
+                "targets": [
                 {
-                  "enabled": false,
-                  "id": 1,
-                  "name": "testRule",
-                  "targets": [
-                  {
-                    "company": "testCompany",
-                    "member": "testMember",
-                    "name": "testName"
-                  }],
-                  "task":
-                  {
-                    "params":
-                    {
-                      "param": "testParam"
-                    },
-                    "task": "testTask"
-                  }
-                },
+                  "company": "testCompany",
+                  "member": "testMember",
+                  "name": "testName"
+                }],
+                "task":
                 {
-                  "enabled": false,
-                  "id": 2,
-                  "name": "testRule2",
-                  "targets": [
+                  "params":
                   {
-                    "company": "testCompany2",
-                    "member": "testMember2",
-                    "name": "testName2"
-                  }],
-                  "task":
-                  {
-                    "params":
-                    {
-                      "param": "testParam2"
-                    },
-                    "task": "testTask2"
-                  }
+                    "param": "testParam"
+                  },
+                  "task": "testTask"
                 }
-              ]
-            }));
+              },
+              {
+                "enabled": false,
+                "id": 2,
+                "name": "testRule2",
+                "targets": [
+                {
+                  "company": "testCompany2",
+                  "member": "testMember2",
+                  "name": "testName2"
+                }],
+                "task":
+                {
+                  "params":
+                  {
+                    "param": "testParam2"
+                  },
+                  "task": "testTask2"
+                }
+              }
+            ));
           let ev = {};
           rules.getRuleList(ev, context);
           let call = context.succeed.getCall(0);

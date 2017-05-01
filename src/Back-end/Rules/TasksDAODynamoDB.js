@@ -163,7 +163,7 @@ class TasksDAODynamoDB
   			observer.error(err);
   		else
   		{
-  			data.Items.forEach((task) => observer.next(task));
+  			data.Items.forEach((task) => observer.next(task.Item));
   			if(data.LastEvaluatedKey)
   			{
 

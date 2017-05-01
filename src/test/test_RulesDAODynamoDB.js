@@ -5,8 +5,8 @@ const expect = chai.expect;
 const dao = require('../Back-end/Rules/RulesDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
-var mock_rule = {enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}};
-var mock_rule2 = {enabled:true, id:2, name:'testing_rule2', targets:[], task:{params:['first1','second2'], task: 'task_name2'}};
+var mock_rule = {Item : {enabled:true, id:1, name:'testing_rule', targets:[], task:{params:['first','second'], task: 'task_name'}}};
+var mock_rule2 = {Item : {enabled:true, id:2, name:'testing_rule2', targets:[], task:{params:['first1','second2'], task: 'task_name2'}}};
 
 
 let next, error, complete;
@@ -90,7 +90,8 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].id).to.equal(mock_rule.id);
+					console.log(callNext.args);
+					expect(callNext.args[0].id).to.equal(mock_rule.Item.id);
 					expect(complete.callCount).to.equal(1);
 
         });
@@ -116,10 +117,10 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].id).to.equal(mock_rule.id);
+					expect(callNext.args[0].id).to.equal(mock_rule.Item.id);
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].id).to.equal(mock_rule2.id);
+					expect(callNext.args[0].id).to.equal(mock_rule2.Item.id);
 					expect(complete.callCount).to.equal(0);
 
         });
@@ -137,9 +138,9 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(2);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].id).to.equal(mock_rule.id);
+					expect(callNext.args[0].id).to.equal(mock_rule.Item.id);
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].id).to.equal(mock_rule2.id);
+					expect(callNext.args[0].id).to.equal(mock_rule2.Item.id);
 					expect(complete.callCount).to.equal(1);
 
         });

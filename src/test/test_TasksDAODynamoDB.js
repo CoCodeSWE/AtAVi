@@ -5,8 +5,8 @@ const expect = chai.expect;
 const dao = require('../Back-end/Rules/TasksDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
-var mock_task = {'type':'mock_type'};
-var mock_task2 = {'type':'mock_type2'};
+var mock_task = {Item:{'type':'mock_type'}};
+var mock_task2 = {Item:{'type':'mock_type2'}};
 
 let next, error, complete;
 beforeEach(function()
@@ -88,7 +88,7 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0]).to.equal(mock_task);
+					expect(callNext.args[0]).to.equal(mock_task.Item);
 					expect(complete.callCount).to.equal(1);
 
         });
@@ -112,9 +112,9 @@ describe('Back-end', function()
 					expect(callError.args[0].statusCode).to.equal(500);
 					expect(next.callCount).to.equal(2);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].type).to.equal(mock_task.type);
+					expect(callNext.args[0].type).to.equal(mock_task.Item.type);
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].type).to.equal(mock_task2.type);
+					expect(callNext.args[0].type).to.equal(mock_task2.Item.type);
 					expect(complete.callCount).to.equal(0);
 
         });
@@ -131,9 +131,9 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(2);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].type).to.equal(mock_task.type);
+					expect(callNext.args[0].type).to.equal(mock_task.Item.type);
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].type).to.equal(mock_task2.type);
+					expect(callNext.args[0].type).to.equal(mock_task2.Item.type);
 					expect(complete.callCount).to.equal(1);
 
         });

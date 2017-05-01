@@ -169,7 +169,7 @@ class RulesDAODynamoDB
       }
   		else
   		{
-  			data.Items.forEach((rule) => observer.next(rule));
+  			data.Items.forEach((rule) => {console.log(rule); observer.next(rule.Item);});
   			if(data.LastEvaluatedKey)
   			{
   				params.ExclusiveStartKey= data.LastEvaluatedKey;
