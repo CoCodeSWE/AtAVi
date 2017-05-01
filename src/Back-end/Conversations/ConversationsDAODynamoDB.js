@@ -64,7 +64,7 @@ class ConversationsDAODynamoDB
             observer.error(err);
           else
           {
-            observer.next(data);
+            observer.next(data.Item);
             observer.complete();
           }
       });
@@ -91,30 +91,37 @@ class ConversationsDAODynamoDB
         if(err)
           observer.error(err);
         else
-          observer.next(data);
+          observer.next(data.Item);
           observer.complete();
       });
     });
   }
   /**
 		* Ottiene la lista delle conversazioni aventi l'd del Guest come parametro, suddivisi in blocchi (da massimo da 1MB)
-		* @param guest_id {String} - id del Guest della lista di conversazioni che si vuole ottenere
+		* @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 		*/
-  getConversationList(guest_id)
+  getConversationList(query)
   {
     let self = this;
-    return new Rx.Observable(function(observer)
-    {
-      let params = {
-        TableName: self.table,
-        ExpressionAttributeValues:
-        {
-          ":id_guest":guest_id
-        },
-        FilterExpression: "guest_id = :id_guest"
-      };
-      self.client.scan(params, self._onScan(observer, params));
-    });
+		return new Rx.Observable(function(observer)
+		{
+			let params =
+			{
+				TableName: self.table
+			};
+
+			// Controllo se gli user da restituire hanno dei filtri (contenuti in query)
+			if(query)
+			{
+				let filter_expression = filterExpression(query);
+				if(Object.keys(filter_expression).length > 0)
+				{
+					params.FilterExpression = filter_expression.FilterExpression;
+					params.ExpressionAttributeValues = filter_expression.ExpressionAttributeValues;
+				}
+			}
+			self.client.scan(params, self._onScan(observer, params));
+		});
   }
 
   /**
@@ -158,7 +165,7 @@ class ConversationsDAODynamoDB
   			observer.error(err);
   		else
   		{
-  			observer.next(data);
+  			data.Items.forEach((conv) => { observer.next(conv.Item);});
   			if(data.LastEvaluatedKey)
   			{
   				params.ExclusiveStartKey = data.LastEvaluatedKey;
@@ -171,6 +178,42 @@ class ConversationsDAODynamoDB
   		}
   	}
   }
+}
+/**
+	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
+	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	*/
+function filterExpression(obj)
+{
+	let filter_expression =
+	{
+		FilterExpression: '',
+		ExpressionAttributeValues: {}
+	};
+
+  let new_obj = {};
+
+  for(let i in obj)
+  {
+    let key = attr_map[i] ? attr_map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
+    new_obj[key] = obj[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
+  };
+
+  for(let key in new_obj)
+  {
+    filter_expression.FilterExpression += `${key} = :${key} and `;
+		filter_expression.ExpressionAttributeValues[`:${key}`] = new_obj[key];
+  }
+
+	// Tolgo l'and finale dal FilterExpression
+	filter_expression.FilterExpression = filter_expression.FilterExpression.slice(0,-5);
+  return filter_expression;
+}
+
+// probabilmente da modificare
+const attr_map =
+{
+  name: 'full_name'
 }
 
 module.exports = ConversationsDAODynamoDB;

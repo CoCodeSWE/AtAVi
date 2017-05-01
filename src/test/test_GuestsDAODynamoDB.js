@@ -76,7 +76,7 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          dynamo_client.get.yield(null, { name : "Mauro", company : "Zero12" });
+          dynamo_client.get.yield(null, { Item:{name : "Mauro", company : "Zero12" }});
           expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
@@ -96,8 +96,8 @@ describe('Back-end', function()
             complete: complete
           });
 
-          dynamo_client.scan.yield(null, {Items: [{ name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
-          dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }], LastEvaluatedKey: 'Luca'});
+          dynamo_client.scan.yield(null, {Items: [{Item:{ name : "Mauro", company : "Zero12" }}], LastEvaluatedKey: 'Piero'});
+          dynamo_client.scan.yield(null, {Items: [{Item:{ name : "Piero", company : "Google" }}], LastEvaluatedKey: 'Luca'});
           dynamo_client.scan.yield({ statusCode : 500 });
 
           expect(error.callCount).to.equal(1);
@@ -107,12 +107,12 @@ describe('Back-end', function()
           expect(next.callCount).to.equal(2);
 
           let callNext = next.getCall(0);
-          expect(callNext.args[0].Items[0].name).to.equal('Mauro');
-          expect(callNext.args[0].Items[0].company).to.equal('Zero12');
+          expect(callNext.args[0].name).to.equal('Mauro');
+          expect(callNext.args[0].company).to.equal('Zero12');
 
           callNext = next.getCall(1);
-          expect(callNext.args[0].Items[0].name).to.equal('Piero');
-          expect(callNext.args[0].Items[0].company).to.equal('Google');
+          expect(callNext.args[0].name).to.equal('Piero');
+          expect(callNext.args[0].company).to.equal('Google');
 
           expect(complete.callCount).to.equal(0);
         });
@@ -125,8 +125,8 @@ describe('Back-end', function()
             complete: complete
           });
 
-          dynamo_client.scan.yield(null, {Items: [{ name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
-          dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }]});
+          dynamo_client.scan.yield(null, {Items: [{ Item:{name : "Mauro", company : "Zero12" }}], LastEvaluatedKey: 'Piero'});
+          dynamo_client.scan.yield(null, {Items: [{ Item:{name : "Piero", company : "Google" }}]});
 
 					expect(error.callCount).to.equal(0);
 
@@ -134,12 +134,12 @@ describe('Back-end', function()
 
 					let callNext = next.getCall(0);
 
-          expect(callNext.args[0].Items[0].name).to.equal('Mauro');
-          expect(callNext.args[0].Items[0].company).to.equal('Zero12');
+          expect(callNext.args[0].name).to.equal('Mauro');
+          expect(callNext.args[0].company).to.equal('Zero12');
 
           callNext = next.getCall(1);
-          expect(callNext.args[0].Items[0].name).to.equal('Piero');
-          expect(callNext.args[0].Items[0].company).to.equal('Google');
+          expect(callNext.args[0].name).to.equal('Piero');
+          expect(callNext.args[0].company).to.equal('Google');
 
           expect(complete.callCount).to.equal(1);
         });

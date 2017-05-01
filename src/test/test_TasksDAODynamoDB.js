@@ -137,10 +137,6 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(1);
 
         });
-				it("Nel caso in cui il metodo venga chiamato con queryStringParameters con un solo attributo, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati filtrati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
-				{
-					//da definire
-				});
       });
 
      describe('removeTask', function()

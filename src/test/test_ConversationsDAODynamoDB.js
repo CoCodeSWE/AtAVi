@@ -5,8 +5,8 @@ const expect = chai.expect;
 const dao = require('../Back-end/Conversations/ConversationsDAODynamoDB');
 const dynamo_client = require('./stubs/DynamoDB');
 
-var mock_conv = {guest_id:1, session_id: 2, messages:[{sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}]};
-var mock_conv2 = {guest_id:3, session_id: 4, messages:[{sender:'mock_sender2',text: 'mock_text2', timestamp: '2000-20-20'}]};
+var mock_conv = {Item:{guest_id:1, session_id: 2, messages:[{sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'}]}};
+var mock_conv2 = {Item:{guest_id:3, session_id: 4, messages:[{sender:'mock_sender2',text: 'mock_text2', timestamp: '2000-20-20'}]}};
 
 let next, error, complete;
 beforeEach(function()
@@ -114,7 +114,7 @@ describe('Back-end', function()
           expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0]).to.equal(mock_conv);
+					expect(callNext.args[0]).to.equal(mock_conv.Item);
 					expect(complete.callCount).to.equal(1);
         });
       });
@@ -137,9 +137,9 @@ describe('Back-end', function()
           expect(callError.args[0].statusCode).to.equal(500);
           expect(next.callCount).to.equal(2);
           let callNext = next.getCall(0);
-          expect(callNext.args[0].Items[0]).to.equal(mock_conv);
+          expect(callNext.args[0]).to.equal(mock_conv.Item);
 					callNext = next.getCall(1);
-          expect(callNext.args[0].Items[0]).to.equal(mock_conv2);
+          expect(callNext.args[0]).to.equal(mock_conv2.Item);
           expect(complete.callCount).to.equal(0);
 				});
         it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte le conversazioni ottenute dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function()
@@ -156,9 +156,9 @@ describe('Back-end', function()
             expect(error.callCount).to.equal(0);
             expect(next.callCount).to.equal(2);
 						let callNext = next.getCall(0);
-						expect(callNext.args[0].Items[0]).to.equal(mock_conv);
+						expect(callNext.args[0]).to.equal(mock_conv.Item);
 						callNext = next.getCall(1);
-						expect(callNext.args[0].Items[0]).to.equal(mock_conv2);
+						expect(callNext.args[0]).to.equal(mock_conv2.Item);
             expect(complete.callCount).to.equal(1);
         });
       });
