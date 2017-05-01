@@ -1,6 +1,6 @@
 const Rx = require('rxjs/Rx');
 
-class CmdDispatcher {
+class ConversationDispatcher {
   constructor() {
     this.subject = new Rx.Subject();
   }
