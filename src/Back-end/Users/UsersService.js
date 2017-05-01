@@ -182,7 +182,7 @@ class UsersService
 
 		this.users.getUserList(query).subscribe(
 		{
-			next: (user) => { list.users.push(user); }),
+			next: (user) => { list.users.push(user); },
 			error: internalServerError(context),
 
 			complete: function()

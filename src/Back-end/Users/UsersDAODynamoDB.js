@@ -222,7 +222,7 @@ const attr_map =
 
 const reverse_attr_map =
 {
-  full_name: name
+  full_name: 'name'
 }
 
 module.exports = UsersDAODynamoDB;
