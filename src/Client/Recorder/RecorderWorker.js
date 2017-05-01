@@ -1,10 +1,9 @@
-
 var recLength = 0,
 recBuffersL = [],
 recBuffersR = [],
 sampleRate;
 
-this.onMessage = function(e)
+this.onmessage = function(e)
 {
   switch(e.data.command)
   {
@@ -23,6 +22,9 @@ this.onMessage = function(e)
     case 'getBuffers':
       getBuffers();
       break;
+    case 'encodeWAV':
+      encodeWAV(e.data.buffer, e.data.mono);
+      break;
     case 'clear':
       clear();
       break;
@@ -36,22 +38,23 @@ function init(config)
 
 function record(inputBuffer)
 {
-  resampler(inputBuffer[0], 16000, function(data)
+  /*resampler(inputBuffer[0], sampleRate, function(data)
   {
     data.getAudioBuffer(function(buffer)
     {
       recBuffersL.push(buffer);// passarli a resampler a 16000, callback fa push
-
     });
   });
-  resampler(inputBuffer[1], 16000, function(data)
+  resampler(inputBuffer[1], sampleRate, function(data)
   {
     data.getAudioBuffer(function(buffer)
     {
       recBuffersR.push(buffer);// passarli a resampler a 16000, callback fa push
 
     });
-  });
+  });*/
+  recBuffersR.push(inputBuffer[0]);
+  recBuffersL.push(inputBuffer[1]);
   recLength += inputBuffer[0].length;
 }
 
@@ -70,44 +73,18 @@ function exportMonoWAV(type)
   var bufferL = mergeBuffers(recBuffersL, recLength);
   //chiamo downsample su bufferL per portarlo a 16000Hz
   //var downsampled = downsampleBuffer(bufferL, 16000);
-  var dataview = encodeWAV(downsampled, true);
+  var dataview = encodeWAV(bufferL, true);
   var audioBlob = new Blob([dataview], { type: type });
 
   this.postMessage(audioBlob);
 }
-
-/*function downsampleBuffer(buffer, rate) {
-    if (rate == sampleRate) {
-        return buffer;
-    }
-    if (rate > sampleRate) {
-        throw "downsampling rate show be smaller than original sample rate";
-    }
-    var sampleRateRatio = sampleRate / rate;
-    var newLength = Math.round(buffer.length / sampleRateRatio);
-    var result = new Float32Array(newLength);
-    var offsetResult = 0;
-    var offsetBuffer = 0;
-    while (offsetResult < result.length) {
-        var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
-        var accum = 0, count = 0;
-        for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
-            accum += buffer[i];
-            count++;
-        }
-        result[offsetResult] = accum / count;
-        offsetResult++;
-        offsetBuffer = nextOffsetBuffer;
-    }
-    return result;
-}*/
 
 function getBuffers()
 {
   var buffers = [];
   buffers.push( mergeBuffers(recBuffersL, recLength) );
   buffers.push( mergeBuffers(recBuffersR, recLength) );
-  this.postMessage(buffers);
+  this.postMessage({type: 'buffers', buffers: buffers, length: recLength});
 }
 
 function clear()
@@ -148,7 +125,7 @@ function interleave(inputL, inputR)
 
 function floatTo16BitPCM(output, offset, input)
 {
-  for (var i = 0; i < input.length; i+=rapp, offset+=2)
+  for (var i = 0; i < input.length; i++, offset+=2)
   {
     var s = Math.max(-1, Math.min(1, input[i]));
     output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
@@ -163,17 +140,14 @@ function writeString(view, offset, string)
   }
 }
 
-function encodeWAV(samples, mono)
-{
-
-
-  var buffer = new ArrayBuffer(44 + length * 2);
+function encodeWAV(samples, mono){
+  var buffer = new ArrayBuffer(44 + samples.length * 2);
   var view = new DataView(buffer);
 
   /* RIFF identifier */
   writeString(view, 0, 'RIFF');
   /* file length */
-  view.setUint32(4, 32 + samples.lenght * 2, true);
+  view.setUint32(4, 32 + samples.length * 2, true);
   /* RIFF type */
   writeString(view, 8, 'WAVE');
   /* format chunk identifier */
@@ -185,9 +159,9 @@ function encodeWAV(samples, mono)
   /* channel count */
   view.setUint16(22, mono?1:2, true);
   /* sample rate */
-  view.setUint32(24, 16000, true);
+  view.setUint32(24, sampleRate, true);
   /* byte rate (sample rate * block align) */
-  view.setUint32(28, 16000 * 2 * (mono?1:2), true);
+  view.setUint32(28, sampleRate * 2 * (mono?1:2), true);
   /* block align (channel count * bytes per sample) */
   view.setUint16(32, 2 * (mono?1:2), true);
   /* bits per sample */
@@ -195,9 +169,10 @@ function encodeWAV(samples, mono)
   /* data chunk identifier */
   writeString(view, 36, 'data');
   /* data chunk length */
-  view.setUint32(40, samples.lenght * 2, true);
+  view.setUint32(40, samples.length * 2, true);
 
   floatTo16BitPCM(view, 44, samples);
 
-  return view;
+  var audioBlob = new Blob([view], { type: 'audio/wav' });
+  postMessage({type: 'wav', blob: audioBlob});
 }

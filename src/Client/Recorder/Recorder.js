@@ -1,49 +1,54 @@
 (function(window)
 {
 
-  var WORKER_PATH = 'js/recorderjs/recorderWorker.js';
+  var WORKER_PATH = 'js/recorderjs/RecorderWorker.js';
 
   var Recorder = function(cfg)
   {
     //create source
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-
+    //window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var audioContext = new AudioContext();
-    var audioInput = null,
-    realAudioInput = null,
-    inputPoint = null,
-    audioRecorder = null,
-    analyserNode,
-    source;
-    var self = this;
+    var audioInput = null;
+    var realAudioInput = null;
+    var inputPoint = null;
+    var audioRecorder = null;
+    var analyserNode;
+    var source;
     var config = cfg || {};
+    var worker = new Worker(config.workerPath || WORKER_PATH);
+    var onComplete = cfg.oncomplete;
+    var recording = false;
+    worker.onmessage = function(e)
+    {
+      switch (e.data.type)
+      {
+        case 'buffers':
+          let audio_buffer = audioContext.createBuffer(2, e.data.length, audioContext.sampleRate);
+          audio_buffer.copyToChannel(e.data.buffers[1], 1);
+          audio_buffer.copyToChannel(e.data.buffers[0], 0);
+          resampler(audio_buffer, 16000, function(buffer)
+          {
+            array = buffer.getChannelData(0);
+            worker.postMessage({command: 'encodeWAV', buffer: array, mono: true});
+          });
+          break;
+        case 'wav':
+          onComplete(e.data.blob);
+      }
+      //var blob = e.data;
+    }
+    let self = this;
     var bufferLen = config.bufferLen || 4096;
 
 
     if (!navigator.mediaDevices.getUserMedia)
-            navigator.mediaDevices.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        if (!navigator.cancelAnimationFrame)
-            navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;
-        if (!navigator.requestAnimationFrame)
-            navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
+      navigator.mediaDevices.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    if (!navigator.cancelAnimationFrame)
+      navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;
+    if (!navigator.requestAnimationFrame)
+      navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-    navigator.mediaDevices.getUserMedia(
-        {
-            "audio": {
-                "mandatory": {
-                    "googEchoCancellation": "false",
-                    "googAutoGainControl": "false",
-                    "googNoiseSuppression": "false",
-                    "googHighpassFilter": "false"
-                },
-                "optional": []
-            },
-        }).then(gotStream).catch(function(e) {
-            alert('Error getting audio');
-            console.log(e);
-        });
-
-    this.gotStream(stream)
+    this.gotStream = function(stream)
     {
       inputPoint = audioContext.createGain();
 
@@ -54,69 +59,90 @@
 
       analyserNode = audioContext.createAnalyser();
       analyserNode.fftSize = 2048;
-      inputPoint.connect( analyserNode );
+      inputPoint.connect(analyserNode);
 
       source = inputPoint;
-    }
+      zeroGain = audioContext.createGain();
+      zeroGain.gain.value = 0.0;
+      inputPoint.connect(zeroGain);
+      zeroGain.connect(audioContext.destination);
 
 
-
-    this.context = source.context;
-    if(!this.context.createScriptProcessor)
-    {
-      this.node = this.context.createJavaScriptNode(bufferLen, 2, 2);
-    }
-    else
-    {
-      this.node = this.context.createScriptProcessor(bufferLen, 2, 2);
-    }
-
-    var worker = new Worker(config.workerPath || WORKER_PATH);
-    worker.postMessage(
-    {
-      command: 'init',
-      config:
+      this.context = source.context;
+      if (!this.context.createScriptProcessor)
       {
-        sampleRate: this.context.sampleRate
+        this.node = this.context.createJavaScriptNode(bufferLen, 2, 2);
       }
-    });
-    var recording = false,
-    currCallback;
-
-    var time;
-
-    this.node.onaudioprocess = function(e)
-    {
-      var timeByteData = new Float32Array(analyserNode.fftSize);
-      var volume = getAverageVolume(timeByteData);
-      if (!recording && volume > config.threshold)
+      else
       {
+        this.node = this.context.createScriptProcessor(bufferLen, 2, 2);
+      }
+
+      worker.postMessage(
+      {
+        command: 'init',
+        config:
+        {
+          sampleRate: 16000
+        }
+      });
+      recording = false;
+      var time;
+      this.node.onaudioprocess = function(e)
+      {
+        var volData = new Uint8Array(analyserNode.fftSize);
+        analyserNode.getByteFrequencyData(volData);
+        var volume = getAverageVolume(volData);
+        if (!recording && volume > config.threshold)
+        {
           if (time)
           {
             clearTimeout(time);
             time = null;
           }
-          this.start();
-      }
-      if (recording)
-      {
-        if (config.max_silence !== -1 && !time && volume<config.threshold)
+          self.start();
+        }
+        if (recording)
         {
-          time = setTimeoout(function()
+          if (config.max_silence !== -1 && !time && volume < config.threshold)
           {
-            self.stop();
-          },config.max_silence);
-        worker.postMessage(
-        {
-          command: 'record',
-          buffer:
-          [
-            e.inputBuffer.getChannelData(0),
-            e.inputBuffer.getChannelData(1)
-          ]
-        });
+            time = setTimeout(function()
+            {
+              self.stop();
+            }, config.max_silence);
+          }
+          worker.postMessage(
+          {
+            command: 'record',
+            buffer: [
+              e.inputBuffer.getChannelData(0),
+              e.inputBuffer.getChannelData(1)
+            ]
+          });
+        }
       }
+
+      source.connect(this.node);
+      this.node.connect(this.context.destination); // if the script node is not connected to an output the "onaudioprocess" event is not triggered in chrome.
     }
+
+    navigator.mediaDevices.getUserMedia(
+    {
+      "audio":
+      {
+        "mandatory":
+        {
+          "googEchoCancellation": "false",
+          "googAutoGainControl": "false",
+          "googNoiseSuppression": "false",
+          "googHighpassFilter": "false"
+        },
+        "optional": []
+      },
+    }).then(this.gotStream.bind(this)).catch(function(e)
+    {
+      alert('Error getting audio');
+    });
 
     this.setConfig = function(cfg)
     {
@@ -134,24 +160,6 @@
       recording = true;
     }
 
-    function getAverageVolume(array)
-    {
-        var values = 0;
-        var average;
-
-        var length = array.length;
-
-        // get all the frequency amplitudes
-        for (var i = 0; i < length; i++)
-        {
-            values += array[i];
-        }
-
-        average = values / length;
-        return average;
-    }
-
-
     this.stop = function()
     {
       recording = false;
@@ -159,13 +167,19 @@
 
     this.clear = function()
     {
-      worker.postMessage({ command: 'clear' });
+      worker.postMessage(
+      {
+        command: 'clear'
+      });
     }
 
     this.getBuffers = function(cb)
     {
-      currCallback = cb || config.callback;
-      worker.postMessage({ command: 'getBuffers' })
+      onComplete = cb || config.oncomplete;
+      worker.postMessage(
+      {
+        command: 'getBuffers'
+      });
     }
 
     this.exportWAV = function(cb, type)
@@ -191,15 +205,6 @@
         type: type
       });
     }
-
-    worker.onMessage = function(e)
-    {
-      var blob = e.data;
-      currCallback(blob);
-    }
-
-    source.connect(this.node);
-    this.node.connect(this.context.destination);   // if the script node is not connected to an output the "onaudioprocess" event is not triggered in chrome.
   };
 
   Recorder.setupDownload = function(blob, filename)
@@ -211,5 +216,43 @@
   }
 
   window.Recorder = Recorder;
-
 })(window);
+
+function getAverageVolume(array)
+{
+  var values = 0;
+  var average;
+
+  var length = array.length;
+
+  // get all the frequency amplitudes
+  for (var i = 0; i < length; i++)
+  {
+    values += array[i];
+  }
+
+  average = values / length;
+  return average;
+}
+
+function resampler(audioBuffer, targetSampleRate, oncomplete)
+{
+  var numCh_ = audioBuffer.numberOfChannels;
+  var numFrames_ = audioBuffer.length * targetSampleRate / audioBuffer.sampleRate;
+  var offlineContext_ = new OfflineAudioContext(numCh_, numFrames_, targetSampleRate);
+  var bufferSource_ = offlineContext_.createBufferSource();
+  bufferSource_.buffer = audioBuffer;
+
+  offlineContext_.oncomplete = function(event)
+  {
+    var resampeledBuffer = event.renderedBuffer;
+    if (typeof oncomplete === 'function')
+    {
+      oncomplete(resampeledBuffer);
+    }
+  };
+
+  bufferSource_.connect(offlineContext_.destination);
+  bufferSource_.start(0);
+  offlineContext_.startRendering();
+}
