@@ -1,122 +1,31 @@
-service: users
+service: notifications
 
 provider:
   name: aws
   runtime: nodejs6.10
   region: eu-central-1
   environment:
-    RULES_TABLE: Rules-${opt:stage, self:provider.stage}
-    TASKS_TABLE: Tasks-${opt:stage, self:provider.stage}
+    SLACK_API_TOKEN: ''
   profile: default
   apiKeys:
-    - rules-service
+    - notifications-service
   iamRoleStatements:
     - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-        - dynamodb:PutItem
-      Resource: 
-          - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.RULES_TABLE}"
-          - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASKS_TABLE}"
-      
+     
 
 functions:
-  addRule:
-    handler: addRule.addRule
+  getChannelList:
+    handler: getChannelList.getChannelList
     events:
       - http:
-          path: rules
+          path: notifications
+          method: get
+          private: true
+
+  sendMsg:
+    handler: sendMsg.sendMsg
+    events:
+      - http:
+          path: notifications
           method: post
           private: true
-
-  deleteRule:
-    handler: deleteRule.deleteRule
-    events:
-      - http:
-          path: rules/{id}
-          method: delete
-          private: true
-          request:
-            parameters:
-              paths:
-                id: true
-  
-  getRule:
-    handler: getRule.getRule
-    events:
-      - http:
-          path: rules/{id}
-          method: get
-          private: true
-          request:
-            parameters:
-              paths:
-                id: true
-  
-  getRuleList:
-    handler: getRuleList.getRuleList
-    events:
-      - http:
-          path: rules
-          method: get
-          private: true
-          request:
-            parameters:
-              querystring:
-                enabled: false
-                name: false
-                target: false
-                task: false
-        
-  getTaskList:
-    handler: getTaskList.getTaskList
-    events:
-      - http:
-          path: rules/tasks
-          method: get
-          private: true
-              
-  updateRule:
-    handler: updateRule.updateRule
-    events:
-      - http:
-          path: rules/{id}
-          method: put
-          private: true
-          request:
-            parameters:
-              paths:
-                id: true
-
-resources:
-  Resources:
-    usersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:provider.environment.USERS_TABLE}
-        AttributeDefinitions:
-          - AttributeName: username
-            AttributeType: S
-        KeySchema:
-          - AttributeName: username
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-    rulesTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:provider.environment.RULES_TABLE}
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: N
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
