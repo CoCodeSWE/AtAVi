@@ -24,7 +24,8 @@ class UsersDAODynamoDB
       let params =
 			{
 				'TableName': self.table,
-				'Item': user
+				'Item': mapProperties(user, attr_map),
+				'ConditionExpression': 'attribute_not_exists(username)'
 			};
       self.client.put(params, function(err, data)
 			{
@@ -57,8 +58,8 @@ class UsersDAODynamoDB
       {
         if(err)
           observer.error(err);
-				else if(!data.Item.username)
-					observer.error('Not found');
+				else if(!data.Item)
+					observer.error({ code: 'Not found' });
         else
         {
           observer.next(mapProperties(data.Item, reverse_attr_map));
@@ -136,7 +137,7 @@ class UsersDAODynamoDB
       let params =
 			{
 				'TableName': self.table,
-				'Item': user
+				'Item': mapProperties(user, attr_map)
 			};
       self.client.put(params, function(err, data)
 			{
