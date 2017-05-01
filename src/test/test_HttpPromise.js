@@ -1,6 +1,4 @@
-const HttpPromise = require('../Client/Logic/HttpPromise');
-const chai = require('chai');
-
+const expect = chai.expect;
 
 let httppromise;
 let xhr;
@@ -8,14 +6,15 @@ let xhr;
 beforeEach(function()
 {
   var requests = [];
-    httppromise = new HttpPromise('method','url',{},{});
+  httppromise = new HttpPromise('method','url',{},{});
 });
 
 before(function()
 {
     xhr = sinon.useFakeXMLHttpRequest();
-    this.xhr.onCreate = function (xhr) {
-            requests.push(xhr);
+    this.xhr.onCreate = function (xhr)
+    {
+      requests.push(xhr);
     };
 });
 

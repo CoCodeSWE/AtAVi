@@ -1,4 +1,3 @@
-const Rx = require('rxjs/Rx');
 const URL = 'www.google.it'
 
 class Logic
