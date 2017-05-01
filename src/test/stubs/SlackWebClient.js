@@ -1,8 +1,6 @@
 const sinon = require('sinon');
 
 
-module.exports =
-
 let stub =
 {
   _reset: function()
@@ -11,6 +9,7 @@ let stub =
     {
       test: sinon.stub()
     };
+
     stub.auth =
     {
       revoke: sinon.stub(),
@@ -37,6 +36,7 @@ let stub =
       setPurpose: sinon.stub(),
       setTopic: sinon.stub(),
       unarchive: sinon.stub()
+
     };
     stub.chat =
     {
@@ -194,3 +194,6 @@ let stub =
     }
   }
 };
+
+
+module.exports = stub;
