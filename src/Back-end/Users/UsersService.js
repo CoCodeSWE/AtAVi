@@ -33,7 +33,6 @@ class UsersService
 
 		// Parametro contenente i dati relativi all'user da aggiungere
 		let params = objectFilter(user, ['username', 'name', 'sr_id', 'password', 'slack_channel']);
-
 		// Controllo che user abbia almeno i campi obbligatori (name e username)
 		if(user.username && user.name)
 		{
