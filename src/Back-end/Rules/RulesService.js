@@ -179,13 +179,13 @@ class RulesService
 
 
     // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
-		let query = objectFilter(event.queryStringParameters, ['enabled', 'name', 'targets', 'task']);
+		let query = objectFilter(event.queryStringParameters, ['enabled', 'name', 'targets', 'task','id']);
 		if(Object.keys(query).length === 0)
 			query = null;
 
     this.rules.getRuleList(query).subscribe(
     {
-      next: (rule) => { list.Items.push(rule);}),
+      next: (rule) => { list.Items.push(rule);},
       error: internalServerError(context),
 
       complete: function()
@@ -214,11 +214,7 @@ class RulesService
 			query = null;
     this.task.getTaskList(query).subscribe(
     {
-      next: function(data)
-      {
-        data.Items.forEach((task) => { list.Items.push(task); });
-      },
-
+      next: (task) => { list.Items.push(task); },
       error: internalServerError(context),
 
       complete: function()

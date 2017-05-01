@@ -22,7 +22,7 @@ class RulesDAODynamoDB
     return new Rx.Observable(function(observer){
       let params =
       {
-        'TableName': this.table,
+        'TableName': self.table,
         'Item': rule
       };
       self.client.put(params, function(err, data)
@@ -49,7 +49,7 @@ class RulesDAODynamoDB
         TableName: self.table,
         Key:
         {
-          'HashKey': id
+          'id': id
         }
       };
       self.client.get(params, function(err, data)
@@ -109,9 +109,9 @@ class RulesDAODynamoDB
         TableName: self.table,
         Key:
         {
-          'HashKey': id
+          'id': id
         },
-        ConditionExpression: 'attribute_exists(HashKey)'
+        ConditionExpression: 'attribute_exists(id)'
       };
       self.client.delete(params, function(err, data)
       {
@@ -136,7 +136,7 @@ class RulesDAODynamoDB
         TableName: self.table,
         Key:
         {
-          'HashKey': rule.id
+          'id': rule.id
         }
       };
       self.client.update(params, function(err, data)

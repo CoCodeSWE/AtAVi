@@ -135,7 +135,7 @@ describe('Back-end', function()
         it("Nel caso in cui la \file{Rule} richiesta non sia disponibile, il campo \file{statusCode} della risposta deve essere impostato a 404.", function()
         {
           {
-            rulesDAO.removeRule.returns(Rx.Observable.throw({ code: 'Not found' }));
+            rulesDAO.removeRule.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
             let ev = {pathParameters: 1};
             rules.deleteRule(ev, context);
             let call = context.succeed.getCall(0);

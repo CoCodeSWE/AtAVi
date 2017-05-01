@@ -1,0 +1,9 @@
+{
+  "name": "rules-service",
+  "version": "0.0.1",
+  "description": "Microservice for managing rules",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {}
+}
