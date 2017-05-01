@@ -6,6 +6,6 @@ module.exports = {
   addUser: sinon.stub(),
   getUser: sinon.stub(),
   getUserList: sinon.stub(),
-  deleteUser: sinon.stub(),
+  removeUser: sinon.stub(),
   updateUser: sinon.stub()
 }
