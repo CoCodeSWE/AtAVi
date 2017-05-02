@@ -1,5 +1,3 @@
-const React = require('react');
-
 class ConversationView extends React.Component {
   constructor(props) {
     super(props);
@@ -9,14 +7,11 @@ class ConversationView extends React.Component {
     return React.createElement(
       'ul',
       null,
-      this.props.msgs.map(msg => React.createElement(
+      this.props.msgs.map((msg, index) => React.createElement(
         'li',
-        null,
+        { key: index, 'data-sender': msg.sender },
         msg.text
       ))
     );
   }
 }
-
-module.exports = ConversationView;
-//# sourceMappingURL=ConversationView.js.map
