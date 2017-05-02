@@ -1,7 +1,16 @@
 const ConversationWebhookService = require('./ConversationWebhookService');
-const jwt = require('jsonwebtoken');
+const GuestsDAO = require('GuestsDAODynamoDB');
+const ConversationsDAO = require('ConversationsDAODynamoDB');
+const UsersDAO = require('UsersDAODynamoDB');
+const aws = require('aws-sdk')
 
-let service = new ConversationWebhookService();
+let client = new aws.DynamoDB.DocumentClient();
+let users = new UsersDAO(client);
+let conversations = new ConversationsDAO(client);
+let guests = new GuestsDAO(client);
+
+
+let service = new ConversationWebhookService(conversations, guests, users);
 
 module.exports.webhook = service.webhook.bind(service);
 

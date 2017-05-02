@@ -2,14 +2,21 @@ const Rx = require('rxjs/Rx');
 
 class UsersDAODynamoDB
 {
+	/**
+		* Costruttore della classes
+		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli utenti
+		*/
   constructor(client)
   {
     this.client = client;
     this.table = process.env.USERS_TABLE;
   }
 
-	// Aggiunge un nuovo user in DynamoDB
-  addUser(user)
+	/**
+		* Aggiunge un nuovo user in DynamoDB
+		* @param user {User} - Utente che si vuole aggiungere al sistema
+		*/
+	addUser(user)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -17,7 +24,8 @@ class UsersDAODynamoDB
       let params =
 			{
 				'TableName': self.table,
-				'Item': user
+				'Item': mapProperties(user, attr_map),
+				'ConditionExpression': 'attribute_not_exists(username)'
 			};
       self.client.put(params, function(err, data)
 			{
@@ -29,8 +37,11 @@ class UsersDAODynamoDB
     });
   }
 
-	// Ottiene l'user avente l'username passato come parametro
-  getUser(username)
+	/**
+		* Ottiene l'user avente l'username passato come parametro
+		* @param username {String} - Parametro contenente l'username dello User che si vuole ottenere.
+		*/
+	getUser(username)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -47,19 +58,22 @@ class UsersDAODynamoDB
       {
         if(err)
           observer.error(err);
-				else if(!data.username)
-					observer.error('Not found');
+				else if(!data.Item)
+					observer.error({ code: 'Not found' });
         else
         {
-          observer.next(data);
+          observer.next(mapProperties(data.Item, reverse_attr_map));
           observer.complete();
         }
       });
     });
   }
 
-	// Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-  getUserList(query)
+	/**
+		* Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
+		* @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+		*/
+	getUserList(query)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -83,8 +97,11 @@ class UsersDAODynamoDB
 		});
   }
 
-	// Elimina l'user avente l'username passato come parametro
-  removeUser(username)
+	/**
+		* Elimina l'user avente l'username passato come parametro
+		* @param username {String} - Parametro contenente l'username dello User che si vuole rimuovere
+		*/
+	removeUser(username)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -108,8 +125,11 @@ class UsersDAODynamoDB
 		});
   }
 
-	// Aggiorna l'user passato come parametro (se non c'è lo crea)
-  updateUser(user)
+	/**
+		* Aggiorna l'user passato come parametro (se non c'è lo crea)
+		* @param user {User} - Parametro contenente i dati relativi all'utente che si vuole modificare
+		*/
+	updateUser(user)
   {
 		let self = this;
     return new Rx.Observable(function(observer)
@@ -117,7 +137,7 @@ class UsersDAODynamoDB
       let params =
 			{
 				'TableName': self.table,
-				'Item': user
+				'Item': mapProperties(user, attr_map)
 			};
       self.client.put(params, function(err, data)
 			{
@@ -129,7 +149,11 @@ class UsersDAODynamoDB
     });
   }
 
-	// Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
+	/**
+		* Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
+		* @param observer {UserObserver} - Observer da notificare
+		* @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+		*/
 	_onScan(observer, params)
 	{
 		let self = this;
@@ -141,7 +165,7 @@ class UsersDAODynamoDB
 			}
 			else
 			{
-				observer.next(data);
+        data.Items.forEach((user) => observer.next(mapProperties(user, reverse_attr_map)));
 				if(data.LastEvaluatedKey)
 				{
 					params.ExclusiveStartKey = data.LastEvaluatedKey;
@@ -156,7 +180,10 @@ class UsersDAODynamoDB
 	}
 }
 
-// Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object).
+/**
+	* Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object)
+	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	*/
 function filterExpression(obj)
 {
 	let filter_expression =
@@ -165,13 +192,7 @@ function filterExpression(obj)
 		ExpressionAttributeValues: {}
 	};
 
-  let new_obj = {};
-
-  for(let i in obj)
-  {
-    let key = attr_map[i] ? attr_map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = obj[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  };
+  let new_obj = mapProperties(obj, attr_map);
 
   for(let key in new_obj)
   {
@@ -184,9 +205,25 @@ function filterExpression(obj)
   return filter_expression;
 }
 
+function mapProperties(object, map)
+{
+  let new_obj = {};
+  for(let i in object)
+  {
+    let key = map[i] ? map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
+    new_obj[key] = object[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
+  }
+  return new_obj;
+}
+
 const attr_map =
 {
   name: 'full_name'
+}
+
+const reverse_attr_map =
+{
+  full_name: 'name'
 }
 
 module.exports = UsersDAODynamoDB;

@@ -13,8 +13,8 @@ provider:
   region: eu-central-1
   profile: default
   environment:
-    AWS_ACCESS_KEY_ID: 'SECRET'
-    AWS_SECRET_ACCESS_KEY: 'SECRET'
+    USERS_SERVICE_URL:
+    VA_SERVICE_URL:
 functions:
   query:
     handler: handler.queryLambda

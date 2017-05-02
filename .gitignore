@@ -5,3 +5,4 @@ coverage
 dist
 mochawesome-reports
 *.map
+secret.yml

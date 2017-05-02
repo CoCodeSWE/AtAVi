@@ -1,5 +1,3 @@
-const Rx = require('rxjs/Rx');
-
 class MsgStore
 {
   constructor()
@@ -25,6 +23,7 @@ class MsgStore
         break;
       case 'sendMsg':
         this.msgs.push({text: action.params[0], sender:0});
+        console.log("asdadada");
         break;
       case 'receiveMsg':
         this.msgs.push({text: action.params[0], sender:1});
@@ -37,9 +36,6 @@ class MsgStore
   _onClear()
   {
     this.msgs = [];
-    this.subject.next();
   }
 
 }
-
-module.exports = MsgStore;

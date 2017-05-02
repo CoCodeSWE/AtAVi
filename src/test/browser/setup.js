@@ -1,0 +1,1 @@
+mocha.setup('bdd'); // Behavior-driven development

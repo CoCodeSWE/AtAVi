@@ -89,7 +89,7 @@ describe('Back-end', function()
 						complete: complete
           });
 
-					dynamo_client.get.yield(null, {name: "mauro", username: "mou"});
+					dynamo_client.get.yield(null, {Item: {name: "mauro", username: "mou"}});
 
 					expect(error.callCount).to.equal(0);
 
@@ -124,12 +124,12 @@ describe('Back-end', function()
           expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].name).to.equal('piero');
-					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					expect(callNext.args[0].name).to.equal('piero');
+					expect(callNext.args[0].username).to.equal('sun');
 
 					expect(complete.callCount).to.equal(0);
 				});
@@ -151,12 +151,12 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].name).to.equal('piero');
-					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					expect(callNext.args[0].name).to.equal('piero');
+					expect(callNext.args[0].username).to.equal('sun');
 
 					expect(complete.callCount).to.equal(1);
 				});
@@ -187,12 +187,12 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('sun');
 				});
 
 				it("Nel caso in cui il metodo venga chiamato con queryStringParameters con due attributi, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati filtrati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
@@ -223,12 +223,12 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('sun');
 				});
       });
 
