@@ -1,4 +1,5 @@
 /*
+
 Diario
 
  Versione        Programmatore         Data
@@ -12,7 +13,7 @@ implementata la classe
 */
 const http = require("http");
 var promise = require('bluebird');
-var fs = require('fs');
+//var fs = require('fs');
 //var SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 
@@ -21,8 +22,8 @@ class STTWatsonAdapter
 	constructor(sb, stt)
 	{
 		this.stream_buffer = sb;
-		/*this.stt = new SpeechToTextV1({username: '21ba336f-8d8f-468d-a37d-3ffe3be29dae',
-		password: 'sYORNvBXg7en'});*/
+		this.stt = stt;
+
 	}
 
 	speechToText(audio, type)
@@ -40,7 +41,6 @@ class STTWatsonAdapter
 		    				reject(err);
 		      	else
 		          	fulfill(res.results[0].alternatives[0].transcript);
-						//console.log(pro);
 		    	});
 			});
 	 }
@@ -50,8 +50,8 @@ module.exports = STTWatsonAdapter;
 
 /* // TEST
 var s = new STTWatsonAdapter({},new SpeechToTextV1({
-	username: '21ba336f-8d8f-468d-a37d-3ffe3be29dae',
-	password: 'sYORNvBXg7en'
+	username: '',
+	password: ''
 }));
 var p = s.speechToText({},'audio/wav');
 p.then(console.log);
