@@ -16,6 +16,7 @@ class Recorder
     this.worker = new Worker(conf.worker_path || this.WORKER_PATH);
     this.recording = false;
     this.time = null;
+    this.enabled = false;
     this.setConfig(conf);
 
     let self = this;
@@ -70,6 +71,7 @@ class Recorder
     this.audio_input.connect(input_point);
     this.analiser = this.audio_context.createAnalyser();
     this.analiser.fftSize = this.fft;
+    input_point.connect(this.analiser);
     zero_gain.gain.value = 0.0;
     input_point.connect(zero_gain);
     zero_gain.connect(this.audio_context.destination);
@@ -96,10 +98,16 @@ class Recorder
 
   onAudioProcess(msg)
   {
+    if(!this.enabled)
+    {
+      console.log('disabled');
+      return;
+    }
     let self = this;
     let vol_data = new Uint8Array(this.analiser.fftSize);
     this.analiser.getByteFrequencyData(vol_data); //ottengo i dati della frequenza, necessari per calcolare il volume
-    let level = vol_data.reduce((acc, val) => {acc+val}, 0) / vol_data.length;  // calcolo il volume medio
+    //console.log(vol_data);
+    let level = vol_data.reduce((acc, val) => {return acc + val}, 0) / vol_data.length;  // calcolo il volume medio
     if(!this.recording && level > this.threshold)
     {
       if(this.time)
@@ -107,11 +115,11 @@ class Recorder
         clearTimeout(this.time);
         this.time = null;
       }
-      this.start();
+      this._startRecording();
     }
-    else if(this.max_silence !== -1 && !this.time  && level < this.threshold)
+    else if(this.max_silence !== -1 && !this.time  && level <= this.threshold)
     {
-      this.time = setTimeout(() => {self.stop()}, self)
+      this.time = setTimeout(() => {self._stopRecording(); }, self.max_silence)
     }
     if(this.recording)
       this.worker.postMessage({command: 'record', buffer: [ msg.inputBuffer.getChannelData(0), msg.inputBuffer.getChannelData(1)]});
@@ -119,6 +127,19 @@ class Recorder
 
   start()
   {
+    this.enabled = true;
+    this._startRecording();
+  }
+
+  stop()
+  {
+    this.enabled = false;
+    this._stopRecording();
+  }
+
+  _startRecording()
+  {
+    console.log('start');
     if(!this.recording)
     {
       this.worker.postMessage({command: 'clear'});
@@ -126,7 +147,7 @@ class Recorder
     }
   }
 
-  stop()
+  _stopRecording()
   {
     if(this.recording)
     {
