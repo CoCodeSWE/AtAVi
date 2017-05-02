@@ -1,0 +1,134 @@
+$colSfondo: #3d323e;
+
+@font-face {
+    font-family: Atavi;
+    src: url('../Font/heroesassemble2.ttf');
+}
+
+@font-face {
+    font-family: AtaviMessage;
+    src: url('../Font/TakeItOrLeaveItBold.ttf');
+}
+
+*
+{
+	margin: 0em;
+	padding: 0em;
+}
+
+html
+{
+	font-family: "Palatino Linotype", "Courier New", "Verdana", "Sans-Serif";
+}
+
+.hide
+{
+  text-indent:100%;
+	white-space:nowrap;
+	overflow:hidden;
+}
+
+body
+{
+  background-color: $colSfondo;
+}
+
+ #mainFrame
+{
+  border-top-left-radius: 2em;
+  border-top-right-radius: 2em;
+  margin: 3em auto;
+  height: 40em;
+  width: 40%;
+  border: 0.2em solid #000000;
+  background-color: #ffffff;
+  overflow-y: scroll;
+}
+
+#startStop
+{
+	text-align: center;
+  margin: 0 auto;
+  width: 40%;
+	height: 13em;
+	display: flex;
+}
+
+.buttonSS
+{
+  margin: 0 auto;
+  display: block;
+  width: 25%;
+  height: 60%;
+  background-size: 100% 100%;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+#start
+{
+  background-image: url("../Image/start.png");
+}
+
+#stop
+{
+ background-image: url("../Image/stop.png");
+}
+
+#logoApp
+{
+	color: #ffffff;
+	font-family: Atavi;
+	font-size: 4em;
+
+}
+
+#nomeApp
+{
+	color: #ffffff;
+	font-family: Atavi;
+	font-size: 2.6em;
+}
+
+//Css ConversationApp
+
+#listMessages
+{
+  list-style: none;
+  background: none;
+  margin: 0;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+$shad: 0.04em;
+#listMessages li
+{
+  padding: 0.5em;
+  border: 0.2em;
+  max-width: 40%;
+  font-size: 1.8em;
+  word-wrap: break-word;
+  box-shadow: $shad $shad $shad $shad #888888;
+  font-family: AtaviMessage;
+}
+
+$br: 0.6em;
+li[data-sender="0"]
+{
+  background-color: #9adb99;
+  margin-left: 0.5em;
+  border-radius: $br $br $br 0;
+}
+
+li[data-sender="1"]
+{
+  background-color: #99dbdb;
+  margin-right: 0.5em;
+  margin-left: 55%;
+  border-radius: $br $br 0 $br;
+}

@@ -1,5 +1,3 @@
-const Logic = require('../Client/Logic/Logic');
-const chai = require('chai');
 const expect = chai.expect;
 
 describe('Client', function()

@@ -1,14 +1,5 @@
-class ConversationApp
-{
-	constructor()
-	{	
-		
-	}
-	
-	runCmd(cmd, params)
-	{
-		
-	}
-}
+class ConversationApp {
+	constructor() {}
 
-module.exports = ConversationApp;
+	runCmd(cmd, params) {}
+}

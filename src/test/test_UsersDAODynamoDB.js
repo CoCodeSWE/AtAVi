@@ -1,4 +1,3 @@
-const Rx = require('rxjs/Rx');
 const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
@@ -11,6 +10,7 @@ beforeEach(function()
 	next = sinon.stub();
 	error = sinon.stub();
 	complete = sinon.stub();
+  dynamo_client._reset();
 });
 
 describe('Back-end', function()
@@ -89,7 +89,7 @@ describe('Back-end', function()
 						complete: complete
           });
 
-					dynamo_client.get.yield(null, {name: "mauro", username: "mou"});
+					dynamo_client.get.yield(null, {Item: {name: "mauro", username: "mou"}});
 
 					expect(error.callCount).to.equal(0);
 
@@ -121,15 +121,15 @@ describe('Back-end', function()
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
 
-					expect(next.callCount).to.equal(2);
+          expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].name).to.equal('piero');
-					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					expect(callNext.args[0].name).to.equal('piero');
+					expect(callNext.args[0].username).to.equal('sun');
 
 					expect(complete.callCount).to.equal(0);
 				});
@@ -151,14 +151,84 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].Items[0].name).to.equal('mauro');
-					expect(callNext.args[0].Items[0].username).to.equal('mou');
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].Items[0].name).to.equal('piero');
-					expect(callNext.args[0].Items[0].username).to.equal('sun');
+					expect(callNext.args[0].name).to.equal('piero');
+					expect(callNext.args[0].username).to.equal('sun');
 
 					expect(complete.callCount).to.equal(1);
+				});
+
+				it("Nel caso in cui il metodo venga chiamato con queryStringParameters con un solo attributo, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati filtrati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
+				{
+					let query =
+					{
+						name: 'mauro'
+					};
+
+					users.getUserList(query).subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'sun'});
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "sun"}]}); // Ultimo elemento da ottenere
+
+					let callScan = dynamo_client.scan.getCall(0);
+          expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'full_name = :full_name');
+					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues.:full_name', 'mauro' );
+
+					expect(error.callCount).to.equal(0);
+
+					expect(next.callCount).to.equal(2);
+
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
+
+					callNext = next.getCall(1);
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('sun');
+				});
+
+				it("Nel caso in cui il metodo venga chiamato con queryStringParameters con due attributi, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati filtrati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
+				{
+					let query =
+					{
+						name: 'mauro',
+						slack_channel: 'channel'
+					};
+
+					users.getUserList(query).subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "mou"}], LastEvaluatedKey: 'sun'});
+					dynamo_client.scan.yield(null, {Items: [{name: "mauro", username: "sun"}]}); // Ultimo elemento da ottenere
+
+					let callScan = dynamo_client.scan.getCall(0);
+          expect(callScan.args[0]).to.have.deep.property('FilterExpression', 'full_name = :full_name and slack_channel = :slack_channel');
+					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues.:full_name', 'mauro' );
+					expect(callScan.args[0]).to.have.deep.property('ExpressionAttributeValues.:slack_channel', 'channel' );
+
+					expect(error.callCount).to.equal(0);
+
+					expect(next.callCount).to.equal(2);
+
+					let callNext = next.getCall(0);
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('mou');
+
+					callNext = next.getCall(1);
+					expect(callNext.args[0].name).to.equal('mauro');
+					expect(callNext.args[0].username).to.equal('sun');
 				});
       });
 
@@ -183,7 +253,7 @@ describe('Back-end', function()
 
 					expect(complete.callCount).to.equal(0);
         });
-        
+
 				it("Nel caso in cui l'utente sia rimosso correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta", function()
         {
           users.removeUser('mou').subscribe(

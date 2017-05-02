@@ -1,0 +1,31 @@
+service: notifications
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: eu-central-1
+  environment:
+    SLACK_API_TOKEN: ''
+  profile: default
+  apiKeys:
+    - notifications-service
+  iamRoleStatements:
+    - Effect: Allow
+     
+
+functions:
+  getChannelList:
+    handler: getChannelList.getChannelList
+    events:
+      - http:
+          path: notifications
+          method: get
+          private: true
+
+  sendMsg:
+    handler: sendMsg.sendMsg
+    events:
+      - http:
+          path: notifications
+          method: post
+          private: true

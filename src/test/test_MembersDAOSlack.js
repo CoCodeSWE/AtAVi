@@ -8,6 +8,7 @@ const web_client = require('./stubs/SlackWebClient');
 let next, error, complete;
 beforeEach(function()
 {
+	web_client._reset();
 	next = sinon.stub();
 	error = sinon.stub();
 	complete = sinon.stub();
@@ -46,12 +47,12 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
 					});
-					
+
 					//Docs: https://api.slack.com/methods/users.info
 					let res =
 					{
 						'ok': true,
-						'user': 
+						'user':
 						{
 							'id': 'U023BECGF',
 							'name': 'bobby',
@@ -74,19 +75,19 @@ describe('Back-end', function()
 							'has_2fa': true
 						}
 					};
-					
+
 					web_client.users.info.yield(null, res);
-					
+
 					expect(error.callCount).to.equal(0);
-					
+
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
 					expect(callNext.args[0].id).to.equal(res.user.id);
 					expect(callNext.args[0].name).to.equal(res.user.name);
-					
+
 					expect(complete.callCount).to.equal(1);
 				});
-				
+
 				it('Se si verifica un errore nell\'ottenere il membro dell\'azienda, l\'Observable deve notificare l\'Observer iscritto richiamando il metodo error.', function()
 				{
 					members.getMember('mou').subscribe(
@@ -95,29 +96,29 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
 					});
-					
+
 					//Esempio di errore (https://api.slack.com/methods/users.info/test)
-					let res = 
+					let res =
 					{
 						'ok': false,
 						'error': 'not_authed'
 					}
-					
+
 					web_client.users.info.yield(res);
-					
+
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].ok).to.equal(false);
 					expect(callError.args[0].error).to.equal('not_authed');
-					
+
 					expect(next.callCount).to.equal(0);
-					expect(complete.callCount).to.equal(0);	
+					expect(complete.callCount).to.equal(0);
 				});
 			});
 
 			describe('getMemberList', function()
 			{
-				it('L\'Observable deve notificare l\'Observer con il metodo complete solo dopo aver inviato tutti i blocchi di Member tramite il metodo next.', function()
+				it('L\'Observable deve notificare l\'Observer con il metodo complete solo dopo aver inviato tutti i Member tramite il metodo next.', function()
 				{
 					members.getMemberList().subscribe(
 					{
@@ -125,11 +126,11 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
 					});
-					
+
 					let res =
 					{
 						"ok": true,
-						"members": 
+						"members":
 						[
 							{
 								"id": "U023BECGF",
@@ -187,21 +188,21 @@ describe('Back-end', function()
 							}
 						]
 					}
-					
-					web_client.users.list.yield(res);
-					
+
+					web_client.users.list.yield(null,res);
+
 					expect(error.callCount).to.equal(0);
-					
+
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
 					expect(callNext.args[0].members[0].id).to.equal(res.members[0].id);
 					expect(callNext.args[0].members[0].name).to.equal(res.members[0].name);
 					expect(callNext.args[0].members[1].id).to.equal(res.members[1].id);
 					expect(callNext.args[0].members[1].name).to.equal(res.members[1].name);
-					
+
 					expect(complete.callCount).to.equal(1);
 				});
-				
+
 				it('Se si verifica un errore nell\'ottenere la lista dei membri dell\'azienda, l\'Observable deve notificare l\'Observer iscritto richiamando il metodo error.', function()
 				{
 					members.getMemberList().subscribe(
@@ -210,23 +211,23 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
 					});
-					
+
 					//Esempio di errore (https://api.slack.com/methods/users.info/test)
-					let res = 
+					let res =
 					{
 						'ok': false,
 						'error': 'not_authed'
 					}
-					
+
 					web_client.users.list.yield(res);
-					
+
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].ok).to.equal(false);
 					expect(callError.args[0].error).to.equal('not_authed');
-					
+
 					expect(next.callCount).to.equal(0);
-					expect(complete.callCount).to.equal(0);	
+					expect(complete.callCount).to.equal(0);
 				});
 			});
 
