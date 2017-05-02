@@ -1,7 +1,4 @@
-const ConversationView = require('../Client/ConversationApp/ConversationView');
-const chai = require('chai');
 const expect = chai.expect;
-const react = require('react');
 
 describe('Client', function()
 {
@@ -9,12 +6,12 @@ describe('Client', function()
 	{
 		describe('ConversationView', function()
 		{
-			let view = new ConversationView();
+			let view = new ConversationView({msgs: [{text: "", sender: 1}, {text: "", sender: 1}]});
 			describe('render', function() {
-				it('Vogliamo testare che l\'oggetto ritornato dalla funzione sia effettivamente un ReactElement.', function()
+				it('Vogliamo testare che l\'oggetto ritornato dalla funzione sia un ReactElement valido.', function()
 				{
 					let element = view.render();
-					expect(element).to.be.an.instanceof(ReactElement);
+					expect(React.isValidElement(element)).to.be.true;
 				});
 			});
 		});

@@ -1,21 +1,21 @@
-const HttpPromise = require('../Client/Logic/HttpPromise');
-const chai = require('chai');
+const expect = chai.expect;
 
-
+let requests;
 let httppromise;
 let xhr;
 
 beforeEach(function()
 {
-  var requests = [];
-    httppromise = new HttpPromise('method','url',{},{});
+  requests = [];
+  httppromise = new HttpPromise('method','url',{},{});
 });
 
 before(function()
 {
     xhr = sinon.useFakeXMLHttpRequest();
-    this.xhr.onCreate = function (xhr) {
-            requests.push(xhr);
+    xhr.onCreate = function (xhr)
+    {
+      requests.push(xhr);
     };
 });
 
@@ -45,14 +45,13 @@ describe('Client', function()
 
         it('Se la richiesta fallisce, viene chiamato il metodo catch.', function(done)
         {
-
           httppromise.then(done)
           .catch(function(err)
           {
             done();
           });
-          expect(request.length).to.equal(1);
-          request[0].error();
+          expect(requests.length).to.equal(1);
+          requests[0].error();
         });
       });
     });

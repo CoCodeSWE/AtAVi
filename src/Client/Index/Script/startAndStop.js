@@ -13,6 +13,6 @@ var player = new Player(option, synth);
 
 function startAndStop()
 {
-  var li = document.getElementById('listMessages').lastChild.innerHTML;
+  var li = document.getElementById('listMessages').lastChild;
   player.speak(li);
 }

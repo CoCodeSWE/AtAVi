@@ -9,7 +9,7 @@ class Player
   {
     this.tts = speech_syntesis;
     this.options = conf;
-    //this.subject = new Rx.Subject();
+    this.subject = new Rx.Subject();
   }
 
   /**
@@ -25,7 +25,7 @@ class Player
   */
   getObservable()
   {
-    return this.tts.subject.asObservable();
+    return this.subject.asObservable();
   }
 
   /**
@@ -77,14 +77,17 @@ class Player
   */
   speak(text)
   {
-    let to_speak = new SpeechSynthesisUtterance(text);
+    let utterance = new SpeechSynthesisUtterance(text);
     //imposto le configurazione del oggetto da riprodurre
-    to_speak.lang = this.options.lang;
-    to_speak.pitch = this.options.pitch;
-    to_speak.rate = this.options.rate;
-    to_speak.voice = this.options.voice;
-    to_speak.volume = this.options.volume;
-
+    utterance.lang = this.options.lang;
+    utterance.pitch = this.options.pitch;
+    utterance.rate = this.options.rate;
+    utterance.voice = this.options.voice;
+    utterance.volume = this.options.volume;
+    utterance.onstart = () => this.subject.next(true);
+    utterance.onresume = () => this.subject.next(true);
+    utterance.onend = () => this.subject.next(false);
+    utterance.onpause = () => this.subject.next(false);
     this.tts.speak(to_speak);
   }
 }

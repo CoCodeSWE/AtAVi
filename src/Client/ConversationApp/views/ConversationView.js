@@ -1,5 +1,3 @@
-const React = require('react');
-
 class ConversationView extends React.Component {
   constructor(props) {
     super(props);
@@ -17,6 +15,3 @@ class ConversationView extends React.Component {
     );
   }
 }
-
-module.exports = ConversationView;
-//# sourceMappingURL=ConversationView.js.map
