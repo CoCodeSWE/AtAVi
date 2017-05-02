@@ -1,13 +1,16 @@
-class Dispatcher {
+class Dispatcher
+{
   constructor() {
     this.subject = new Rx.Subject();
   }
 
-  getObservable() {
+  getObservable()
+  {
     return this.subject.asObservable();
   }
 
-  dispatch(cmd, params) {
+  dispatch(cmd, params)
+  {
     this.subject.next({ cmd: cmd, params: params });
   }
 }

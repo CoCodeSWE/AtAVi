@@ -28,10 +28,7 @@ functions:
           path: users
           method: post
           private: true
-          request:
-            parameters:
-              paths:
-                username: true
+                
   deleteUser:
     handler: deleteUser.deleteUser
     events:
@@ -43,6 +40,7 @@ functions:
             parameters:
               paths:
                 username: true
+                
   getUser:
     handler: getUser.getUser
     events:
@@ -54,6 +52,7 @@ functions:
             parameters:
               paths:
                 username: true
+                
   getUserList:
     handler: getUserList.getUserList
     events:
@@ -66,6 +65,7 @@ functions:
               querystring:
                 name: false
                 slack_channel: false
+                
   updateUser:
     handler: updateUser.updateUser
     events:

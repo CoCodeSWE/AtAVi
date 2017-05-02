@@ -33,7 +33,6 @@ class UsersService
 
 		// Parametro contenente i dati relativi all'user da aggiungere
 		let params = objectFilter(user, ['username', 'name', 'sr_id', 'password', 'slack_channel']);
-
 		// Controllo che user abbia almeno i campi obbligatori (name e username)
 		if(user.username && user.name)
 		{
@@ -44,8 +43,26 @@ class UsersService
 					// Il metodo next dell'Observer non riceve nessun tipo di dato
 				},
 
-				error: internalServerError(context),
-
+				error: function(err)
+				{
+					if(err.code === 'ConditionalCheckFailedException')
+					{
+						context.succeed(
+						{
+							statusCode: 409,
+							body: JSON.stringify({ message: 'Conflict' })
+						});
+					}
+					else
+					{
+						context.succeed(
+						{
+							statusCode: 500,
+							body: JSON.stringify({ message: 'Internal server error' })
+						});
+					}
+				},
+				
 				complete: function()
 				{
 					context.succeed(
@@ -69,52 +86,43 @@ class UsersService
 		*/
 	deleteUser(event, context)
 	{
-		let username;
-		if(event.pathParameters)
+		let username = event.pathParameters.username;
+		this.users.removeUser(username).subscribe(
 		{
-			username = event.pathParameters;
-			this.users.deleteUser(username).subscribe(
+			next: function(data)
 			{
-				next: function(data)
-				{
-					// Il metodo next dell'Observer non riceve nessun tipo di dato
-				},
+				// Il metodo next dell'Observer non riceve nessun tipo di dato
+			},
 
-				error: function(err)
-				{
-					if(err.code === 'ConditionalCheckFailedException')
-					{
-						context.succeed(
-						{
-							statusCode: 404,
-							body: JSON.stringify({ message: 'Not found' })
-						});
-					}
-					else
-					{
-						context.succeed(
-						{
-							statusCode: 500,
-							body: JSON.stringify({ message: 'Internal server error' })
-						});
-					}
-				},
-
-				complete: function()
+			error: function(err)
+			{
+				if(err.code === 'ConditionalCheckFailedException')
 				{
 					context.succeed(
 					{
-						statusCode: 200,
-						body: JSON.stringify({ message: 'success' })
+						statusCode: 404,
+						body: JSON.stringify({ message: 'Not found' })
 					});
 				}
-			});
-		}
-		else
-		{
-			// Event non contiene i dati attesi: Bad Request(400)
-			badRequest(context);
-		}
+				else
+				{
+					context.succeed(
+					{
+						statusCode: 500,
+						body: JSON.stringify({ message: 'Internal server error' })
+					});
+				}
+			},
+
+			complete: function()
+			{
+				context.succeed(
+				{
+					statusCode: 200,
+					body: JSON.stringify({ message: 'success' })
+				});
+			}
+		});
 	}
 
 	/**
@@ -124,7 +132,7 @@ class UsersService
 		*/
 	getUser(event, context)
 	{
-		let username = event.pathParameters;
+		let username = event.pathParameters.username;
 		let user; // Conterrà i dati relativi all'user
 		this.users.getUser(username).subscribe(
 		{
@@ -135,7 +143,7 @@ class UsersService
 
 			error: function(err)
 			{
-				if(err === 'Not found')
+				if(err.code === 'Not found')
 				{
 					context.succeed(
 					{
@@ -183,7 +191,7 @@ class UsersService
 
 		this.users.getUserList(query).subscribe(
 		{
-			next: (user) => { list.users.push(user); }),
+			next: (user) => { list.users.push(user); },
 			error: internalServerError(context),
 
 			complete: function()
@@ -204,46 +212,39 @@ class UsersService
 		*/
 	updateUser(event, context)
 	{
-		if(event.pathParameters)
+		let user; // Conterrà le informazioni relative all'utente da aggiornare
+		try
 		{
-			let user; // Conterrà le informazioni relative all'utente da aggiornare
-			try
-			{
-				user = JSON.parse(event.body);
-			}
-			catch(exception)
-			{
-				badRequest(context);
-				return;
-			}
-
-			// Parametro contenente i dati relativi all'user da aggiornare
-			let params = objectFilter(user, ['name', 'sr_id', 'password', 'slack_channel']);
-			params.username = event.pathParameters;
-
-			this.users.updateUser(params).subscribe(
-			{
-				next: function(data)
-				{
-					// Il metodo next dell'Observer non riceve nessun tipo di dato
-				},
-
-				error: internalServerError(context),
-
-				complete: function()
-				{
-					context.succeed(
-					{
-						statusCode: 200,
-						body: JSON.stringify({ message: 'success' })
-					});
-				}
-			});
+			user = JSON.parse(event.body);
 		}
-		else
+		catch(exception)
 		{
 			badRequest(context);
+			return;
 		}
+
+		// Parametro contenente i dati relativi all'user da aggiornare
+		let params = objectFilter(user, ['name', 'sr_id', 'password', 'slack_channel']);
+		params.username = event.pathParameters.username;
+		
+		this.users.updateUser(params).subscribe(
+		{
+			next: function(data)
+			{
+				// Il metodo next dell'Observer non riceve nessun tipo di dato
+			},
+
+			error: internalServerError(context),
+
+			complete: function()
+			{
+				context.succeed(
+				{
+					statusCode: 200,
+					body: JSON.stringify({ message: 'success' })
+				});
+			}
+		});
 	}
 }
 
@@ -252,7 +253,6 @@ function internalServerError(context)
 {
 	return function(err)
 	{
-		console.log('internalServerError ', err);
 		context.succeed(
 		{
 			statusCode: 500,
@@ -264,7 +264,6 @@ function internalServerError(context)
 // Funzione per gestire lo status code 400
 function badRequest(context)
 {
-	console.log('badRequest');
 	context.succeed(
 	{
 		statusCode: 400,

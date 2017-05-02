@@ -24,7 +24,8 @@ class UsersDAODynamoDB
       let params =
 			{
 				'TableName': self.table,
-				'Item': user
+				'Item': mapProperties(user, attr_map),
+				'ConditionExpression': 'attribute_not_exists(username)'
 			};
       self.client.put(params, function(err, data)
 			{
@@ -57,11 +58,11 @@ class UsersDAODynamoDB
       {
         if(err)
           observer.error(err);
-				else if(!data.Item.username)
-					observer.error('Not found');
+				else if(!data.Item)
+					observer.error({ code: 'Not found' });
         else
         {
-          observer.next(data.Item);
+          observer.next(mapProperties(data.Item, reverse_attr_map));
           observer.complete();
         }
       });
@@ -136,7 +137,7 @@ class UsersDAODynamoDB
       let params =
 			{
 				'TableName': self.table,
-				'Item': user
+				'Item': mapProperties(user, attr_map)
 			};
       self.client.put(params, function(err, data)
 			{
@@ -164,7 +165,7 @@ class UsersDAODynamoDB
 			}
 			else
 			{
-        data.Items.forEach((user) => observer.next(user));
+        data.Items.forEach((user) => observer.next(mapProperties(user, reverse_attr_map)));
 				if(data.LastEvaluatedKey)
 				{
 					params.ExclusiveStartKey = data.LastEvaluatedKey;
@@ -191,13 +192,7 @@ function filterExpression(obj)
 		ExpressionAttributeValues: {}
 	};
 
-  let new_obj = {};
-
-  for(let i in obj)
-  {
-    let key = attr_map[i] ? attr_map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = obj[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  };
+  let new_obj = mapProperties(obj, attr_map);
 
   for(let key in new_obj)
   {
@@ -210,9 +205,25 @@ function filterExpression(obj)
   return filter_expression;
 }
 
+function mapProperties(object, map)
+{
+  let new_obj = {};
+  for(let i in object)
+  {
+    let key = map[i] ? map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
+    new_obj[key] = object[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
+  }
+  return new_obj;
+}
+
 const attr_map =
 {
   name: 'full_name'
+}
+
+const reverse_attr_map =
+{
+  full_name: 'name'
 }
 
 module.exports = UsersDAODynamoDB;
