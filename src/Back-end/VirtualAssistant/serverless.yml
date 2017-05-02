@@ -36,10 +36,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.AGENTS_TABLE}
         AttributeDefinitions:
-          - AttributeName: name
+          - AttributeName: agent_name
             AttributeType: S
         KeySchema:
-          - AttributeName: name
+          - AttributeName: agent_name
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

@@ -1,4 +1,5 @@
 const Rx = require('rxjs/Rx');
+const mapProperties = require('map-object-properties');
 
 class UsersDAODynamoDB
 {
@@ -203,17 +204,6 @@ function filterExpression(obj)
 	// Tolgo l'and finale dal FilterExpression
 	filter_expression.FilterExpression = filter_expression.FilterExpression.slice(0,-5);
   return filter_expression;
-}
-
-function mapProperties(object, map)
-{
-  let new_obj = {};
-  for(let i in object)
-  {
-    let key = map[i] ? map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = object[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  }
-  return new_obj;
 }
 
 const attr_map =

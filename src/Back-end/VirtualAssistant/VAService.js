@@ -55,6 +55,7 @@ class VAService
 				{
 					self.va_module.query(request.query).then(function(data)
 					{
+						console.log(data);
 						success(context, data);
 					})
 					.catch(function(err)
@@ -95,7 +96,6 @@ function internalServerError(context)
 // Funzione per gestire lo status code 200
 function success(context, data)
 {
-  console.log("success: ",data);
 	context.succeed(
 	{
 		statusCode: 200,
