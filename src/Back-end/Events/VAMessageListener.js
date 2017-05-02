@@ -43,11 +43,10 @@ class VAMessageListener
     this.NOTIFICATIONS_SERVICE_URL = process.env.NOTIFICATIONS_SERVICE_URL;
 	}
 
-	/**
-	* Metodo
-	* @param event {type} -
-	* @param context {type} -
-	* @param callback {function} -
+	/** Questo metodo si occupa di inviare una notifica alla persona desiderata e di registrare le interzioni avvenute nei relativi databases
+	* @param event {JSON} - parametro contenente il payload del messaggio pubblicato sul topic SNS
+	* @param context {JSON} - parametro per inviare il corpo della risposta. In realtà non viene utilizzato
+	* @param callback {function} - funzione di callback utilizzata per informare il chiamate del successo o del fallimento del metodo
 	*/
 
 	onMessage(event, context, callback)
@@ -70,13 +69,13 @@ class VAMessageListener
 			json: true
 		};
 		let text = ''; // testo da inviare alla persona desiderata
-		if(message.action === 'guest.warnedRequiredPerson') // notificare la persona desiderata dell'arrivo dell'ospite
+		if(message.action && message.action === 'guest.warnedRequiredPerson') // notificare la persona desiderata dell'arrivo dell'ospite
 			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" is arrived and looking for ' + message.res.contexts[0].parameters.required_person + '.';
-		else if(message.action === 'guest.coffee') // l'ospite vuole un caffè
+		else if(message.action && message.action === 'guest.coffee') // l'ospite vuole un caffè
 			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" wants a coffee.';
-		else if(message.action === 'guest.drink') // l'ospite vuole qualcos'altro da bere
+		else if(message.action && message.action === 'guest.drink') // l'ospite vuole qualcos'altro da bere
 			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" wants \"' + message.res.contexts[0].parameters.another_drink + '\"';
-		else if(message.action === 'guest.need') // l'ospite ha bisogno di qualcosa
+		else if(message.action && message.action === 'guest.need') // l'ospite ha bisogno di qualcosa
 			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" needs \"' + message.res.contexts[0].parameters.need + '\"';
 
 		if(text) // se text è non vuoto => bisogna notifica qualcuno di qualcosa

@@ -26,13 +26,11 @@ class STTWatsonAdapter
 
 	}
 
-	/**
-	* Metodo
-	* @param event {type} -
-	* @param context {type} -
-	* @param callback {function} -
+	/** metodo che contatta il servizio esterno STT di ibm e ritorna una promessa soddisfatta con il testo pronunciato nell'audio
+	* @param audio {Buffer} - Parametro contenente l'audio dal quale estrarre il testo pronunciato
+	* @param type {String} - indica in quale formato è l'audio
 	*/
-	
+
 	speechToText(audio, type)
 	{
 		var self = this;
