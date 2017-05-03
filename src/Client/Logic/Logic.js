@@ -1,4 +1,7 @@
-class Logic
+import {HttpPromise} from './HttpPromise';
+import Rx from 'rxjs/Rx';
+
+export default class Logic
 {
   /**
   * Costruttore della parte logica del sistema che si occupa di comunicare con l'API Gateway.
@@ -24,12 +27,12 @@ class Logic
 
   /**
   * Metodo che permette di inviare l'audio all'API Gateway.
-  * @param audio {Blob} - Parametro contenente l'audio da inviare all'APIGateway.
+  * @param {Blob} audio - Parametro contenente l'audio da inviare all'APIGateway.
   */
-  sendData(audio)
+  sendData(data)
   {
-    HttpPromise('POST', this.url, 'test', audio)  // faccio la richiesta http e configuro l'observer per notificare quando arrivano i dati o quando si verifica un errore
-      .then((data) => this.subject.next(data))
+    HttpPromise('POST', this.url, {'content-type': 'application/json'}, JSON.stringify(data))  // faccio la richiesta http e configuro l'observer per notificare quando arrivano i dati o quando si verifica un errore
+      .then((data) => this.subject.next(JSON.parse(data)))
       .catch((err) => this.subject.error(err));
   }
 }

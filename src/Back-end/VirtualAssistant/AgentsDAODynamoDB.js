@@ -4,7 +4,7 @@ class AgentsDAODynamoDB
 {
 	/**
 		* Costruttore della classes
-		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli agenti
+		* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli agenti
 		*/
 	constructor(client)
 	{
@@ -14,7 +14,7 @@ class AgentsDAODynamoDB
 
 	/**
 		* Aggiunge un nuovo agente in DynamoDB
-		* @param agent {Agent} - Parametro contenente l'agente da aggiungere al database
+		* @param {Agent} agent - Parametro contenente l'agente da aggiungere al database
 		*/
 	addAgent(agent)
 	{
@@ -38,7 +38,7 @@ class AgentsDAODynamoDB
 
 	/**
 		* Ottiene l'agente avente il nome passato come parametro
-		* @param name {String} - Parametro contenente il nome dell'agente da ottenere
+		* @param {String} name - Parametro contenente il nome dell'agente da ottenere
 		*/
 	getAgent(name)
 	{
@@ -88,7 +88,7 @@ class AgentsDAODynamoDB
 
 	/**
 		* Elimina l'agente avente il nome passato come parametro
-		* @param name {String} - Parametro contenente il nome dell'agente da rimuovere
+		* @param {String} name - Parametro contenente il nome dell'agente da rimuovere
 		*/
 	removeAgent(name)
 	{
@@ -116,7 +116,7 @@ class AgentsDAODynamoDB
 
 	/**
 		* Aggiorna un agente passato come parametro (se non c'è lo crea)
-		* @param agent {Agent} - Parametro contenente l'agente da aggiornare.
+		* @param {Agent} agent - Parametro contenente l'agente da aggiornare.
 		*/
 	updateAgent(agent)
 	{

@@ -33,7 +33,22 @@ module.exports = function(grunt) {
         }]
       }
     },
-
+    browserify:
+    {
+      client:
+      {
+        options:
+        {
+          transform: [
+            ["babelify", {presets: ["es2015", "react"]}]
+          ]
+        },
+        files:
+        {
+          "./dist/client/main.js": ["./src/Client/main.js"]
+        }
+      }
+    },
     mochaTest:
     {
       test:
@@ -54,11 +69,34 @@ module.exports = function(grunt) {
       conversation:
       {
         src: 'src/Client/ConversationApp/setup.json',
-        out: 'temp',
-        name: 'ConversationApp'
+        out: 'src/Client/Applications',
+        name: 'ConversationApp',
+        javascript: true
+      }
+    },
+    'copy':
+    {
+      client:
+      {
+        files: [
+          {expand: true, cwd: 'src/Client/Index/', src: '**', dest: 'dist/Client'},
+          {expand: true, cwd: 'src/Client/Recorder/', src: 'RecorderWorker.js', dest: 'dist/Client/Script'}
+        ]
+      }
+    },
+    watch:
+    {
+      client:
+      {
+        files: ['src/Client/**/*'],
+        tasks: ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]
       }
     }
 
+  });
+
+  grunt.event.on('watch', function(action, filepath, target) {
+    grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
   });
 
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -66,10 +104,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('atavi-client-bundle-application');
+  grunt.loadNpmTasks("grunt-browserify");
+  grunt.loadNpmTasks('grunt-contrib-copy');
   // Default task(s).
   grunt.registerTask('default', ['babel:react','babel:dist','mochaTest']);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
   grunt.registerTask('react', ['babel:react']);
-
-
+  grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]);
 };

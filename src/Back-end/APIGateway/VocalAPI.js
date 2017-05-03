@@ -7,11 +7,11 @@ class VocalAPI
 {
   /**
   * Costruttore della classe che implementa la logica dell'api gateway
-  * @param vocal {VocalLoginModule} - Modulo utilizzato per effettuare il login vocale degli amministratori
-  * @param jwt {JsonWebTokenModule} - Modulo utilizzato per la creazione di JWT
-  * @param rp {RequestPromisModule} - Modulo utilizzato per effettuare richieste http ai microservizi utilizzando le Promise
-  * @param stt {STTModule} - Modulo utilizzato per la conversione di un file audio in testo
-  * @param sns {AWS.SNS} - Modulo utilizzato per pubblicare i dati della interazione su un topic SNS
+  * @param {VocalLoginModule} vocal - Modulo utilizzato per effettuare il login vocale degli amministratori
+  * @param {JsonWebTokenModule} jwt - Modulo utilizzato per la creazione di JWT
+  * @param {RequestPromisModule} rp - Modulo utilizzato per effettuare richieste http ai microservizi utilizzando le Promise
+  * @param {STTModule} stt - Modulo utilizzato per la conversione di un file audio in testo
+  * @param {AWS.SNS} sns - Modulo utilizzato per pubblicare i dati della interazione su un topic SNS
   */
   constructor(vocal, jwt, rp, stt, sns)
   {
@@ -27,8 +27,8 @@ class VocalAPI
 
 	/**
 	* Questa classe si occupa di implementare l'endpoint dell'API Gateway utilizzato dal client vocale
-	* @param event {LambdaEvent} - Parametro contenente, all'interno del campo body sotto forma di stringa in formato JSON, un oggetto contenente tutti i dati relativi ad un messaggio ricevuto da API Gateway
-	* @param context {LambdaContext} - Parametro utilizzato dalle lambda function per inviare la risposta
+	* @param {LambdaEvent} event - Parametro contenente, all'interno del campo body sotto forma di stringa in formato JSON, un oggetto contenente tutti i dati relativi ad un messaggio ricevuto da API Gateway
+	* @param {LambdaContext} context - Parametro utilizzato dalle lambda function per inviare la risposta
 	*/
   queryLambda(event, context)
   {
@@ -71,7 +71,7 @@ class VocalAPI
 
   /**
   * Metodo che permette di aggiungere una direttiva al sistema
-  * @param rule {Rule} - direttiva da aggiungere
+  * @param {Rule} rule - direttiva da aggiungere
   */
   _addRule(rule)
   {
@@ -103,7 +103,7 @@ class VocalAPI
 
   /**
   * Metodo che permette di ottenere una direttiva al sistema
-  * @param id {String} - id della direttiva richiesta
+  * @param {String} id - id della direttiva richiesta
   */
   _getRule(id)
   {
@@ -165,7 +165,7 @@ class VocalAPI
 
 	/**
   * Metodo che permette di rimuovere una direttiva dal sistema
-  * @param id {String} - id della direttiva da rimuovere
+  * @param {String} id - id della direttiva da rimuovere
   */
   _removeRule(id)
   {
@@ -196,7 +196,7 @@ class VocalAPI
 
 	/**
   * Metodo che permette di aggiornare una direttiva dal sistema
-  * @param rule {Rule} - Rule da aggiornare
+  * @param {Rule} rule - Rule da aggiornare
   */
   _updateRule(rule)
   {
@@ -230,7 +230,7 @@ class VocalAPI
 
 	/**
   * Metodo che permette di aggiungere un utente al sistema
-  * @param user {User} - Utente da aggiungere
+  * @param {User} user - Utente da aggiungere
   */
   _addUser(user)
   {
@@ -262,7 +262,7 @@ class VocalAPI
 
 	/**
   * Metodo che permette di aggiungere un enrollment ad un utente del sistema
-  * @param enr {Enrollment} - Parametro contenente l'enrollment da aggiungere a un utente
+  * @param {Enrollment} enr - Parametro contenente l'enrollment da aggiungere a un utente
   */
   _addUserEnrollment(enr)
   {
@@ -326,7 +326,7 @@ class VocalAPI
 
 	/**
 	* Metodo che permette di ottenere i dati relativi ad un utente del sistema
-	* @param username {String} - Parametro contente l'username dell'utente del quale si vogliono ottenere i dati
+	* @param {String} username - Parametro contente l'username dell'utente del quale si vogliono ottenere i dati
 	*/
   _getUser(username)
   {
@@ -357,7 +357,7 @@ class VocalAPI
 
 	/**
 	* Metodo che permette di ottenere una lista degli utenti del sistema
-	* @param query {UserListQueryParameters} - Parametro che indica quali utenti devono essere inclusi nella lista restituita
+	* @param {UserListQueryParameters} query - Parametro che indica quali utenti devono essere inclusi nella lista restituita
 	*/
   _getUserList(query)
   {
@@ -392,7 +392,7 @@ class VocalAPI
 
 	/**
 	* Metodo che si occupa di gestire il login vocale degli utenti
-	* @param enr {Enrollment} - Attributo contenente l'Enrollment (audio + username) con il quale tentare il login
+	* @param {Enrollment} enr - Attributo contenente l'Enrollment (audio + username) con il quale tentare il login
 	*/
   _loginUser(enr)
   {
@@ -456,7 +456,7 @@ class VocalAPI
 
 	/**
 	* Metodo che permette di eliminare un utente dal sistema
-	* @param username {String} - Parametro contenente l'username dell'user da eliminare dal sistema
+	* @param {String} username - Parametro contenente l'username dell'user da eliminare dal sistema
 	*/
   _removeUser(username)
   {
@@ -487,7 +487,7 @@ class VocalAPI
 
 	/**
 	* Metodo che permette di eliminare tutti gli enrollments di un utente del sistema
-	* @param username {String} - Parametro contenente l'username dell utente a cui si vogliono eliminare tutti gli enrollments
+	* @param {String} username - Parametro contenente l'username dell utente a cui si vogliono eliminare tutti gli enrollments
 	*/
   _resetUserEnrollment(username)
   {
@@ -551,7 +551,7 @@ class VocalAPI
 
 	/**
 	* Metodo che permette di modificare i dati relativi ad un utente del sistema
-	* @param user {User} - Parametro contenente l'User da modificare
+	* @param {User} user - Parametro contenente l'User da modificare
 	*/
   _updateUser(user)
   {
@@ -583,8 +583,8 @@ class VocalAPI
 
   /**
   * metodo che viene chiamato ogni volta viene ricevuta una risposta dall'assitente virtuale
-  * @param context {LambdaContext} - oggetto utilizzato per mandare l'eventuale risposta ad API gateway
-  * @param audio_buffer {Buffer} - Buffer contenente l'audio ricevuto
+  * @param {LambdaContext} context - oggetto utilizzato per mandare l'eventuale risposta ad API gateway
+  * @param {Buffer} audio_buffer - Buffer contenente l'audio ricevuto
   * @return {function(VAResponse)} - funzione utilizzata come callback, che accetta come parametro la risposta dell'assistente viruale
   */
   _onVaResponse(context, audio_buffer)
@@ -793,7 +793,7 @@ class VocalAPI
 * funzione di utilità utilizzata per restituire un codice d'errore nel caso in cui
 * ci sia qualche problema. Forse dovrebbe essere modificata per utilizzare un
 * evento dell'assistente virtuale??
-* @param context {LambdaContext} - oggetto utilizzato per ritornare la risposta
+* @param {LambdaContext} context - oggetto utilizzato per ritornare la risposta
 * contenente il codice d'errore
 */
 function error(context)

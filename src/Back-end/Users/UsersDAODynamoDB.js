@@ -4,7 +4,7 @@ class UsersDAODynamoDB
 {
 	/**
 		* Costruttore della classes
-		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli utenti
+		* @param {AWS::DynamoDB::DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli utenti
 		*/
   constructor(client)
   {
@@ -14,7 +14,7 @@ class UsersDAODynamoDB
 
 	/**
 		* Aggiunge un nuovo user in DynamoDB
-		* @param user {User} - Utente che si vuole aggiungere al sistema
+		* @param {User} user - Utente che si vuole aggiungere al sistema
 		*/
 	addUser(user)
   {
@@ -39,7 +39,7 @@ class UsersDAODynamoDB
 
 	/**
 		* Ottiene l'user avente l'username passato come parametro
-		* @param username {String} - Parametro contenente l'username dello User che si vuole ottenere.
+		* @param {String} username - Parametro contenente l'username dello User che si vuole ottenere.
 		*/
 	getUser(username)
   {
@@ -71,7 +71,7 @@ class UsersDAODynamoDB
 
 	/**
 		* Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-		* @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+		* @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 		*/
 	getUserList(query)
   {
@@ -99,7 +99,7 @@ class UsersDAODynamoDB
 
 	/**
 		* Elimina l'user avente l'username passato come parametro
-		* @param username {String} - Parametro contenente l'username dello User che si vuole rimuovere
+		* @param {String} username - Parametro contenente l'username dello User che si vuole rimuovere
 		*/
 	removeUser(username)
   {
@@ -127,7 +127,7 @@ class UsersDAODynamoDB
 
 	/**
 		* Aggiorna l'user passato come parametro (se non c'è lo crea)
-		* @param user {User} - Parametro contenente i dati relativi all'utente che si vuole modificare
+		* @param {User} user - Parametro contenente i dati relativi all'utente che si vuole modificare
 		*/
 	updateUser(user)
   {
@@ -151,8 +151,8 @@ class UsersDAODynamoDB
 
 	/**
 		* Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
-		* @param observer {UserObserver} - Observer da notificare
-		* @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+		* @param {UserObserver} observer - Observer da notificare
+		* @param {Object} params - Parametro passato alla funzione scan del DocumentClient
 		*/
 	_onScan(observer, params)
 	{
@@ -182,7 +182,7 @@ class UsersDAODynamoDB
 
 /**
 	* Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object)
-	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 	*/
 function filterExpression(obj)
 {

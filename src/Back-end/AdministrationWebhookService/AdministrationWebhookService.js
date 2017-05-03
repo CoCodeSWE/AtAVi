@@ -1,9 +1,9 @@
 class AdministrationWebhookService
 {
   /**
-  * Costruttore del servizio di webhook per l'area di amministrazione
-  * @param jwt {JsonWebTokenModule} - modulo di nodejs per la gestione di jsonwebtoken. Ne effettuiamo qui la dependency injection
-  */
+   * Costruttore del servizio di webhook per l'area di amministrazione
+   * @param {JsonWebTokenModule} jwt - modulo di nodejs per la gestione di jsonwebtoken. Ne effettuiamo qui la dependency injection
+   */
   constructor(jwt)
   {
     this.jwt = jwt;
@@ -11,8 +11,8 @@ class AdministrationWebhookService
 
   /**
   * Lambda function che si occupa di rispondere alle richieste di api.ai, verificando la validità dei token presenti.
-  * @param event {LambdaEvent} - event contenente i dati della richiesta, compreso il token
-  * @param context {LambdaContext} - context necessario per mandare la risposta
+  * @param {LambdaEvent} event - event contenente i dati della richiesta, compreso il token
+  * @param {LambdaContext} context - context necessario per mandare la risposta
   */
   webhook(event, context)
   {
@@ -55,7 +55,7 @@ class AdministrationWebhookService
 
   /**
   * Metodo utilizzato per controllare la validità di un token.
-  * @param token {String} - jsonwebtoken da controllare
+  * @param {String} token - jsonwebtoken da controllare
   * @return {boolean} - true nel caso in cui il token sia valido, false altrimenti
   */
   _checkToken(token)

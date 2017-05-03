@@ -1,4 +1,7 @@
-class Application
+/**
+* @desc Questa classe si occupa della gestione dell'applicazione in esecuzione. È una classe astratta.
+*/
+export default class Application
 {
   /**
   * Costruttore che permette di istanziare un'aplicazione a partire dal suo package.
@@ -7,11 +10,12 @@ class Application
   constructor(pkg)
   {
     let self = this;
+    this.name = pkg.name;
     this.ui = document.createElement('div');
     this.ui.innerHTML = pkg.ui;
     this._loadLibs(pkg.libs);
-    this.onload = []; //array di callback da chiamare quando l'applicazione è istanziata
-    this.onload.push(function()
+    this._onload = []; //array di callback da chiamare quando l'applicazione è istanziata
+    this._onload.push(function()
     {
       ((new Function(pkg.setup)).apply(self)); //creo funzione costruttore, faccio binding con this e la chiamo
       self.runCmd = (new Function("cmd", "params", pkg.cmdHandler)).bind(self);
@@ -37,8 +41,8 @@ class Application
     }
     else
     {
-      this.onload.forEach((cb) => {cb();});
-      this.onload = [];
+      this._onload.forEach((cb) => {cb();});
+      this._onload = [];
     }
   }
   /**
@@ -47,5 +51,18 @@ class Application
   getUI()
   {
     return this.ui;
+  }
+
+
+  /**
+   * setter che permette di aggiungere una funzione di callback che verrà chiamata
+   * una volta caricata l'applicazione
+   * @param {function} cb - callback da chiamare una volta finita di caricare l'applicazione
+   */
+  set onload(cb)
+  {
+    console.log('cb')
+    if(typeof(cb) === 'function') //controllo che mi sia passata effettivamente una funzione
+      this._onload.push(cb);
   }
 }

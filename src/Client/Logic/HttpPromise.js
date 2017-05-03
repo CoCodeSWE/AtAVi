@@ -1,20 +1,22 @@
 /**
 * Constructor, si occupa di creare la promessa relativa ad una richiesta HTTP fatta con metodo, headers e URL specificati.
-* @param method {String} - Metodo della richiesta HTTP.
-* @param url {String} - URL a cui fare la richiesta.
-* @param headers {StringAssocArray} - Array associativo contenente gli headers. La chiave rappresenta il nome dell'header.
-* @param data {Object} - Dati da mandare con la richiesta.
+* @param {String} method - Metodo della richiesta HTTP.
+* @param {String} url - URL a cui fare la richiesta.
+* @param {StringAssocArray} headers - Array associativo contenente gli headers. La chiave rappresenta il nome dell'header.
+* @param {Object} data - Dati da mandare con la richiesta.
 */
 
-var HttpPromise = function(method, url, headers, data)
+export var HttpPromise = function(method, url, headers, data)
 {
   return new Promise(function(resolve, reject)
   {
     var xhr = new XMLHttpRequest();
+    console.log('new request');
     xhr.onreadystatechange = function() //funzione eventhandler invocata ogni volta  che l'attributo readyState cambia
     {
-      if (xhr.readyState === 4) //se l'attributo readyState = 4 l'operazione è completata (complete).
+      if (xhr.readyState === XMLHttpRequest.DONE) //se l'attributo readyState = 4 l'operazione è completata (complete).
       {
+        console.log(xhr);
         if (xhr.status === 200) //se l'attributo status = 200 la richiesta è avvenuta con successo(complete).
           resolve(xhr.responseText);
         else
@@ -26,6 +28,9 @@ var HttpPromise = function(method, url, headers, data)
       }
     }
     xhr.open(method, url, true); // inizializzazione della richiesta, true equivale a richiesta asincrona
+    for(let name in headers)
+      xhr.setRequestHeader(name, headers[name]);
     xhr.send(data); //invio della richiesta
+    console.log(xhr);
   });
 }

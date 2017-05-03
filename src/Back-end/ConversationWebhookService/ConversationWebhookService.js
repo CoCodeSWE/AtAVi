@@ -5,9 +5,9 @@ class ConversationWebhookService
 {
   /**
    * Costruttore del Webhook relativo all'assistente di conversazione
-   * @param conversations {ConversationsDAO} - DAO utilizzato per l'accesso ai dati relativi alle conversazioni degli ospiti con l'assistente virtuale
-   * @param guests {GuestsDAO} - DAO utilizzato per l'accesso ai dati relativi agli ospiti che hanno già visitato l'azienda
-   * @param users {UsersDAO} - DAO utilizzato per l'accesso ai dati relativi agli utenti (amministratori)
+   * @param {ConversationsDAO} conversations - DAO utilizzato per l'accesso ai dati relativi alle conversazioni degli ospiti con l'assistente virtuale
+   * @param {GuestsDAO} guests - DAO utilizzato per l'accesso ai dati relativi agli ospiti che hanno già visitato l'azienda
+   * @param {UsersDAO} users - DAO utilizzato per l'accesso ai dati relativi agli utenti (amministratori)
    */
   constructor(conversations, guests, users)
   {
@@ -18,8 +18,8 @@ class ConversationWebhookService
 
   /**
   * Lambda function che si occupa di rispondere alle richieste di api.ai, verificando la validità dei token presenti.
-  * @param event {LambdaEvent} - event contenente i dati della richiesta.
-  * @param context {LambdaContext} - context necessario per mandare la risposta
+  * @param {LambdaEvent} event - event contenente i dati della richiesta.
+  * @param {LambdaContext} context - context necessario per mandare la risposta
   */
   webhook(event, context)
   {
@@ -54,8 +54,8 @@ class ConversationWebhookService
 
   /**
   * metodo privato utilizzato per controllare se la persona con cui stiamo parlando è un amministratore
-  * @param body {ApiAiRequestBody} - contiene i dati della richiesta fatta da api.ai al webhook
-  * @param context {lambdaContext} - permette di inviare una risposta ad api gateway
+  * @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
+  * @param {lambdaContext} context - permette di inviare una risposta ad api gateway
   */
   _checkUser(body, context)
   {
@@ -109,8 +109,8 @@ class ConversationWebhookService
 
   /**
   * metodo privato utilizzato per controllare se la persona con cui stiamo parlando è un ospite che ha già visitato l'azienda in precedenza
-  * @param body {ApiAiRequestBody} - contiene i dati della richiesta fatta da api.ai al webhook
-  * @param context {lambdaContext} - permette di inviare una risposta ad api gateway
+  * @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
+  * @param {lambdaContext} context - permette di inviare una risposta ad api gateway
   */
   _checkGuest(body, context)
   {
@@ -161,8 +161,8 @@ class ConversationWebhookService
   /**
   * metodo privato utilizzato per mandare la risposta di default nel caso in cui la persona con cui sta avvenendo la conversazione
   * non sia né un amministratore né un ospite chje ha visitato precedentemente l'azienda
-  * @param body {ApiAiRequestBody} - contiene i dati della richiesta fatta da api.ai al webhook
-  * @param context {lambdaContext} - permette di inviare una risposta ad api gateway
+  * @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
+  * @param {lambdaContext} context - permette di inviare una risposta ad api gateway
   */
   _defaultResponse(body, context)
   {

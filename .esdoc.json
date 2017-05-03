@@ -1,0 +1,6 @@
+{
+  "source": "./src",
+  "destination": "./doc",
+  "excludes": ["(node_modules|bower_components|test)"],
+  "plugins": [{"name": "esdoc-node"}]
+}

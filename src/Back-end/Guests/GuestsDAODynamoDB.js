@@ -4,7 +4,7 @@ class guestsDAODynamoDB
 {
   /**
 		* Costruttore della classes
-		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella dei Guests
+		* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella dei Guests
 		*/
   constructor(client)
   {
@@ -13,7 +13,7 @@ class guestsDAODynamoDB
   }
   /**
 		* Aggiunge un nuovo Guest in DynamoDB
-		* @param guest {Guest} - Guest che si vuole aggiungere al sistema
+		* @param {Guest} guest - Guest che si vuole aggiungere al sistema
 		*/
   addGuest(guest)
   {
@@ -36,8 +36,8 @@ class guestsDAODynamoDB
   }
   /**
 		* Ottiene il guest avente name e company passato come parametro
-		* @param name {String} -  nome del Guest
-    * @param company {String} - azienda di provenienza del Guest
+		* @param {String} name -  nome del Guest
+    * @param {String} company - azienda di provenienza del Guest
 		*/
   getGuest(name,company)
   {
@@ -63,8 +63,8 @@ class guestsDAODynamoDB
   }
   /**
     * Elimina il Guest avente name e company passati come parametro
-    * @param name {String} -  nome del Guest
-    * @param company {String} - azienda di provenienza del Guest
+    * @param {String} name -  nome del Guest
+    * @param {String} company - azienda di provenienza del Guest
     */
   removeGuest(name,company)
   {
@@ -90,7 +90,7 @@ class guestsDAODynamoDB
 
   /**
 		* Ottiene la lista dei Guest in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-    * @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+    * @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 		*/
   getGuestList(query)
   {
@@ -118,7 +118,7 @@ class guestsDAODynamoDB
 
   /**
 		* Aggiorna il Guest passato come parametro (se non c'è lo crea)
-		* @param guest {Guest} - Parametro contenente i dati relativi al Guest che si vuole modificare
+		* @param {Guest} guest - Parametro contenente i dati relativi al Guest che si vuole modificare
 		*/
   updateGuest(guest)
   {
@@ -146,8 +146,8 @@ class guestsDAODynamoDB
 
 /**
   * Viene ritornata la funzione di callback per la gesitone dei blocchi di getGuestList e query
-  * @param observer {GuestObserver} - Observer da notificare
-  * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+  * @param {GuestObserver} observer - Observer da notificare
+  * @param {Object} params - Parametro passato alla funzione scan del DocumentClient
   */
   _onScan(observer, params)
   {
@@ -175,7 +175,7 @@ class guestsDAODynamoDB
 
 /**
 	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
-	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 	*/
 function filterExpression(obj)
 {
