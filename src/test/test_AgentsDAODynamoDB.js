@@ -74,7 +74,7 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
 					});
-					dynamo_client.get.yield(null, mock_agent);
+					dynamo_client.get.yield(null, {Item: {mock_agent}});
 					expect(next.callCount).to.be.above(0);
 					expect(complete.callCount).to.equal(1);
 				});

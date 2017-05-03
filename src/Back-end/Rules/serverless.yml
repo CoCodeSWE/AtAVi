@@ -1,4 +1,4 @@
-service: users
+service: rules
 
 provider:
   name: aws
@@ -19,11 +19,17 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
         - dynamodb:PutItem
-      Resource: 
-          - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.RULES_TABLE}"
-          - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASKS_TABLE}"
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.RULES_TABLE}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASKS_TABLE}"
       
-
 functions:
   addRule:
     handler: addRule.addRule
@@ -94,19 +100,6 @@ functions:
 
 resources:
   Resources:
-    usersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:provider.environment.USERS_TABLE}
-        AttributeDefinitions:
-          - AttributeName: username
-            AttributeType: S
-        KeySchema:
-          - AttributeName: username
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     rulesTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -116,6 +109,19 @@ resources:
             AttributeType: N
         KeySchema:
           - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    tasksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.TASKS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: type
+            AttributeType: S
+        KeySchema:
+          - AttributeName: type
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

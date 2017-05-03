@@ -6,7 +6,7 @@ class RulesService
 		* @param {RulesDAO} rules - Attributo contenente il RulesDAO
     * @param {TasksDAO} task - Attributo contenente il TasksDAO
 		*/
-  constructor(rules,task)
+  constructor(rules, task)
   {
     this.rules = rules     //RulesDAODynamoDB
     this.task = task;      //TaskDAODynamoDB
@@ -17,11 +17,12 @@ class RulesService
 		* @param {LambdaEvent} event - All'interno del campo body, sotto forma di stringa in formato JSON, un oggetto Rule contenente tutti i dati relativi ad una Rule da inserire
 		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
-  addRule(event,context)
+  addRule(event, context)
   {
     let rule; //conterrà la rule da aggiungere
 
-    try {
+    try 
+		{
       rule=JSON.parse(event.body);
     }
     catch (exception)
@@ -33,27 +34,46 @@ class RulesService
     // Parametro contenente i dati relativi alla rule da aggiungere
 		let params = objectFilter(rule , ['enabled', 'id', 'name', 'targets', 'task']);
     // controllo che rule abbia tutti i campi definiti
-    if(isDefined(rule.enabled) && isDefined(rule.id) && isDefined(rule.name) && isDefined(rule.targets[0].company) && isDefined(rule.targets[0].member) && isDefined(rule.targets[0].name) && isDefined(rule.task.type) && isDefined(rule.task.params))
+    if(params.id && ('enabled' in params) && params.name && params.targets && params.task)
     {
       this.rules.addRule(params).subscribe(
       {
-        next:function(data)
+        next: function(data)
         {
           //il metodo next dell'Observer non riceve nessun tipo di dato
         },
 
-        error:internalServerError(context),
+        error: function(err)
+				{
+					if(err.code === 'ConditionalCheckFailedException')
+					{
+						context.succeed(
+						{
+							statusCode: 409,
+							body: JSON.stringify({ message: 'Conflict' })
+						});
+					}
+					else
+					{
+						context.succeed(
+						{
+							statusCode: 500,
+							body: JSON.stringify({ message: 'Internal server error' })
+						});
+					}
+				},
 
-        complete:function()
+        complete: function()
         {
           context.succeed(
           {
-            statusCode:200,
+            statusCode: 200,
             body: JSON.stringify({ message: 'success' })
           })
         }
       });
-    }else
+    }
+		else
     {
       badRequest(context);
     }
@@ -64,108 +84,94 @@ class RulesService
 		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole eliminare
 		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
-  deleteRule(event,context)
+  deleteRule(event, context)
   {
-    let rule_id;
-    if(event.pathParameters)
-    {
-      rule_id=event.pathParameters;
-      this.rules.removeRule(rule_id).subscribe(
-      {
-        next: function(data)
-        {
-          // Il metodo next dell'Observer non riceve nessun tipo di dato
-        },
+    let rule_id = Number(event.pathParameters.id);
+		this.rules.removeRule(rule_id).subscribe(
+		{
+			next: function(data)
+			{
+				// Il metodo next dell'Observer non riceve nessun tipo di dato
+			},
 
-        error: function(err)
-        {
-          if(err.code === 'ConditionalCheckFailedException')
-          {
-            context.succeed(
-            {
-              statusCode: 404,
-              body: JSON.stringify({ message: 'Not found' })
-            });
-          }
-          else
-          {
-            context.succeed(
-            {
-              statusCode: 500,
-              body: JSON.stringify({ message: 'Internal server error' })
-            });
-          }
-        },
+			error: function(err)
+			{
+				if(err.code === 'ConditionalCheckFailedException')
+				{
+					context.succeed(
+					{
+						statusCode: 404,
+						body: JSON.stringify({ message: 'Not found' })
+					});
+				}
+				else
+				{
+					context.succeed(
+					{
+						statusCode: 500,
+						body: JSON.stringify({ message: 'Internal server error' })
+					});
+				}
+			},
 
-        complete: function()
-        {
-          context.succeed(
-          {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'success' })
-          });
-        }
-      });
-    }	else
-  		{
-  			// Event non contiene i dati attesi: Bad Request(400)
-  			badRequest(context);
-  		}
+			complete: function()
+			{
+				context.succeed(
+				{
+					statusCode: 200,
+					body: JSON.stringify({ message: 'success' })
+				});
+			}
+		});
   }
+	
   /**
 		* Metodo che implementa la Lambda Function per eliminare una rule
 		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole ottenere
 		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
-  getRule(event,context)
+  getRule(event, context)
   {
-    let rule_id;
+    let rule_id = Number(event.pathParameters.id);
     let rule; //conterrà la rule che verrà ottenuta
-    if(event.pathParameters)
-    {
-      rule_id=event.pathParameters;
-      this.rules.getRule(rule_id).subscribe(
-      {
-        next: function(data)
-        {
-          rule = data;
-        },
+		this.rules.getRule(rule_id).subscribe(
+		{
+			next: function(data)
+			{
+				rule = data;
+			},
 
-        error: function(err)
-        {
-          if(err.code === 'Not Found')
-          {
-            context.succeed(
-            {
-              statusCode: 404,
-              body: JSON.stringify({ message: 'Not found' })
-            });
-          }
-          else
-          {
-            context.succeed(
-            {
-              statusCode: 500,
-              body: JSON.stringify({ message: 'Internal server error' })
-            });
-          }
-        },
+			error: function(err)
+			{
+				if(err.code === 'Not found')
+				{
+					context.succeed(
+					{
+						statusCode: 404,
+						body: JSON.stringify({ message: 'Not found' })
+					});
+				}
+				else
+				{
+					context.succeed(
+					{
+						statusCode: 500,
+						body: JSON.stringify({ message: 'Internal server error' })
+					});
+				}
+			},
 
-        complete: function()
-        {
-          context.succeed(
-          {
-            statusCode: 200,
-            body: JSON.stringify(rule)
-          });
-        }
-      });
-    }	else
-  		{
-  			// Event non contiene i dati attesi: Bad Request(400)
-  			badRequest(context);
-  		}
+			complete: function()
+			{
+				context.succeed(
+				{
+					statusCode: 200,
+					body: JSON.stringify(rule)
+				});
+			}
+		});
   }
+	
   /**
 		* Metodo che implementa la Lambda Function per ottenere la lista delle rules
 		* @param {LambdaRuleListEvent} event - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
@@ -173,10 +179,10 @@ class RulesService
 		*/
   getRuleList(event,context)
   {
-    let list = {        //conterrà la lista delle rules
-      Items: []
+    let list = 
+		{
+      rules: []
     };
-
 
     // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
 		let query = objectFilter(event.queryStringParameters, ['enabled', 'name', 'target.name','target.company','target.member']);
@@ -185,7 +191,7 @@ class RulesService
 
     this.rules.getRuleList(query).subscribe(
     {
-      next: (rule) => { list.Items.push(rule);},
+      next: (rule) => { list.rules.push(rule); },
       error: internalServerError(context),
 
       complete: function()
@@ -198,6 +204,7 @@ class RulesService
       }
     });
   }
+	
   /**
 		* Metodo che implementa la Lambda Function per ottenere la lista dei tasks
 		* @param {LambdaTaskListEvent} event - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
@@ -205,16 +212,19 @@ class RulesService
 		*/
   getTaskList(event,context)
   {
-    let list = {                  //conterrà la lista dei task
-      Items: []
+    let list = 
+		{
+      tasks: []
     };
+		
     // Controllo se ci sono filtri da applicare nell'ottenimento degli utenti
 		let query = objectFilter(event.queryStringParameters);
 		if(Object.keys(query).length === 0)
 			query = null;
-    this.task.getTaskList(query).subscribe(
+    
+		this.task.getTaskList(query).subscribe(
     {
-      next: (task) => { list.Items.push(task); },
+      next: (task) => { list.tasks.push(task); },
       error: internalServerError(context),
 
       complete: function()
@@ -235,47 +245,39 @@ class RulesService
 		*/
   updateRule(event,context)
   {
-    if(event.pathParameters)
+		let rule; // Conterrà le informazioni relative alls rule da aggiornare
+		try
 		{
-			let rule; // Conterrà le informazioni relative alls rule da aggiornare
-			try
-			{
-				rule = JSON.parse(event.body);
-			}
-			catch(exception)
-			{
-				badRequest(context);
-				return;
-			}
-
-			// Parametro contenente i dati relativi alla rule da aggiungere
-			let params = rule;
-			params.id=event.pathParameters;
-
-
-			this.rules.updateRule(params).subscribe(
-			{
-				next: function(data)
-				{
-					// Il metodo next dell'Observer non riceve nessun tipo di dato
-				},
-
-				error: internalServerError(context),
-
-				complete: function()
-				{
-					context.succeed(
-					{
-						statusCode: 200,
-						body: JSON.stringify({ message: 'success' })
-					});
-				}
-			});
+			rule = JSON.parse(event.body);
 		}
-		else
+		catch(exception)
 		{
 			badRequest(context);
+			return;
 		}
+
+		// Parametro contenente i dati relativi alla rule da aggiungere
+		let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task']);
+		params.id = Number(event.pathParameters.id);
+
+		this.rules.updateRule(params).subscribe(
+		{
+			next: function(data)
+			{
+				// Il metodo next dell'Observer non riceve nessun tipo di dato
+			},
+
+			error: internalServerError(context),
+
+			complete: function()
+			{
+				context.succeed(
+				{
+					statusCode: 200,
+					body: JSON.stringify({ message: 'success' })
+				});
+			}
+		});
   }
 }
 
@@ -284,7 +286,7 @@ function internalServerError(context)
 {
 	return function(err)
 	{
-    console.log('internalServerError ', err);
+    //console.log('internalServerError ', err);
 		context.succeed(
 		{
 			statusCode: 500,
@@ -296,16 +298,12 @@ function internalServerError(context)
 // Funzione per gestire lo status code 400
 function badRequest(context)
 {
-  console.log('badRequest');
+  //console.log('badRequest');
 	context.succeed(
 	{
 		statusCode: 400,
 		body: JSON.stringify({ message: 'Bad Request' })
 	});
-}
-// funzione che controlla se una variabile è definita
-function isDefined(prop){
-   return (prop === 'undefined') ? false : true;
 }
 
 module.exports = RulesService;

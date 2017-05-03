@@ -1,0 +1,1 @@
+HttpPromise = sinon.stub();

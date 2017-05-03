@@ -1,4 +1,5 @@
 const Rx = require('rxjs/Rx');
+const mapProperties = require('map-object-properties');
 
 class AgentsDAODynamoDB
 {
@@ -24,7 +25,8 @@ class AgentsDAODynamoDB
 			let params =
 			{
 				TableName: self.table,
-				Item: agent
+				Item: mapProperties(agent, attr_map),
+				ConditionExpression: 'attribute_not_exists(agent_name)'
 			};
 			self.client.put(params, function(err, data)
 			{
@@ -50,20 +52,18 @@ class AgentsDAODynamoDB
 				TableName: self.table,
 				Key:
 				{
-					'name': name
+					'agent_name': name
 				}
 			};
-      console.log(params);
 			self.client.get(params, function(err, data)
 			{
-        console.log(err, data);
 				if(err)
 					observer.error(err);
-				else if(!data.Item.name)
-					observer.error('Not found');
+				else if(!data.Item)
+					observer.error({ code: 'Not found'});
 				else
 				{
-					observer.next(data.Item);
+					observer.next(mapProperties(data.Item, reverse_attr_map));
 					observer.complete();
 				}
 			});
@@ -82,7 +82,7 @@ class AgentsDAODynamoDB
 			{
 				TableName: self.table
 			};
-			self.client.scan(params, onScan(observer, self));
+			self.client.scan(params, self._onScan(observer, params));
 		});
 	}
 
@@ -100,9 +100,9 @@ class AgentsDAODynamoDB
 				TableName: self.table,
 				Key:
 				{
-					'name': name
+					'agent_name': name
 				},
-				ConditionExpression: 'attribute_exists(name)'
+				ConditionExpression: 'attribute_exists(agent_name)'
 			};
 			self.client.delete(params, function(err, data)
 			{
@@ -126,7 +126,7 @@ class AgentsDAODynamoDB
 			let params =
 			{
 				TableName: self.table,
-				Item: agent
+				Item: mapProperties(agent, attr_map)
 			};
 			self.client.put(params, function(err, data)
 			{
@@ -137,32 +137,46 @@ class AgentsDAODynamoDB
 			});
 		});
 	}
-}
-
-function onScan(observer, agents)
-{
-	return function(err, data)
+	
+	/**
+		* Viene ritornata la funzione di callback per la gesitone dei blocchi di getAgentList
+		* @param observer {AgentObserver} - Observer da notificare
+		* @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+		*/
+	_onScan(observer, params)
 	{
-		if(err)
-			observer.error(err);
-		else
+		let self = this;
+    return function(err, data)
 		{
-			observer.next(data);
-			if(data.LastEvaluatedKey)
+      if(err)
 			{
-				let params =
-				{
-					TableName: agents.table,
-					ExclusiveStartKey: data.LastEvaluatedKey
-				};
-				agents.client.scan(params, onScan(observer, agents));
+				observer.error(err);
 			}
 			else
 			{
-				observer.complete();
+        data.Items.forEach((agent) => observer.next(mapProperties(agent, reverse_attr_map)));
+				if(data.LastEvaluatedKey)
+				{
+					params.ExclusiveStartKey = data.LastEvaluatedKey;
+					self.client.scan(params, self._onScan(observer, params));
+				}
+				else
+				{
+					observer.complete();
+				}
 			}
 		}
 	}
+}
+
+const attr_map =
+{
+  name: 'agent_name'
+}
+
+const reverse_attr_map =
+{
+  full_name: 'name'
 }
 
 module.exports = AgentsDAODynamoDB;

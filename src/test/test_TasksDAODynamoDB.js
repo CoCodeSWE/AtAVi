@@ -41,6 +41,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
 
         });
+				
 		    it("Nel caso in cui la funzione di una direttiva sia aggiunta correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function()
 				{
 					tasks.addTask(mock_task).subscribe(
@@ -104,20 +105,21 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
           });
-          dynamo_client.scan.yield(null, {Items:[mock_task],LastEvaluatedKey:"mock_type2"});
-					dynamo_client.scan.yield(null, {Items:[mock_task2],LastEvaluatedKey:"mock_type3"});
+          dynamo_client.scan.yield(null, {Items: [{mock_task}], LastEvaluatedKey: "mock_type2"});
+					dynamo_client.scan.yield(null, {Items: [{mock_task2}], LastEvaluatedKey: "mock_type3"});
 					dynamo_client.scan.yield({statusCode: 500});
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
 					expect(next.callCount).to.equal(2);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].type).to.equal(mock_task.Item.type);
+					expect(callNext.args[0].type).to.equal(mock_task.type);
 					callNext = next.getCall(1);
-					expect(callNext.args[0].type).to.equal(mock_task2.Item.type);
+					expect(callNext.args[0].type).to.equal(mock_task2.type);
 					expect(complete.callCount).to.equal(0);
 
         });
+				
 		    it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta.", function()
         {
           tasks.getTaskList().subscribe(
@@ -131,9 +133,9 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(2);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].type).to.equal(mock_task.Item.type);
+					expect(callNext.args[0].type).to.equal(mock_task.type);
 					callNext = next.getCall(1);
-					expect(callNext.args[0].type).to.equal(mock_task2.Item.type);
+					expect(callNext.args[0].type).to.equal(mock_task2.type);
 					expect(complete.callCount).to.equal(1);
 
         });
@@ -157,6 +159,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
 
         });
+				
 		    it("Nel caso in cui la funzione di una direttiva sia rimossa correttamente, l'Observable restituito deve chiamare il metodo complete dell'observer iscritto un'unica volta.", function()
         {
           tasks.removeTask('mock_type').subscribe(
@@ -182,7 +185,7 @@ describe('Back-end', function()
   					error: error,
   					complete: complete
   				});
-  					dynamo_client.update.yield({statusCode: 500, message:"error updating rule"});
+  					dynamo_client.put.yield({statusCode: 500, message:"error updating rule"});
 						expect(error.callCount).to.equal(1);
 						let callError = error.getCall(0);
 						expect(callError.args[0].statusCode).to.equal(500);
@@ -200,7 +203,7 @@ describe('Back-end', function()
 						complete: complete
 					});
 
-					dynamo_client.update.yield(null, mock_task);
+					dynamo_client.put.yield(null, {});
           expect(error.callCount).to.equal(0);
           expect(complete.callCount).to.equal(1);
 
