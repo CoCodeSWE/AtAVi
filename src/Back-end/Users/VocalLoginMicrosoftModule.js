@@ -4,8 +4,8 @@ class VocalLoginMicrosoftModule
 {
 	/**
 	 * Costruttore della classe
-	 * @param conf {VocalLoginModuleConfig} - Parametro contenente la configurazione di VocalLoginModule. Contiene una key e un livello minimo di confidenza
-	 * @param rp {RequestPromiseModule} - Modulo per poter fare richieste HTTP ai microservizi
+	 * @param {VocalLoginModuleConfig} conf - Parametro contenente la configurazione di VocalLoginModule. Contiene una key e un livello minimo di confidenza
+	 * @param {RequestPromiseModule} rp - Modulo per poter fare richieste HTTP ai microservizi
 	 */
 	constructor(conf, rp)
 	{
@@ -16,8 +16,8 @@ class VocalLoginMicrosoftModule
 
 	/**
 		*	Verification Profile - Create Enrollment (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549c)
-		* @param id {String} - Stringa contenente l'identificativo dell'utente a cui si vuole aggiungere un enrollment
-		* @param audio {Blob} - Blob contenente il file audio dell'enrollment
+		* @param {String} id - Stringa contenente l'identificativo dell'utente a cui si vuole aggiungere un enrollment
+		* @param {Blob} audio - Blob contenente il file audio dell'enrollment
 		*/
 	addEnrollment(id, audio)
 	{
@@ -35,7 +35,7 @@ class VocalLoginMicrosoftModule
 				body: audio,
 				json: true // Automaticamente passa un JSON come risposta (non serve fare JSON.parse)
 			};
-			
+
 			self.request_promise(options).then(function()
 			{
 				observer.complete();
@@ -84,7 +84,7 @@ class VocalLoginMicrosoftModule
 
 	/**
 		* Verification Profile - Delete Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/563309b7778daf06340c9655)
-		* @param id {String} - Parametro contenente l'identificativo dell'utente che si vuole eliminare
+		* @param {String} id - Parametro contenente l'identificativo dell'utente che si vuole eliminare
 		*/
 	deleteUser(id)
 	{
@@ -115,8 +115,8 @@ class VocalLoginMicrosoftModule
 
 	/**
 		* Speaker Recognition - Verification (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549d)
-		* @param id {String} - Parametro contenente l'identificativo dell'utente che vuole effettuare il login
-		* @param audio {Blob} - Parametro contenente l'audio relativo alla frase di riconoscimento pronunciata
+		* @param {String} id - Parametro contenente l'identificativo dell'utente che vuole effettuare il login
+		* @param {Blob} audio - Parametro contenente l'audio relativo alla frase di riconoscimento pronunciata
 		*/
 	doLogin(id, audio)
 	{
@@ -180,9 +180,9 @@ class VocalLoginMicrosoftModule
 		});
 	}
 
-	/** 
+	/**
 		* Verification Profile - Get Profile (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56409ee2778daf19706420de)
-		* @param id {String} - Stringa contenente l'identificativo dell'utente di cui si vogliono ottenere le informazioni
+		* @param {String} id - Stringa contenente l'identificativo dell'utente di cui si vogliono ottenere le informazioni
 		*/
 	getUser(id)
 	{
@@ -214,7 +214,7 @@ class VocalLoginMicrosoftModule
 
 	/**
 		* Verification Profile - Reset Enrollments (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549b)
-		* @param id {String} - Parametro contenente l'identificativo dell'utente di cui si vogliono eliminare gli enrollment
+		* @param {String} id - Parametro contenente l'identificativo dell'utente di cui si vogliono eliminare gli enrollment
 		*/
 	resetEnrollment(id)
 	{
@@ -246,7 +246,7 @@ class VocalLoginMicrosoftModule
 
 /**
 	* Assegna un valore numerico alla confidenza passata alla funzione. Ritorna -1 se l'input è un valore di confidence non atteso.
-	* @param confidence {String} - Valore che indica il livello di confidenza. È un valore che può assumere i seguenti valori:
+	* @param {String} confidence - Valore che indica il livello di confidenza. È un valore che può assumere i seguenti valori:
 		- 0: Low
 		- 1: Normal
 		- 2: High

@@ -3,8 +3,8 @@ class RulesService
 {
   /**
 		* Costruttore della classe
-		* @param rules {RulesDAO} - Attributo contenente il RulesDAO
-    * @param task {TasksDAO} - Attributo contenente il TasksDAO
+		* @param {RulesDAO} rules - Attributo contenente il RulesDAO
+    * @param {TasksDAO} task - Attributo contenente il TasksDAO
 		*/
   constructor(rules, task)
   {
@@ -14,8 +14,8 @@ class RulesService
 
   /**
 		* Metodo che implementa la Lambda Function per inserire una rule
-		* @param event {LambdaEvent} - All'interno del campo body, sotto forma di stringa in formato JSON, un oggetto Rule contenente tutti i dati relativi ad una Rule da inserire
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaEvent} event - All'interno del campo body, sotto forma di stringa in formato JSON, un oggetto Rule contenente tutti i dati relativi ad una Rule da inserire
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   addRule(event, context)
   {
@@ -81,8 +81,8 @@ class RulesService
 
   /**
 		* Metodo che implementa la Lambda Function per eliminare una rule
-		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole eliminare
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole eliminare
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   deleteRule(event, context)
   {
@@ -127,8 +127,8 @@ class RulesService
 	
   /**
 		* Metodo che implementa la Lambda Function per eliminare una rule
-		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole ottenere
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole ottenere
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   getRule(event, context)
   {
@@ -174,8 +174,8 @@ class RulesService
 	
   /**
 		* Metodo che implementa la Lambda Function per ottenere la lista delle rules
-		* @param event {LambdaRuleListEvent} - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaRuleListEvent} event - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   getRuleList(event,context)
   {
@@ -207,8 +207,8 @@ class RulesService
 	
   /**
 		* Metodo che implementa la Lambda Function per ottenere la lista dei tasks
-		* @param event {LambdaTaskListEvent} - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaTaskListEvent} event - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   getTaskList(event,context)
   {
@@ -240,8 +240,8 @@ class RulesService
 
   /**
 		* Metodo che implementa la Lambda Function per aggiornare una rule
-		* @param event {LambdaIdEvent} - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo Rule contenente i dati da aggiornare e, all'interno del campo pathParameters, l'id della rule da modificare.
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaIdEvent} event - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo Rule contenente i dati da aggiornare e, all'interno del campo pathParameters, l'id della rule da modificare.
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   updateRule(event,context)
   {

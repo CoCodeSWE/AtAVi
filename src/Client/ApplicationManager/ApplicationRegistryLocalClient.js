@@ -1,18 +1,26 @@
-class ApplicationRegistryLocalClient
+import Rx from 'rxjs/Rx';
+
+/**
+* @desc Questa classe si occupa di implementare l'interfaccia fornita da ApplicationRegistryClient. Interroga un LocalRegistry.
+*/
+export default class ApplicationRegistryLocalClient
 {
   /**
   * Costruttore del registro che interroga l'ApplicationLocalRegistry.
-  * @param client {ApplicationLocalRegistry} registro contenente i package delle applicazioni diponibili. Ne facciamo qui la dependency injection.
+  * @param {ApplicationLocalRegistry} client registro contenente i package delle applicazioni diponibili. Ne facciamo qui la dependency injection.
   */
-  constructor(client)
+  constructor(registry)
   {
-    this.registry = client;
+    /**
+    * @type {ApplicationLocalRegistry}
+    */
+    this.registry = registry;
   }
 
   /**
   * Metodo utilizzato per aggiungere o aggiornare il package di una applicazione.
-  * @param name {String} nome del package dell'applicazione.
-  * @param pkg {ApplicationPackage} package dell'applicazione da aggiungere.
+  * @param {String} name nome del package dell'applicazione.
+  * @param {ApplicationPackage} pkg package dell'applicazione da aggiungere.
   * @return {ErrorObservable} //ritorno un Observable che registra l'applicazione nel ApplicationLocalRegistry e successivamente chiama la complete dell'Observer iscritto
   */
   register(name, pkg)
@@ -27,7 +35,7 @@ class ApplicationRegistryLocalClient
 
   /**
   * Metodo utilizzato per ottenere il package di un'applicazione.
-  * @param name {String} nome del package dell'applicazione da ottenere.
+  * @param {String} name nome del package dell'applicazione da ottenere.
   * @return {ApplicationPackageObservable} ritorno un Observable che interroga l'ApplicationLocalRegistry, successivamente chiama la next dell'Observer iscritto con i dati ottenuti e la complete.
   */
   query(name)

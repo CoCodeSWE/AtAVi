@@ -2,20 +2,27 @@ class ApiAiVAAdapter
 {
 	/**
 		* Costruttore della classe
-		* @param rp {RequestPromiseModule} - Modulo per poter fare richieste HTTP ai microservizi
-		* @param agent {Agent} - contiene l'Agent interrogato. Può essere null
+		* @param {RequestPromiseModule} rp - Modulo per poter fare richieste HTTP ai microservizi
+		* @param {Agent} agent - contiene l'Agent interrogato. Può essere null
 		*/
 	constructor(rp, agent)
 	{
+    /**
+    * @type {string}
+    */
 		this.agent = agent;
+    /**
+    * @type {RequestPromiseModule}
+    */
 		this.request_promise = rp;
-		this.VERSION = '20150910';
+    /** @constant {string} */
+    this.VERSION = '20150910';
     this.LANG = 'en';
 	}
 
 	/**
 		* Metodo che permette di interrogare l'Agent in api.ai
-		* @param str {VAQuery} - Attributo contenente i dati relativi all'interrogazione
+		* @param {VAQuery} data - Attributo contenente i dati relativi all'interrogazione
 		*/
 	query(data)
 	{
@@ -77,7 +84,7 @@ class ApiAiVAAdapter
 
 	/**
 		* Metodo setter di agent
-		* @param agent {Agent} - Nuovo agent
+		* @param {Agent} agent - Nuovo agent
 		*/
 	setAgent(agent)
 	{

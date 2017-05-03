@@ -5,7 +5,7 @@ class RulesDAODynamoDB
 {
   /**
     * Costruttore della classes
-    * @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle rules
+    * @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle rules
     */
   constructor(client)
   {
@@ -15,7 +15,7 @@ class RulesDAODynamoDB
 
   /**
 		* Aggiunge una nuova rule in DynamoDB
-		* @param rule {Rule} - Rule che si vuole aggiungere al sistema
+		* @param {Rule} rule - Rule che si vuole aggiungere al sistema
 		*/
   addRule(rule)
   {
@@ -40,7 +40,7 @@ class RulesDAODynamoDB
 
   /**
 		* Ottiene la rule avente l'id passato come parametro
-		* @param id {String} - Parametro contenente l'id della Rule che si vuole ottenere.
+		* @param {String} id - Parametro contenente l'id della Rule che si vuole ottenere.
 		*/
   getRule(id)
   {
@@ -72,7 +72,7 @@ class RulesDAODynamoDB
 
   /**
     * Ottiene la lista delle rule in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-    * @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+    * @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
     */
   getRuleList(query)
   {
@@ -100,7 +100,7 @@ class RulesDAODynamoDB
 
   /**
 		* Elimina la rule avente l'id passato come parametro
-		* @param id {String} - Parametro contenente l'id della Rule che si vuole rimuovere
+		* @param {String} id - Parametro contenente l'id della Rule che si vuole rimuovere
 		*/
   removeRule(id)
   {
@@ -128,7 +128,7 @@ class RulesDAODynamoDB
 	
   /**
 		* Aggiorna la Rule passata come parametro (se non c'è lo crea)
-		* @param rule {Rule} - Parametro contenente i dati relativi alla Rule che si vuole modificare
+		* @param {Rule} rule - Parametro contenente i dati relativi alla Rule che si vuole modificare
 		*/
   updateRule(rule)
   {
@@ -152,8 +152,8 @@ class RulesDAODynamoDB
 
   /**
     * Viene ritornata la funzione di callback per la gesitone dei blocchi di getRuleList
-    * @param observer {RuleObserver} - Observer da notificare
-    * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+    * @param {RuleObserver} observer - Observer da notificare
+    * @param {Object} params - Parametro passato alla funzione scan del DocumentClient
     */
   _onScan(observer, params)
   {
@@ -183,7 +183,7 @@ class RulesDAODynamoDB
 
 /**
 	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
-	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 	*/
 function filterExpression(obj)
 {

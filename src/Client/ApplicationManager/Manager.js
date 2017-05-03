@@ -1,9 +1,15 @@
-class Manager
+import State from './State';
+import Application from './Application';
+
+/**
+* @desc Questa classe si occupa di gestire il cambio delle applicazioni nel client.
+*/
+export default class Manager
 {
   /**
   * Costruttore del manager che si occupa di gestire le applicazioni istanziate.
-  * @param rc {ApplicationRegistryLocalClient} registro che gestisce i package delle applicazioni. Ne effettuiamo qui la dependency injection.
-  * @param frame {HTMLElement} pagina HTML iniziale del nostro sistema.
+  * @param {ApplicationRegistryLocalClient} rc registro che gestisce i package delle applicazioni. Ne effettuiamo qui la dependency injection.
+  * @param {HTMLElement} frame pagina HTML iniziale del nostro sistema.
   */
   constructor(rc, frame)
   {
@@ -11,41 +17,63 @@ class Manager
     this.frame = frame;
     this.state = new State();
     this.application = null;
+    this.application_name = '';
     this.ui = null;
   }
 
   /**
   * Metodo che permette di invocare un comando sull'applicazione passata come parametro.
-  * @param app {String} nome dell'applicazione sulla quale invocare il comando.
-  * @param cmd {String} comando da invocare.
-  * @param params {ResponseBody} parametro contenente l'insieme dei dati relativi alla risposta ricevuta.
+  * @param {String} app - nome dell'applicazione sulla quale invocare il comando.
+  * @param {String} cmd - comando da invocare.
+  * @param {ResponseBody} params - parametro contenente l'insieme dei dati relativi alla risposta ricevuta.
+  * @param {String} [name=null] - parametro che indica il nome dell'applicazione. Se null verrà utilizzato il nome
+  * presente all'interno del package
   */
-  runApplication(app, cmd, params)
+  runApplication(app, cmd, params, name)
   {
+    console.log('params: ', app, cmd, params, name);
+    let self = this;
     //se l'applicazione istanziata non è quella desiderata, devo cambiarla salvando nello state quella attuale e istanziando l'applicazione richiesta
-    if (this.application.name !== app)
+    if(!name || typeof(name) !== 'string')
+      name = app;
+    if (this.application_name !== app)
     {
       let new_app = this.state.getApp(app);
 
-      //se non si trova nello state devo recuperarla dall'ApplicationRegistryLocalClient tramite il metodo query()
+      // se non si trova nello state devo recuperarla dall'ApplicationRegistryLocalClient tramite il metodo query()
       if (new_app === undefined)
       {
-        registry_client.query(app).subscribe(
+        this.registry_client.query(app).subscribe(
         {
-          next: (data) => { new_app = new Application(data); },
-          error: (err) => { error(err); },
-          complete: () =>
+          next: function(pkg)
           {
-            _changeApplication(new_app);
-
-            this.application.runCmd(cmd, params);
-          }
+            console.log(pkg);
+            if(!pkg.setup)  // package parziale, interfaccia condivisa con un'altra applicazione
+            {
+              self.runApplication(pkg.name, cmd, params, name);
+            }
+            else
+            {
+              new_app = new Application(pkg);
+              new_app.onload = function()
+              {
+                console.log('onload')
+                self._changeApplication(new_app);
+                self.application_name = name; //cambio il nome dell'applicazione attualmente in esecuzione.
+                //in questo modo se viene richiesta nuovamente l'esecuzione di un'azione da parte di
+                //quella applicazione non interrogo nuovamente il registry. L'idea  è che una volta in esecuzione
+                //un'applicazione dovrà eseguire una serie di azioni prima di essere cambiata.
+                self.application.runCmd(cmd, params);
+              }
+            }
+          },
+          error: (err) => { console.log(err); }
         });
       }
       else
       {
-        _changeApplication(new_app)
-
+        this.application_name = name; // applicazione attualmente in esecuzione
+        this._changeApplication(new_app);
         this.application.runCmd(cmd, params);
       }
     }
@@ -55,7 +83,7 @@ class Manager
 
   /**
   * Metoso utilizzato per modificare il frame presente nel manager.
-  * @param frame {HTMLElement} parametro che contiene l'elemento del DOM.
+  * @param {HTMLElement} frame parametro che contiene l'elemento del DOM.
   */
   setFrame(frame)
   {
@@ -66,21 +94,24 @@ class Manager
 
   /**
   * Metodo utilizzato per cambiare l'applicazione istanziata.
-  * @param app {Application} nuova applicazione da istanziare.
+  * @param {Application} app nuova applicazione da istanziare.
   */
   _changeApplication(app)
   {
     //salvo l'applicazione da sostituire nello state
-    this.state.addApp(this.application, this.application.name);
+    if(this.application)
+      this.state.addApp(this.application, this.application_name);
     //elimino il div contenente l'applicazione
-    this.frame.removeChild(this.ui);
+    if(this.ui)
+      this.frame.removeChild(this.ui);
 
     this.application = app;
     //aggiungo la nuova applicazione da istanziare al frame HTML
     this.ui = this.application.getUI();
     this.frame.appendChild(this.ui);
+    console.log(this.application_name);
+    console.log(this.frame);
+    console.log(this.ui);
   }
 
 }
-
-module.exports = Manager;

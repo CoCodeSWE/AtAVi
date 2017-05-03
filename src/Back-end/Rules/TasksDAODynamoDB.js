@@ -5,7 +5,7 @@ class TasksDAODynamoDB
 {
   /**
     * Costruttore della classes
-    * @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella dei tasks
+    * @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella dei tasks
     */
   constructor(client)
   {
@@ -15,7 +15,7 @@ class TasksDAODynamoDB
 
   /**
 		* Aggiunge un nuovo task in DynamoDB
-		* @param task {Task} - Task che si vuole aggiungere al sistema
+		* @param {Task} task - Task che si vuole aggiungere al sistema
 		*/
   addTask(task)
   {
@@ -40,7 +40,7 @@ class TasksDAODynamoDB
 	
   /**
 		* Ottiene il task avente il type passato come parametro
-		* @param type {String} - Parametro contenente il type del task che si vuole ottenere.
+		* @param {String} type - Parametro contenente il type del task che si vuole ottenere.
 		*/
   getTask(type)
   {
@@ -72,7 +72,7 @@ class TasksDAODynamoDB
 	
   /**
     * Ottiene la lista dei task in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-    * @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+    * @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
     */
   getTaskList(query)
   {
@@ -100,7 +100,7 @@ class TasksDAODynamoDB
 	
   /**
 		* Elimina il task avente il type passato come parametro
-		* @param type {String} - Parametro contenente il type del Task che si vuole rimuovere
+		* @param {String} type - Parametro contenente il type del Task che si vuole rimuovere
 		*/
   removeTask(type)
   {
@@ -128,7 +128,7 @@ class TasksDAODynamoDB
 	
   /**
 		* Aggiorna il task passato come parametro (se non c'è lo crea)
-		* @param task {Task} - Parametro contenente i dati relativi al Task che si vuole modificare
+		* @param {Task} task - Parametro contenente i dati relativi al Task che si vuole modificare
 		*/
   updateTask(task)
   {
@@ -152,8 +152,8 @@ class TasksDAODynamoDB
 
   /**
     * Viene ritornata la funzione di callback per la gesitone dei blocchi di getTaskList
-    * @param observer {TaskObserver} - Observer da notificare
-    * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+    * @param {TaskObserver} observer - Observer da notificare
+    * @param {Object} params - Parametro passato alla funzione scan del DocumentClient
     */
   _onScan(observer, params)
   {
@@ -183,7 +183,7 @@ class TasksDAODynamoDB
 
 /**
 	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
-	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 	*/
 function filterExpression(obj)
 {

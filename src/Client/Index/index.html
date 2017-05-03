@@ -6,9 +6,7 @@
   <meta name="description" content="Accoglienza tramite Assistente Virtuale">
   <meta name="keywords" content="HTML,SASS,XML,JavaScript">
   <meta name="author" content="Co.Code">
-  <script src="../TTS/Player.js"></script>
   <script src="Script/changeValueButton.js"></script>
-  <script src="Script/startAndStop.js"></script>
   <link rel="stylesheet" type="text/css" href="Sass/index.css">
 </head>
 <body>
@@ -32,7 +30,7 @@
     <div id = "logoApp">
       <p>AtAVi</p>
     </div>
-    <button type="button" onclick="changeValue();startAndStop();" class="hide buttonSS" id="start"> START </button>
+    <button type="button" onclick="recorder.start();" class="hide buttonSS" id="start"> START </button>
     <div id = "nomeApp">
       <p>Accoglienza</p>
       <p>tramite</p>
@@ -40,5 +38,6 @@
       <p>Virtuale</p>
     </div>
   </div>
+  <script src="main.js"></script>
 </body>
 </html>

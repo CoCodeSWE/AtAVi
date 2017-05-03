@@ -4,7 +4,7 @@ class UsersService
 {
 	/**
 		* Costruttore della classe
-		* @param users {UsersDAO} - Attributo contenente lo UsersDAO
+		* @param {UsersDAO} users - Attributo contenente lo UsersDAO
 		*/
 	constructor(users)
 	{
@@ -13,8 +13,8 @@ class UsersService
 
 	/**
 		* Metodo che implementa la Lambda Function per inserire uno user
-		* @param event {LambdaEvent} - All'interno del campo body, sotto forma di stringa in formato JSON, un oggetto User contenente tutti i dati relativi ad un utente da inserire
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaEvent} event - All'interno del campo body, sotto forma di stringa in formato JSON, un oggetto User contenente tutti i dati relativi ad un utente da inserire
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
 	addUser(event, context)
 	{
@@ -62,7 +62,7 @@ class UsersService
 						});
 					}
 				},
-				
+
 				complete: function()
 				{
 					context.succeed(
@@ -81,8 +81,8 @@ class UsersService
 
 	/**
 		* Metodo che implementa la Lambda Function per eliminare uno user
-		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'username dell'utente registrato che si vuole eliminare
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'username dell'utente registrato che si vuole eliminare
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
 	deleteUser(event, context)
 	{
@@ -127,8 +127,8 @@ class UsersService
 
 	/**
 		* Metodo che implementa la Lambda Function per ottenere uno user
-		* @param event {LambdaIdEvent} - Parametro contenente, all'interno del campo pathParameters, l'username dell'utente registrato del quale si vogliono ottenere i dati
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'username dell'utente registrato del quale si vogliono ottenere i dati
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
 	getUser(event, context)
 	{
@@ -174,8 +174,8 @@ class UsersService
 
 	/**
 		* Metodo che implementa la Lambda Function per ottenere la lista degli users
-		* @param event {LambdaUserListEvent} - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaUserListEvent} event - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
 	getUserList(event, context)
 	{
@@ -207,8 +207,8 @@ class UsersService
 
 	/**
 		* Metodo che implementa la Lambda Function per aggiornare uno user
-		* @param event {LambdaIdEvent} - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo User contenente i dati da aggiornare e, all'interno del campo pathParameters, l'username dell'utente da modificare.
-		* @param context {LambdaContext} - Parametro utilizzato per inviare la risposta
+		* @param {LambdaIdEvent} event - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo User contenente i dati da aggiornare e, all'interno del campo pathParameters, l'username dell'utente da modificare.
+		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
 	updateUser(event, context)
 	{
@@ -226,7 +226,7 @@ class UsersService
 		// Parametro contenente i dati relativi all'user da aggiornare
 		let params = objectFilter(user, ['name', 'sr_id', 'password', 'slack_channel']);
 		params.username = event.pathParameters.username;
-		
+
 		this.users.updateUser(params).subscribe(
 		{
 			next: function(data)

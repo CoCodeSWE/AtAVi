@@ -4,9 +4,9 @@ const mapProperties = require('map-object-properties');
 class UsersDAODynamoDB
 {
 	/**
-		* Costruttore della classes
-		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli utenti
-		*/
+	* Costruttore della classes
+	* @param {AWS::DynamoDB::DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli utenti
+	*/
   constructor(client)
   {
     this.client = client;
@@ -14,9 +14,9 @@ class UsersDAODynamoDB
   }
 
 	/**
-		* Aggiunge un nuovo user in DynamoDB
-		* @param user {User} - Utente che si vuole aggiungere al sistema
-		*/
+	* Aggiunge un nuovo user in DynamoDB
+	* @param {User} user - Utente che si vuole aggiungere al sistema
+	*/
 	addUser(user)
   {
     let self = this;
@@ -39,9 +39,9 @@ class UsersDAODynamoDB
   }
 
 	/**
-		* Ottiene l'user avente l'username passato come parametro
-		* @param username {String} - Parametro contenente l'username dello User che si vuole ottenere.
-		*/
+	* Ottiene l'user avente l'username passato come parametro
+	* @param {String} username - Parametro contenente l'username dello User che si vuole ottenere.
+	*/
 	getUser(username)
   {
     let self = this;
@@ -71,9 +71,9 @@ class UsersDAODynamoDB
   }
 
 	/**
-		* Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-		* @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
-		*/
+	* Ottiene la lista degli user in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
+	* @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	*/
 	getUserList(query)
   {
 		let self = this;
@@ -99,9 +99,9 @@ class UsersDAODynamoDB
   }
 
 	/**
-		* Elimina l'user avente l'username passato come parametro
-		* @param username {String} - Parametro contenente l'username dello User che si vuole rimuovere
-		*/
+	* Elimina l'user avente l'username passato come parametro
+	* @param {String} username - Parametro contenente l'username dello User che si vuole rimuovere
+	*/
 	removeUser(username)
   {
 		let self = this;
@@ -127,9 +127,9 @@ class UsersDAODynamoDB
   }
 
 	/**
-		* Aggiorna l'user passato come parametro (se non c'è lo crea)
-		* @param user {User} - Parametro contenente i dati relativi all'utente che si vuole modificare
-		*/
+	* Aggiorna l'user passato come parametro (se non c'è lo crea)
+	* @param {User} user - Parametro contenente i dati relativi all'utente che si vuole modificare
+	*/
 	updateUser(user)
   {
 		let self = this;
@@ -152,8 +152,8 @@ class UsersDAODynamoDB
 
 	/**
 	* Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
-	* @param observer {UserObserver} - Observer da notificare
-	* @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+	* @param {UserObserver} observer - Observer da notificare
+	* @param {Object} params - Parametro passato alla funzione scan del DocumentClient
 	*/
 	_onScan(observer, params)
 	{
@@ -182,9 +182,9 @@ class UsersDAODynamoDB
 }
 
 /**
-	* Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object)
-	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
-	*/
+* Ritorna un oggetto contenente FilterExpression (striga) e ExpressionAttributeValues (object)
+* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+*/
 function filterExpression(obj)
 {
 	let filter_expression =

@@ -1,8 +1,10 @@
-class Recorder
+import Rx from 'rxjs/Rx';
+
+export default class Recorder
 {
   /**
   * Costruttore della classe Recorder, inizializza worker e AudioContext.
-  * @param conf {RecorderConfig} - configurazione iniziale del Recorder
+  * @param {RecorderConfig} conf - configurazione iniziale del Recorder
   */
   constructor(conf)
   {
@@ -59,7 +61,7 @@ class Recorder
   /**
   * metodo chiamato quando viene ottenuto lo stream audio, il quale inizializza
   * i vari node
-  * @param stream {MediaStream} - stream audio da cui si ottengono i dati
+  * @param {MediaStream} stream - stream audio da cui si ottengono i dati
   */
   _init(stream)
   {
@@ -76,7 +78,7 @@ class Recorder
     input_point.connect(zero_gain);
     zero_gain.connect(this.audio_context.destination);
     this.node = this.audio_context.createScriptProcessor(this.buffer_len, 2, 2);
-    this.worker.postMessage({command: 'init', config: { sampleRate: this.sample_rate}});
+    this.worker.postMessage({command: 'init', config:{ sampleRate: this.sample_rate}}  );
     this.node.onaudioprocess = this.onAudioProcess.bind(this);
     input_point.connect(this.node);
     this.node.connect(this.audio_context.destination);
@@ -84,7 +86,7 @@ class Recorder
 
   /**
   * metodo che permette di modificare la configurazione del recorder
-  * @param conf {RecorderConfig} - parametro contenente la nuova configurazione
+  * @param {RecorderConfig} conf - parametro contenente la nuova configurazione
   * TODO: forse non dovrebbe settare i valori di default?
   */
   setConfig(conf)
@@ -152,6 +154,7 @@ class Recorder
     if(this.recording)
     {
       this.recording = false;
+      this.time = null;
       this.worker.postMessage({command: 'getBuffers'});
     }
   }

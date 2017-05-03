@@ -1,15 +1,18 @@
-class Player
+import Rx from 'rxjs/Rx';
+
+export default class Player
 {
   /**
   * Costruttore del Player che si occupa di riprodurre le risposte dell'assistente.
-  * @param conf {TTSConfig} - parametro contenente la configurazione per il Player.
-  * @param speech_syntesis {SpeechSynthesis} - parametro contenente uno SpeechSynthesis di JavaScript Web Speech API. Ne effettuiamo qui la dependency injection.
+  * @param {TTSConfig} conf - parametro contenente la configurazione per il Player.
+  * @param {SpeechSynthesis} speech_syntesis - parametro contenente uno SpeechSynthesis di JavaScript Web Speech API. Ne effettuiamo qui la dependency injection.
   */
   constructor(conf, speech_syntesis)
   {
     this.tts = speech_syntesis;
     this.options = conf;
     this.subject = new Rx.Subject();
+    this._time = null;
   }
 
   /**
@@ -64,7 +67,7 @@ class Player
 
   /**
   * Metodo utilizzato per cambiare la configurazione del Player.
-  * @param conf {TTSConfig} nuova configurazione del Player.
+  * @param {TTSConfig} conf nuova configurazione del Player.
   */
   setConfig(conf)
   {
@@ -73,7 +76,7 @@ class Player
 
   /**
   * Metodo utilizzato per passare al Player il testo da riprodurre.
-  * @param text {String} testo da riprodurre.
+  * @param {String} text testo da riprodurre.
   */
   speak(text)
   {
@@ -84,10 +87,18 @@ class Player
     utterance.rate = this.options.rate;
     utterance.voice = this.options.voice;
     utterance.volume = this.options.volume;
-    utterance.onstart = () => this.subject.next(true);
-    utterance.onresume = () => this.subject.next(true);
-    utterance.onend = () => this.subject.next(false);
-    utterance.onpause = () => this.subject.next(false);
-    this.tts.speak(to_speak);
+    utterance.onstart = () => {console.log('start');this.subject.next(true)};
+    utterance.onresume = () => {console.log('resume');this.subject.next(true)};
+    utterance.onend = () => {console.log('end');this.subject.next(false)};
+    utterance.onpause = () => {console.log('pause');this.subject.next(false)};
+    utterance.onerror = () => {console.log('error');this.subject.next(false)};
+    //utterance.onboundary = () => {console.log('boundary')};
+    this.tts.speak(utterance);
+    //fix callback non chiamati
+    if(this._time)
+      clearTimeout(this._time);
+    this.time = setTimeout(() => {console.log(utterance)}, 60000);  //settando il timeout
+    // in teoria non viene chiamato il garbage collector su utterance, e quindi
+    // i callback vengono chiamati
   }
 }

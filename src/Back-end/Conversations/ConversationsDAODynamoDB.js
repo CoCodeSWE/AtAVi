@@ -4,7 +4,7 @@ class ConversationsDAODynamoDB
 {
   /**
 		* Costruttore della classes
-		* @param client {AWS::DynamoDB::DocumentClient} - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle conversazioni
+		* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle conversazioni
 		*/
   constructor(client)
   {
@@ -13,7 +13,7 @@ class ConversationsDAODynamoDB
   }
   /**
 		* Aggiunge una nuova conversazione in DynamoDB
-		* @param conversation {Conversation} - Conversazione che si vuole aggiungere al sistema
+		* @param {Conversation} conversation - Conversazione che si vuole aggiungere al sistema
 		*/
   addConversation(conversation)
   {
@@ -36,8 +36,8 @@ class ConversationsDAODynamoDB
   }
   /**
     * Aggiunge un nuovo messaggio ad una conversazione in DynamoDB
-    * @param msg {ConversationMsg} - messaggio che si vuole aggiungere alla conversazione
-    * @param session_id {String} - id della sessione della conversazione dove aggiungere il messaggio
+    * @param {ConversationMsg} msg - messaggio che si vuole aggiungere alla conversazione
+    * @param {String} session_id - id della sessione della conversazione dove aggiungere il messaggio
     */
   addMessage(msg, session_id)
   {
@@ -73,7 +73,7 @@ class ConversationsDAODynamoDB
 
   /**
 		* Ottiene la conversazione avente l'id della sessione passato come parametro
-		* @param session_id {String} - id della sessione della conversazione che si vuole ottenere
+		* @param {String} session_id - id della sessione della conversazione che si vuole ottenere
 		*/
   getConversation(session_id)
   {
@@ -98,7 +98,7 @@ class ConversationsDAODynamoDB
   }
   /**
 		* Ottiene la lista delle conversazioni aventi l'd del Guest come parametro, suddivisi in blocchi (da massimo da 1MB)
-		* @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+		* @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 		*/
   getConversationList(query)
   {
@@ -126,7 +126,7 @@ class ConversationsDAODynamoDB
 
   /**
     * Elimina la conversazione avente l'id della sessione  passato come parametro
-    * @param session_id {String} - Parametro contenente l'id dello sessione della conversazione che si vuole rimuovere
+    * @param {String} session_id - Parametro contenente l'id dello sessione della conversazione che si vuole rimuovere
     */
 
   removeConversation(session_id)
@@ -153,8 +153,8 @@ class ConversationsDAODynamoDB
 
 /**
   * Viene ritornata la funzione di callback per la gesitone dei blocchi di getConversationList
-  * @param observer {ConversationObserver} - Observer da notificare
-  * @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+  * @param {ConversationObserver} observer - Observer da notificare
+  * @param {Object} params - Parametro passato alla funzione scan del DocumentClient
   */
   _onScan(observer, params)
   {
@@ -181,7 +181,7 @@ class ConversationsDAODynamoDB
 }
 /**
 	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
-	* @param obj {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
 	*/
 function filterExpression(obj)
 {

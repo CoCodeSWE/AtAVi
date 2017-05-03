@@ -16,7 +16,8 @@ class MsgStore
     switch(action.cmd)
     {
       case 'displayMsgs':
-        this.msgs.push({text: action.params[0], sender:0}, {text: action.params[1], sender:1});
+        action.params.forEach((msg) => this.msgs.push(msg));
+        //this.msgs.push({text: action.params[0], sender:0}, {text: action.params[1], sender:1});
         break;
       case 'clear':
         this._onClear();
