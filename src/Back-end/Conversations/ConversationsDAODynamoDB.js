@@ -1,20 +1,22 @@
 const Rx = require('rxjs/Rx');
+const mapProperties = require('map-object-properties');
 
 class ConversationsDAODynamoDB
 {
   /**
-		* Costruttore della classes
-		* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle conversazioni
-		*/
+	* Costruttore della classes
+	* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella delle conversazioni
+	*/
   constructor(client)
   {
     this.client = client;
     this.table = process.env.CONVERSATIONS_TABLE;
   }
+	
   /**
-		* Aggiunge una nuova conversazione in DynamoDB
-		* @param {Conversation} conversation - Conversazione che si vuole aggiungere al sistema
-		*/
+	* Aggiunge una nuova conversazione in DynamoDB
+	* @param {Conversation} conversation - Conversazione che si vuole aggiungere al sistema
+	*/
   addConversation(conversation)
   {
     let self = this;
@@ -23,7 +25,8 @@ class ConversationsDAODynamoDB
       let params =
       {
         TableName: self.table,
-        Item: conversation
+        Item: mapProperties(conversation, attr_map),
+				ConditionExpression: 'attribute_not_exists(session_id)'
       };
       self.client.put(params, function(err, data)
       {
@@ -34,11 +37,12 @@ class ConversationsDAODynamoDB
       });
     });
   }
+	
   /**
-    * Aggiunge un nuovo messaggio ad una conversazione in DynamoDB
-    * @param {ConversationMsg} msg - messaggio che si vuole aggiungere alla conversazione
-    * @param {String} session_id - id della sessione della conversazione dove aggiungere il messaggio
-    */
+	* Aggiunge un nuovo messaggio ad una conversazione in DynamoDB
+	* @param {ConversationMsg} msg - messaggio che si vuole aggiungere alla conversazione
+	* @param {String} session_id - id della sessione della conversazione dove aggiungere il messaggio
+	*/
   addMessage(msg, session_id)
   {
     let self = this;
@@ -46,7 +50,10 @@ class ConversationsDAODynamoDB
     {
       let params = {
         TableName: self.table,
-        Key: {"session_id": session_id},
+        Key: 
+				{
+					"session_id": session_id
+				},
         ExpressionAttributeValues:
         {
           ":msg": msg
@@ -72,9 +79,9 @@ class ConversationsDAODynamoDB
   };
 
   /**
-		* Ottiene la conversazione avente l'id della sessione passato come parametro
-		* @param {String} session_id - id della sessione della conversazione che si vuole ottenere
-		*/
+	* Ottiene la conversazione avente l'id della sessione passato come parametro
+	* @param {String} session_id - id della sessione della conversazione che si vuole ottenere
+	*/
   getConversation(session_id)
   {
     let self = this;
@@ -82,7 +89,8 @@ class ConversationsDAODynamoDB
     {
       let params = {
         TableName: self.table,
-        Key: {
+        Key: 
+				{
           "session_id": session_id
         }
       };
@@ -91,15 +99,18 @@ class ConversationsDAODynamoDB
         if(err)
           observer.error(err);
         else
+				{
           observer.next(mapProperties(data.Item, reverse_attr_map));
           observer.complete();
-      });
+				}
+			});
     });
   }
+	
   /**
-		* Ottiene la lista delle conversazioni aventi l'd del Guest come parametro, suddivisi in blocchi (da massimo da 1MB)
-		* @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
-		*/
+	* Ottiene la lista delle conversazioni aventi l'd del Guest come parametro, suddivisi in blocchi (da massimo da 1MB)
+	* @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	*/
   getConversationList(query)
   {
     let self = this;
@@ -125,10 +136,9 @@ class ConversationsDAODynamoDB
   }
 
   /**
-    * Elimina la conversazione avente l'id della sessione  passato come parametro
-    * @param {String} session_id - Parametro contenente l'id dello sessione della conversazione che si vuole rimuovere
-    */
-
+	* Elimina la conversazione avente l'id della sessione  passato come parametro
+	* @param {String} session_id - Parametro contenente l'id dello sessione della conversazione che si vuole rimuovere
+	*/
   removeConversation(session_id)
   {
     let self = this;
@@ -136,9 +146,11 @@ class ConversationsDAODynamoDB
     {
       let params = {
         TableName: self.table,
-        Key: {
+        Key:
+				{
           "session_id": session_id
-        }
+        },
+				ConditionExpression: 'attribute_exists(session_id)'
       };
       self.client.delete(params, function(err, data)
       {
@@ -151,7 +163,7 @@ class ConversationsDAODynamoDB
   }
 
 
-/**
+	/**
   * Viene ritornata la funzione di callback per la gesitone dei blocchi di getConversationList
   * @param {ConversationObserver} observer - Observer da notificare
   * @param {Object} params - Parametro passato alla funzione scan del DocumentClient
@@ -165,7 +177,7 @@ class ConversationsDAODynamoDB
   			observer.error(err);
   		else
   		{
-  			data.Items.forEach((conv) => observer.next(mapProperties(conv.Item, reverse_attr_map)));
+  			data.Items.forEach((conv) => observer.next(mapProperties(conv, reverse_attr_map)));
   			if(data.LastEvaluatedKey)
   			{
   				params.ExclusiveStartKey = data.LastEvaluatedKey;
@@ -179,10 +191,11 @@ class ConversationsDAODynamoDB
   	}
   }
 }
+
 /**
-	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
-	* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
-	*/
+* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
+* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+*/
 function filterExpression(obj)
 {
 	let filter_expression =
@@ -192,12 +205,6 @@ function filterExpression(obj)
 	};
 
   let new_obj = mapProperties(obj, attr_map);
-
-  for(let i in obj)
-  {
-    let key = attr_map[i] ? attr_map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = obj[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  };
 
   for(let key in new_obj)
   {
@@ -210,24 +217,14 @@ function filterExpression(obj)
   return filter_expression;
 }
 
-function mapProperties(object, map)
-{
-  let new_obj = {};
-  for(let i in object)
-  {
-    let key = map[i] ? map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = object[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  }
-  return new_obj;
-}
-
 const attr_map =
 {
-  name: 'full_name'
+  
 }
+
 const reverse_attr_map =
 {
-  full_name: 'name'
+  
 }
 
 module.exports = ConversationsDAODynamoDB;

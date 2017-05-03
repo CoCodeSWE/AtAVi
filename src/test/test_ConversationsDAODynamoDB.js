@@ -26,7 +26,7 @@ describe('Back-end', function()
       let conv = new dao(dynamo_client);
       describe('addConversation', function()
       {
-    		it("Nel caso in cui una conversazione non venga aggiunta a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+    		it("Nel caso in cui una conversazione non venga aggiunta a causa di un errore del DB, l'\\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
           conv.addConversation(mock_conv).subscribe(
           {
@@ -42,7 +42,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
 
         });
-		    it("Nel caso in cui una conversazione sia aggiunta correttamente, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'\file{Observer} iscritto un'unica volta.", function()
+		    it("Nel caso in cui una conversazione sia aggiunta correttamente, l'\\\file{Observable} restituito deve chiamare il metodo \\\file{complete} dell'\\file{Observer} iscritto un'unica volta.", function()
         {
           conv.addConversation(mock_conv).subscribe(
           {
@@ -57,7 +57,7 @@ describe('Back-end', function()
       });
       describe('addMessage', function()
       {
-        it("Nel caso in cui un messaggio non venga aggiunta alla conversazione a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui un messaggio non venga aggiunta alla conversazione a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
           conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
           {
@@ -72,7 +72,7 @@ describe('Back-end', function()
           expect(next.callCount).to.equal(0);
           expect(complete.callCount).to.equal(0);
         });
-        it("Nel caso in cui un messaggio venga aggiunto correttamente alla conversazione, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.", function()
+        it("Nel caso in cui un messaggio venga aggiunto correttamente alla conversazione, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'\\file{Observer} iscritto un'unica volta.", function()
         {
           conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
           {
@@ -87,7 +87,7 @@ describe('Back-end', function()
       });
       describe('getConversation', function()
       {
-        it("Nel caso in cui una conversazione non venga restituita a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui una conversazione non venga restituita a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
           conv.getConversation(2).subscribe(
           {
@@ -102,7 +102,7 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(0);
 					expect(complete.callCount).to.equal(0);
         });
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta",function()
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\\file{Observable} restituito deve chiamare il metodo \\file{next} dell'\\file{Observer} iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \\file{complete} un'unica volta",function()
         {
           conv.getConversation(2).subscribe(
           {
@@ -137,12 +137,13 @@ describe('Back-end', function()
           expect(callError.args[0].statusCode).to.equal(500);
           expect(next.callCount).to.equal(2);
           let callNext = next.getCall(0);
-          expect(callNext.args[0].session_id).to.equal(mock_conv.Item.session_id);
+          expect(callNext.args[0].session_id).to.equal(mock_conv.session_id);
 					callNext = next.getCall(1);
-          expect(callNext.args[0].session_id).to.equal(mock_conv2.Item.session_id);
+          expect(callNext.args[0].session_id).to.equal(mock_conv2.session_id);
           expect(complete.callCount).to.equal(0);
 				});
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte le conversazioni ottenute dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function()
+				
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\\file{Observable} restituito deve chiamare il metodo \\file{next} dell'\\file{Observer} iscritto, fino ad inviare tutte le conversazioni ottenute dall'interrogazione, ed in seguito il metodo \\file{complete} un'unica volta", function()
         {
           conv.getConversationList().subscribe(
   					{
@@ -156,15 +157,15 @@ describe('Back-end', function()
             expect(error.callCount).to.equal(0);
             expect(next.callCount).to.equal(2);
 						let callNext = next.getCall(0);
-						expect(callNext.args[0].session_id).to.equal(mock_conv.Item.session_id);
+						expect(callNext.args[0].session_id).to.equal(mock_conv.session_id);
 						callNext = next.getCall(1);
-						expect(callNext.args[0].session_id).to.equal(mock_conv2.Item.session_id);
+						expect(callNext.args[0].session_id).to.equal(mock_conv2.session_id);
             expect(complete.callCount).to.equal(1);
         });
       });
       describe('removeConversation', function()
       {
-        it("Nel caso in cui una conversazione non venga eliminata a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui una conversazione non venga eliminata a causa di un errore del DB, l'\\\file{Observable} ritornato deve chiamare il metodo \\\file{error} dell'\\file{Observer} iscritto.", function()
         {
           conv.removeConversation(2).subscribe(
           {
@@ -179,7 +180,7 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(0);
 					expect(complete.callCount).to.equal(0);
         });
-        it("Nel caso in cui una conversazione sia eliminata correttamente, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'\file{Observer} iscritto un'unica volta.",function()
+        it("Nel caso in cui una conversazione sia eliminata correttamente, l'\\\file{Observable} restituito deve chiamare il metodo \\\file{complete} dell'\\file{Observer} iscritto un'unica volta.",function()
         {
           conv.removeConversation(2).subscribe(
           {
