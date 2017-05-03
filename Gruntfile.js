@@ -89,7 +89,27 @@ module.exports = function(grunt) {
       client:
       {
         files: ['src/Client/**/*'],
-        tasks: ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]
+        tasks: ["babel:react", "atavi-client-bundle-application", "browserify:client", "sass:client", "copy:client"]
+      }
+    },
+    sass:
+    {
+      client:
+      {
+        options:
+        {
+          style: 'expanded',
+          update: true
+        },
+        files:
+        [
+          {
+            expand: true,
+            src: 'src/Client/Index/Sass/*.scss',
+            dest: './',
+            ext: '.css'
+          }
+        ]
       }
     }
 
@@ -106,6 +126,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('atavi-client-bundle-application');
   grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-sass');
   // Default task(s).
   grunt.registerTask('default', ['babel:react','babel:dist','mochaTest']);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);

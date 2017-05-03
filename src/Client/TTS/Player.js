@@ -87,8 +87,8 @@ export default class Player
     utterance.rate = this.options.rate;
     utterance.voice = this.options.voice;
     utterance.volume = this.options.volume;
-    utterance.onstart = () => {console.log('start');this.subject.next(true)};
-    utterance.onresume = () => {console.log('resume');this.subject.next(true)};
+    utterance.onstart = () => {console.log('startSpeak');this.subject.next(true)};
+    utterance.onresume = () => {console.log('resumeSpeak');this.subject.next(true)};
     utterance.onend = () => {console.log('end');this.subject.next(false)};
     utterance.onpause = () => {console.log('pause');this.subject.next(false)};
     utterance.onerror = () => {console.log('error');this.subject.next(false)};
