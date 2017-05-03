@@ -90,7 +90,6 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(1);
 					let callNext = next.getCall(0);
-					console.log(callNext.args);
 					expect(callNext.args[0].id).to.equal(mock_rule.Item.id);
 					expect(complete.callCount).to.equal(1);
 
@@ -117,10 +116,10 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(2);
 
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].id).to.equal(mock_rule.Item.id);
+					expect(callNext.args[0].id).to.equal(mock_rule.id);
 
 					callNext = next.getCall(1);
-					expect(callNext.args[0].id).to.equal(mock_rule2.Item.id);
+					expect(callNext.args[0].id).to.equal(mock_rule2.id);
 					expect(complete.callCount).to.equal(0);
 
         });
@@ -138,9 +137,9 @@ describe('Back-end', function()
 					expect(error.callCount).to.equal(0);
 					expect(next.callCount).to.equal(2);
 					let callNext = next.getCall(0);
-					expect(callNext.args[0].id).to.equal(mock_rule.Item.id);
+					expect(callNext.args[0].id).to.equal(mock_rule.id);
 					callNext = next.getCall(1);
-					expect(callNext.args[0].id).to.equal(mock_rule2.Item.id);
+					expect(callNext.args[0].id).to.equal(mock_rule2.id);
 					expect(complete.callCount).to.equal(1);
 
         });
@@ -193,7 +192,7 @@ describe('Back-end', function()
 						error: error,
 						complete: complete
 					});
-					dynamo_client.update.yield({statusCode: 500, message:"error updating rule"});
+					dynamo_client.put.yield({statusCode: 500, message:"error updating rule"});
 					expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
@@ -210,7 +209,7 @@ describe('Back-end', function()
 						complete: complete
 					});
 
-					dynamo_client.update.yield(null, {});
+					dynamo_client.put.yield(null, {});
           expect(error.callCount).to.equal(0);
           expect(complete.callCount).to.equal(1);
 

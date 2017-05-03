@@ -1,4 +1,5 @@
 const Rx = require('rxjs/Rx');
+const mapProperties = require('map-object-properties');
 
 class TasksDAODynamoDB
 {
@@ -19,13 +20,16 @@ class TasksDAODynamoDB
   addTask(task)
   {
     let self = this;
-    return new Rx.Observable(function(observer){
+    return new Rx.Observable(function(observer)
+		{
       let params =
       {
         TableName: this.table,
-        Item: task
+        Item: task,
+				ConditionExpression: 'attribute_not_exists(type)'
       };
-      self.client.put(params, function(err, data){
+      self.client.put(params, function(err, data)
+			{
         if(err)
           observer.error(err);
         else
@@ -33,6 +37,7 @@ class TasksDAODynamoDB
       });
     });
   }
+	
   /**
 		* Ottiene il task avente il type passato come parametro
 		* @param type {String} - Parametro contenente il type del task che si vuole ottenere.
@@ -47,13 +52,15 @@ class TasksDAODynamoDB
         TableName: self.table,
         Key:
         {
-          HashKey: type // un task è identificato dal nome del suo tipo
+          type: type // un task è identificato dal nome del suo tipo
         }
       };
       self.client.get(params, function(err, data)
       {
         if(err)
           observer.error(err);
+				else if(!data.Item)
+					observer.error({ code: 'Not found' });
         else
         {
           observer.next(mapProperties(data.Item, reverse_attr_map));
@@ -62,6 +69,7 @@ class TasksDAODynamoDB
       });
     });
   }
+	
   /**
     * Ottiene la lista dei task in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
     * @param query {Object} - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
@@ -76,7 +84,7 @@ class TasksDAODynamoDB
         TableName: self.table
       };
 
-      // Controllo se gli user da restituire hanno dei filtri (contenuti in query)
+      // Controllo se i task da restituire hanno dei filtri (contenuti in query)
       if(query)
       {
         let filter_expression = filterExpression(query);
@@ -89,6 +97,7 @@ class TasksDAODynamoDB
       self.client.scan(params, self._onScan(observer, params));
     });
   }
+	
   /**
 		* Elimina il task avente il type passato come parametro
 		* @param type {String} - Parametro contenente il type del Task che si vuole rimuovere
@@ -103,8 +112,9 @@ class TasksDAODynamoDB
         TableName: self.table,
         Key:
         {
-          HashKey: type
-        }
+          type: type
+        },
+				ConditionExpression: 'attribute_exists(type)'
       };
       self.client.delete(params, function(err, data)
       {
@@ -115,6 +125,7 @@ class TasksDAODynamoDB
       });
     });
   }
+	
   /**
 		* Aggiorna il task passato come parametro (se non c'è lo crea)
 		* @param task {Task} - Parametro contenente i dati relativi al Task che si vuole modificare
@@ -127,27 +138,17 @@ class TasksDAODynamoDB
       let params =
       {
         TableName: self.table,
-        Key:
-        {
-          HashKey: task.type
-        }
+        Item: mapProperties(task, attr_map)
       };
-      self.client.update(params, function(err, data)
+      self.client.put(params, function(err, data)
       {
         if(err)
           observer.error(err);
         else
-        {
-          observer.next(data.Item);
           observer.complete();
-        }
       });
     });
   }
-
-
-
-
 
   /**
     * Viene ritornata la funzione di callback per la gesitone dei blocchi di getTaskList
@@ -160,13 +161,14 @@ class TasksDAODynamoDB
   	return function(err, data)
   	{
   		if(err)
+			{
   			observer.error(err);
-  		else
+  		}
+			else
   		{
-  			data.Items.forEach((task) => observer.next(mapProperties(task.Item, reverse_attr_map)));
+  			data.Items.forEach((task) => observer.next(mapProperties(task, reverse_attr_map)));
   			if(data.LastEvaluatedKey)
   			{
-
   				params.ExclusiveStartKey= data.LastEvaluatedKey;
   				self.client.scan(params, self._onScan(observer, params));
   			}
@@ -193,12 +195,6 @@ function filterExpression(obj)
 
   let new_obj = mapProperties(obj, attr_map);
 
-  for(let i in obj)
-  {
-    let key = attr_map[i] ? attr_map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = obj[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  };
-
   for(let key in new_obj)
   {
     filter_expression.FilterExpression += `${key} = :${key} and `;
@@ -210,24 +206,14 @@ function filterExpression(obj)
   return filter_expression;
 }
 
-function mapProperties(object, map)
-{
-  let new_obj = {};
-  for(let i in object)
-  {
-    let key = map[i] ? map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = object[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  }
-  return new_obj;
-}
-
 const attr_map =
 {
-  name: 'full_name'
+
 }
+
 const reverse_attr_map =
 {
-  full_name: 'name'
+
 }
 
 module.exports = TasksDAODynamoDB;
