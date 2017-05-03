@@ -21,7 +21,7 @@ describe('Back-end', function()
 					promise.catch(onRejected);
 					expect(onRejected.callCount).to.equal(1);
 					let call = onRejected.getCall(0);
-					expect(call.args[0]).to.deep.equal({code: 500});
+					expect(call.args[0]).to.have.deep.property('code', 500);
 				});
 			});
 		});

@@ -1,16 +1,3 @@
-/*
-
-Diario
-
- Versione        Programmatore         Data
- ######################################################################
- 0.0.1           Mattia Bottaro       2017-04-23
-
- ----------------------------------------------------------------------
-implementata la classe
- ----------------------------------------------------------------------
-
-*/
 const http = require("http");
 var promise = require('bluebird');
 //var fs = require('fs');
@@ -23,7 +10,6 @@ class STTWatsonAdapter
 	{
 		this.stream_buffer = sb;
 		this.stt = stt;
-
 	}
 
 	/** metodo che contatta il servizio esterno STT di ibm e ritorna una promessa soddisfatta con il testo pronunciato nell'audio
@@ -39,15 +25,15 @@ class STTWatsonAdapter
       content_type: type
     };
 		return new Promise(function(fulfill, reject)
+		{
+			self.stt.recognize(params, function(err, res)
 			{
-				self.stt.recognize(params, function(err, res)
-					{
-		      	if (err)
-		    				reject(err);
-		      	else
-		          	fulfill(res.results[0].alternatives[0].transcript);
-		    	});
+				if (err)
+						reject(err);
+				else
+						fulfill(res.results[0].alternatives[0].transcript);
 			});
+		});
 	 }
 }
 

@@ -151,10 +151,10 @@ class UsersDAODynamoDB
   }
 
 	/**
-		* Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
-		* @param observer {UserObserver} - Observer da notificare
-		* @param params {Object} - Parametro passato alla funzione scan del DocumentClient
-		*/
+	* Viene ritornata la funzione di callback per la gesitone dei blocchi di getUserList
+	* @param observer {UserObserver} - Observer da notificare
+	* @param params {Object} - Parametro passato alla funzione scan del DocumentClient
+	*/
 	_onScan(observer, params)
 	{
 		let self = this;
