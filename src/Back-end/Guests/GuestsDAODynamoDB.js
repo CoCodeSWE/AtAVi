@@ -1,20 +1,22 @@
 const Rx = require('rxjs/Rx');
+const mapProperties = require('map-object-properties');
 
-class guestsDAODynamoDB
+class GuestsDAODynamoDB
 {
   /**
-		* Costruttore della classes
-		* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella dei Guests
-		*/
+	* Costruttore della classes
+	* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella dei Guests
+	*/
   constructor(client)
   {
     this.client = client;
     this.table = process.env.GUESTS_TABLE;
   }
+	
   /**
-		* Aggiunge un nuovo Guest in DynamoDB
-		* @param {Guest} guest - Guest che si vuole aggiungere al sistema
-		*/
+	* Aggiunge un nuovo Guest in DynamoDB
+	* @param {Guest} guest - Guest che si vuole aggiungere al sistema
+	*/
   addGuest(guest)
   {
     let self = this;
@@ -23,7 +25,8 @@ class guestsDAODynamoDB
       let params =
       {
         TableName: self.table,
-        Item: guest
+        Item:  mapProperties(guest, attr_map),
+				ConditionExpression: 'attribute_not_exists(guest_name) && attribute_not_exists(company)'
       };
       self.client.put(params, function(err, data)
       {
@@ -34,20 +37,23 @@ class guestsDAODynamoDB
       });
     });
   }
+	
   /**
-		* Ottiene il guest avente name e company passato come parametro
-		* @param {String} name -  nome del Guest
-    * @param {String} company - azienda di provenienza del Guest
-		*/
+	* Ottiene il guest avente name e company passato come parametro
+	* @param {String} name -  nome del Guest
+	* @param {String} company - azienda di provenienza del Guest
+	*/
   getGuest(name,company)
   {
     let self = this;
     return new Rx.Observable(function(observer)
     {
-      let params = {
+      let params =
+			{
         TableName: self.table,
-        Key: {
-          "name": name,
+        Key: 
+				{
+          "guest_name": name,
           "company": company
         }
       };
@@ -55,28 +61,36 @@ class guestsDAODynamoDB
       {
         if(err)
           observer.error(err);
+				else if(!data.Item)
+					observer.error({ code: 'Not found' });
         else
+				{
           observer.next(mapProperties(data.Item, reverse_attr_map));
           observer.complete();
+				}
       });
     });
   }
+	
   /**
-    * Elimina il Guest avente name e company passati come parametro
-    * @param {String} name -  nome del Guest
-    * @param {String} company - azienda di provenienza del Guest
-    */
+	* Elimina il Guest avente name e company passati come parametro
+	* @param {String} name -  nome del Guest
+	* @param {String} company - azienda di provenienza del Guest
+	*/
   removeGuest(name,company)
   {
     let self = this;
     return new Rx.Observable(function(observer)
     {
-      let params = {
+      let params = 
+			{
         TableName: self.table,
-        Key: {
-          "name": name,
+        Key:
+				{
+          "guest_name": name,
           "company": company
-        }
+        },
+				ConditionExpression: 'attribute_exists(guest_name) && attribute_exists(company)'
       };
       self.client.delete(params, function(err, data)
       {
@@ -89,9 +103,9 @@ class guestsDAODynamoDB
   }
 
   /**
-		* Ottiene la lista dei Guest in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
-    * @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
-		*/
+	* Ottiene la lista dei Guest in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
+	* @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+	*/
   getGuestList(query)
   {
     let self = this;
@@ -117,9 +131,9 @@ class guestsDAODynamoDB
   }
 
   /**
-		* Aggiorna il Guest passato come parametro (se non c'è lo crea)
-		* @param {Guest} guest - Parametro contenente i dati relativi al Guest che si vuole modificare
-		*/
+	* Aggiorna il Guest passato come parametro (se non c'è lo crea)
+	* @param {Guest} guest - Parametro contenente i dati relativi al Guest che si vuole modificare
+	*/
   updateGuest(guest)
   {
     let self = this;
@@ -128,23 +142,56 @@ class guestsDAODynamoDB
       let params =
       {
         TableName: self.table,
-        Item: guest
+        Item: mapProperties(guest, attr_map)
       };
-      self.client.update(params, function(err, data)
+      self.client.put(params, function(err, data)
       {
         if(err)
           observer.error(err);
         else
-        {
-          observer.next(data.Item);
           observer.complete();
-        }
       });
     });
   }
+	
+	/**
+  * Aggiunge l'id di una conversazione alla lista conversations del guest identificato da name e company
+  * @param {String} name - Nome del guest
+  * @param {String} company - Azienda del guest
+	* @param {Number} session_id - Id della conversazione
+  */
+	addConversation(name, company, session_id)
+	{
+		let self = this;
+		return new Rx.Observable(function(observer)
+		{
+			let params =
+			{
+				TableName: self.table,
+				Key:
+				{
+					'guest_name': name,
+					'company': company
+				},
+				UpdateExpression: 'set conversations = list_append(conversations, :conversation)',
+				ConditionExpression: 'not(contains(attori, :check_conversation))',
+				ExpressionAttributeValues: 
+				{
+					':conversation': [session_id],
+					'check_conversation': session_id
+				}
+			};
+			self.client.update(params, function(err, data)
+			{
+				if(err)
+					observer.error(err);
+				else
+					observer.complete();
+			});
+		});
+	}
 
-
-/**
+	/**
   * Viene ritornata la funzione di callback per la gesitone dei blocchi di getGuestList e query
   * @param {GuestObserver} observer - Observer da notificare
   * @param {Object} params - Parametro passato alla funzione scan del DocumentClient
@@ -155,10 +202,12 @@ class guestsDAODynamoDB
     	return function(err, data)
     	{
     		if(err)
+				{
     			 observer.error(err);
-    		else
+    		}
+				else
     		{
-    		  data.Items.forEach((guest) => observer.next(mapProperties(guest.Item, reverse_attr_map)));
+    		  data.Items.forEach((guest) => observer.next(mapProperties(guest, reverse_attr_map)));
     			if(data.LastEvaluatedKey)
     			{
     				params.ExclusiveStartKey = data.LastEvaluatedKey;
@@ -174,9 +223,9 @@ class guestsDAODynamoDB
 }
 
 /**
-	* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
-	* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
-	*/
+* Ritorna un oggetto contenente FilterExpression (stringa) e ExpressionAttributeValues (object)
+* @param {Object} obj - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
+*/
 function filterExpression(obj)
 {
 	let filter_expression =
@@ -186,12 +235,6 @@ function filterExpression(obj)
 	};
 
   let new_obj = mapProperties(obj, attr_map);
-
-  for(let i in obj)
-  {
-    let key = attr_map[i] ? attr_map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = obj[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  };
 
   for(let key in new_obj)
   {
@@ -204,23 +247,14 @@ function filterExpression(obj)
   return filter_expression;
 }
 
-function mapProperties(object, map)
-{
-  let new_obj = {};
-  for(let i in object)
-  {
-    let key = map[i] ? map[i] : i;  // calcolo il valore della nuova key che, nel caso in cui non esista una mappatura, sarà uguale alla vecchia
-    new_obj[key] = object[i];  // assegno il valore che aveva obj[i] con la vecchia key a new_obj[key] con la nuova key.
-  }
-  return new_obj;
-}
-
 const attr_map =
 {
-  name: 'full_name'
+  name: 'guest_name'
 }
+
 const reverse_attr_map =
 {
   full_name: 'name'
 }
-module.exports = guestsDAODynamoDB;
+
+module.exports = GuestsDAODynamoDB;
