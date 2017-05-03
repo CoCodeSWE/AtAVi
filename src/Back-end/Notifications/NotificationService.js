@@ -114,8 +114,6 @@ class NotificationService
       }
     };
 
-
-
     types.forEach( function(type)
     {
       promise = promise.then(type_functions[type]);

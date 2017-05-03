@@ -5,5 +5,11 @@
   "main": "",
   "author": "",
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {},
+  "dependencies": {
+    "@slack/client": "^3.9.0",
+    "bluebird": "^3.5.0",
+    "map-object-properties": "0.0.1",
+    "rxjs": "^5.3.1"
+  }
 }

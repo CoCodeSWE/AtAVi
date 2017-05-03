@@ -36,6 +36,7 @@
     "sinon": "^2.1.0"
   },
   "dependencies": {
+    "@slack/client": "^3.9.0",
     "bluebird": "^3.5.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
