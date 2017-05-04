@@ -24,7 +24,7 @@ describe('Back-end', function()
 			let agents = new dao(dynamo_client);
 			describe('addAgent', function()
 			{
-				it("Nel caso in cui un agente di api.ai non venga aggiunto a causa di un'errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'observer iscritto.", function()
+				it("Nel caso in cui un agente di api.ai non venga aggiunto a causa di un'errore del DB, l'\Observable ritornato deve chiamare il metodo \error dell'observer iscritto.", function()
 				{
 					agents.addAgent(mock_agent).subscribe(
 					{
@@ -37,7 +37,7 @@ describe('Back-end', function()
 					expect(error.getCall(0).args[0].statusCode).to.equal(400);
 				});
 				
-				it("Nel caso in cui un agente di api.ai sia aggiunto correttamente, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'observer iscritto un'unica volta.", function()
+				it("Nel caso in cui un agente di api.ai sia aggiunto correttamente, l'\Observable restituito deve chiamare il metodo \complete dell'observer iscritto un'unica volta.", function()
 				{
 					agents.addAgent(mock_agent).subscribe(
 					{
@@ -52,7 +52,7 @@ describe('Back-end', function()
 
 			describe('getAgent',function()
 			{
-				it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'observer iscritto.", function()
+				it("Nel caso in cui si verifichi un errore nell'interrogazione del DB, l'\Observable ritornato deve chiamare il metodo \error dell'observer iscritto.", function()
 				{
 					agents.getAgent('mock_name').subscribe(
 					{
@@ -65,7 +65,7 @@ describe('Back-end', function()
 					expect(error.getCall(0).args[0].statusCode).to.equal(500);
 				});
 				
-				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\\file{Observable} restituito deve chiamare il metodo \\file{next} dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \\file{complete} un'unica volta.", function()
+				it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\Observable restituito deve chiamare il metodo \next dell'observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \complete un'unica volta.", function()
 				{
 					let observable = agents.getAgent('mock_name');
 					observable.subscribe(

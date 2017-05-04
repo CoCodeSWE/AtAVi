@@ -21,7 +21,7 @@ describe('Back-end', function()
 			
       describe('addRule', function()
       {
-        it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400.", function()
+        it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \statusCode della risposta deve essere impostato a 400.", function()
         {
           rulesDAO.addRule.returns(Rx.Observable.throw(new Error()));
           let ev = {body: ""};
@@ -33,7 +33,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('statusCode', 400);
         });
 				
-        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \\file{statusCode} della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \statusCode della risposta deve essere impostato a 500.", function()
         {
           rulesDAO.addRule.returns(Rx.Observable.throw(new Error()));
           let ev = {body: JSON.stringify(rule)};
@@ -45,7 +45,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
-        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \\file{statusCode} della risposta deve essere impostato a 200.", function()
+        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \statusCode della risposta deve essere impostato a 200.", function()
         {
           rulesDAO.addRule.returns(Rx.Observable.empty());
           let ev = {body: JSON.stringify(rule)};
@@ -72,7 +72,7 @@ describe('Back-end', function()
 			
       describe('deleteRule', function()
       {
-        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \\file{statusCode} della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \statusCode della risposta deve essere impostato a 500.", function()
         {
           rulesDAO.removeRule.returns(Rx.Observable.throw(new Error()));
           let ev = {pathParameters: { id: 1 }};
@@ -84,7 +84,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
-        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \\file{statusCode} della risposta deve essere impostato a 200.", function()
+        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \statusCode della risposta deve essere impostato a 200.", function()
         {
           rulesDAO.removeRule.returns(Rx.Observable.empty());
           let ev = {pathParameters: { id: 1 }};
@@ -96,7 +96,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
-        it("Nel caso in cui la \\file{Rule} richiesta non sia disponibile, il campo \\file{statusCode} della risposta deve essere impostato a 404.", function()
+        it("Nel caso in cui la \Rule richiesta non sia disponibile, il campo \statusCode della risposta deve essere impostato a 404.", function()
         {
           {
             rulesDAO.removeRule.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
@@ -113,7 +113,7 @@ describe('Back-end', function()
 			
       describe('getRule', function()
       {
-        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo statusCode della risposta deve essere impostato a 200 e il campo body deve contenere la \\file{Rule} cercata.", function()
+        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo statusCode della risposta deve essere impostato a 200 e il campo body deve contenere la \Rule cercata.", function()
         {
           rulesDAO.getRule.returns(Rx.Observable.of(rule));
           let ev = {pathParameters: { id: 1 }};
@@ -125,7 +125,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
-        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \\file{statusCode} della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \statusCode della risposta deve essere impostato a 500.", function()
         {
           rulesDAO.getRule.returns(Rx.Observable.throw(new Error()));
           let ev = {pathParameters: { id: 1 }};
@@ -137,7 +137,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 				
-        it("Nel caso in cui la \\file{Rule} richiesta non sia disponibile, il campo \\file{statusCode} della risposta deve essere impostato a 404.", function()
+        it("Nel caso in cui la \Rule richiesta non sia disponibile, il campo \statusCode della risposta deve essere impostato a 404.", function()
         {
           rulesDAO.getRule.returns(Rx.Observable.throw({ code: 'Not found' }));
           let ev = {pathParameters: { id: 1 }};
@@ -165,7 +165,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
-        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \\file{statusCode} della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \statusCode della risposta deve essere impostato a 500.", function()
         {
           rulesDAO.getRuleList.returns(Rx.Observable.throw(new Error()));
           let ev = {};
@@ -192,7 +192,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
-        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \\file{statusCode} della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \statusCode della risposta deve essere impostato a 500.", function()
         {
           taskDAO.getTaskList.returns(Rx.Observable.throw(new Error()));
           let ev = {};
@@ -207,7 +207,7 @@ describe('Back-end', function()
 			
       describe('updateRule', function()
       {
-        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \\file{statusCode} della risposta deve essere impostato a 200.", function()
+        it("Nel caso in cui la chiamata al metodo vada a buon fine, il campo \statusCode della risposta deve essere impostato a 200.", function()
         {
           rulesDAO.updateRule.returns(Rx.Observable.empty());
           let ev = {pathParameters: { id: 1 }, body: JSON.stringify(rule)};
@@ -219,7 +219,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 				
-        it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400.", function()
+        it("Nel caso in cui la chiamata al metodo venga fatta con un parametro non atteso, il campo \statusCode della risposta deve essere impostato a 400.", function()
         {
           rulesDAO.updateRule.returns(Rx.Observable.throw(new Error));
           let ev = {pathParameters: "" , body: ""};
@@ -231,7 +231,7 @@ describe('Back-end', function()
           expect(call.args[0]).to.have.deep.property('statusCode', 400);
         });
 				
-        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \\file{statusCode} della risposta deve essere impostato a 500.", function()
+        it("Nel caso in cui la chiamata al metodo generi un errore del microservizio, il campo \statusCode della risposta deve essere impostato a 500.", function()
         {
           rulesDAO.updateRule.returns(Rx.Observable.throw(new Error));
           let ev = {pathParameters: { id: 1 }, body: JSON.stringify(rule)};

@@ -19,7 +19,7 @@ describe('Client', function()
     {
       describe('runApplication', function()
       {
-        it('Nel caso in cui l’applicazione sia presente all\'interno di \file{State}, non viene interrogato il Client.',function()
+        it('Nel caso in cui l’applicazione sia presente all\'interno di State, non viene interrogato il Client.',function()
         {
           //testo con applicazione che ho aggiunto io
           state.getApp.returns(application);
@@ -27,7 +27,7 @@ describe('Client', function()
           expect(applicationRegistryClient.query.callCount).to.equal(0);
         });
 
-        it('Nel caso in cui l’applicazione non sia presente all\'interno di \file{State}, viene interrogato il Client per ottenerla e la vecchia applicazione viene salvata nello \file{State}.',function()
+        it('Nel caso in cui l’applicazione non sia presente all\'interno di State, viene interrogato il Client per ottenerla e la vecchia applicazione viene salvata nello State.',function()
         {
           state.getApp.returns(null);
           applicationRegistryClient.returns(Promise.resolve({cmdHandler: 'cmdHandler', name: 'name', setup: 'setup', ui: 'ui'}));
@@ -40,7 +40,7 @@ describe('Client', function()
 
       describe('setFrame', function()
       {
-        it('Deve chiamare \file{appendChild} sul parametro passato al metodo per poter mostrare l’interfaccia utente.', function()
+        it('Deve chiamare appendChild sul parametro passato al metodo per poter mostrare l’interfaccia utente.', function()
         {
           let call = manager.setFrame.getCall(0);
           expect(manager.setFrame.callCount).to.equal(1);
