@@ -18,6 +18,7 @@ class ApiAiVAAdapter
     /** @constant {string} */
     this.VERSION = '20150910';
     this.LANG = 'en';
+    this.DEF_ACTION = 'admin.displayMsgs'
 	}
 
 	/**
@@ -52,7 +53,7 @@ class ApiAiVAAdapter
 		};
     if(data.event)
     {
-      //inserisco dati evento in options
+      options.body.event = data.event
     }
     else if(data.text)
     {
@@ -61,7 +62,8 @@ class ApiAiVAAdapter
 		return this.request_promise(options).then(function(response)
 		{
 			// Creo va_response per mappare la risposta di api.ai in un oggetto VAResponse
-			let va_response =
+      let action =
+      let va_response =
 			{
 				action: response.result.action,
 				res:
