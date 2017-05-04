@@ -10,7 +10,7 @@ describe('Client', function()
     {
       describe("register, query", function()
       {
-        it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere ritornato tramite il metodo query. ", function()
+        it("L' ApplicationPackage passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. L'ApplicationPackage inserito dev'essere ritornato tramite il metodo query. ", function()
         {
           let registry = new ApplicationLocalRegistry();
           registry.register('conv', { name:'Conversation' });
@@ -21,7 +21,7 @@ describe('Client', function()
       });
       describe('register, remove', function()
       {
-        it("L'\\{ApplicationPackage} passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. \\ L'\\{ApplicationPackage} inserito dev'essere eliminato tramite il metodo remove.", function()
+        it("L'ApplicationPackage passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. L'ApplicationPackage inserito dev'essere eliminato tramite il metodo remove.", function()
         {
           let registry = new ApplicationLocalRegistry();
           let name_app_pack = 'ConversationApp';

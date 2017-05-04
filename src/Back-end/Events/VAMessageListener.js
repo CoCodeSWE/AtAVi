@@ -36,9 +36,9 @@ class VAMessageListener
 {
 	constructor(conversations, guests, rp)
 	{
-		this.conversations = conversations;
-		this.guests = guests;
-		this.request_promise = rp;
+		this.conversations = conversations; // ConversationsDAODynamoDB
+		this.guests = guests; // GuestssDAODynamoDB
+		this.request_promise = rp; // request-promise
 		this.RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
     this.NOTIFICATIONS_SERVICE_URL = process.env.NOTIFICATIONS_SERVICE_URL;
 	}
@@ -103,7 +103,7 @@ class VAMessageListener
 									attachments_array:[],
 									text: text
 								},
-								send_to: parsed_body.messages[0].id;
+								send_to: parsed_body.messages[0].id
 							};
 							let notifications_send_to_slack = // mando il messaggio a slack con la chiamata HTTP al microservizio Notifications
 							{
@@ -134,7 +134,7 @@ class VAMessageListener
 								attachments_array:[],
 								text: text
 							},
-							send_to: parsed_body.messages[0].id;
+							send_to: parsed_body.messages[0].id
 						};
 						let notifications_send_to_slack = // mando il messaggio a slack con la chiamata HTTP al microservizio Notifications
 						{
@@ -156,6 +156,7 @@ class VAMessageListener
 			'sender': 'User',
 			'timestamp': event.Records[0].Timestamp
 		};
+
 		self.conversations.addMessage(user_conversation_message, session_id).subscribe(
 			{
 				error: callback,
@@ -174,13 +175,13 @@ class VAMessageListener
 				error: callback,
 				complete:  () => {callback(null);}
 			});
-/*
-		self.guests.addConversation(name, company, session_id).subscribe(
+
+		/*self.guests.addConversation(name, company, session_id).subscribe(
 		{
 			error: callback,
 			complete:  () => {callback(null);}
-		});
-*/
+		});*/
+
 	}
 
 }

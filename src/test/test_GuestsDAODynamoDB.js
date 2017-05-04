@@ -23,7 +23,7 @@ describe('Back-end', function()
       let guests = new dao(dynamo_client);
       describe('addGuest', function()
       {
-		    it("Nel caso in cui un ospite non venga aggiunto a causa di un errore del DB, l'\Observable ritornato deve chiamare il metodo \error dell'\Observer iscritto.", function()
+		    it("Nel caso in cui un ospite non venga aggiunto a causa di un errore del DB, l'Observable ritornato deve chiamare il metodo error dell'Observer iscritto.", function()
         {
           guests.addGuest().subscribe(
           {
@@ -39,7 +39,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
         });
 				
-		    it("Nel caso in cui un ospite sia aggiunto correttamente, l'\Observable restituito deve chiamare il metodo \complete dell'\Observer iscritto un'unica volta.",function()
+		    it("Nel caso in cui un ospite sia aggiunto correttamente, l'Observable restituito deve chiamare il metodo complete dell'Observer iscritto un'unica volta.",function()
         {
           guests.addGuest('mauro','Zero12').subscribe(
           {
@@ -55,7 +55,7 @@ describe('Back-end', function()
 			
       describe('getGuest', function()
       {
-        it("Nel caso in cui un ospite non venga restituito a causa di un errore del DB, l'\Observable ritornato deve chiamare il metodo \error dell'\Observer iscritto.", function()
+        it("Nel caso in cui un ospite non venga restituito a causa di un errore del DB, l'Observable ritornato deve chiamare il metodo error dell'Observer iscritto.", function()
         {
 					guests.getGuest('Mauro', 'Zero12').subscribe(
           {
@@ -71,7 +71,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
 				});
 				
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\Observable restituito deve chiamare il metodo \next dell'\Observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \complete un'unica volta",function()
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'Observer iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta",function()
         {
           guests.getGuest('Mauro', 'Zero12').subscribe(
           {
@@ -91,7 +91,7 @@ describe('Back-end', function()
 			
       describe('getGuestList', function()
       {
-        it("Nel caso in cui un blocco di ospiti non venga restituito a causa di un errore del DB, l'\Observable ritornato deve chiamare il metodo \error dell'\Observer iscritto.", function()
+        it("Nel caso in cui un blocco di ospiti non venga restituito a causa di un errore del DB, l'Observable ritornato deve chiamare il metodo error dell'Observer iscritto.", function()
         {
           guests.getGuestList().subscribe(
           {
@@ -121,7 +121,7 @@ describe('Back-end', function()
           expect(complete.callCount).to.equal(0);
         });
 				
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\Observable restituito deve chiamare il metodo \next dell'\Observer iscritto, fino ad inviare tutte gli ospiti ottenuti dall'interrogazione, ed in seguito il metodo \complete un'unica volta", function()
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'Observable restituito deve chiamare il metodo next dell'Observer iscritto, fino ad inviare tutte gli ospiti ottenuti dall'interrogazione, ed in seguito il metodo complete un'unica volta", function()
         {
           guests.getGuestList().subscribe(
           {
@@ -152,7 +152,7 @@ describe('Back-end', function()
 			
       describe('removeGuest', function()
       {
-        it("Nel caso in cui un ospite non venga eliminato a causa di un errore del DB, l'\Observable ritornato deve chiamare il metodo \error dell'\Observer iscritto.", function()
+        it("Nel caso in cui un ospite non venga eliminato a causa di un errore del DB, l'Observable ritornato deve chiamare il metodo error dell'Observer iscritto.", function()
         {
           guests.removeGuest('mou').subscribe(
           {
@@ -168,7 +168,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
         });
 				
-        it("Nel caso in cui un ospite sia eliminato correttamente, l'\Observable restituito deve chiamare il metodo \complete dell'\Observer iscritto un'unica volta.",function()
+        it("Nel caso in cui un ospite sia eliminato correttamente, l'Observable restituito deve chiamare il metodo complete dell'Observer iscritto un'unica volta.",function()
         {
           guests.removeGuest('mou','Zero12').subscribe(
           {
@@ -184,7 +184,7 @@ describe('Back-end', function()
 			
       describe('updateGuest', function()
       {
-        it("Nel caso in cui un ospite non venga aggiornato a causa di un errore del DB, l'\Observable ritornato deve chiamare il metodo \error dell'\Observer iscritto.", function()
+        it("Nel caso in cui un ospite non venga aggiornato a causa di un errore del DB, l'Observable ritornato deve chiamare il metodo error dell'Observer iscritto.", function()
         {
           guests.updateGuest('mou').subscribe(
           {
@@ -200,7 +200,7 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(0);
         });
 				
-        it("Nel caso in cui un ospite sia aggiornato correttamente, l'\Observable restituito deve chiamare il metodo \complete dell'\Observer iscritto un'unica volta.",function()
+        it("Nel caso in cui un ospite sia aggiornato correttamente, l'Observable restituito deve chiamare il metodo complete dell'Observer iscritto un'unica volta.",function()
         {
           guests.updateGuest('mou','Zero12').subscribe(
           {
@@ -216,7 +216,7 @@ describe('Back-end', function()
 			
 			describe('addConversation', function()
       {
-        it("Nel caso in cui si provi ad aggiungere l'id di una conversazione già presente, l'\Observable ritornato deve chiamare il metodo \error dell'\Observer iscritto.", function()
+        it("Nel caso in cui si provi ad aggiungere l'id di una conversazione già presente, l'Observable ritornato deve chiamare il metodo error dell'Observer iscritto.", function()
         {
 					guests.addConversation('Mauro', 'Zero12', 2).subscribe(
 					{
@@ -230,7 +230,7 @@ describe('Back-end', function()
 					expect(callError.args[0].statusCode).to.equal(500);
         });
 				
-        it("Nel caso in cui venga aggiunto correttamente l'id di una conversazione, l'\Observable restituito deve chiamare il metodo \complete dell'\Observer iscritto un'unica volta.",function()
+        it("Nel caso in cui venga aggiunto correttamente l'id di una conversazione, l'Observable restituito deve chiamare il metodo complete dell'Observer iscritto un'unica volta.",function()
         {
 					guests.addConversation('Mauro', 'Zero12', 2).subscribe(
 					{
