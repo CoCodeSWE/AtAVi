@@ -637,7 +637,7 @@ class VocalAPI
         case 'rule.getList':
           let rules;
           options.body.event = {name: 'getRuleListSuccess'};
-          self._getRuleList(/*dd*/).subscribe(
+          self._getRuleList(''/*dd*/).subscribe(
           {
             next: (data) => {rules = data},
             error: error(context),
@@ -651,7 +651,7 @@ class VocalAPI
         case 'rule.get':
           let rule;
           options.body.event = {name: 'getSuccess'};
-          self._getRule(/*dd*/).subscribe(
+          self._getRule(''/*dd*/).subscribe(
           {
             next: (data) => {rule = data;},
             error: error(context),
@@ -680,7 +680,7 @@ class VocalAPI
             name: 'updateRuleSuccess',
             data: {}
           };
-          this._updateRule(/*dd*/).subscribe(
+          this._updateRule(''/*dd*/).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -700,7 +700,7 @@ class VocalAPI
           break;
         case 'user.addEnrollment':
           options.body.event = {name: "addUserEnrollmentSuccess"}
-          this._addUserEnrollment({audio: audio_buffer, username: /**/}).subscribe(
+          this._addUserEnrollment({audio: audio_buffer, username: ''/**/}).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -709,7 +709,7 @@ class VocalAPI
         case 'user.get':
           let user;
           options.body.event = {name: 'getUserSuccess'};
-          self._getUser(/*dd*/).subscribe(
+          self._getUser(''/*dd*/).subscribe(
           {
             next: (data) => {user = data;},
             error: error(context),
@@ -723,7 +723,7 @@ class VocalAPI
         case 'user.getList':
           let users;
           options.body.event = {name: 'getUserListSuccess'};
-          self._getUserList(/*dd*/).subscribe(
+          self._getUserList(''/*dd*/).subscribe(
           {
             next: (data) => {users = data},
             error: error(context),
@@ -764,7 +764,7 @@ class VocalAPI
           break;
         case 'user.resetEnrollment':
         options.body.event = {name: "resetUserEnrollmentSuccess"}
-        this._resetUserEnrollment(/*dd*/}).subscribe(
+        this._resetUserEnrollment(''/*dd*/).subscribe(
         {
           complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
           error: error(context)
@@ -776,7 +776,7 @@ class VocalAPI
             name: 'userUpdateSuccess',
             data: {}
           };
-          this._updateuser(/*dd*/).subscribe(
+          this._updateuser(''/*dd*/).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
