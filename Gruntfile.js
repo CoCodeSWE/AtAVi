@@ -109,7 +109,8 @@ module.exports = function(grunt) {
       client:
       {
         files: ['src/Client/**/*'],
-        tasks: ["babel:react", "atavi-client-bundle-application", "browserify:client", "sass:client", "copy:client"]
+        tasks: ["babel:react", "atavi-client-bundle-application", "browserify:client", "sass:client", "copy:client"],
+        options: {livereload: true}
       }
     },
     sass:
