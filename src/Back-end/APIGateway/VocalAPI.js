@@ -700,7 +700,7 @@ class VocalAPI
           break;
         case 'user.addEnrollment':
           options.body.event = {name: "addUserEnrollmentSuccess"}
-          this._addUserEnrollment({audio: audio_buffer, username: /**/}).subscribe(
+          this._addUserEnrollment({audio: audio_buffer, username: 'fixme'/**/}).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -764,7 +764,7 @@ class VocalAPI
           break;
         case 'user.resetEnrollment':
         options.body.event = {name: "resetUserEnrollmentSuccess"}
-        this._resetUserEnrollment(/*dd*/}).subscribe(
+        this._resetUserEnrollment(/*dd*/).subscribe(
         {
           complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
           error: error(context)

@@ -17,7 +17,7 @@ module.exports = function(grunt) {
         [{
           expand: true,
 				  cwd: 'src',
-				  src: ['**/*.js' ],
+				  src: ['Back-end/**/*.js' ],
 				  dest: 'dist/'
         }]
       },
@@ -102,6 +102,13 @@ module.exports = function(grunt) {
           {expand: true, cwd: 'src', src: 'test/browser/**/*', dest: 'dist'},
           {expand: true, cwd: 'src/Client/ConversationApp/', src: '**/*.js', dest: 'dist/test/client'}
         ]
+      },
+      backend:
+      {
+        files:[
+          {expand:true, cwd: 'src', src: '**/*.yml', dest: 'dist'},
+          {expand:true, cwd: 'src', src: '**/*.json', dest: 'dist'}
+        ]
       }
     },
     watch:
@@ -132,6 +139,16 @@ module.exports = function(grunt) {
           }
         ]
       }
+    },
+    'modules-copy':
+    {
+      backend:
+      {
+        files:
+        {
+          'dist/Back-end/APIGateway': ['src/Back-end/STT/STTWatsonAdapter.js', 'src/Back-end/Users/VocalLoginMicrosoftModule.js']
+        }
+      }
     }
   });
 
@@ -148,11 +165,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('mocha-browser-test-page');
+  grunt.loadNpmTasks('modules-copy');
   // Default task(s).
-  grunt.registerTask('default', ['babel:react','babel:dist','mochaTest']);
+  grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "copy","modules-copy:backend",'mochaTest']);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
   grunt.registerTask('react', ['babel:react']);
   grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]);
   grunt.registerTask('test-client', ["browserify:test-client", "copy:test-client"]);
+  grunt.registerTask('copymod', ["modules-copy:backend"]);
 
 };

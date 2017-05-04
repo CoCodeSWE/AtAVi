@@ -53,7 +53,7 @@ class ApiAiVAAdapter
 		};
     if(data.event)
     {
-      options.body.event = data.event
+      options.body.event = data.event;
     }
     else if(data.text)
     {
@@ -62,7 +62,6 @@ class ApiAiVAAdapter
 		return this.request_promise(options).then(function(response)
 		{
 			// Creo va_response per mappare la risposta di api.ai in un oggetto VAResponse
-      let action =
       let va_response =
 			{
 				action: response.result.action,
