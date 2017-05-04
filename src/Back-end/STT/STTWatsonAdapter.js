@@ -33,6 +33,7 @@ class STTWatsonAdapter
 
 	speechToText(audio, type)
 	{
+		console.log("OUT");
 		var self = this;
     let params = {
       audio: audio,
@@ -40,10 +41,12 @@ class STTWatsonAdapter
     };
 		return new Promise(function(fulfill, reject)
 			{
+				console.log("PROMISE");
 				self.stt.recognize(params, function(err, res)
 					{
+						console.log("uetttttttttteRECOGNIZE");
 		      	if (err)
-		    				reject(err);
+		    				console.log(err);
 		      	else
 		          	fulfill(res.results[0].alternatives[0].transcript);
 		    	});

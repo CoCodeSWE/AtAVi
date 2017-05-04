@@ -1,3 +1,4 @@
+onRejected
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
@@ -16,11 +17,11 @@ describe('Back-end', function()
 			{
 				it('Se la chiamata al metodo stt.recognize fallisce allora il metodo deve chiamare il metodo rejected della Promise con un parametro onRejected avente campo code 500.', function()
 				{
-					let reject = sinon.stub();
+					let onRejected = sinon.stub();
 					let promise = watson.speechToText();
-					promise.catch(reject);
-					expect(reject.callCount).to.equal(1);
-					let call = reject.getCall(0);
+					promise.catch(onRejected);
+					expect(onRejected.callCount).to.equal(1);
+					let call = onRejected.getCall(0);
 					expect(call.args[0]).to.deep.equal({code: 500});
 				});
 			});
