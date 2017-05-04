@@ -36,6 +36,7 @@ describe('Back-end', function()
             done();
           }
         });
+				
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
 					let ev = {body: '', queryStringParameters: ''};
@@ -49,6 +50,7 @@ describe('Back-end', function()
             done();
           }
         });
+				
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
 					let ev = {body: '', queryStringParameters: ''};
@@ -62,9 +64,10 @@ describe('Back-end', function()
             done();
           }
         });
+				
         it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista dei canali Slack (utenti, canali pubblici e gruppi privati) in formato JSON.", function(done)
         {
-          let ev = {body: '', queryStringParameters: ''};
+          let ev = {body: '', queryStringParameters: null};
           service.getChannelList(ev, context);
           client.groups.list.yields(null, groups);
           client.users.list.yields(null, users);
