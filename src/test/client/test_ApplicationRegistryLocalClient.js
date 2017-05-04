@@ -29,6 +29,7 @@ describe('Client', function()
 						error: error,
 						complete: complete
 					});
+
           expect(next.callCount).to.equal(0);
           expect(error.callCount).to.equal(0);
           expect(complete.callCount).to.equal(1);
