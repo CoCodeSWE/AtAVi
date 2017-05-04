@@ -7,3 +7,4 @@ mochawesome-reports
 *.map
 secret.yml
 .sass-cache
+npm-debug.log

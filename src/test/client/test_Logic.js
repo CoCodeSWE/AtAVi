@@ -1,10 +1,11 @@
-import {Logic} from '../../Client/Logic/Logic';
+import Logic from '../../Client/Logic/Logic';
 
 const expect = chai.expect;
+let logic;
 
 beforeEach(function()
 {
-	let logic = new Logic();
+	logic = new Logic();
 });
 
 describe('Client', function()
