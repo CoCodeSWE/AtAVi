@@ -19,16 +19,9 @@ describe('Client', function()
 
           let error = sinon.stub(), next = sinon.stub(), complete = sinon.stub();
 
-          let bool = registry.register('conv', app_pckg).subscribe(
-          {
-						next: next,
-						error: error,
-						complete: complete
-					});
           expect(next.callCount).to.equal(0);
           expect(error.callCount).to.equal(0);
           expect(complete.callCount).to.equal(1);
-          expect(bool).to.be.true;
         });
       });
       describe('query', function()
