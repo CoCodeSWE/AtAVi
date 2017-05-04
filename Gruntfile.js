@@ -47,6 +47,19 @@ module.exports = function(grunt) {
         {
           "./dist/client/main.js": ["./src/Client/main.js"]
         }
+      },
+      'test-client':
+      {
+        options:
+        {
+          transform: [
+            ["babelify", {presets: ["es2015", "react"]}]
+          ]
+        },
+        files:
+        {
+          "./dist/test/client/test.js": ["./src/test/client/test_*.js"]
+        }
       }
     },
     mochaTest:
@@ -63,7 +76,6 @@ module.exports = function(grunt) {
         src: ['src/test/*.js']
       }
     },
-
     'atavi-client-bundle-application':
     {
       conversation:
@@ -81,6 +93,14 @@ module.exports = function(grunt) {
         files: [
           {expand: true, cwd: 'src/Client/Index/', src: '**', dest: 'dist/Client'},
           {expand: true, cwd: 'src/Client/Recorder/', src: 'RecorderWorker.js', dest: 'dist/Client/Script'}
+        ]
+      },
+      'test-client':
+      {
+        files:[
+          {expand: true, cwd: 'src', src: 'test/client/index.htm', dest: 'dist'},
+          {expand: true, cwd: 'src', src: 'test/browser/**/*', dest: 'dist'},
+          {expand: true, cwd: 'src/Client/ConversationApp/', src: '**/*.js', dest: 'dist/test/client'}
         ]
       }
     },
@@ -112,7 +132,6 @@ module.exports = function(grunt) {
         ]
       }
     }
-
   });
 
   grunt.event.on('watch', function(action, filepath, target) {
@@ -127,9 +146,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('mocha-browser-test-page');
   // Default task(s).
   grunt.registerTask('default', ['babel:react','babel:dist','mochaTest']);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
   grunt.registerTask('react', ['babel:react']);
   grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]);
+  grunt.registerTask('test-client', ["browserify:test-client", "copy:test-client"]);
+
 };

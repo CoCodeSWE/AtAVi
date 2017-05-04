@@ -1,7 +1,5 @@
-const sinon = require('sinon');
-
-module.exports = {
+export var application = {
   getUI: sinon.stub(),
   runCmd: sinon.stub(),
-  attr: 'mauro'  
+  attr: 'mauro'
 }

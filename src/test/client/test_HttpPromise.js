@@ -1,3 +1,5 @@
+import {HttpPromise} from '../../Client/Logic/HttpPromise';
+
 const expect = chai.expect;
 
 let requests;

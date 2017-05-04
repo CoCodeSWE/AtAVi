@@ -1,4 +1,4 @@
-var app_local_reg =
+export var app_local_reg =
 {
   remove: sinon.stub(),
   register: sinon.stub(),

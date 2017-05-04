@@ -1,15 +1,14 @@
-const Manager = require('../Client/ApplicationManager/Manager');
-const chai = require('chai');
-const applicationRegistryClient = require ('./stubs/ApplicationRegistryClient')
-const state = require ('./stubs/State');
-const Application = require('./stubs/Application');
-const HTMLElement = require('./stubs/HTMLElement');
+import Manager from '../../Client/ApplicationManager/Manager';
+import {applicationRegistryClient} from '../stubs/ApplicationRegistryClient';
+import {state} from '../stubs/State';
+import {application} from '../stubs/Application';
+import {HTMLElement} from '../stubs/HTMLElement';
 
 let manager;
 
 beforeEach(function()
 {
-  manager = new Manager(ApplicationRegistryClient, HTMLElement);
+  manager = new Manager(applicationRegistryClient, HTMLElement);
 });
 
 describe('Client', function()
@@ -23,7 +22,7 @@ describe('Client', function()
         it('Nel caso in cui l’applicazione sia presente all\'interno di \file{State}, non viene interrogato il Client.',function()
         {
           //testo con applicazione che ho aggiunto io
-          state.getApp.returns(Application);
+          state.getApp.returns(application);
           manager.runApplication('app', 'cmd', {});
           expect(applicationRegistryClient.query.callCount).to.equal(0);
         });

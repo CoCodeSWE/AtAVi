@@ -1,7 +1,4 @@
-const sinon = require('sinon');
-
-module.exports = {
+export var state = {
 addApp: sinon.stub(),
 getApp: sinon.stub()
-
 }

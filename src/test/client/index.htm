@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
 
@@ -12,13 +13,16 @@
     <script src="../browser/setup.js"></script>
     <script src="../browser/load.js"></script>
     <script src="../browser/sinon.js"></script>
-    <script src="../browser/observer.js"></script>
-    <script src="../browser/HTTPPromiseStub.js"></script>
-
+    <script src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="https://unpkg.com/rxjs@5.3.0/bundles/Rx.min.js"></script>
 
-    <script src="../../Client/Logic/Logic.js"></script>
-    <script src="./test_Logic.js"></script>
+    <!--dipendenze di test che non possono essere compilati da browserify-->
+    <script src="./stores/MsgStore.js"></script>
+    <script src="./views/ConversationView.js"></script>
+    <script src="./ConversationDispatcher.js"></script>
+
+    <script src="./test.js"></script>
 
 	</head>
 

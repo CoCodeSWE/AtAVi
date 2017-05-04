@@ -1,5 +1,4 @@
-const expect = chai.expect;
-var store;
+let store;
 
 beforeEach(function()
 {

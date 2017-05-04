@@ -1,3 +1,4 @@
+/**@todo riscrivere il test che così non ha senso, oppure eliminarlo*/
 const expect = chai.expect;
 
 describe('Client', function()

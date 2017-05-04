@@ -1,3 +1,5 @@
+import Logic from '../../Client/Logic/Logic';
+
 const expect = chai.expect;
 
 describe('Client', function()
