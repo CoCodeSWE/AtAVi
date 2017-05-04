@@ -69,7 +69,7 @@ describe('Back-end', function()
 					expect(callback.getCall(0).args[1]).to.be.undefined;
 				});
 
-				it("Nel caso in cui la chiamata ai metodi di GuestsDAO non vada a buon fine, la funzione di callback deve essere chiamata con un solo parametro diverso da null.", function()
+				it("Nel caso in cui la chiamata ai metodi di GuestsDAO non vada a buon fine, la funzione di callback deve essere chiamata con un solo parametro diverso da null.", function(done)
 				{
 					let context = { body: '' };
 					listener.onMessage(event, context, callback);
@@ -81,7 +81,7 @@ describe('Back-end', function()
 					expect(callback.getCall(0).args[1]).to.be.undefined;
 				});
 
-				it("Nel caso in cui la chiamata ai metodi di ConversationsDAO non vada a buon fine, la funzione di callback deve essere chiamata con un solo parametro diverso da null.", function()
+				it("Nel caso in cui la chiamata ai metodi di ConversationsDAO non vada a buon fine, la funzione di callback deve essere chiamata con un solo parametro diverso da null.", function(done)
 				{
 					let context = { body: '' };
 					listener.onMessage(event, context, callback);
