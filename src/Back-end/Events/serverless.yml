@@ -1,7 +1,7 @@
 # Welcome to Serverless!
 #
 
-service: topicatavisls
+service: topicatavislffccrs
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -15,6 +15,6 @@ provider:
 
 functions:
   dispatcher:
-    handler: handler.onMessage
+    handler: onMessage.onMessage
     events:
-      - sns: atavi_SECOND
+      - sns: atavi_SECOND_SECONDcc

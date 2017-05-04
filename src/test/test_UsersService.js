@@ -21,7 +21,7 @@ describe('Back-end', function()
       let users = new users_service(users_DAO);
       describe('addUser', function()
       {
-        it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500", function()
         {
           users_DAO.addUser.returns(Rx.Observable.throw(new Error()));
           let user=
@@ -38,7 +38,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 
-        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
+        it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200", function()
         {
           users_DAO.addUser.returns(Rx.Observable.empty());
           let user=
@@ -55,7 +55,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 
-        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400",function()
+        it("Nel caso in cui sia passato un parametro non atteso, il campo statusCode della risposta deve essere impostato a 400",function()
         {
 	        users_DAO.addUser.returns(Rx.Observable.throw(new Error()));
           let ev = { body: "" };
@@ -86,7 +86,7 @@ describe('Back-end', function()
       });
       describe('deleteUser', function()
       {
-        it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500", function()
         {
           users_DAO.removeUser.returns(Rx.Observable.throw(new Error()));
           let ev = { pathParameters: { username: 'mou' }};
@@ -98,7 +98,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 
-        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
+        it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200", function()
         {
           users_DAO.removeUser.returns(Rx.Observable.empty());
           let ev = { pathParameters: { username: 'mou' }};
@@ -110,7 +110,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 
-				it("Nel caso in cui sia passato uno username non esistente, il campo \\file{statusCode} della risposta deve essere impostato a 404", function()
+				it("Nel caso in cui sia passato uno username non esistente, il campo statusCode della risposta deve essere impostato a 404", function()
         {
 					users_DAO.removeUser.returns(Rx.Observable.throw({ code: 'ConditionalCheckFailedException' }));
 					let ev = { pathParameters: { username: 'pippo' }};
@@ -124,7 +124,7 @@ describe('Back-end', function()
       });
       describe('getUser', function()
       {
-        it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500", function()
         {
           users_DAO.getUser.returns(Rx.Observable.throw(new Error()));
           let ev = { pathParameters: { username: 'mou'} };
@@ -136,7 +136,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 
-        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere l'utente richiesto", function()
+        it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere l'utente richiesto", function()
         {
           users_DAO.getUser.returns(Rx.Observable.of({ name : 'Mauro', username : 'mou' }));
           let ev = { pathParameters: { username: 'mou'} };
@@ -148,7 +148,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 
-        it("Nel caso in cui sia passato uno username non esistente, il campo \\file{statusCode} della risposta deve essere impostato a 404", function()
+        it("Nel caso in cui sia passato uno username non esistente, il campo statusCode della risposta deve essere impostato a 404", function()
         {
 					users_DAO.getUser.returns(Rx.Observable.throw({ code: 'Not found' }));
           let ev = { pathParameters: { username: 'pippo'} };
@@ -162,7 +162,7 @@ describe('Back-end', function()
       });
       describe('getUserList', function()
       {
-        it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500", function()
         {
           users_DAO.getUserList.returns(Rx.Observable.throw(new Error()));
           let ev = { queryStringParameters: {} };
@@ -173,7 +173,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 
-        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista degli utenti", function()
+        it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista degli utenti", function()
         {
           users_DAO.getUserList.returns(Rx.Observable.of({ name : 'Mauro', username : 'mou' }, { name : 'Nicola', username : 'tinto' }));
           let ev = { queryStringParameters: {} };
@@ -187,7 +187,7 @@ describe('Back-end', function()
       });
       describe('updateUser', function()
       {
-        it("Nel caso in cui si verifichi un errore, il campo \\file{statusCode} della risposta deve essere impostato a 500", function()
+        it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500", function()
         {
           users_DAO.updateUser.returns(Rx.Observable.throw(new Error()));
           let user =
@@ -203,7 +203,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 500);
         });
 
-        it("Nel caso in cui non si verifichino errori, il campo \\file{statusCode} della risposta deve essere impostato a 200", function()
+        it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200", function()
         {
           users_DAO.updateUser.returns(Rx.Observable.empty());
           let user =
@@ -219,7 +219,7 @@ describe('Back-end', function()
 					expect(call.args[0]).to.have.deep.property('statusCode', 200);
         });
 
-        it("Nel caso in cui sia passato un parametro non atteso, il campo \\file{statusCode} della risposta deve essere impostato a 400", function()
+        it("Nel caso in cui sia passato un parametro non atteso, il campo statusCode della risposta deve essere impostato a 400", function()
         {
           let ev = { pathParameters: "", body: "" };
           service.updateUser(ev, context);
