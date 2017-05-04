@@ -14,11 +14,12 @@ describe('Back-end', function()
 			let watson = new STTWatsonAdapter(streamBuffers, STT);
 			describe('speechToText', function()
 			{
-				it('Se la chiamata al metodo stt.recognize fallisce allora il metodo deve chiamare il metodo rejected della Promise con un parametro onRejected avente campo code 500.', function()
+				it('Se la chiamata al metodo stt.recognize fallisce allora il metodo deve chiamare il metodo rejected della Promise con un parametro onRejected avente campo code 500.', function(done)
 				{
 					let reject = sinon.stub();
 					let promise = watson.speechToText();
 					promise.catch(reject);
+					done();
 					expect(reject.callCount).to.equal(1);
 					let call = reject.getCall(0);
 					expect(call.args[0]).to.deep.equal({code: 500});

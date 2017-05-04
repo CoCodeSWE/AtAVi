@@ -19,7 +19,6 @@ class STTWatsonAdapter
 
 	speechToText(audio, type)
 	{
-		console.log("OUT");
 		var self = this;
     let params = {
       audio: audio,
