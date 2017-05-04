@@ -4,8 +4,9 @@ import {state} from '../stubs/State';
 import {application} from '../stubs/Application';
 import {HTMLElement} from '../stubs/HTMLElement';
 
-let manager;
+const expect = chai.expect;
 
+let manager;
 beforeEach(function()
 {
   manager = new Manager(applicationRegistryClient, HTMLElement);
@@ -21,20 +22,22 @@ describe('Client', function()
       {
         it('Nel caso in cui l’applicazione sia presente all\'interno di State, non viene interrogato il Client.',function()
         {
-          //testo con applicazione che ho aggiunto io
-          state.getApp.returns(application);
-          manager.runApplication('app', 'cmd', {});
+					manager.state.getApp = sinon.stub();
+					manager.state.getApp.returns(application);
+          manager.runApplication('app', 'cmd', {}, 'name');
           expect(applicationRegistryClient.query.callCount).to.equal(0);
         });
 
         it('Nel caso in cui l’applicazione non sia presente all\'interno di State, viene interrogato il Client per ottenerla e la vecchia applicazione viene salvata nello State.',function()
         {
-          state.getApp.returns(null);
-          applicationRegistryClient.returns(Promise.resolve({cmdHandler: 'cmdHandler', name: 'name', setup: 'setup', ui: 'ui'}));
-          manager.runApplication('app', 'cmd', {});
+					manager.state.getApp = sinon.stub();
+					manager.state.addApp = sinon.stub();
+          manager.state.getApp.returns(undefined);
+          applicationRegistryClient.query.returns(Rx.Observable.of({cmdHandler: 'cmdHandler', name: 'name', setup: 'setup', ui: 'ui', libs: ['0', '1', '2']}));
+          manager.runApplication('app1', 'cmd', {}, 'name');
           expect(applicationRegistryClient.query.callCount).to.equal(1);
-          manager.runApplication('app2', 'cmd', {});
-          expect(state.addApp.callCount).to.equal(1);
+          manager.runApplication('app2', 'cmd', {}, 'name');
+					expect(manager.state.addApp.callCount).to.equal(1);
         });
       });
 
@@ -42,10 +45,16 @@ describe('Client', function()
       {
         it('Deve chiamare appendChild sul parametro passato al metodo per poter mostrare l’interfaccia utente.', function()
         {
-          let call = manager.setFrame.getCall(0);
-          expect(manager.setFrame.callCount).to.equal(1);
-          expect(call.args[0]).to.not.be.null;
-          expect(call.args[0].appendChild.callCount).to.equal(1);
+					var new_frame =
+					{
+						appendChild: sinon.stub(),
+						removeChild: sinon.stub(),
+						innerHTML: 'frame'
+					};
+					
+          manager.setFrame(new_frame);
+					expect(new_frame.appendChild.callCount).to.equal(1);
+					
         });
       });
     });

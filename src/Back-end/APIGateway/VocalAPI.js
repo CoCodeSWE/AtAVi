@@ -606,15 +606,15 @@ class VocalAPI
 
       //aggiungere controllo azione completata oppure no ???
 
+      let params = response.res.contexts[0];
       switch(response.action)
       {
-        let params = response.res.contexts[0];
         case 'rule.add':
           options.body.event =
           {
             name: 'addRuleSuccess',  // da definire il vero event come anche i parametri necessari
             data: {}
-          }
+          };
           self._addRule(
           {
             name: params.name,
@@ -627,10 +627,10 @@ class VocalAPI
               name: target_name,
               member: target_member,
               copmany: target_company
-            }
+            }]
           }).subscribe(
           {
-            complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
           });
           break;
@@ -670,7 +670,7 @@ class VocalAPI
           };
           self._removeRule(/*da definire*/).subscribe(
           {
-            complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
           });
           break;
@@ -682,7 +682,7 @@ class VocalAPI
           };
           this._updateRule(/*dd*/).subscribe(
           {
-            complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
           });
           break;
@@ -694,7 +694,7 @@ class VocalAPI
           };
           self._addUser(/*da definire*/).subscribe(
           {
-            complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
           });
           break;
@@ -702,7 +702,7 @@ class VocalAPI
           options.body.event = {name: "addUserEnrollmentSuccess"}
           this._addUserEnrollment({audio: audio_buffer, username: /**/}).subscribe(
           {
-            complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
           });
           break;
@@ -758,7 +758,7 @@ class VocalAPI
           };
           self._removeUser(/*da definire*/).subscribe(
           {
-            complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
           });
           break;
@@ -766,7 +766,7 @@ class VocalAPI
         options.body.event = {name: "resetUserEnrollmentSuccess"}
         this._resetUserEnrollment(/*dd*/}).subscribe(
         {
-          complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+          complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
           error: error(context)
         });
         break;
@@ -778,7 +778,7 @@ class VocalAPI
           };
           this._updateuser(/*dd*/).subscribe(
           {
-            complete: () => context.succeed(statusCode: 200, body: JSON.stringify(response)),
+            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
           });
           break;

@@ -28,9 +28,16 @@ export default class ApplicationRegistryLocalClient
     let self = this;
     return new Rx.Observable(function(observer)
     {
-      self.registry.register(name, pkg);
-      observer.complete();
-    });
+			if(pkg.name && pkg.cmdHandler && pkg.setup && pkg.ui)
+			{
+				self.registry.register(name, pkg);
+				observer.complete();
+			}
+			else
+			{
+				observer.error('Package parziale');
+			}
+		});
   }
 
   /**
