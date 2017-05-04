@@ -21,9 +21,8 @@ describe('Client', function()
       {
         it('Nel caso in cui l’applicazione sia presente all\'interno di State, non viene interrogato il Client.',function()
         {
-          //testo con applicazione che ho aggiunto io
-          state.getApp.returns(application);
-          manager.runApplication('app', 'cmd', {});
+					state.getApp.returns(application);
+          manager.runApplication('app', 'cmd', {}, 'name');
           expect(applicationRegistryClient.query.callCount).to.equal(0);
         });
 

@@ -2,6 +2,12 @@ import ApplicationLocalRegistry from '../../Client/ApplicationManager/Applicatio
 
 const expect = chai.expect;
 
+let registry;
+beforeEach(function()
+{
+	registry = new ApplicationLocalRegistry();
+});
+
 describe('Client', function()
 {
   describe('ApplicationManager', function()
@@ -12,20 +18,20 @@ describe('Client', function()
       {
         it("L' ApplicationPackage passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. L'ApplicationPackage inserito dev'essere ritornato tramite il metodo query. ", function()
         {
-          let registry = new ApplicationLocalRegistry();
-          registry.register('conv', { name:'Conversation' });
-          let app_pckg = registry.query('conv');
-          expect(app_pckg).to.not.be.undefined;
-          expect(app_pckg.name).to.equal('Conversation');
+					let register_pkg = { name:'Conversation' };
+          registry.register('conv', register_pkg);
+					
+					let app_pckg = registry.query('conv');
+          expect(app_pckg).to.deep.equal(register_pkg);
         });
       });
       describe('register, remove', function()
       {
         it("L'ApplicationPackage passato come parametro al metodo register dev'essere inserito con name uguale al parametro passato. L'ApplicationPackage inserito dev'essere eliminato tramite il metodo remove.", function()
         {
-          let registry = new ApplicationLocalRegistry();
           let name_app_pack = 'ConversationApp';
-          registry.register('conv', { name:'Conversation' });
+          registry.register(name_app_pack, { name:'Conversation' });
+					
           registry.remove(name_app_pack);
           expect(registry.query(name_app_pack)).to.be.undefined;
         });

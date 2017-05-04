@@ -15,7 +15,7 @@ describe('Client', function()
           let state = new State();
           state.addApp(application, 'app');
           let temp_app = state.getApp('app');
-          expect(application).to.equal(temp_app);
+          expect(application).to.deep.equal(temp_app);
         });
       });
     });
