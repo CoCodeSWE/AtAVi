@@ -9,10 +9,11 @@ class NotificationService
 
   getChannelList(event, context)
   {
+    console.log(event);
     let self = this;
     let list = [];
     let types;
-    if (event.queryStringParameters.type)
+    if (event.queryStringParameters && event.queryStringParameters.type )
       types = event.queryStringParameters.type.split(',');
     else
       types = ['groups', 'users', 'channels'];
@@ -33,7 +34,7 @@ class NotificationService
               reject(
       				{
       					statusCode: 500,
-      					body: JSON.stringify({ message: 'Internal server error' })
+      					body: JSON.stringify({ message: 'Internal server error: channels', error: err })
       				});
             }
             else
@@ -63,7 +64,7 @@ class NotificationService
               reject(
       				{
       					statusCode: 500,
-      					body: JSON.stringify({ message: 'Internal server error' })
+      					body: JSON.stringify({ message: 'Internal server error: groups', error: err })
       				});
             }
             else
@@ -93,7 +94,7 @@ class NotificationService
               reject(
               {
                 statusCode: 500,
-                body: JSON.stringify({ message: 'Internal server error' })
+                body: JSON.stringify({ message: 'Internal server error: users', error: err })
               });
             }
             else
@@ -123,7 +124,7 @@ class NotificationService
     promise.then(function(result)
     {
       var final_result = [];
-      if (event.queryStringParameters.name)
+      if (event.queryStringParameters && event.queryStringParameters.name)
       {
           final_result = result.filter(item => item.name === event.queryStringParameters.name);
       }
@@ -142,7 +143,7 @@ class NotificationService
       context.succeed(
       {
         statusCode: 500,
-        body: JSON.stringify({ message: 'Internal server error' })
+        body: JSON.stringify({ message: 'Internal server error', error: err })
       });
     });
   }
