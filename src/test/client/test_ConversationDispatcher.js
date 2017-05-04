@@ -1,3 +1,5 @@
+import Observer from '../browser/observer';
+
 const expect = chai.expect;
 
 describe('Client', function(done)

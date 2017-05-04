@@ -1,5 +1,5 @@
 this.store = new MsgStore();
-this.dispatcher = new CmdDispatcher();
+this.dispatcher = new Dispatcher();
 var _this = this;
 function render() {
   ReactDOM.render(React.createElement(ConversationView, _this.store), _this.ui);

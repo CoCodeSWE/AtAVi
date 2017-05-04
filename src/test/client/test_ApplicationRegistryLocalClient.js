@@ -1,3 +1,6 @@
+import ApplicationRegistryLocalClient from '../../Client/ApplicationManager/ApplicationRegistryLocalClient';
+import {app_local_reg} from '../stubs/ApplicationLocalRegistry';
+
 const expect = chai.expect;
 
 describe('Client', function()

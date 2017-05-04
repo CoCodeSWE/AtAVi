@@ -8,6 +8,8 @@ export default class Recorder
   */
   constructor(conf)
   {
+    // FIXME: rimuovere codice per visualizzazione volume
+    this.element = document.getElementById('volume');
     this.WORKER_PATH = 'js/recorderjs/RecorderWorker.js';
 
     this.audio_context = new AudioContext();
@@ -110,18 +112,20 @@ export default class Recorder
     this.analiser.getByteFrequencyData(vol_data); //ottengo i dati della frequenza, necessari per calcolare il volume
     //console.log(vol_data);
     let level = vol_data.reduce((acc, val) => {return acc + val}, 0) / vol_data.length;  // calcolo il volume medio
-    if(!this.recording && level > this.threshold)
+    this.element.innerHTML = level;
+    if(level > this.threshold)
     {
       if(this.time)
       {
         clearTimeout(this.time);
         this.time = null;
       }
+      if(!this.recording)
       this._startRecording();
     }
     else if(this.max_silence !== -1 && !this.time  && level <= this.threshold)
     {
-      this.time = setTimeout(() => {self._stopRecording(); }, self.max_silence)
+      this.time = setTimeout(() => {self._stopRecording(); }, self.max_silence);
     }
     if(this.recording)
       this.worker.postMessage({command: 'record', buffer: [ msg.inputBuffer.getChannelData(0), msg.inputBuffer.getChannelData(1)]});
@@ -133,6 +137,11 @@ export default class Recorder
     this._startRecording();
   }
 
+  enable()
+  {
+    this.enabled = true;
+  }
+
   stop()
   {
     this.enabled = false;
@@ -141,7 +150,7 @@ export default class Recorder
 
   _startRecording()
   {
-    console.log('start');
+    console.log('recording', this.recording);
     if(!this.recording)
     {
       this.worker.postMessage({command: 'clear'});
@@ -151,9 +160,11 @@ export default class Recorder
 
   _stopRecording()
   {
+    console.log('notRecording', this.recording);
     if(this.recording)
     {
       this.recording = false;
+      clearTimeout(this.time);
       this.time = null;
       this.worker.postMessage({command: 'getBuffers'});
     }

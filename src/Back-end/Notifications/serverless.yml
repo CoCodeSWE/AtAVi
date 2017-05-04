@@ -5,13 +5,10 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   environment:
-    SLACK_API_TOKEN: ''
+    SLACK_API_TOKEN: ${file(secret.yml):secret}
   profile: default
   apiKeys:
     - notifications-service
-  iamRoleStatements:
-    - Effect: Allow
-     
 
 functions:
   getChannelList:

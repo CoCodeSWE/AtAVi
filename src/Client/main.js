@@ -24,11 +24,11 @@ const tts_conf =
 const rec_conf =
 {
   worker_path: 'Script/RecorderWorker.js',
-  threshold: 2
+  threshold: 15  //FIXME rimettere ad un valore decente o utilizzare il default
 }
 
 //URL dell'endpoint
-const API_URL = 'http://sime1.ddns.net:3031/'; /**@todo cambiare url mettendo quello vero*/
+const API_URL = 'http://localhost:3031/'; /**@todo cambiare url mettendo quello vero*/
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -54,7 +54,7 @@ player.getObservable().subscribe(
     if(playing)
       recorder.stop();
     else
-      recorder.start();
+      recorder.enable();
   },
   error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
   complete: console.log

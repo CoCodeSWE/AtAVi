@@ -23,7 +23,7 @@ describe('Back-end', function()
       let guests = new dao(dynamo_client);
       describe('addGuest', function()
       {
-		    it("Nel caso in cui un ospite non venga aggiunto a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+		    it("Nel caso in cui un ospite non venga aggiunto a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
           guests.addGuest().subscribe(
           {
@@ -38,7 +38,8 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(0);
 					expect(complete.callCount).to.equal(0);
         });
-		    it("Nel caso in cui un ospite sia aggiunto correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function()
+				
+		    it("Nel caso in cui un ospite sia aggiunto correttamente, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'\\file{Observer} iscritto un'unica volta.",function()
         {
           guests.addGuest('mauro','Zero12').subscribe(
           {
@@ -51,9 +52,10 @@ describe('Back-end', function()
           expect(complete.callCount).to.equal(1);
         });
       });
+			
       describe('getGuest', function()
       {
-        it("Nel caso in cui un ospite non venga restituito a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui un ospite non venga restituito a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
 					guests.getGuest('Mauro', 'Zero12').subscribe(
           {
@@ -68,7 +70,8 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(0);
 					expect(complete.callCount).to.equal(0);
 				});
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta",function()
+				
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\\file{Observable} restituito deve chiamare il metodo \\file{next} dell'\\file{Observer} iscritto con i dati ottenuti dall'interrogazione, ed in seguito il metodo \\file{complete} un'unica volta",function()
         {
           guests.getGuest('Mauro', 'Zero12').subscribe(
           {
@@ -85,9 +88,10 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(1);
         });
       });
+			
       describe('getGuestList', function()
       {
-        it("Nel caso in cui un blocco di ospiti non venga restituito a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui un blocco di ospiti non venga restituito a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
           guests.getGuestList().subscribe(
           {
@@ -96,8 +100,8 @@ describe('Back-end', function()
             complete: complete
           });
 
-          dynamo_client.scan.yield(null, {Items: [{Item:{ name : "Mauro", company : "Zero12" }}], LastEvaluatedKey: 'Piero'});
-          dynamo_client.scan.yield(null, {Items: [{Item:{ name : "Piero", company : "Google" }}], LastEvaluatedKey: 'Luca'});
+          dynamo_client.scan.yield(null, {Items: [{ name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
+          dynamo_client.scan.yield(null, {Items: [{ name : "Piero", company : "Google" }], LastEvaluatedKey: 'Luca'});
           dynamo_client.scan.yield({ statusCode : 500 });
 
           expect(error.callCount).to.equal(1);
@@ -116,7 +120,8 @@ describe('Back-end', function()
 
           expect(complete.callCount).to.equal(0);
         });
-        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\file{Observable} restituito deve chiamare il metodo \file{next} dell'\file{Observer} iscritto, fino ad inviare tutte gli ospiti ottenuti dall'interrogazione, ed in seguito il metodo \file{complete} un'unica volta", function()
+				
+        it("Nel caso in cui l'interrogazione del DB vada a buon fine, l'\\file{Observable} restituito deve chiamare il metodo \\file{next} dell'\\file{Observer} iscritto, fino ad inviare tutte gli ospiti ottenuti dall'interrogazione, ed in seguito il metodo \\file{complete} un'unica volta", function()
         {
           guests.getGuestList().subscribe(
           {
@@ -125,8 +130,8 @@ describe('Back-end', function()
             complete: complete
           });
 
-          dynamo_client.scan.yield(null, {Items: [{ Item:{name : "Mauro", company : "Zero12" }}], LastEvaluatedKey: 'Piero'});
-          dynamo_client.scan.yield(null, {Items: [{ Item:{name : "Piero", company : "Google" }}]});
+          dynamo_client.scan.yield(null, {Items: [{name : "Mauro", company : "Zero12" }], LastEvaluatedKey: 'Piero'});
+          dynamo_client.scan.yield(null, {Items: [{name : "Piero", company : "Google" }]});
 
 					expect(error.callCount).to.equal(0);
 
@@ -144,9 +149,10 @@ describe('Back-end', function()
           expect(complete.callCount).to.equal(1);
         });
       });
+			
       describe('removeGuest', function()
       {
-        it("Nel caso in cui un ospite non venga eliminato a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui un ospite non venga eliminato a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
           guests.removeGuest('mou').subscribe(
           {
@@ -161,7 +167,8 @@ describe('Back-end', function()
 					expect(next.callCount).to.equal(0);
 					expect(complete.callCount).to.equal(0);
         });
-        it("Nel caso in cui un ospite sia eliminato correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function()
+				
+        it("Nel caso in cui un ospite sia eliminato correttamente, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'\\file{Observer} iscritto un'unica volta.",function()
         {
           guests.removeGuest('mou','Zero12').subscribe(
           {
@@ -174,9 +181,10 @@ describe('Back-end', function()
           expect(complete.callCount).to.equal(1);
         });
       });
+			
       describe('updateGuest', function()
       {
-        it("Nel caso in cui un ospite non venga aggiornato a causa di un errore del DB, l'\file{Observable} ritornato deve chiamare il metodo \file{error} dell'\file{Observer} iscritto.", function()
+        it("Nel caso in cui un ospite non venga aggiornato a causa di un errore del DB, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
         {
           guests.updateGuest('mou').subscribe(
           {
@@ -184,14 +192,15 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          dynamo_client.update.yield({statusCode: 500, message:"error updating guest"});
+          dynamo_client.put.yield({statusCode: 500, message:"error updating guest"});
           expect(error.callCount).to.equal(1);
 					let callError = error.getCall(0);
 					expect(callError.args[0].statusCode).to.equal(500);
 					expect(next.callCount).to.equal(0);
 					expect(complete.callCount).to.equal(0);
         });
-        it("Nel caso in cui un ospite sia aggiornato correttamente, l'\file{Observable} restituito deve chiamare il metodo \file{complete} dell'\file{Observer} iscritto un'unica volta.",function()
+				
+        it("Nel caso in cui un ospite sia aggiornato correttamente, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'\\file{Observer} iscritto un'unica volta.",function()
         {
           guests.updateGuest('mou','Zero12').subscribe(
           {
@@ -199,11 +208,41 @@ describe('Back-end', function()
             error: error,
             complete: complete
           });
-          dynamo_client.update.yield(null, {});
+          dynamo_client.put.yield(null, {});
           expect(error.callCount).to.equal(0);
           expect(complete.callCount).to.equal(1);
         });
       });
+			
+			describe('addConversation', function()
+      {
+        it("Nel caso in cui si provi ad aggiungere l'id di una conversazione già presente, l'\\file{Observable} ritornato deve chiamare il metodo \\file{error} dell'\\file{Observer} iscritto.", function()
+        {
+					guests.addConversation('Mauro', 'Zero12', 2).subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+					dynamo_client.update.yield({ statusCode: 500 }, null);
+					expect(error.callCount).to.equal(1);
+					let callError = error.getCall(0);
+					expect(callError.args[0].statusCode).to.equal(500);
+        });
+				
+        it("Nel caso in cui venga aggiunto correttamente l'id di una conversazione, l'\\file{Observable} restituito deve chiamare il metodo \\file{complete} dell'\\file{Observer} iscritto un'unica volta.",function()
+        {
+					guests.addConversation('Mauro', 'Zero12', 2).subscribe(
+					{
+						next: next,
+						error: error,
+						complete: complete
+					});
+					dynamo_client.update.yield(null, { Attributes: {conversations: [1,2] }});
+					expect(error.callCount).to.equal(0);
+					expect(complete.callCount).to.equal(1);
+				});
+			});
     });
   });
 });

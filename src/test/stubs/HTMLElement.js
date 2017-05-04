@@ -1,6 +1,4 @@
-const sinon = require('sinon');
-
-module.exports =
+export var HTMLElement =
 {
   appendChild: sinon.stub(),
   innerHTML: ''

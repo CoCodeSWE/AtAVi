@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const objectFilter = require('./object-filter');
 
 class NotificationService
 {
@@ -12,7 +13,7 @@ class NotificationService
     let self = this;
     let list = [];
     let types;
-    if (event.queryStringParameters.type)
+    if (event.queryStringParameters && event.queryStringParameters.type )
       types = event.queryStringParameters.type.split(',');
     else
       types = ['groups', 'users', 'channels'];
@@ -33,7 +34,7 @@ class NotificationService
               reject(
       				{
       					statusCode: 500,
-      					body: JSON.stringify({ message: 'Internal server error' })
+      					body: JSON.stringify({ message: 'Internal server error: channels', error: err })
       				});
             }
             else
@@ -63,7 +64,7 @@ class NotificationService
               reject(
       				{
       					statusCode: 500,
-      					body: JSON.stringify({ message: 'Internal server error' })
+      					body: JSON.stringify({ message: 'Internal server error: groups', error: err })
       				});
             }
             else
@@ -93,7 +94,7 @@ class NotificationService
               reject(
               {
                 statusCode: 500,
-                body: JSON.stringify({ message: 'Internal server error' })
+                body: JSON.stringify({ message: 'Internal server error: users', error: err })
               });
             }
             else
@@ -114,8 +115,6 @@ class NotificationService
       }
     };
 
-
-
     types.forEach( function(type)
     {
       promise = promise.then(type_functions[type]);
@@ -125,7 +124,7 @@ class NotificationService
     promise.then(function(result)
     {
       var final_result = [];
-      if (event.queryStringParameters.name)
+      if (event.queryStringParameters && event.queryStringParameters.name)
       {
           final_result = result.filter(item => item.name === event.queryStringParameters.name);
       }
@@ -144,7 +143,7 @@ class NotificationService
       context.succeed(
       {
         statusCode: 500,
-        body: JSON.stringify({ message: 'Internal server error' })
+        body: JSON.stringify({ message: 'Internal server error'})
       });
     });
   }
@@ -163,47 +162,46 @@ class NotificationService
       context.succeed(
       {
         statusCode: 400,
-        body: ''
+        body: JSON.stringify({ message: 'Bad Request' })
       });
       return;
     }
 
-
-    const allowed = ['actions','callback_id','color','fallback','title'];
-    let attachments_filtered = [];
-    body.msg.attachments.forEach(function(item)
-    {
-      let filtered = Object.keys(item)
-                      .filter(key => allowed.includes(key))
-                      .reduce((obj,key) =>
-                      {
-                        obj[key] = item[key];
-                        return obj;
-                      }, {});
-
-      attachments_filtered.push(filtered);
-    });
-
-
-    self.client.chat.postMessage(body.send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
-    {
-      if (err)
-      {
-        context.succeed(
-        {
-          body: '',
-          statusCode: 500
-        });
-      }
-      else
-      {
-        context.succeed(
-        {
-          body: '',
-          statusCode: 200
-        });
-      }
-    });
+		// Controllo che ci siano i campi obbligatori
+		if(body.msg.text && body.send_to)
+		{
+			let attachments_filtered = null;
+			if(body.msg.attachments)
+				objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
+			
+			self.client.chat.postMessage(body.send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
+			{
+				if (err)
+				{
+					context.succeed(
+					{
+						statusCode: 500,
+						body: JSON.stringify({ message: 'Internal server error' })
+					});
+				}
+				else
+				{
+					context.succeed(
+					{
+						statusCode: 200,
+						body: JSON.stringify({ message: 'success' })
+					});
+				}
+			});
+		}
+		else
+		{
+			context.succeed(
+			{
+				statusCode: 400,
+				body: JSON.stringify({ message: 'Bad Request' })
+			});
+		}
   }
 }
 

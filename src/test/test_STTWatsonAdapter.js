@@ -22,6 +22,7 @@ describe('Back-end', function()
 					expect(reject.callCount).to.equal(1);
 					let call = reject.getCall(0);
 					expect(call.args[0]).to.deep.equal({code: 500});
+
 				});
 			});
 		});

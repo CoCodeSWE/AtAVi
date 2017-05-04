@@ -1,4 +1,4 @@
-class Observer
+export default class Observer
 {
   constructor()
   {

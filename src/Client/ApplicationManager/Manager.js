@@ -55,11 +55,10 @@ export default class Manager
             else
             {
               new_app = new Application(pkg);
+              self._changeApplication(new_app);
+              self.application_name = name; //cambio il nome dell'applicazione attualmente in esecuzione.
               new_app.onload = function()
               {
-                console.log('onload')
-                self._changeApplication(new_app);
-                self.application_name = name; //cambio il nome dell'applicazione attualmente in esecuzione.
                 //in questo modo se viene richiesta nuovamente l'esecuzione di un'azione da parte di
                 //quella applicazione non interrogo nuovamente il registry. L'idea  è che una volta in esecuzione
                 //un'applicazione dovrà eseguire una serie di azioni prima di essere cambiata.

@@ -1,6 +1,4 @@
-const sinon = require('sinon');
-
-module.exports = {
+export var applicationRegistryClient = {
   query: sinon.stub(),
   register: sinon.stub()
 }
