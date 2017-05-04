@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const objectFilter = require('./object-filter');
 
 class NotificationService
 {
@@ -9,7 +10,6 @@ class NotificationService
 
   getChannelList(event, context)
   {
-    console.log(event);
     let self = this;
     let list = [];
     let types;
@@ -143,7 +143,7 @@ class NotificationService
       context.succeed(
       {
         statusCode: 500,
-        body: JSON.stringify({ message: 'Internal server error', error: err })
+        body: JSON.stringify({ message: 'Internal server error'})
       });
     });
   }
@@ -162,47 +162,46 @@ class NotificationService
       context.succeed(
       {
         statusCode: 400,
-        body: ''
+        body: JSON.stringify({ message: 'Bad Request' })
       });
       return;
     }
 
-
-    const allowed = ['actions','callback_id','color','fallback','title'];
-    let attachments_filtered = [];
-    body.msg.attachments.forEach(function(item)
-    {
-      let filtered = Object.keys(item)
-                      .filter(key => allowed.includes(key))
-                      .reduce((obj,key) =>
-                      {
-                        obj[key] = item[key];
-                        return obj;
-                      }, {});
-
-      attachments_filtered.push(filtered);
-    });
-
-
-    self.client.chat.postMessage(body.send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
-    {
-      if (err)
-      {
-        context.succeed(
-        {
-          body: '',
-          statusCode: 500
-        });
-      }
-      else
-      {
-        context.succeed(
-        {
-          body: '',
-          statusCode: 200
-        });
-      }
-    });
+		// Controllo che ci siano i campi obbligatori
+		if(body.msg.text && body.send_to)
+		{
+			let attachments_filtered = null;
+			if(body.msg.attachments)
+				objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
+			
+			self.client.chat.postMessage(body.send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
+			{
+				if (err)
+				{
+					context.succeed(
+					{
+						statusCode: 500,
+						body: JSON.stringify({ message: 'Internal server error' })
+					});
+				}
+				else
+				{
+					context.succeed(
+					{
+						statusCode: 200,
+						body: JSON.stringify({ message: 'success' })
+					});
+				}
+			});
+		}
+		else
+		{
+			context.succeed(
+			{
+				statusCode: 400,
+				body: JSON.stringify({ message: 'Bad Request' })
+			});
+		}
   }
 }
 

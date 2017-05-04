@@ -105,6 +105,16 @@ describe('Back-end', function()
 
 					expect(call.args[0]).to.have.property('statusCode', 200);
 				});
+				
+				it("Nel caso in cui sia passato un parametro non atteso, il campo statusCode della risposta deve essere impostato a 400.", function()
+				{
+					let ev = {body: JSON.stringify(bad_request)};
+					service.sendMsg(ev, context);
+					
+					expect(context.succeed.callCount).to.equal(1);	
+					let call = context.succeed.getCall(0);
+					expect(call.args[0]).to.have.property('statusCode', 400);
+				});
       });
     });
   });
@@ -209,7 +219,7 @@ const responseSendMsg =
 	{
 		//info posted message
 	}
-}
+};
 
 const request_event =
 {
@@ -240,4 +250,12 @@ const request_event =
     }],
     text : 'ciao'
   }
-}
+};
+
+const bad_request =
+{
+	msg:
+	{
+		"text": "testo di prova"
+	}
+};
