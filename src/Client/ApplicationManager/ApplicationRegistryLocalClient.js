@@ -25,7 +25,9 @@ export default class ApplicationRegistryLocalClient
   */
   register(name, pkg)
   {
+
     let self = this;
+
     return new Rx.Observable(function(observer)
     {
 			if(pkg.setup !== undefined && pkg.name !== undefined && pkg.cmdHandler !== undefined && pkg.ui !== undefined)

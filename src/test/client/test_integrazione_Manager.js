@@ -1,15 +1,21 @@
 import Manager from '../../Client/ApplicationManager/Manager';
-import {applicationRegistryClient} from '../../Client/ApplicationManager/ApplicationRegistryLocalClient';
-import {state} from '../../Client/ApplicationManager/State';
+import ApplicationRegistryLocalClient from '../../Client/ApplicationManager/ApplicationRegistryLocalClient';
+import ApplicationLocalRegistry from '../../Client/ApplicationManager/ApplicationLocalRegistry';
 import Application from '../../Client/ApplicationManager/Application';
 import {ConversationApp} from '../../Client/Applications/ConversationApp';
 
 const expect = chai.expect;
 
-let manager;
+let manager, html;
 beforeEach(function()
 {
-  manager = new Manager(applicationRegistryClient, '');
+  html =
+  {
+    appendChild : function(){},
+    removeChild : function(){},
+    innerHTML : '<!DOCTYPE html><html><head></head><body></body></html>'
+  }
+  manager = new Manager(new ApplicationRegistryLocalClient(new ApplicationLocalRegistry()), html);
 });
 
 describe('Integrazione Client', function()
@@ -20,41 +26,21 @@ describe('Integrazione Client', function()
     {
       describe('runApplication', function()
       {
-        it('Nel caso in cui l’applicazione sia presente all\'interno di State, non viene interrogato il Client.',function()
-        {
-          let conversation = new Application(ConversationApp);
-					manager.state.addApp(conversation, 'conversation');
-          manager.runApplication('conversation', 'cmd', {}, 'conversation');
-          expect(applicationRegistryClient.query.callCount).to.equal(0);
-        });
-
         it('Nel caso in cui l’applicazione non sia presente all\'interno di State, viene interrogato il Client per ottenerla e la vecchia applicazione viene salvata nello State.',function()
         {
-					manager.state.getApp = sinon.stub();
-					manager.state.addApp = sinon.stub();
-          manager.state.getApp.returns(undefined);
-          applicationRegistryClient.query.returns(Rx.Observable.of({cmdHandler: 'cmdHandler', name: 'name', setup: 'setup', ui: 'ui', libs: ['0', '1', '2']}));
-          manager.runApplication('app1', 'cmd', {}, 'name');
-          expect(applicationRegistryClient.query.callCount).to.equal(1);
-          manager.runApplication('app2', 'cmd', {}, 'name');
-					expect(manager.state.addApp.callCount).to.equal(1);
-        });
-      });
-
-      describe('setFrame', function()
-      {
-        it('Deve chiamare appendChild sul parametro passato al metodo per poter mostrare l’interfaccia utente.', function()
-        {
-					var new_frame =
-					{
-						appendChild: sinon.stub(),
-						removeChild: sinon.stub(),
-						innerHTML: 'frame'
-					};
-
-          manager.setFrame(new_frame);
-					expect(new_frame.appendChild.callCount).to.equal(1);
-
+          let conversation = new Application(ConversationApp);
+          manager.registry_client.register('conversation', ConversationApp).subscribe(
+          {
+            next : function(data){ console.log(data); },
+            error : function(err){ console.log(err); },
+            complete : function()
+            {
+              manager.runApplication('conversation', 'cmd', {}, 'conversation');
+              expect(manager.application_name).to.equal('conversation');
+              expect(manager.ui).to.equal(manager.application.ui);
+              expect(manager.application.name).to.equal(conversation.name);
+            }
+          });
         });
       });
     });

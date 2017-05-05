@@ -39,15 +39,14 @@ export default class Manager
     if (this.application_name !== app)
     {
       let new_app = this.state.getApp(app);
-
       // se non si trova nello state devo recuperarla dall'ApplicationRegistryLocalClient tramite il metodo query()
       if (new_app === undefined)
       {
-        this.registry_client.query(app).subscribe(
+        self.registry_client.query(app).subscribe(
         {
           next: function(pkg)
           {
-            console.log(pkg);
+            console.log("PACKAGE", pkg);
             if(!pkg.setup)  // package parziale, interfaccia condivisa con un'altra applicazione
             {
               self.runApplication(pkg.name, cmd, params, name);
@@ -66,14 +65,15 @@ export default class Manager
               }
             }
           },
-          error: (err) => { console.log(err); }
+          error: (err) => { console.log(err); },
+          complete : function(){}
         });
       }
       else
       {
         this.application_name = name; // applicazione attualmente in esecuzione
         this._changeApplication(new_app);
-        this.application.runCmd(cmd, params);
+      //  this.application.runCmd(cmd, params);
       }
     }
     else
@@ -108,9 +108,6 @@ export default class Manager
     //aggiungo la nuova applicazione da istanziare al frame HTML
     this.ui = this.application.getUI();
     this.frame.appendChild(this.ui);
-    console.log(this.application_name);
-    console.log(this.frame);
-    console.log(this.ui);
   }
 
 }
