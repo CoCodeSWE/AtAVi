@@ -146,7 +146,7 @@ module.exports = function(grunt) {
       {
         files:
         {
-          'dist/Back-end/APIGateway': ['src/Back-end/STT/STTWatsonAdapter.js', 'src/Back-end/Users/VocalLoginMicrosoftModule.js']
+          'src/Back-end/APIGateway': ['dist/Back-end/STT/STTWatsonAdapter.js', 'src/Back-end/Users/VocalLoginMicrosoftModule.js']
         }
       }
     }

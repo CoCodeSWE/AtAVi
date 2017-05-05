@@ -18,15 +18,15 @@ const STT_CONF =
 // VocalLoginMicorsoftModule
 const VOCAL_LOGIN_CONF =
 {
-  key: process.env.MICROSOFT_SPEAKER_RECOGNITION_KEY,
+  key: process.env.SPEAKER_RECOGNITION_KEY,
   min_confidence: 2
 }
 
 // creazione moduli per dependency injection
 let sns = new SNS({ sns: '2010-03-31' });
-let stt = new STTWatsonAdapter(sb, new STTWatsonAdapter(STT_CONF));
+let stt = new STTWatsonAdapter(sb, new SpeechToTextV1(STT_CONF));
 let vocal = new VocalLoginMicrosoftModule(VOCAL_LOGIN_CONF);
 
 let gateway = new VocalAPI(vocal, jwt, rp, stt, sns);
 
-module.exports.query = gateway.query.bind(gateway);
+module.exports.query = gateway.queryLambda.bind(gateway);

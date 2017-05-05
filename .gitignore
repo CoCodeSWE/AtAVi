@@ -4,6 +4,7 @@ coverage
 .serverless
 dist
 mochawesome-reports
+mochawesome-report
 *.map
 secret.yml
 .sass-cache

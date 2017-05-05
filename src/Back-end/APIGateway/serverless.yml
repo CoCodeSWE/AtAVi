@@ -13,11 +13,25 @@ provider:
   region: eu-central-1
   profile: default
   environment:
-    USERS_SERVICE_URL:
-    VA_SERVICE_URL:
+    USERS_SERVICE_KEY: ${file(secret.yml):users.key}
+    USERS_SERVICE_URL: ${file(secret.yml):users.url}
+    VA_SERVICE_KEY: ${file(secret.yml):va.key}
+    VA_SERVICE_URL: ${file(secret.yml):va.url}
+    RULES_SERVICE_URL: ${file(secret.yml):rules.url}
+    RULES_SERVICE_KEY: ${file(secret.yml):rules.key}
+    SNS_TOPIC: Notification-${opt:stage, self:provider.stage}
+    SNS_TOPIC_ARN: "arn:aws:sns:${opt:region, self:provider.region}:${file(secret.yml):account.id}:${self:provider.environment.SNS_TOPIC}"
+    SPEAKER_RECOGNITION_KEY: ${file(secret.yml):speaker_recognition.key}
+    WASTON_USERNAME: ${file(secret.yml):watson.username}
+    WATSON_PASSWORD: ${file(secret.yml):watson.password}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "sns:publish"
+      Resource: "arn:aws:sns:${opt:region, self:provider.region}:*:${self:provider.environment.SNS_TOPIC}"
 functions:
   query:
-    handler: handler.queryLambda
+    handler: handler.query
     events:
       - http:
           path: query

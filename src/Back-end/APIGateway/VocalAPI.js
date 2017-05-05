@@ -1,8 +1,15 @@
-//TODO: aggiungere session_id e data a tutte le richieste
-// nel file dd indica parametri che bisogna definire dove si trovino all'interno
-//della risposta dell'assistente virtuale.
+/**
+* @todo manca sns publish per notificare quando si può.
+*/
 const Rx = require('rxjs/Rx');
 
+const USERS_SERVICE_URL = process.env.USERS_SERVICE_URL;
+const RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
+const VA_SERVICE_URL = process.env.VA_SERVICE_URL;
+const USERS_SERVICE_KEY = process.env.USERS_SERVICE_KEY;
+const RULES_SERVICE_KEY = process.env.RULES_SERVICE_KEY;
+const VA_SERVICE_KEY = process.env.VA_SERVICE_KEY;
+const SPEAKER_RECOGNITION_KEY = process.env.SPEAKER_RECOGNITION_KEY;
 class VocalAPI
 {
   /**
@@ -15,9 +22,6 @@ class VocalAPI
   */
   constructor(vocal, jwt, rp, stt, sns)
   {
-    this.USERS_SERVICE_URL = process.env.USERS_SERVICE_URL;
-    this.RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
-    this.VA_SERVICE_URL = process.env.VA_SERVICE_URL;
     this.vocal = vocal;
     this.request_promise = rp;
     this.sns = sns;
@@ -58,7 +62,12 @@ class VocalAPI
         body:
         {
           text: text,
-          session_id: body.session_id
+          session_id: body.session_id,
+          data: body.data
+        },
+        headers:
+        {
+          'x-api-key': VA_SERVICE_KEY
         },
         json: true
       }
@@ -83,6 +92,7 @@ class VocalAPI
 				method: 'POST',
 				uri: self.RULES_SERVICE_URL,
 				body: rule,
+        headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
 
@@ -114,6 +124,7 @@ class VocalAPI
 			{
 				method: 'GET',
 				uri: `${self.RULES_SERVICE_URL}/${id}`,
+        headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
 
@@ -145,6 +156,7 @@ class VocalAPI
 			{
 				method: 'GET',
 				uri: self.RULES_SERVICE_URL,
+        headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
 
@@ -176,6 +188,7 @@ class VocalAPI
 			{
 				method: 'DELETE',
 				uri: `${self.RULES_SERVICE_URL}/${id}`,
+        headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
 
@@ -207,6 +220,7 @@ class VocalAPI
 			{
 				method: 'PUT',
 				uri: `${self.RULES_SERVICE_URL}/${rule.id}`,
+        headers:{'x-api-key': RULES_SERVICE_KEY},
 				body: rule,
 				json: true
 			};
@@ -241,6 +255,7 @@ class VocalAPI
 			{
 				method: 'POST',
 				uri: self.USERS_SERVICE_URL,
+        headers:{'x-api-key': USERS_SERVICE_KEY},
 				body: user,
 				json: true
 			};
@@ -337,6 +352,7 @@ class VocalAPI
 			{
 				method: 'GET',
 				uri: `${self.USERS_SERVICE_URL}/${username}`,
+        headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
 
@@ -371,6 +387,7 @@ class VocalAPI
 			{
 				method: 'GET',
 				uri: `${self.USERS_SERVICE_URL}?${query_string}`,
+        headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
 
@@ -467,6 +484,7 @@ class VocalAPI
 			{
 				method: 'DELETE',
 				uri: `${self.USERS_SERVICE_URL}/${username}`,
+        headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
 
@@ -562,6 +580,7 @@ class VocalAPI
 			{
 				method: 'PUT',
 				uri: `${self.USERS_SERVICE_URL}/${user.username}`,
+        headers:{'x-api-key': USERS_SERVICE_KEY},
 				body: user,
 				json: true
 			};
@@ -596,6 +615,7 @@ class VocalAPI
       {
         method: 'POST',
         uri: self.VA_SERVICE_URL,
+        headers:{'x-api-key': VA_SERVICE_KEY},
         json: true,
         body:
         {
@@ -617,16 +637,16 @@ class VocalAPI
           };
           self._addRule(
           {
-            name: params.name,
+            name: params.rule_name,
             task:
             {
               task: params.task_name
             },
             targets:[
             {
-              name: target_name,
-              member: target_member,
-              copmany: target_company
+              name: params.target_name,
+              member: params.target_member,
+              company: params.target_company
             }]
           }).subscribe(
           {
@@ -651,7 +671,7 @@ class VocalAPI
         case 'rule.get':
           let rule;
           options.body.event = {name: 'getSuccess'};
-          self._getRule(/*dd*/).subscribe(
+          self._getRule(params.id).subscribe(
           {
             next: (data) => {rule = data;},
             error: error(context),
@@ -668,7 +688,7 @@ class VocalAPI
             name: 'removeRuleSuccess',
             data: {}
           };
-          self._removeRule(/*da definire*/).subscribe(
+          self._removeRule(params.rule_id).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -680,7 +700,7 @@ class VocalAPI
             name: 'updateRuleSuccess',
             data: {}
           };
-          this._updateRule(/*dd*/).subscribe(
+          this._updateRule({}).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -692,7 +712,12 @@ class VocalAPI
             name: 'addUserSuccess',  // da definire il vero event come anche i parametri necessari
             data: {}
           };
-          self._addUser(/*da definire*/).subscribe(
+          self._addUser(
+          {
+            name: params.user_name,
+            company: params.company,
+            username: params.user_username
+          }).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -700,7 +725,7 @@ class VocalAPI
           break;
         case 'user.addEnrollment':
           options.body.event = {name: "addUserEnrollmentSuccess"}
-          this._addUserEnrollment({audio: audio_buffer, username: 'fixme'/**/}).subscribe(
+          this._addUserEnrollment({audio: audio_buffer, username: params.user_username}).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -709,7 +734,7 @@ class VocalAPI
         case 'user.get':
           let user;
           options.body.event = {name: 'getUserSuccess'};
-          self._getUser(/*dd*/).subscribe(
+          self._getUser(params.user_username).subscribe(
           {
             next: (data) => {user = data;},
             error: error(context),
@@ -723,7 +748,7 @@ class VocalAPI
         case 'user.getList':
           let users;
           options.body.event = {name: 'getUserListSuccess'};
-          self._getUserList(/*dd*/).subscribe(
+          self._getUserList(/**@todo add query parametr*/).subscribe(
           {
             next: (data) => {users = data},
             error: error(context),
@@ -735,7 +760,7 @@ class VocalAPI
           });
           break;
         case 'user.login':
-          this._loginUser({audio: audio_buffer, username: 'username' /*da definire dove si trova*/}).subscribe(
+          this._loginUser({audio: audio_buffer, username: params.user_usernames}).subscribe(
           {
             next: function(token)
             {
@@ -756,7 +781,7 @@ class VocalAPI
             name: 'removeUserSuccess',
             data: {}
           };
-          self._removeUser(/*da definire*/).subscribe(
+          self._removeUser(params.user_username).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -764,7 +789,7 @@ class VocalAPI
           break;
         case 'user.resetEnrollment':
         options.body.event = {name: "resetUserEnrollmentSuccess"}
-        this._resetUserEnrollment(/*dd*/).subscribe(
+        this._resetUserEnrollment(params.user_username).subscribe(
         {
           complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
           error: error(context)

@@ -62,9 +62,14 @@ class ApiAiVAAdapter
 		return this.request_promise(options).then(function(response)
 		{
 			// Creo va_response per mappare la risposta di api.ai in un oggetto VAResponse
+      let action;
+      if(response.result.action && !response.result.actionIncomplete)
+        action = response.result.action;
+      else
+        action = this.DEF_ACTION;
       let va_response =
 			{
-				action: response.result.action,
+				action: action,
 				res:
 				{
 					text_request: response.result.resolvedQuery,
