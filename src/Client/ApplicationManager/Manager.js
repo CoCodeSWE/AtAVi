@@ -73,7 +73,7 @@ export default class Manager
       {
         this.application_name = name; // applicazione attualmente in esecuzione
         this._changeApplication(new_app);
-      //  this.application.runCmd(cmd, params);
+        this.application.runCmd(cmd, params);
       }
     }
     else
