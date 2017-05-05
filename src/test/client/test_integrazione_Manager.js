@@ -26,38 +26,21 @@ describe('Integrazione Client', function()
     {
       describe('runApplication', function()
       {
-        /*it('Nel caso in cui l’applicazione sia presente all\'interno di State, non viene interrogato il Client.',function()
-        {
-          let conversation = new Application(ConversationApp);
-					manager.state.addApp(conversation, 'conversation');
-          manager.runApplication('conversation', 'cmd', {}, 'conversation');
-          expect(manager.registry_client.query.callCount).to.equal(0);
-        });*/
-
         it('Nel caso in cui l’applicazione non sia presente all\'interno di State, viene interrogato il Client per ottenerla e la vecchia applicazione viene salvata nello State.',function()
         {
           let conversation = new Application(ConversationApp);
-					manager.registry_client.register('conversation', ConversationApp);
-          manager.runApplication('conversation', 'COMANDO', {}, 'conversation');
-          expect(manager.application).to.deep.equal(conversation);
-					//expect(manager.state.addApp.callCount).to.equal(1);
-        });
-      });
-
-      describe('setFrame', function()
-      {
-        it('Deve chiamare appendChild sul parametro passato al metodo per poter mostrare l’interfaccia utente.', function()
-        {
-					var new_frame =
-					{
-						appendChild: function(){},
-						removeChild: function(){},
-						innerHTML: 'frame'
-					};
-
-          manager.setFrame(new_frame);
-					expect(manager.frame).to.deep.equal(new_frame);
-
+          manager.registry_client.register('conversation', ConversationApp).subscribe(
+          {
+            next : function(data){ console.log(data); },
+            error : function(err){ console.log(err); },
+            complete : function()
+            {
+              manager.runApplication('conversation', 'cmd', {}, 'conversation');
+              expect(manager.application_name).to.equal('conversation');
+              expect(manager.ui).to.equal(manager.application.ui);
+              expect(manager.application.name).to.equal(conversation.name);
+            }
+          });
         });
       });
     });

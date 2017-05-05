@@ -42,7 +42,7 @@ export default class Manager
       // se non si trova nello state devo recuperarla dall'ApplicationRegistryLocalClient tramite il metodo query()
       if (new_app === undefined)
       {
-        this.registry_client.query(app).subscribe(
+        self.registry_client.query(app).subscribe(
         {
           next: function(pkg)
           {
@@ -65,7 +65,8 @@ export default class Manager
               }
             }
           },
-          error: (err) => { console.log(err); }
+          error: (err) => { console.log(err); },
+          complete : function(){}
         });
       }
       else
