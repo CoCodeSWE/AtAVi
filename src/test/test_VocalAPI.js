@@ -175,7 +175,7 @@ describe('Back-end', function()
 
 			describe('queryLambda', function ()
 			{
-				
+
 				it("Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.", function(done)
 				{
 
@@ -188,12 +188,24 @@ describe('Back-end', function()
 
 				it("Se l\'action del body della risposta è uguale a 'rule.add' allora il metodo deve chiamare il metodo privato _addRule.", function()
 				{
-					
+					let stub = sinon.stub(api, "_addRule");
+          stub.returns(Observable.empty());
+          promise.onCall(0).returns(Promise.resolve(JSON.stringify(
+          {
+            //corpo della risposta di VAService con action settato
+          })));
+          promise.onCall(1).returns();  //viene chiamato VAService con un evento di successo, restituire una risposta qualunque di VAService.
+          context.succeed = function(response)
+          {
+            //controllo che i campi non siano nulli, quindi chiamo done
+            done();
+          }
+          api.query(event, context);  //un qualunque event valido, controllare che campi deve avere
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.add' allora il metodo deve chiamare il metodo privato _addUser.", function()
 				{
-	
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.addEnrollment' allora il metodo deve chiamare il metodo privato _addUserEnrollment.", function()
@@ -203,127 +215,127 @@ describe('Back-end', function()
 
 				it("Se l\'action del body della risposta è uguale a 'rule.get' allora il metodo deve chiamare il metodo privato _getRule.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'rule.getList' allora il metodo deve chiamare il metodo privato _getRuleList.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.get' allora il metodo deve chiamare il metodo privato _getUser.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.getList' allora il metodo deve chiamare il metodo privato _getUserList.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.login' allora il metodo deve chiamare il metodo privato _loginUser.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'rule.remove' allora il metodo deve chiamare il metodo privato _removeRule.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.remove' allora il metodo deve chiamare il metodo privato _removeUser.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.resetEnrollment' allora il metodo deve chiamare il metodo privato _resetUserEnrollment.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'rule.update' allora il metodo deve chiamare il metodo privato _updateRule.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.update' allora il metodo deve chiamare il metodo privato _updateUser.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _addRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
-				
+
 				});
 
 				it("Se durante la chiamata al metodo privato _addUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _addUserEnrollment si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-				
+
 				});
 
 				it("Se durante la chiamata al metodo privato _getRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _getRuleList si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _getUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _getUserList si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _loginUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _removeRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _removeUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _resetUserEnrollment si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _updateRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
-					
+
 				});
 
 				it("Se durante la chiamata al metodo privato _updateUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
-					
+
 				});
 
 				it("Se la chiamata al metodo sns.publish genera un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente campo statusCode pari allo status dell\'errore.", function()
 				{
-					
+
 				});
 
 				it("Se lo status code della risposta di un microservizio è pari a 200 e l\'action contenuta nel suo body non corrisponde a nessuna action supportata dal back-end allora il metodo deve rielabolare la risposta e inoltrarla.", function()
 				{
-					
+
 				});
 			});
 
@@ -458,7 +470,7 @@ let enrollment =
 	username: 'mou'
 }
 
-let body_va = 
+let body_va =
 {
 	'app': 'conversation',
 	'query':
@@ -472,9 +484,9 @@ let body_query_lambda =
 {
 	'app': 'conversation',
 	'audio': 'csacascsayucs',
-	'data': 
+	'data':
 	{
-		
+
 	},
 	'session_id': '1'
 };

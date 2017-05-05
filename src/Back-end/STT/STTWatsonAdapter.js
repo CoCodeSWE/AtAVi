@@ -8,7 +8,7 @@ class STTWatsonAdapter
 {
 	constructor(sb, stt)
 	{
-		this.stream_buffer = sb;
+		this.streamifier = sb;
 		this.stt = stt;
 	}
 
@@ -21,7 +21,7 @@ class STTWatsonAdapter
 	{
 		var self = this;
     let params = {
-      audio: audio,
+      audio: this.streamifier.createReadStream(audio),
       content_type: type
     };
 		return new Promise(function(fulfill, reject)

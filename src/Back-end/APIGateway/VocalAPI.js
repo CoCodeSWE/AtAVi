@@ -52,8 +52,9 @@ class VocalAPI
       return;
     }
     let audio_buffer = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
-    self.stt.speechToText(audio_buffer, 'audio/l16').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
+    self.stt.speechToText(audio_buffer, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
+      console.log("stt: ", text);
       self.text_request = text;
       let req_options =
       {
@@ -61,9 +62,13 @@ class VocalAPI
         uri: VA_SERVICE_URL,
         body:
         {
-          text: text,
-          session_id: body.session_id,
-          data: body.data
+          app: body.app,
+          query:
+          {
+            text: text,
+            session_id: body.session_id,
+            data: body.data
+          }
         },
         headers:
         {
@@ -72,7 +77,7 @@ class VocalAPI
         json: true
       }
       return self.request_promise(req_options); //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
-    }).then(self._onVaResponse(context, audio_buffer));
+    }).then(self._onVaResponse(context, audio_buffer)).catch(console.log);
   }
   //context.succeed(statusCode: 200, body: JSON.stringify(response));
 

@@ -1,3 +1,5 @@
+const DEF_ACTION = 'admin.displayMsgs';
+
 class ApiAiVAAdapter
 {
 	/**
@@ -18,7 +20,6 @@ class ApiAiVAAdapter
     /** @constant {string} */
     this.VERSION = '20150910';
     this.LANG = 'en';
-    this.DEF_ACTION = 'admin.displayMsgs'
 	}
 
 	/**
@@ -66,7 +67,7 @@ class ApiAiVAAdapter
       if(response.result.action && !response.result.actionIncomplete)
         action = response.result.action;
       else
-        action = this.DEF_ACTION;
+        action = DEF_ACTION;
       let va_response =
 			{
 				action: action,

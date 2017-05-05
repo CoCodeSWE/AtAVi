@@ -22,7 +22,7 @@ provider:
     SNS_TOPIC: Notification-${opt:stage, self:provider.stage}
     SNS_TOPIC_ARN: "arn:aws:sns:${opt:region, self:provider.region}:${file(secret.yml):account.id}:${self:provider.environment.SNS_TOPIC}"
     SPEAKER_RECOGNITION_KEY: ${file(secret.yml):speaker_recognition.key}
-    WASTON_USERNAME: ${file(secret.yml):watson.username}
+    WATSON_USERNAME: ${file(secret.yml):watson.username}
     WATSON_PASSWORD: ${file(secret.yml):watson.password}
   iamRoleStatements:
     - Effect: Allow

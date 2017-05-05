@@ -5,7 +5,7 @@ const STTWatsonAdapter = require('STTWatsonAdapter');
 const rp = require('request-promise');
 const jwt = require('jsonwebtoken');
 const VocalAPI = require('./VocalAPI');
-const sb = require('stream-buffer');
+const sb = require('streamifier');
 const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 // configurazioni
