@@ -176,7 +176,7 @@ describe('Back-end', function()
 			describe('queryLambda', function ()
 			{
 				
-				it("Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.", function()
+				it("Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.", function(done)
 				{
 
 				});
@@ -251,67 +251,67 @@ describe('Back-end', function()
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _addRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _addRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
 				
 				});
 
-				it("Se durante la chiamata al metodo privato _addUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _addUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _addUserEnrollment si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _addUserEnrollment si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 				
 				});
 
-				it("Se durante la chiamata al metodo privato _getRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _getRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _getRuleList si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _getRuleList si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _getUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _getUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _getUserList si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _getUserList si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _loginUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _loginUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _removeRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _removeRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _removeUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _removeUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _resetUserEnrollment si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _resetUserEnrollment si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _updateRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _updateRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rule.", function()
 				{
 					
 				});
 
-				it("Se durante la chiamata al metodo privato _updateUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato a 500.", function()
+				it("Se durante la chiamata al metodo privato _updateUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio User.", function()
 				{
 					
 				});
