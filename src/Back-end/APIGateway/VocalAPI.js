@@ -657,7 +657,7 @@ class VocalAPI
         case 'rule.getList':
           let rules;
           options.body.event = {name: 'getRuleListSuccess'};
-          self._getRuleList(/*dd*/).subscribe(
+          self._getRuleList(''/*dd*/).subscribe(
           {
             next: (data) => {rules = data},
             error: error(context),
@@ -801,7 +801,7 @@ class VocalAPI
             name: 'userUpdateSuccess',
             data: {}
           };
-          this._updateuser(/*dd*/).subscribe(
+          this._updateuser(''/*dd*/).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
