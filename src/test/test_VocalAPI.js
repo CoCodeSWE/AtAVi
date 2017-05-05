@@ -175,27 +175,15 @@ describe('Back-end', function()
 
 			describe('queryLambda', function ()
 			{
+				
 				it("Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.", function()
 				{
-					stt.speechToText.returns(Promise.reject(errore));
-					api.queryLambda(event, context);
-					setTimeout(function()
-					{
-						expect(context.succeed.callCount).to.equal(1);
-						expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', 500);
-					});
+
 				});
 
 				it("Se lo status della risposta ricevuta dall\'assistente virtuale è diverso da 200 allora il metodo deve chiamare il metodo succeed di context con un oggetto di tipo LambdaResponse come parametro avente il campo statusCode uguale a quello ricevuto e corpo del messaggio 'Errore nel contattare l\'assistente virtuale'.", function()
 				{
-					stt.speechToText.returns(Promise.resolve('Text'));
-					promise.onCall(0).returns(Promise.reject(errore_VA));
-					api.queryLambda(event, context);
-					setTimeout(function()
-					{
-						expect(context.succeed.callCount).to.equal(1);
-						expect(context.succeed.getCall(0).args[0]).to.have.property('statusCode', errore_VA.statusCode);
-					});
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'rule.add' allora il metodo deve chiamare il metodo privato _addRule.", function()
@@ -205,12 +193,12 @@ describe('Back-end', function()
 
 				it("Se l\'action del body della risposta è uguale a 'user.add' allora il metodo deve chiamare il metodo privato _addUser.", function()
 				{
-					
+	
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.addEnrollment' allora il metodo deve chiamare il metodo privato _addUserEnrollment.", function()
 				{
-					
+
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'rule.get' allora il metodo deve chiamare il metodo privato _getRule.", function()
@@ -448,7 +436,7 @@ let errore =
 let errore_VA =
 {
 	statusCode: 404,
-	message: 'Errore nel contattare l\'assistente virtuale'
+	message: 'Bad Request'
 }
 
 let rule =
