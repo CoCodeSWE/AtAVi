@@ -186,21 +186,20 @@ describe('Back-end', function()
 
 				});
 
-				it("Se l\'action del body della risposta è uguale a 'rule.add' allora il metodo deve chiamare il metodo privato _addRule.", function()
+				it("Se l\'action del body della risposta è uguale a 'rule.add' allora il metodo deve chiamare il metodo privato _addRule.", function(done)
 				{
-					let stub = sinon.stub(api, "_addRule");
-          stub.returns(Observable.empty());
-          promise.onCall(0).returns(Promise.resolve(JSON.stringify(
-          {
-            //corpo della risposta di VAService con action settato
-          })));
-          promise.onCall(1).returns();  //viene chiamato VAService con un evento di successo, restituire una risposta qualunque di VAService.
-          context.succeed = function(response)
+					api._addRule = sinon.stub();
+          api._addRule.returns(Observable.empty());
+					stt.speechToText.returns(Promise.resolve('Test'));
+          promise.onCall(0).returns(Promise.resolve(va_response));
+          promise.onCall(1).returns(Promise.resolve(empty_action_response));  
+					context.succeed = function(response)
           {
             //controllo che i campi non siano nulli, quindi chiamo done
+						expect(api._addRule.callCount).to.equal(1);
             done();
           }
-          api.query(event, context);  //un qualunque event valido, controllare che campi deve avere
+          api.queryLambda(event, context); 
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.add' allora il metodo deve chiamare il metodo privato _addUser.", function()
@@ -494,4 +493,26 @@ let body_query_lambda =
 let event =
 {
 	body: JSON.stringify(body_query_lambda)
+};
+
+let va_response_addRule = 
+{
+	'action': 'rule.add',
+	'res':
+	{
+		text_request: 'Hi',
+		text_response: 'Hi'
+	},
+	'session_id': '1'
+};
+
+let empty_action_response = 
+{
+	'action': '',
+	'res':
+	{
+		text_request: 'Hi',
+		text_response: 'Hi'
+	},
+	'session_id': '1'
 };
