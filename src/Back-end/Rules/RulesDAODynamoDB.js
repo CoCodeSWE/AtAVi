@@ -32,7 +32,7 @@ class RulesDAODynamoDB
       {
         'TableName': self.table,
         'Item': mapProperties(rule, attr_map),
-				'ConditionExpression': 'attribute_not_exists(id)'
+				'ConditionExpression': 'attribute_not_exists(rule_name)'
       };
       self.client.put(params, function(err, data)
       {
@@ -48,7 +48,7 @@ class RulesDAODynamoDB
 		* Ottiene la rule avente l'id passato come parametro
 		* @param {String} id - Parametro contenente l'id della Rule che si vuole ottenere.
 		*/
-  getRule(id)
+  getRule(name)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -58,7 +58,7 @@ class RulesDAODynamoDB
         TableName: self.table,
         Key:
         {
-          'id': id
+          'rule_name': name
         }
       };
       self.client.get(params, function(err, data)
@@ -108,7 +108,7 @@ class RulesDAODynamoDB
 		* Elimina la rule avente l'id passato come parametro
 		* @param {String} id - Parametro contenente l'id della Rule che si vuole rimuovere
 		*/
-  removeRule(id)
+  removeRule(name)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -118,9 +118,9 @@ class RulesDAODynamoDB
         TableName: self.table,
         Key:
         {
-          'id': id
+          'rule_name': name
         },
-        ConditionExpression: 'attribute_exists(id)'
+        ConditionExpression: 'attribute_exists(rule_name)'
       };
       self.client.delete(params, function(err, data)
       {

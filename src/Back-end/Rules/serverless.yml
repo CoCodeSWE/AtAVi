@@ -43,25 +43,25 @@ functions:
     handler: deleteRule.deleteRule
     events:
       - http:
-          path: rules/{id}
+          path: rules/{name}
           method: delete
           private: true
           request:
             parameters:
               paths:
-                id: true
+                name: true
 
   getRule:
     handler: getRule.getRule
     events:
       - http:
-          path: rules/{id}
+          path: rules/{name}
           method: get
           private: true
           request:
             parameters:
               paths:
-                id: true
+                name: true
 
   getRuleList:
     handler: getRuleList.getRuleList
@@ -90,13 +90,13 @@ functions:
     handler: updateRule.updateRule
     events:
       - http:
-          path: rules/{id}
+          path: rules/{name}
           method: put
           private: true
           request:
             parameters:
               paths:
-                id: true
+                name: true
 
 resources:
   Resources:
@@ -105,10 +105,10 @@ resources:
       Properties:
         TableName: ${self:provider.environment.RULES_TABLE}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: rule_name
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: rule_name
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
