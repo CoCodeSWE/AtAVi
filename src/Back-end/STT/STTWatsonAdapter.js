@@ -1,3 +1,12 @@
+/**
+*	Questa classe si occupa di convertire l'interfaccia fornita dal servizio di Speech to Text di IBM in una più adatta alle esigenze dell'applicazione,
+* definita da \file{STTModule}. \\ Facendo da Adapter tra le API del servizio di Speech to Text di IBM (adaptee) e
+* l'interfaccia \file{STTModule} (target) utilizzata da \file{APIGateway::VocalAPI}, permette l'interoperabilità tra queste due interfacce.
+* @author Pier Paolo Tricomi
+* @version 0.0.6
+* @since 0.0.3-alpha
+*/
+
 const http = require("http");
 const Promise = require('bluebird');
 //var fs = require('fs');

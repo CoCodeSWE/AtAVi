@@ -1,6 +1,9 @@
-//forse non serve jwt, magari lo fa api gateway
-//forse i test sono da aggiornare, non so se sono stati definiti correttamente
-
+/**
+* Questa classe si occupa di implementare l'interfaccia \file{WebhookService}, implementando un Webhook che fornisce una risposta ad api.ai.
+* @author Andrea Magnan
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 class ConversationWebhookService
 {
   /**

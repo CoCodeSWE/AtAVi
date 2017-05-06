@@ -1,10 +1,16 @@
+/**
+* Classe che si occupa di implementare l'interfaccia \file{AgentsDAO}, utilizzando un database DynamoDB come supporto per la memorizzazione dei dati.
+* @author Luca Bertolini
+* @version 0.0.5
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 const mapProperties = require('map-object-properties');
 
 class AgentsDAODynamoDB
 {
 	/**
-		* Costruttore della classes
+		* Costruttore della classe
 		* @param {AWS.DynamoDB.DocumentClient} client - Modulo di Node.js utilizzato per l'accesso al database DynamoDB contenente la tabella degli agenti
 		*/
 	constructor(client)
@@ -137,7 +143,7 @@ class AgentsDAODynamoDB
 			});
 		});
 	}
-	
+
 	/**
 		* Viene ritornata la funzione di callback per la gesitone dei blocchi di getAgentList
 		* @param observer {AgentObserver} - Observer da notificare

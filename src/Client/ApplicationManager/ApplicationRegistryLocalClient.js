@@ -1,8 +1,11 @@
-import Rx from 'rxjs/Rx';
-
 /**
 * @desc Questa classe si occupa di implementare l'interfaccia fornita da ApplicationRegistryClient. Interroga un LocalRegistry.
+* @author Andrea Magnan
+* @version 0.0.4
+* @since 0.0.3-alpha
 */
+import Rx from 'rxjs/Rx';
+
 export default class ApplicationRegistryLocalClient
 {
   /**

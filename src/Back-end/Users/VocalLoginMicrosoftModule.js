@@ -1,3 +1,9 @@
+/**
+* Interfaccia che rappresenta un modulo di Node.js che viene utilizzato per il login vocale degli utenti.
+* @author Mauro Carlin
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 
 class VocalLoginMicrosoftModule

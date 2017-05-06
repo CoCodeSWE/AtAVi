@@ -1,3 +1,9 @@
+/**
+* Classe che si occupa di implementare l'interfaccia \file{ConversationsDAO}, utilizzando un database DynamoDB come supporto per la memorizzazione dei dati.
+* @author Mauro Carlin
+* @version 0.0.5
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 const mapProperties = require('map-object-properties');
 
@@ -12,7 +18,7 @@ class ConversationsDAODynamoDB
     this.client = client;
     this.table = process.env.CONVERSATIONS_TABLE;
   }
-	
+
   /**
 	* Aggiunge una nuova conversazione in DynamoDB
 	* @param {Conversation} conversation - Conversazione che si vuole aggiungere al sistema
@@ -37,7 +43,7 @@ class ConversationsDAODynamoDB
       });
     });
   }
-	
+
   /**
 	* Aggiunge un nuovo messaggio ad una conversazione in DynamoDB
 	* @param {ConversationMsg} msg - messaggio che si vuole aggiungere alla conversazione
@@ -50,7 +56,7 @@ class ConversationsDAODynamoDB
     {
       let params = {
         TableName: self.table,
-        Key: 
+        Key:
 				{
 					"session_id": session_id
 				},
@@ -89,7 +95,7 @@ class ConversationsDAODynamoDB
     {
       let params = {
         TableName: self.table,
-        Key: 
+        Key:
 				{
           "session_id": session_id
         }
@@ -106,7 +112,7 @@ class ConversationsDAODynamoDB
 			});
     });
   }
-	
+
   /**
 	* Ottiene la lista delle conversazioni aventi l'd del Guest come parametro, suddivisi in blocchi (da massimo da 1MB)
 	* @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
@@ -219,12 +225,12 @@ function filterExpression(obj)
 
 const attr_map =
 {
-  
+
 }
 
 const reverse_attr_map =
 {
-  
+
 }
 
 module.exports = ConversationsDAODynamoDB;

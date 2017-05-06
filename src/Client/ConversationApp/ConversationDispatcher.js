@@ -1,3 +1,9 @@
+/**
+* @desc Questa classe si occupa di gestire il cambio delle applicazioni nel client.
+* @author Mauro Carlin
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 class Dispatcher
 {
   constructor() {

@@ -1,3 +1,11 @@
+/**
+* Questa classe si occupa di convertire l'interfaccia fornita da api.ai in una più adatta alle esigenze dell'applicazione, definita da \file{VAModule}.
+* \\ Facendo da Adapter tra le API di api.ai (adaptee) e l'interfaccia \file{VAModule} (target) utilizzata da \file{VAService},
+* permette l'interoperabilità tra queste due interfacce.
+* @author Pier Paolo Tricomi
+* @version 0.0.5
+* @since 0.0.3-alpha
+*/
 const DEF_ACTION = 'admin.displayMsgs';
 
 class ApiAiVAAdapter

@@ -1,3 +1,9 @@
+/**
+* @desc Questa classe si occupa di gestire il cambio delle applicazioni nel client.
+* @author Andrea Magnan
+* @version 0.0.5
+* @since 0.0.3-alpha
+*/
 export default class State
 {
   /**

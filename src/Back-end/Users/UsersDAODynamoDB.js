@@ -1,3 +1,9 @@
+/**
+* Classe che si occupa di implementare l'interfaccia \file{UsersDAO}, utilizzando un database DynamoDB come supporto per la memorizzazione dei dati.
+* @author Andrea Magnan
+* @version 0.0.6
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 const mapProperties = require('map-object-properties');
 

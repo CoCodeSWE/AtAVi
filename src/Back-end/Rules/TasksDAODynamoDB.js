@@ -1,3 +1,9 @@
+/**
+* Classe che si occupa di implementare l'interfaccia \file{TasksDAO}, utilizzando un database DynamoDB come supporto per la memorizzazione dei dati.
+* @author Simeone Pizzi
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 const mapProperties = require('map-object-properties');
 
@@ -37,7 +43,7 @@ class TasksDAODynamoDB
       });
     });
   }
-	
+
   /**
 		* Ottiene il task avente il type passato come parametro
 		* @param {String} type - Parametro contenente il type del task che si vuole ottenere.
@@ -69,7 +75,7 @@ class TasksDAODynamoDB
       });
     });
   }
-	
+
   /**
     * Ottiene la lista dei task in DynamoDB, suddivisi in blocchi (da massimo da 1MB)
     * @param {Object} query - Contiene i valori che verranno passati al FilterExpression dell'interrogazione
@@ -97,7 +103,7 @@ class TasksDAODynamoDB
       self.client.scan(params, self._onScan(observer, params));
     });
   }
-	
+
   /**
 		* Elimina il task avente il type passato come parametro
 		* @param {String} type - Parametro contenente il type del Task che si vuole rimuovere
@@ -125,7 +131,7 @@ class TasksDAODynamoDB
       });
     });
   }
-	
+
   /**
 		* Aggiorna il task passato come parametro (se non c'è lo crea)
 		* @param {Task} task - Parametro contenente i dati relativi al Task che si vuole modificare

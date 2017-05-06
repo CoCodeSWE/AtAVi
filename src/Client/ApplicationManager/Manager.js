@@ -1,9 +1,11 @@
-import State from './State';
-import Application from './Application';
-
 /**
 * @desc Questa classe si occupa di gestire il cambio delle applicazioni nel client.
+* @author Simeone Pizzi
+* @version 0.0.6
+* @since 0.0.3-alpha
 */
+import State from './State';
+import Application from './Application';
 export default class Manager
 {
   /**
