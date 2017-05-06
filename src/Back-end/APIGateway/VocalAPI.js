@@ -770,7 +770,7 @@ class VocalAPI
             complete: function()
             {
               self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
-            }
+            },
             error: error(context)
           });
           break;
