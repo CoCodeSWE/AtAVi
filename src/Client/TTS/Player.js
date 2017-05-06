@@ -1,3 +1,9 @@
+/**
+* @desc Questa classe si occupa di riprodurre la risposta, fornita dal sistema, all'ospite.
+* @author Nicola Tintorri
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 import Rx from 'rxjs/Rx';
 
 export default class Player

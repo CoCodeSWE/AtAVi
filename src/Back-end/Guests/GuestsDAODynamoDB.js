@@ -1,3 +1,9 @@
+/**
+* Classe che si occupa di implementare l'interfaccia \file{GuestsDAO}, utilizzando un database DynamoDB come supporto per la memorizzazione dei dati.
+* @author Luca Bertolini
+* @version 0.0.6
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 const mapProperties = require('map-object-properties');
 
@@ -12,7 +18,7 @@ class GuestsDAODynamoDB
     this.client = client;
     this.table = process.env.GUESTS_TABLE;
   }
-	
+
   /**
 	* Aggiunge un nuovo Guest in DynamoDB
 	* @param {Guest} guest - Guest che si vuole aggiungere al sistema
@@ -37,7 +43,7 @@ class GuestsDAODynamoDB
       });
     });
   }
-	
+
   /**
 	* Ottiene il guest avente name e company passato come parametro
 	* @param {String} name -  nome del Guest
@@ -51,7 +57,7 @@ class GuestsDAODynamoDB
       let params =
 			{
         TableName: self.table,
-        Key: 
+        Key:
 				{
           "guest_name": name,
           "company": company
@@ -71,7 +77,7 @@ class GuestsDAODynamoDB
       });
     });
   }
-	
+
   /**
 	* Elimina il Guest avente name e company passati come parametro
 	* @param {String} name -  nome del Guest
@@ -82,7 +88,7 @@ class GuestsDAODynamoDB
     let self = this;
     return new Rx.Observable(function(observer)
     {
-      let params = 
+      let params =
 			{
         TableName: self.table,
         Key:
@@ -153,7 +159,7 @@ class GuestsDAODynamoDB
       });
     });
   }
-	
+
 	/**
   * Aggiunge l'id di una conversazione alla lista conversations del guest identificato da name e company
   * @param {String} name - Nome del guest
@@ -175,7 +181,7 @@ class GuestsDAODynamoDB
 				},
 				UpdateExpression: 'set conversations = list_append(conversations, :conversation)',
 				ConditionExpression: 'not(contains(attori, :check_conversation))',
-				ExpressionAttributeValues: 
+				ExpressionAttributeValues:
 				{
 					':conversation': [session_id],
 					'check_conversation': session_id

@@ -1,3 +1,9 @@
+/**
+* Classe che si occupa di implementare l'interfaccia \file{RulesDAO}, utilizzando un database DynamoDB come supporto per la memorizzazione dei dati.
+* @author Mattia Bottaro
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 const mapProperties = require('map-object-properties');
 
@@ -125,7 +131,7 @@ class RulesDAODynamoDB
       });
     });
   }
-	
+
   /**
 		* Aggiorna la Rule passata come parametro (se non c'è lo crea)
 		* @param {Rule} rule - Parametro contenente i dati relativi alla Rule che si vuole modificare

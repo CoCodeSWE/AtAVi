@@ -1,5 +1,8 @@
 /**
-* @todo manca sns publish per notificare quando si può.
+* Questa classe si occupa di implementare l'endpoint dell'API Gateway utilizzato dal client vocale.
+* @author Simeone Pizzi, Nicola Tintorri e Mattia Bottaro
+* @version 0.0.4
+* @since 0.0.3-alpha
 */
 const Rx = require('rxjs/Rx');
 

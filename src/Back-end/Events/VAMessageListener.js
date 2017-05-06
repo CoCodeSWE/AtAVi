@@ -1,37 +1,9 @@
-/*
-
-Diario
-
- Versione        Programmatore         Data
- ######################################################################
- 0.0.2           Mattia Bottaro       2017-04-29
-
- ----------------------------------------------------------------------
- 1 - Ancora non riesco a definire i parametri per fare una riciesta HTTP al microservizio rules.
- 		 Serve un endpoint che, dato il target, ne ritorni le direttive.
-		 Questo endpoint ancora non è stato definito.
- 2 - Non ho modo di definire il valore di notifications_param.send_to. Servirebbe il MembersDAOSlack
- 		 per ottenere il canale slack della persona desiderata (e in caso quello generale).
-
- ----------------------------------------------------------------------
-
- ######################################################################
- 0.0.1           Mattia Bottaro       2017-04-25
-
- ----------------------------------------------------------------------
-Codificati gran parte dei comportamenti che il metodo onMessage deve assumere.
-Mancano da capire le seguenti cose:
-	1 -	Da che paramentri capisco chi è l'ospite con il quale interagisco? In event non
-	 		c'è nulla del genere. R: Forse in event o data.
-	2 - Dato il target, come ottengo la relativa Rules? Avrei bisogno di RulesDAO
-			o di un nuovo endpoint. R : Endpoint
-	3 - come si stabilisce che testo inviare alla persona desiderata? Bisognerebbe capire
-			le intenzioni dell'ospite ...
-	4 - farebbe comodo un metodo guests.addConversation
- ----------------------------------------------------------------------
-
+/**
+* Questa classe si occupa di registrare i dati relativi alle interazioni degli ospiti col nostro sistema.
+* @author Mattia Bottaro
+* @version 0.0.6
+* @since 0.0.3-alpha
 */
-
 class VAMessageListener
 {
 	constructor(conversations, guests, rp)
