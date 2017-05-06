@@ -6,8 +6,8 @@ const conv_DAO = require('./stubs/ConversationsDAO');
 const guests_DAO = require('./stubs/GuestsDAO');
 const users_DAO = require('./stubs/UsersDAO');
 const sinon = require('sinon');
-
 let context = require('./stubs/LambdaContext');
+
 let service;
 beforeEach(function()
 {

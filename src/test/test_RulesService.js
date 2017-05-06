@@ -13,6 +13,7 @@ describe('Back-end', function()
   {
     describe('RulesService', function()
     {
+			let rules;
       beforeEach(function()
       {
         rules = new RulesService(rulesDAO,taskDAO);

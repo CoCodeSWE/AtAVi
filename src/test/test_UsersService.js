@@ -6,6 +6,7 @@ const sinon = require('sinon');
 const users_DAO = require('./stubs/UsersDAO');
 const context = require('./stubs/LambdaContext');
 
+let service;
 beforeEach(function()
 {
   service = new users_service(users_DAO);
