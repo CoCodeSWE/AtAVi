@@ -174,7 +174,7 @@ describe('Back-end', function()
 					})
         });
       });
-      describe('resetEnrollment', function()
+      describe('resetEnrollments', function()
       {
         it("Se la chiamata al servizio di Speaker Recognition per resettare un Enrollment ritorna uno statusCode diverso da 200, l'ErrorObservable deve notificare l'ErrorObserver chiamando il suo metodo error.", function(done)
         {
@@ -186,7 +186,7 @@ describe('Back-end', function()
               "message" : "SpeakerInvalid"
             }
           }));
-          microsoft_login.resetEnrollment().subscribe(
+          microsoft_login.resetEnrollments().subscribe(
           {
             next: next,
             error: error,
