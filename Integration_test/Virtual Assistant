@@ -1,0 +1,33 @@
+{
+	"id": "72baa22f-4d74-924f-0911-4d09e01e6e8a",
+	"name": "VirtualAssistant",
+	"description": "Vogliamo testare che le classi in VirtualAssistant interagiscano tra loro correttamente. Le classi che interagiscono sono VAService, ApiAIVAAdapter e AgentDAODynamoDB.",
+	"order": [
+		"473bedcf-b39e-9525-2944-7c5785d6069f"
+	],
+	"folders": [],
+	"timestamp": 1493680787090,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "473bedcf-b39e-9525-2944-7c5785d6069f",
+			"headers": "x-api-key: XXeoq5tddQ1lqd4xcaSb8TYj6RAlhVY3oW5a5uFf\nContent-Type: application/json\n",
+			"url": "https://z4tqx8dy02.execute-api.eu-central-1.amazonaws.com/dev/query",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "var body = JSON.parse(responseBody);\ntests[\"Check text response\"] = responseCode.code == 200 && body.res.text_response === 'Hi and welcome in Zero12! I\\'m AtAVi and I\\'m at your service. I need to know your name and your surname so I can help you. What are they?';",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1493733874516,
+			"name": "query",
+			"description": "",
+			"collectionId": "72baa22f-4d74-924f-0911-4d09e01e6e8a",
+			"responses": [],
+			"rawModeData": "{\n\t\"app\": \"conversation\",\n\t\"query\":\n\t{\n\t\t\"session_id\": 1,\n\t\t\"text\": \"Hi\"\n\t}\n}"
+		}
+	]
+}
