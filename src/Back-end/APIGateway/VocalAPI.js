@@ -178,7 +178,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'GET',
-				uri: `${S_SERVICE_URL}/${id}`,
+				uri: `${RULES_SERVICE_URL}/${id}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
@@ -709,14 +709,17 @@ class VocalAPI
             enabled: true
           }).subscribe(
           {
-            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+            complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            },
             error: error(context)
           });
           break;
         case 'rule.getList':
           let rules;
           options.body.event = {name: 'getRuleListSuccess'};
-          self._getRuleList(''/*dd*/).subscribe(
+          self._getRuleList(/*dd*/).subscribe(
           {
             next: (data) => {rules = data},
             error: error(context),
@@ -749,7 +752,10 @@ class VocalAPI
           };
           self._removeRule(params.rule_id).subscribe(
           {
-            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+            complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            },
             error: error(context)
           });
           break;
@@ -761,7 +767,10 @@ class VocalAPI
           };
           self._updateRule({}).subscribe(
           {
-            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+            complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            }
             error: error(context)
           });
           break;
@@ -778,7 +787,10 @@ class VocalAPI
             username: params.user_username
           }).subscribe(
           {
-            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+            complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            },
             error: error(context)
           });
           break;
@@ -786,7 +798,10 @@ class VocalAPI
           options.body.event = {name: "addUserEnrollmentSuccess"}
           self._addUserEnrollment({audio: audio_buffer, username: params.user_username}).subscribe(
           {
-            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+            complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            },
             error: error(context)
           });
           break;
@@ -832,7 +847,10 @@ class VocalAPI
               options.body.event = {name: 'loginUserFailure'};
               self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
             },
-						complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)})
+						complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            }
           });
           break;
         case 'user.remove':
@@ -843,7 +861,10 @@ class VocalAPI
           };
           self._removeUser(params.username).subscribe(
           {
-            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+            complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            },
             error: error(context)
           });
           break;
@@ -851,7 +872,10 @@ class VocalAPI
         options.body.event = {name: "resetUserEnrollmentSuccess"}
         this._resetUserEnrollment(params.username).subscribe(
         {
-          complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+          complete: function()
+          {
+            self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+          },
           error: error(context)
         });
         break;
@@ -863,11 +887,15 @@ class VocalAPI
           };
           self._updateUser(''/*dd*/).subscribe(
           {
-            complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+            complete: function()
+            {
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+            },
             error: error(context)
           });
           break;
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
+          this.sns.publish({Message: JSON.stringify(response), TopicArn: this.SNS_TOPIC_ARN});
           context.succeed({ statusCode: 200, body: JSON.stringify(response) });
       }
     }

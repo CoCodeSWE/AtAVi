@@ -42,3 +42,10 @@ functions:
         - http:
             path: text-assistant
             method: post
+resources:
+  Resources:
+    snsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: ${self:provider.environment.SNS_TOPIC}
+        TopicName: ${self:provider.environment.SNS_TOPIC}

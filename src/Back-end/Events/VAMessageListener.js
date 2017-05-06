@@ -15,11 +15,12 @@ class VAMessageListener
     this.NOTIFICATIONS_SERVICE_URL = process.env.NOTIFICATIONS_SERVICE_URL;
 	}
 
-	/** Questo metodo si occupa di inviare una notifica alla persona desiderata e di registrare le interzioni avvenute nei relativi databases
-	* @param event {JSON} - parametro contenente il payload del messaggio pubblicato sul topic SNS
-	* @param context {JSON} - parametro per inviare il corpo della risposta. In realtà non viene utilizzato
-	* @param callback {function} - funzione di callback utilizzata per informare il chiamate del successo o del fallimento del metodo
-	*/
+	/**
+   * Questo metodo si occupa di inviare una notifica alla persona desiderata e di registrare le interzioni avvenute nei relativi databases
+	 * @param event {JSON} - parametro contenente il payload del messaggio pubblicato sul topic SNS
+	 * @param context {JSON} - parametro per inviare il corpo della risposta. In realtà non viene utilizzato
+	 * @param callback {function} - funzione di callback utilizzata per informare il chiamate del successo o del fallimento del metodo
+	 */
 
 	onMessage(event, context, callback)
 	{

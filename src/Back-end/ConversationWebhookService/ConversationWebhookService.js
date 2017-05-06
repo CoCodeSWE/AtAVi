@@ -34,8 +34,28 @@ class ConversationWebhookService
     catch(err)  //nel caso in cui il corpo non sia JSON valido viene sollevata un'eccezione
     {
       console.log(err);
-      context.succeed(error400);
+      context.succeed({speech: 'Errore', data: {_status: 400}});
     }
+    //costanti errori
+    this.error400 =
+    {
+      statusCode: 200,
+      body: JSON.stringify(
+      {
+        speech: "Bad Request",
+        data: Object.assign({ _status: 400}, (body.originalRequest ? body.originalRequest.data : {})),
+      })
+    };
+    this.error500 =
+    {
+      statusCode: 200,
+      body: JSON.stringify(
+      {
+        speech: "Internal Server Error",
+        data: Object.assign({ _status: 500}, (body.originalRequest ? body.originalRequest.data : {})),
+
+      })
+    };
     switch(body.result.action)
     {
       case 'user.check':  //controllo se si tratta di amministratore
@@ -69,7 +89,7 @@ class ConversationWebhookService
     observable.subscribe(
     {
       next: (user) => {console.log("new user!", user); users.push(user);},
-      error: (err) => {context.succeed(error500);},
+      error: (err) => {context.succeed(this.error500);},
       complete: () =>
       {
         if(users.length > 0)
@@ -111,7 +131,7 @@ class ConversationWebhookService
     observable.subscribe(
     {
       next: (guest) => {guests.push(guest);},
-      error: (err) => {context.succeed(error500);},
+      error: (err) => {context.succeed(this.error500);},
       complete: () =>
       {
         if(guests.length > 0)
@@ -176,26 +196,6 @@ module.exports = ConversationWebhookService;
 /**********************
  * COSTANTI ERRORI
  *********************/
-const error400 =
-{
-  statusCode: 200,
-  body: JSON.stringify(
-  {
-    speech: "Bad Request",
-    data: Object.assign({ _status: 400}, (body.originalRequest ? body.originalRequest.data : {})),
-  })
-};
-
-const error500 =
-{
-  statusCode: 200,
-  body: JSON.stringify(
-  {
-    speech: "Internal Server Error",
-    data: Object.assign({ _status: 500}, (body.originalRequest ? body.originalRequest.data : {})),
-
-  })
-};
 
 /*
  * HEADERS CORS, non so se servano effettivamente, nel caso si possono abilitare ed aggiungere alle varie chiamate
