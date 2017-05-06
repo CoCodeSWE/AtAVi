@@ -29,7 +29,7 @@ provider:
         - dynamodb:DeleteItem
         - dynamodb:PutItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TASKS_TABLE}"
-      
+
 functions:
   addRule:
     handler: addRule.addRule
@@ -50,7 +50,7 @@ functions:
             parameters:
               paths:
                 id: true
-  
+
   getRule:
     handler: getRule.getRule
     events:
@@ -62,7 +62,7 @@ functions:
             parameters:
               paths:
                 id: true
-  
+
   getRuleList:
     handler: getRuleList.getRuleList
     events:
@@ -77,7 +77,7 @@ functions:
                 name: false
                 target: false
                 task: false
-        
+
   getTaskList:
     handler: getTaskList.getTaskList
     events:
@@ -85,7 +85,7 @@ functions:
           path: rules/tasks
           method: get
           private: true
-              
+
   updateRule:
     handler: updateRule.updateRule
     events:
@@ -106,7 +106,7 @@ resources:
         TableName: ${self:provider.environment.RULES_TABLE}
         AttributeDefinitions:
           - AttributeName: id
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH

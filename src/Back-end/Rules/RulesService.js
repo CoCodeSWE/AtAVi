@@ -1,4 +1,6 @@
 const objectFilter = require('./object-filter');
+const uuid = require('uuid/v1');
+
 class RulesService
 {
   /**
@@ -6,10 +8,10 @@ class RulesService
 		* @param {RulesDAO} rules - Attributo contenente il RulesDAO
     * @param {TasksDAO} task - Attributo contenente il TasksDAO
 		*/
-  constructor(rules, task)
+  constructor(rules, tasks)
   {
     this.rules = rules     //RulesDAODynamoDB
-    this.task = task;      //TaskDAODynamoDB
+    this.tasks = tasks;      //TaskDAODynamoDB
   }
 
   /**
@@ -21,18 +23,19 @@ class RulesService
   {
     let rule; //conterrà la rule da aggiungere
 
-    try 
+    try
 		{
-      rule=JSON.parse(event.body);
+      rule = JSON.parse(event.body);
     }
     catch (exception)
     {
-        //rule non valida: errore 400 (Bad Request)
+        // rule non valida: errore 400 (Bad Request)
         badRequest(context);
         return;
     }
     // Parametro contenente i dati relativi alla rule da aggiungere
-		let params = objectFilter(rule , ['enabled', 'id', 'name', 'targets', 'task']);
+    rule.id = uuid();
+    let params = objectFilter(rule, ['enabled', 'id', 'name', 'targets', 'task']);
     // controllo che rule abbia tutti i campi definiti
     if(params.id && ('enabled' in params) && params.name && params.targets && params.task)
     {
@@ -86,7 +89,7 @@ class RulesService
 		*/
   deleteRule(event, context)
   {
-    let rule_id = Number(event.pathParameters.id);
+    let rule_id = event.pathParameters.id;
 		this.rules.removeRule(rule_id).subscribe(
 		{
 			next: function(data)
@@ -124,7 +127,7 @@ class RulesService
 			}
 		});
   }
-	
+
   /**
 		* Metodo che implementa la Lambda Function per eliminare una rule
 		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole ottenere
@@ -132,7 +135,7 @@ class RulesService
 		*/
   getRule(event, context)
   {
-    let rule_id = Number(event.pathParameters.id);
+    let rule_id = event.pathParameters.id;
     let rule; //conterrà la rule che verrà ottenuta
 		this.rules.getRule(rule_id).subscribe(
 		{
@@ -171,7 +174,7 @@ class RulesService
 			}
 		});
   }
-	
+
   /**
 		* Metodo che implementa la Lambda Function per ottenere la lista delle rules
 		* @param {LambdaRuleListEvent} event - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
@@ -179,7 +182,7 @@ class RulesService
 		*/
   getRuleList(event,context)
   {
-    let list = 
+    let list =
 		{
       rules: []
     };
@@ -204,7 +207,7 @@ class RulesService
       }
     });
   }
-	
+
   /**
 		* Metodo che implementa la Lambda Function per ottenere la lista dei tasks
 		* @param {LambdaTaskListEvent} event - Parametro che rappresenta la richiesta ricevuta dal VocalAPI. Eventuali parametri sono contenuti in queryStringParameters
@@ -212,17 +215,17 @@ class RulesService
 		*/
   getTaskList(event,context)
   {
-    let list = 
+    let list =
 		{
       tasks: []
     };
-		
+
     // Controllo se ci sono filtri da applicare nell'ottenimento degli utenti
 		let query = objectFilter(event.queryStringParameters);
 		if(Object.keys(query).length === 0)
 			query = null;
-    
-		this.task.getTaskList(query).subscribe(
+
+		this.tasks.getTaskList(query).subscribe(
     {
       next: (task) => { list.tasks.push(task); },
       error: internalServerError(context),
@@ -258,7 +261,7 @@ class RulesService
 
 		// Parametro contenente i dati relativi alla rule da aggiungere
 		let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task']);
-		params.id = Number(event.pathParameters.id);
+		params.id = event.pathParameters.id;
 
 		this.rules.updateRule(params).subscribe(
 		{

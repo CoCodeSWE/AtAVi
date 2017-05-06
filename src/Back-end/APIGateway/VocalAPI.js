@@ -96,7 +96,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'POST',
-				uri: self.RULES_SERVICE_URL,
+				uri: RULES_SERVICE_URL,
 				body: rule,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
@@ -104,10 +104,12 @@ class VocalAPI
 
 			self.request_promise(options).then(function(data)
 			{
+        console.log(data);
 				observer.complete();
 			})
 			.catch(function(err)
 			{
+        console.log('error: ', err)
 				observer.error(
 				{
 					code: err.statusCode,
@@ -129,7 +131,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'GET',
-				uri: `${self.RULES_SERVICE_URL}/${id}`,
+				uri: `${S_SERVICE_URL}/${id}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
@@ -161,7 +163,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'GET',
-				uri: self.RULES_SERVICE_URL,
+				uri: RULES_SERVICE_URL,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
@@ -193,17 +195,19 @@ class VocalAPI
 			let options =
 			{
 				method: 'DELETE',
-				uri: `${self.RULES_SERVICE_URL}/${id}`,
+				uri: `${RULES_SERVICE_URL}/${id}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
 
 			self.request_promise(options).then(function(data)
 			{
+        console.log(data);
 				observer.complete();
 			})
 			.catch(function(err)
 			{
+        console.log("error ", err)
 				observer.error(
 				{
 					code: err.statusCode,
@@ -225,7 +229,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'PUT',
-				uri: `${self.RULES_SERVICE_URL}/${rule.id}`,
+				uri: `${RULES_SERVICE_URL}/${rule.id}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				body: rule,
 				json: true
@@ -260,7 +264,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'POST',
-				uri: self.USERS_SERVICE_URL,
+				uri: USERS_SERVICE_URL,
         headers:{'x-api-key': USERS_SERVICE_KEY},
 				body: user,
 				json: true
@@ -357,7 +361,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'GET',
-				uri: `${self.USERS_SERVICE_URL}/${username}`,
+				uri: `${USERS_SERVICE_URL}/${username}`,
         headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
@@ -392,7 +396,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'GET',
-				uri: `${self.USERS_SERVICE_URL}?${query_string}`,
+				uri: `${USERS_SERVICE_URL}?${query_string}`,
         headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
@@ -489,7 +493,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'DELETE',
-				uri: `${self.USERS_SERVICE_URL}/${username}`,
+				uri: `${USERS_SERVICE_URL}/${username}`,
         headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
@@ -585,7 +589,7 @@ class VocalAPI
 			let options =
 			{
 				method: 'PUT',
-				uri: `${self.USERS_SERVICE_URL}/${user.username}`,
+				uri: `${USERS_SERVICE_URL}/${user.username}`,
         headers:{'x-api-key': USERS_SERVICE_KEY},
 				body: user,
 				json: true
@@ -620,7 +624,7 @@ class VocalAPI
       let options =
       {
         method: 'POST',
-        uri: self.VA_SERVICE_URL,
+        uri: VA_SERVICE_URL,
         headers:{'x-api-key': VA_SERVICE_KEY},
         json: true,
         body:
@@ -632,7 +636,7 @@ class VocalAPI
 
       //aggiungere controllo azione completata oppure no ???
 
-      let params = response.res.contexts ? response.res.contexts[0] : {};
+      let params = response.res.contexts ? response.res.contexts[0].parameters : {};
       switch(response.action)
       {
         case 'rule.add':
@@ -653,7 +657,8 @@ class VocalAPI
               name: params.target_name,
               member: params.target_member,
               company: params.target_company
-            }]
+            }],
+            enabled: true
           }).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
