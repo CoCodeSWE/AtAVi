@@ -3,11 +3,12 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const vocalLogin = require('./stubs/VocalLogin');
-const promise = require('./stubs/RequestPromise');
+let promise = require('./stubs/RequestPromise');
 const jwt = require('./stubs/jwt');
 const stt = require('./stubs/STT');
 const sns = require('./stubs/SNS');
 const context = require('./stubs/LambdaContext');
+const Rx = require('rxjs');
 
 let next, error, complete, api;
 beforeEach(function()
@@ -15,7 +16,8 @@ beforeEach(function()
 	next = sinon.stub();
 	error = sinon.stub();
 	complete = sinon.stub();
-	api = new VocalAPI(vocalLogin, jwt, promise, stt, sns);
+  promise = sinon.stub();
+  api = new VocalAPI(vocalLogin, jwt, promise, stt, sns);
 	context.succeed = sinon.stub();
 });
 
@@ -176,7 +178,7 @@ describe('Back-end', function()
 			describe('queryLambda', function ()
 			{
 
-				it("Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.", function(done)
+				it("Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.", function()
 				{
 
 				});
@@ -189,17 +191,17 @@ describe('Back-end', function()
 				it("Se l\'action del body della risposta è uguale a 'rule.add' allora il metodo deve chiamare il metodo privato _addRule.", function(done)
 				{
 					api._addRule = sinon.stub();
-          api._addRule.returns(Observable.empty());
 					stt.speechToText.returns(Promise.resolve('Test'));
-          promise.onCall(0).returns(Promise.resolve(va_response));
-          promise.onCall(1).returns(Promise.resolve(empty_action_response));  
+          promise.onCall(0).returns(Promise.resolve(va_response_addRule));
+          promise.onCall(1).returns(Promise.resolve(empty_action_response));
+          api._addRule.returns(Rx.Observable.empty());
 					context.succeed = function(response)
           {
             //controllo che i campi non siano nulli, quindi chiamo done
 						expect(api._addRule.callCount).to.equal(1);
             done();
           }
-          api.queryLambda(event, context); 
+          api.queryLambda(event, context);
 				});
 
 				it("Se l\'action del body della risposta è uguale a 'user.add' allora il metodo deve chiamare il metodo privato _addUser.", function()
@@ -495,7 +497,7 @@ let event =
 	body: JSON.stringify(body_query_lambda)
 };
 
-let va_response_addRule = 
+let va_response_addRule =
 {
 	'action': 'rule.add',
 	'res':
@@ -506,7 +508,7 @@ let va_response_addRule =
 	'session_id': '1'
 };
 
-let empty_action_response = 
+let empty_action_response =
 {
 	'action': '',
 	'res':

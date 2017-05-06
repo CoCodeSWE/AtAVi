@@ -36,6 +36,7 @@ class VocalAPI
 	*/
   queryLambda(event, context)
   {
+    console.log('query called');
     let self = this;
     let body;
     try
@@ -77,7 +78,7 @@ class VocalAPI
         json: true
       }
       return self.request_promise(req_options); //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
-    }).then(self._onVaResponse(context, audio_buffer)).catch(console.log);
+    })/*.then((data) => {console.log('data: ', data)})*/.then(self._onVaResponse(context, audio_buffer)).catch(console.log);
   }
   //context.succeed(statusCode: 200, body: JSON.stringify(response));
 
@@ -614,7 +615,7 @@ class VocalAPI
   _onVaResponse(context, audio_buffer)
   {
     let self = this;
-    return function(response) //resti
+    return function(response) //restituisce
     {
       let options =
       {
@@ -631,7 +632,7 @@ class VocalAPI
 
       //aggiungere controllo azione completata oppure no ???
 
-      let params = response.res.contexts[0];
+      let params = response.res.contexts ? response.res.contexts[0] : {};
       switch(response.action)
       {
         case 'rule.add':
@@ -669,7 +670,7 @@ class VocalAPI
             complete: function()
             {
               options.body.event.data = { rules: rules };
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
+              self.request_promise(options).then(self._onVaResponse(context, audio_buffer)).catch(console.log);
             }
           });
           break;
