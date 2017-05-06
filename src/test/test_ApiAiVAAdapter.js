@@ -3,8 +3,8 @@ const chai = require('chai');
 const expect = chai.expect;
 const RequestPromise = require('./stubs/RequestPromise');
 const Promise = require('bluebird');
-let adapter;
 
+let adapter;
 beforeEach(function()
 {
   adapter = new ApiAiVAAdapter(RequestPromise, 'agent');
