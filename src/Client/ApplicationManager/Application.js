@@ -1,5 +1,8 @@
 /**
 * @desc Questa classe si occupa della gestione dell'applicazione in esecuzione. È una classe astratta.
+* @author Nicola Tintorri
+* @version 0.0.4
+* @since 0.0.3-alpha
 */
 export default class Application
 {

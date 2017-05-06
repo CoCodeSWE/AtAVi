@@ -1,3 +1,9 @@
+/**
+* @desc Questa classe si occupa della registrazione della conversazione.
+* @author Simeone Pizzi
+* @version 0.0.7
+* @since 0.0.3-alpha
+*/
 import Rx from 'rxjs/Rx';
 
 export default class Recorder

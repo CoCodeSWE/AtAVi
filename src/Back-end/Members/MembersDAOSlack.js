@@ -1,3 +1,9 @@
+/**
+* Questa classe implementa \file{MembersDAO}, ottenendo i dati da Slack.
+* @author Nicola Tintorri
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 const Rx = require('rxjs/Rx');
 
 class MembersDAOSlack

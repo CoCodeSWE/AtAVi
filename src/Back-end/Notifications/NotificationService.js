@@ -1,3 +1,9 @@
+/**
+* Questa classe si occupa di realizzare il microservizio \file{Notifications}.
+* @author Pier Paolo Tricomi
+* @version 0.0.7
+* @since 0.0.3-alpha
+*/
 const Promise = require('bluebird');
 const objectFilter = require('./object-filter');
 
@@ -173,7 +179,7 @@ class NotificationService
 			let attachments_filtered = null;
 			if(body.msg.attachments)
 				objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
-			
+
 			self.client.chat.postMessage(body.send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
 			{
 				if (err)

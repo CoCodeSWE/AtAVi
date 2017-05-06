@@ -1,3 +1,9 @@
+/**
+* Questa classe si occupa di implementare l'interfaccia WebhookService, realizzando un Webhook che fornisce una risposta all'Agent di amministrazione.
+* @author Simeone Pizzi
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 class AdministrationWebhookService
 {
   /**

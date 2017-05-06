@@ -1,3 +1,9 @@
+/**
+* Questa classe si occupa di rappresentare il microservizio \file{Virtual Assistant}.
+* @author Luca Bertolini
+* @version 0.0.4
+* @since 0.0.3-alpha
+*/
 class VAService
 {
 	/**

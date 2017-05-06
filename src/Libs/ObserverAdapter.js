@@ -1,3 +1,9 @@
+/**
+* @desc Questa classe si occupa di riprodurre la risposta, fornita dal sistema, all'ospite.
+* @author Luca Bertolini
+* @version 0.0.6
+* @since 0.0.3-alpha
+*/
 class ObserverAdapter
 {
   constructor()

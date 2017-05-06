@@ -1,5 +1,8 @@
 /**
 * @desc Questa classe si occupa di implementare l'interfaccia WebhookService, realizzando un Webhook che fornisce una risposta all'Agent di amministrazione.
+* @author Mauro Carlin
+* @version 0.0.7
+* @since 0.0.3-alpha
 */
 export default class ApplicationLocalRegistry
 {
