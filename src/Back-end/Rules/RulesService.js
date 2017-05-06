@@ -1,5 +1,4 @@
 const objectFilter = require('./object-filter');
-const uuid = require('uuid/v1');
 
 class RulesService
 {
@@ -34,10 +33,9 @@ class RulesService
         return;
     }
     // Parametro contenente i dati relativi alla rule da aggiungere
-    rule.id = uuid();
-    let params = objectFilter(rule, ['enabled', 'id', 'name', 'targets', 'task']);
+    let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task']);
     // controllo che rule abbia tutti i campi definiti
-    if(params.id && ('enabled' in params) && params.name && params.targets && params.task)
+    if(('enabled' in params) && params.name && params.targets && params.task)
     {
       this.rules.addRule(params).subscribe(
       {
@@ -84,13 +82,13 @@ class RulesService
 
   /**
 		* Metodo che implementa la Lambda Function per eliminare una rule
-		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole eliminare
+		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, il nome della rule che si vuole eliminare
 		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   deleteRule(event, context)
   {
-    let rule_id = event.pathParameters.id;
-		this.rules.removeRule(rule_id).subscribe(
+    let rule_name = event.pathParameters.name;
+		this.rules.removeRule(rule_name).subscribe(
 		{
 			next: function(data)
 			{
@@ -130,14 +128,14 @@ class RulesService
 
   /**
 		* Metodo che implementa la Lambda Function per eliminare una rule
-		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, l'id della rule che si vuole ottenere
+		* @param {LambdaIdEvent} event - Parametro contenente, all'interno del campo pathParameters, il nome della rule che si vuole ottenere
 		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   getRule(event, context)
   {
-    let rule_id = event.pathParameters.id;
+    let rule_name = event.pathParameters.name;
     let rule; //conterrà la rule che verrà ottenuta
-		this.rules.getRule(rule_id).subscribe(
+		this.rules.getRule(rule_name).subscribe(
 		{
 			next: function(data)
 			{
@@ -188,7 +186,7 @@ class RulesService
     };
 
     // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
-		let query = objectFilter(event.queryStringParameters, ['enabled', 'name', 'target.name','target.company','target.member']);
+		let query = objectFilter(event.queryStringParameters, ['enabled', 'target.name','target.company','target.member']);
 		if(Object.keys(query).length === 0)
 			query = null;
 
@@ -243,7 +241,7 @@ class RulesService
 
   /**
 		* Metodo che implementa la Lambda Function per aggiornare una rule
-		* @param {LambdaIdEvent} event - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo Rule contenente i dati da aggiornare e, all'interno del campo pathParameters, l'id della rule da modificare.
+		* @param {LambdaIdEvent} event - Parametro contenente all'interno del campo body, sotto forma di stringa in formato JSON, un oggetto di tipo Rule contenente i dati da aggiornare e, all'interno del campo pathParameters, il nome della rule da modificare.
 		* @param {LambdaContext} context - Parametro utilizzato per inviare la risposta
 		*/
   updateRule(event,context)
@@ -261,7 +259,7 @@ class RulesService
 
 		// Parametro contenente i dati relativi alla rule da aggiungere
 		let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task']);
-		params.id = event.pathParameters.id;
+		params.id = event.pathParameters.name;
 
 		this.rules.updateRule(params).subscribe(
 		{

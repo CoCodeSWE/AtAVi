@@ -578,7 +578,6 @@ describe('Back-end', function()
           api.queryLambda(event, context);
 				});
 				
-				/*
 				it("Se durante la chiamata al metodo privato _loginUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Users.", function(done)
 				{
 					api._loginUser = sinon.stub();
@@ -596,7 +595,6 @@ describe('Back-end', function()
           }
           api.queryLambda(event, context);
 				});
-				*/
 				
 				it("Se durante la chiamata al metodo privato _removeRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rules.", function(done)
 				{

@@ -6,6 +6,6 @@ export var ConversationApp = {
     "https://unpkg.com/rxjs/bundles/Rx.min.js"
   ],
   "ui": "",
-  "cmdHandler": "let msg = [{sender: 0, text: params.text_request}, {sender: 1, text: params.text_response}];\nthis.dispatcher.dispatch(cmd, msg)\n",
+  "cmdHandler": "let msg = [{sender: 0, text: params.text_request}, {sender: 1, text: params.text_response}];\r\nthis.dispatcher.dispatch(cmd, msg)\r\n",
   "name": "conversation"
 }
