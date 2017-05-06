@@ -36,7 +36,6 @@ class VocalAPI
 	*/
   queryLambda(event, context)
   {
-    console.log('query called');
     let self = this;
     let body;
     try
@@ -55,7 +54,6 @@ class VocalAPI
     let audio_buffer = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
     self.stt.speechToText(audio_buffer, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
-      console.log("stt: ", text);
       self.text_request = text;
       let req_options =
       {
@@ -319,7 +317,7 @@ class VocalAPI
 				complete: function()
 				{
 					// Sono sicuro che l'utente abbia un sr_id, altrimenti verrebbe chiamato observer.error all'interno del metodo next
-					vocal.addEnrollment(id_user, enr.audio).subscribe(
+					self.vocal.addEnrollment(id_user, enr.audio).subscribe(
 					{
 						next: function()
 						{
@@ -451,7 +449,7 @@ class VocalAPI
 				complete: function()
 				{
 					// Sono sicuro che l'utente abbia un sr_id, altrimenti verrebbe chiamato observer.error all'interno del metodo next
-					vocal.doLogin(id_user, enr.audio).subscribe(
+					self.vocal.doLogin(id_user, enr.audio).subscribe(
 					{
 						next: function()
 						{
@@ -547,7 +545,7 @@ class VocalAPI
 				complete: function()
 				{
 					// Sono sicuro che l'utente abbia un sr_id, altrimenti verrebbe chiamato observer.error all'interno del metodo next
-					vocal.addEnrollment(id_user).subscribe(
+					self.vocal.resetEnrollments(id_user).subscribe(
 					{
 						next: function()
 						{
@@ -706,7 +704,7 @@ class VocalAPI
             name: 'updateRuleSuccess',
             data: {}
           };
-          this._updateRule({}).subscribe(
+          self._updateRule({}).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -731,7 +729,7 @@ class VocalAPI
           break;
         case 'user.addEnrollment':
           options.body.event = {name: "addUserEnrollmentSuccess"}
-          this._addUserEnrollment({audio: audio_buffer, username: params.user_username}).subscribe(
+          self._addUserEnrollment({audio: audio_buffer, username: params.user_username}).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -766,7 +764,7 @@ class VocalAPI
           });
           break;
         case 'user.login':
-          this._loginUser({audio: audio_buffer, username: params.user_usernames}).subscribe(
+          self._loginUser({audio: audio_buffer, username: params.user_usernames}).subscribe(
           {
             next: function(token)
             {
@@ -778,7 +776,8 @@ class VocalAPI
             {
               options.body.event = {name: 'loginUserFailure'};
               self.request_promise(options).then(self._onVaResponse(context, audio_buffer));
-            }
+            },
+						complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)})
           });
           break;
         case 'user.remove':
@@ -794,20 +793,20 @@ class VocalAPI
           });
           break;
         case 'user.resetEnrollment':
-        options.body.event = {name: "resetUserEnrollmentSuccess"}
-        this._resetUserEnrollment(params.user_username).subscribe(
-        {
-          complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
-          error: error(context)
-        });
-        break;
+					options.body.event = {name: "resetUserEnrollmentSuccess"}
+					self._resetUserEnrollment(params.user_username).subscribe(
+					{
+						complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
+						error: error(context)
+					});
+					break;
         case 'user.update':
           options.body.event =
           {
             name: 'userUpdateSuccess',
             data: {}
           };
-          this._updateuser(''/*dd*/).subscribe(
+          self._updateUser(''/*dd*/).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -834,7 +833,7 @@ function error(context)
     context.succeed(
     {
       statusCode: err.code,
-      message: JSON.stringify({ message: err.msg })
+      body: JSON.stringify({ message: err.msg })
     });
   }
 }

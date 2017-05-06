@@ -216,7 +216,7 @@ class VocalLoginMicrosoftModule
 		* Verification Profile - Reset Enrollments (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549b)
 		* @param {String} id - Parametro contenente l'identificativo dell'utente di cui si vogliono eliminare gli enrollment
 		*/
-	resetEnrollment(id)
+	resetEnrollments(id)
 	{
 		let self = this;
 		return new Rx.Observable(function(observer)
