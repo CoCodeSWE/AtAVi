@@ -3,5 +3,6 @@ const sinon = require('sinon');
 module.exports =
 {
   query: sinon.stub(),
-  agent: ''
+  agent: '',
+  setAgent: sinon.stub()
 }

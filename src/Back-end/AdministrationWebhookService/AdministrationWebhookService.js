@@ -40,9 +40,9 @@ class AdministrationWebhookService
       console.log(err);
       context.succeed({ statusCode: 200, body: JSON.stringify(error_body) });
     }
-    if(body.originalRequest.data.token && this._checkToken(body.originalRequest.data.token))
+    if(body.originalRequest.data && this._checkToken(body.originalRequest.data.token))
     {
-      let success_body = { speech: body.result.fulfillment.speech, data: body.originalRequest.data };
+      let success_body = { speech: body.result.fulfillment.speech, data: Object.assign({_status: 200}, (body.originalRequest ? body.originalRequest.data : {})) };
       context.succeed({ statusCode: 200, body: JSON.stringify(success_body) }); //token verificato, rispondo normalmente
     }
     else
@@ -50,10 +50,7 @@ class AdministrationWebhookService
       let error_body =
       {
         speech: "Forbidden",
-        data:
-        {
-          _status: 403
-        }
+        data: Object.assign({ _status: 403}, (body.originalRequest ? body.originalRequest.data : {})),
       };
       context.succeed({ statusCode: 200, body:JSON.stringify(error_body) });  //token non verificato, accesso negato
     }

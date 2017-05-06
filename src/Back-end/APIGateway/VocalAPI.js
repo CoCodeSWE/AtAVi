@@ -80,12 +80,58 @@ class VocalAPI
         },
         json: true
       }
+      /**@todo catch su questa promessa*/
       return self.request_promise(req_options); //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
-    })/*.then((data) => {console.log('data: ', data)})*/.then(self._onVaResponse(context, audio_buffer)).catch(console.log);
+    })/*.then((data) => {console.log('data: ', data)})*/.then(self._onVaResponse(context, audio_buffer)).catch(/*chiamo context.succeed con codice errore*/);
   }
   //context.succeed(statusCode: 200, body: JSON.stringify(response));
 
-  /******* RULE *********/
+  queryText(event, context)
+  {
+    console.log('queryText called');
+    let self = this;
+    let body;
+    try
+    {
+      body = JSON.parse(event.body);
+    }
+    catch(err)  //non è un JSON valido, quindi la richiesta non è conforme
+    {
+      context.succeed(
+			{
+				statusCode: 400,
+				body: JSON.stringify({ "message": "Bad Request" })
+			});
+      return;
+    }
+    self.text_request = body.text;
+    console.log("text: ", self.text_request);
+    let req_options =
+    {
+      method: 'POST',
+      uri: VA_SERVICE_URL,
+      body:
+      {
+        app: body.app,
+        query:
+        {
+          text: self.text_request,
+          session_id: body.session_id,
+          data: body.data
+        }
+      },
+      headers:
+      {
+        'x-api-key': VA_SERVICE_KEY
+      },
+      json: true
+    }
+    return self.request_promise(req_options); //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
+  }
+
+  /**
+  * RULE
+  */
 
   /**
   * Metodo che permette di aggiungere una direttiva al sistema
@@ -253,7 +299,9 @@ class VocalAPI
 		});
   }
 
-  /******* USER *********/
+  /**
+   * USER
+   */
 
 	/**
   * Metodo che permette di aggiungere un utente al sistema
@@ -341,7 +389,6 @@ class VocalAPI
 								msg: err.message
 							});
 						},
-
 						complete: function()
 						{
 							observer.complete();
@@ -653,7 +700,7 @@ class VocalAPI
             name: params.rule_name,
             task:
             {
-              task: params.task_name
+              type: params.task_name
             },
             targets:[
             {
@@ -748,7 +795,7 @@ class VocalAPI
         case 'user.get':
           let user;
           options.body.event = {name: 'getUserSuccess'};
-          self._getUser(params.user_username).subscribe(
+          self._getUser(params.username).subscribe(
           {
             next: (data) => {user = data;},
             error: error(context),
@@ -774,7 +821,7 @@ class VocalAPI
           });
           break;
         case 'user.login':
-          this._loginUser({audio: audio_buffer, username: params.user_usernames}).subscribe(
+          this._loginUser({audio: audio_buffer, username: params.username}).subscribe(
           {
             next: function(token)
             {
@@ -795,7 +842,7 @@ class VocalAPI
             name: 'removeUserSuccess',
             data: {}
           };
-          self._removeUser(params.user_username).subscribe(
+          self._removeUser(params.username).subscribe(
           {
             complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
             error: error(context)
@@ -803,7 +850,7 @@ class VocalAPI
           break;
         case 'user.resetEnrollment':
         options.body.event = {name: "resetUserEnrollmentSuccess"}
-        this._resetUserEnrollment(params.user_username).subscribe(
+        this._resetUserEnrollment(params.username).subscribe(
         {
           complete: () => context.succeed({statusCode: 200, body: JSON.stringify(response)}),
           error: error(context)

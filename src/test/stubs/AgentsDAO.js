@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 
-module.exports = 
+module.exports =
 {
   addAgent: sinon.stub(),
   getAgent: sinon.stub(),

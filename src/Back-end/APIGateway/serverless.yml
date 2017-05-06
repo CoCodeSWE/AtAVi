@@ -34,5 +34,11 @@ functions:
     handler: handler.query
     events:
       - http:
-          path: query
+          path: vocal-assistant
           method: post
+    queryText:
+      handler: handler.queryText
+      events:
+        - http:
+            path: text-assistant
+            method: post

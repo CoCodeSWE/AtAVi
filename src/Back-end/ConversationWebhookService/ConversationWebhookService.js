@@ -79,19 +79,7 @@ class ConversationWebhookService
             statusCode: 200,
             body: JSON.stringify(
             {
-              //forse i dati che metto nel context posso metterli direttamente in data di event, senza creare il context
-              //cosi eviterei anche di avere più di un context attivo nello stesso momento
-              //forse però ho bisogno di settare il context per attivare la richista di conferma
-/*              contextOut: [
-              {
-                name: 'admin',
-                lifespan: 0,  //dura solo un'interazione e poi sparisce
-                parameters:
-                {
-                  username: users[0].username //metto come possibile username il primo. Nel caso l'utente dirà di cambiare username
-                }
-              }],*/
-              data: body.originalRequest ? body.originalRequest.data : {},
+              data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
               followupEvent:
               {
                 name: "recognizeAdminEvent",
@@ -143,7 +131,7 @@ class ConversationWebhookService
                   company: guests[0].company //metto come possibile azienda la prima. Nel caso l'utente potrà dire che appartiene ad un'altra azienda
                 }
               }],
-              data: body.originalRequest.data,
+              data: Object.assign({ _status: 200}, (body.originalRequest ? body.originalRequest.data : {})),
               followupEvent:
               {
                 name: "eventoOspiteRiconosciuto",
@@ -176,7 +164,7 @@ class ConversationWebhookService
       {
         speech: body.result.fulfillment.speech,
         displayText: body.result.fulfillment.displayText,
-        data: body.originalRequest ? body.originalRequest.data : {}
+        data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {}))
       })
     });
   }
@@ -194,10 +182,7 @@ const error400 =
   body: JSON.stringify(
   {
     speech: "Bad Request",
-    data:
-    {
-      _status: 400
-    }
+    data: Object.assign({ _status: 400}, (body.originalRequest ? body.originalRequest.data : {})),
   })
 };
 
@@ -207,10 +192,8 @@ const error500 =
   body: JSON.stringify(
   {
     speech: "Internal Server Error",
-    data:
-    {
-      _status: 500
-    }
+    data: Object.assign({ _status: 500}, (body.originalRequest ? body.originalRequest.data : {})),
+
   })
 };
 

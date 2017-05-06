@@ -24,7 +24,7 @@ class VAService
 		*/
 	query(event, context)
 	{
-    console.log(event);
+    //console.log(event);
 		let self = this;
 		let request;	// Conterrà i dati relativi alla richiesta
 		try
@@ -61,13 +61,13 @@ class VAService
 				{
 					self.va_module.query(request.query).then(function(data)
 					{
-						console.log(data);
+						console.log('data', data);
 						success(context, data);
 					})
 					.catch(function(err)
 					{
-            console.log(err);
-						internalServerError(context);
+            console.log('err', err);
+						ServerError(context, err.statusCode);
 					});
 				}
 			});
@@ -90,12 +90,12 @@ function badRequest(context)
 }
 
 // Funzione per gestire lo status code 500
-function internalServerError(context)
+function ServerError(context, status)
 {
 	context.succeed(
 	{
-		statusCode: 500,
-		body: JSON.stringify({ message: 'Internal server error' })
+		statusCode: status,
+		body: JSON.stringify({ message: 'Error' })
 	});
 }
 

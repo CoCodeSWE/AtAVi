@@ -58,38 +58,40 @@ describe('Back-end', function()
         statusCode: 412,
 				message: 'Errore'
       };
-			
+
       agents.getAgent.returns('01011');
 			describe('query', function(done)
 			{
-				it('Se la richiesta HTTP ad api.ai va a buon fine allora lo status code della risposta deve essere uguale a 200.', function()
+				it('Se la richiesta HTTP ad api.ai va a buon fine allora lo status code della risposta deve essere uguale a 200.', function(done)
         {
-					agents.getAgent.returns(Rx.Observable.empty());
+					agents.getAgent.returns(Rx.Observable.of('aaa'));
           va.query.returns(Promise.resolve(res_body));
           service.query({ body: JSON.stringify(req_body) }, context);
-          
+
 					setTimeout(function()
 					{
 						expect(context.succeed.callCount).to.equal(1);
 						expect(agents.getAgent.callCount).to.equal(1);
 						expect(agents.getAgent.calledWith('test'));
 						let result = context.succeed.getCall(0).args[0];
-						expect(result).to.not.be.null;
+            expect(result).to.not.be.null;
 						expect(result.statusCode).to.equal(200);
+            done();
 					});
         });
-				it('Se la chiamata al modulo VAModule genera un\'errore, lo status code della risposta deve essere uguale al codice di errore ricevuto.', function()
+				it('Se la chiamata al modulo VAModule genera un\'errore, lo status code della risposta deve essere uguale al codice di errore ricevuto.', function(done)
         {
-					agents.getAgent.returns(Rx.Observable.throw(new Error()));
-          va.query.returns(Promise.resolve(error));
+					agents.getAgent.returns(Rx.Observable.of('aaa'));
+          va.query.returns(Promise.reject(error));
           service.query({ body: JSON.stringify(req_body) }, context);
-          
+
 					setTimeout(function()
 					{
 						expect(context.succeed.callCount).to.equal(1);
 						let result = context.succeed.getCall(0).args[0];
 						expect(result).to.not.be.null;
 						expect(result.statusCode).to.equal(412);
+            done();
 					});
 				});
 			});

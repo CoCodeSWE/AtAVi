@@ -30,3 +30,4 @@ let vocal = new VocalLoginMicrosoftModule(VOCAL_LOGIN_CONF);
 let gateway = new VocalAPI(vocal, jwt, rp, stt, sns);
 
 module.exports.query = gateway.queryLambda.bind(gateway);
+module.exports.queryText = gateway.queryText.bind(gateway);

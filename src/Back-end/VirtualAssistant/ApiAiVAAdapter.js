@@ -91,10 +91,13 @@ class ApiAiVAAdapter
 				va_response.res.contexts = response.result.contexts;
 
 			if(response.result.fulfillment.data)
-				va_response.res.data = response.result.fulfillment.data;
-
+			{
+        if(response.result.fulfillment.data._status !== 200)
+          throw {statusCode: response.result.fulfillment.data.statusCode}
+      	va_response.res.data = response.result.fulfillment.data;
+      }
 			return va_response;
-		});
+		}); //no catch perchè mi va bene l'eccezione che viene sollevata
 	}
 
 	/**

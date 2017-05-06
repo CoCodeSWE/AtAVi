@@ -24,7 +24,7 @@ const tts_conf =
 const rec_conf =
 {
   worker_path: 'Script/RecorderWorker.js',
-  threshold: 15  //FIXME rimettere ad un valore decente o utilizzare il default
+  threshold: 15 
 }
 
 //URL dell'endpoint
