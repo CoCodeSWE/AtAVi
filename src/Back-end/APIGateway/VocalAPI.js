@@ -765,7 +765,7 @@ class VocalAPI
             name: 'updateRuleSuccess',
             data: {}
           };
-          self._updateRule({}).subscribe(
+          self._updateRule().subscribe(
           {
             complete: function()
             {
@@ -782,9 +782,9 @@ class VocalAPI
           };
           self._addUser(
           {
-            name: params.user_name,
+            name: params.name,
             company: params.company,
-            username: params.user_username
+            username: params.username
           }).subscribe(
           {
             complete: function()
@@ -796,7 +796,7 @@ class VocalAPI
           break;
         case 'user.addEnrollment':
           options.body.event = {name: "addUserEnrollmentSuccess"}
-          self._addUserEnrollment({audio: audio_buffer, username: params.user_username}).subscribe(
+          self._addUserEnrollment({audio: audio_buffer, username: params.username}).subscribe(
           {
             complete: function()
             {
