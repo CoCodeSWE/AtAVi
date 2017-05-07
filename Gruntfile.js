@@ -149,6 +149,48 @@ module.exports = function(grunt) {
           'dist/Back-end/APIGateway': ['src/Back-end/STT/STTWatsonAdapter.js', 'src/Back-end/Users/VocalLoginMicrosoftModule.js']
         }
       }
+    },
+    exec:
+    {
+      install_atavi:
+      {
+        command: 'npm install'
+      },
+      install_adminWebhook:
+      {
+        command: 'npm install',
+        cwd: 'src/Back-end/AdministrationWebhookService'
+      },
+      install_gateway:
+      {
+        command: 'npm install',
+        cwd: 'src/Back-end/APIGateway'
+      },
+      install_ConversationWebhookService:
+      {
+        command: 'npm install',
+        cwd: 'src/Back-end/ConversationWebhookService'
+      },
+      install_Notifications:
+      {
+        command: 'npm install',
+        cwd: 'src/Back-end/Notifications'
+      },
+      install_Rules:
+      {
+        command: 'npm install',
+        cwd: 'src/Back-end/Rules'
+      },
+      install_Users:
+      {
+        command: 'npm install',
+        cwd: 'src/Back-end/Users'
+      },
+      install_VirtualAssistant:
+      {
+        command: 'npm install',
+        cwd: 'src/Back-end/ConversationWebhookService'
+      }
     }
   });
 
@@ -166,8 +208,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('mocha-browser-test-page');
   grunt.loadNpmTasks('modules-copy');
+  grunt.loadNpmTasks('grunt-exec');
   // Default task(s).
-  grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "copy","modules-copy:backend",'mochaTest']);
+  grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "copy","modules-copy:backend", "exec", 'mochaTest']);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
   grunt.registerTask('react', ['babel:react']);
   grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]);
