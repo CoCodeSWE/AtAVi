@@ -27,9 +27,8 @@ body {
 
 #mainFrame {
   border-top-left-radius: 2em;
-  margin: 3em auto;
-  margin-top: 1.5em;
-  height: 40em;
+  margin: 1em auto;
+  height: 30em;
   width: 40%;
   border: 0.2em solid #000000;
   background-color: #ffffff;
@@ -58,7 +57,6 @@ body {
   margin: 0 auto;
   width: 40%;
   height: 13em;
-  display: flex;
 }
 
 .buttonSS {
@@ -92,7 +90,10 @@ body {
 #nomeApp {
   color: #ffffff;
   font-family: Atavi;
-  font-size: 2.6em;
+  font-size: 200%;
+  float: left;
+  width: 100%;
+  margin-bottom: 0.5em;
 }
 
 #listMessages {

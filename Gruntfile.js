@@ -213,7 +213,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "copy","modules-copy:backend", 'mochaTest']);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
   grunt.registerTask('react', ['babel:react']);
-  grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]);
+  grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "sass:client", "copy:client"]);
   grunt.registerTask('test-client', ["browserify:test-client", "copy:test-client"]);
   grunt.registerTask('copymod', ["modules-copy:backend"]);
 
