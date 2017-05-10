@@ -5,6 +5,11 @@
 * @since 0.0.3-alpha
 */
 const Rx = require('rxjs/Rx');
+const ERROR_CODES =
+{
+  REQUEST_ERROR: 1,
+  LOGIN_FAILED: 2
+}
 
 class VocalLoginMicrosoftModule
 {
@@ -131,7 +136,7 @@ class VocalLoginMicrosoftModule
 		{
 			let options =
 			{
-				method: 'GET',
+				method: 'POST',
 				uri: `https://westus.api.cognitive.microsoft.com/spid/v1.0/verify?verificationProfileId=${id}`,
 				headers:
 				{
@@ -143,14 +148,15 @@ class VocalLoginMicrosoftModule
 
 			self.request_promise(options).then(function(data)
 			{
-				if(data.result === 'Accept' && mapConfidence(data.confidence) >= mapConfidence(this.min_confidence))
+				if(data.result === 'Accept' && mapConfidence[data.confidence] >= self.min_confidence)
 					observer.complete();
 				else
-					observer.error('Error recognizing user');
+					observer.error({error: ERROR_CODES.LOGIN_FAILED});
 			})
 			.catch(function(err)
 			{
-				observer.error(err);
+        let error = {error: ERROR_CODES.REQUEST_ERROR, statusCode: err.statusCode};
+				observer.error(error);
 			});
 		});
 	}
@@ -258,27 +264,21 @@ class VocalLoginMicrosoftModule
 		- 2: High
 */
 
-function mapConfidence(confidence)
+class LoginError
 {
-	let value; // Contiene il valore di ritorno della funzione
-
-	switch(confidence)
-	{
-		case 'Low':
-			value = 0;
-			break;
-		case 'Normal':
-			value = 1;
-			break;
-		case 'High':
-			value = 2;
-			break;
-		default:
-			value = -1;
-			break;
-	}
-
-	return value;
+  constructor(error, message)
+  {
+    this.error = error;
+    this.message = message;
+  }
 }
 
+const mapConfidence =
+{
+  'Low' : 0,
+  'Normal' : 1,
+  'High' : 2
+}
+
+VocalLoginMicrosoftModule.ERROR_CODES = ERROR_CODES;
 module.exports = VocalLoginMicrosoftModule;

@@ -17,6 +17,8 @@ beforeEach(function()
 	error = sinon.stub();
 	complete = sinon.stub();
   promise = sinon.stub();
+  sns.publish = sinon.stub();
+  sns.publish.yields(null);
   api = new VocalAPI(vocalLogin, jwt, promise, stt, sns);
 	context.succeed = sinon.stub();
 });
@@ -217,7 +219,7 @@ describe('Back-end', function()
 
 			describe('queryLambda', function ()
 			{
-				/*
+
 				it("Se la chiamata al servizio di STT non va a buon fine allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente statusCode pari a 500.", function(done)
 				{
 					// Manca il catch
@@ -227,10 +229,11 @@ describe('Back-end', function()
 						expect(response).have.property('statusCode', 500);
 						done();
 					};
+          api.queryLambda(event, context);
 				});
-				*/
 
-				/*
+
+
 				it("Se lo status della risposta ricevuta dall\'assistente virtuale è diverso da 200 allora il metodo deve chiamare il metodo succeed di context con un oggetto di tipo LambdaResponse come parametro avente il campo statusCode uguale a quello ricevuto e corpo del messaggio 'Errore nel contattare l\'assistente virtuale'.", function(done)
 				{
 					// Manca il catch
@@ -238,11 +241,12 @@ describe('Back-end', function()
 					promise.onCall(0).returns(Promise.reject(errore_VA));
 					context.succeed = function(response)
 					{
-						ecpect(response).to.have.property('statusCode', errore_VA.statusCode);
+						expect(response).to.have.deep.property('statusCode', errore_VA.statusCode);
 						done();
 					};
+          api.queryLambda(event, context);
 				});
-				*/
+
 
 				it("Se l\'action del body della risposta è uguale a 'rule.add' allora il metodo deve chiamare il metodo privato _addRule.", function(done)
 				{
@@ -577,7 +581,7 @@ describe('Back-end', function()
           }
           api.queryLambda(event, context);
 				});
-				
+
 				it("Se durante la chiamata al metodo privato _loginUser si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Users.", function(done)
 				{
 					api._loginUser = sinon.stub();
@@ -595,7 +599,7 @@ describe('Back-end', function()
           }
           api.queryLambda(event, context);
 				});
-				
+
 				it("Se durante la chiamata al metodo privato _removeRule si verifica un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse il quale campo statusCode è impostato ad un valore uguale a quello restituito dal microservizio Rules.", function(done)
 				{
 					api._removeRule = sinon.stub();
@@ -685,14 +689,22 @@ describe('Back-end', function()
           }
           api.queryLambda(event, context);
 				});
-				
-				/*
-				it("Se la chiamata al metodo sns.publish genera un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente campo statusCode pari allo status dell\'errore.", function(done)
+
+
+				it("Se la chiamata al metodo sns.publish genera un errore allora il metodo deve chiamare il metodo succeed del context con un parametro LambdaResponse avente campo statusCode pari a 500.", function(done)
 				{
-					
+          sns.publish.yields('Errore');
+          stt.speechToText.returns(Promise.resolve('Test'));
+					promise.returns(Promise.resolve(empty_action_response));
+          context.succeed = function(args)
+          {
+            expect(args).to.have.deep.property('statusCode', 500);
+            done();
+          }
+          api.queryLambda(event, context);
 				});
-				*/
-				
+
+
 				it("Se lo status code della risposta di un microservizio è pari a 200 e l\'action contenuta nel suo body non corrisponde a nessuna action supportata dal back-end allora il metodo deve rielabolare la risposta e inoltrarla.", function(done)
 				{
 					api._updateUser = sinon.stub();
@@ -837,6 +849,7 @@ let errore =
 
 let errore_VA =
 {
+  name: 'StatusCodeError',
 	statusCode: 404,
 	message: 'Bad Request'
 }

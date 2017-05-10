@@ -24,6 +24,7 @@ provider:
     SPEAKER_RECOGNITION_KEY: ${file(secret.yml):speaker_recognition.key}
     WATSON_USERNAME: ${file(secret.yml):watson.username}
     WATSON_PASSWORD: ${file(secret.yml):watson.password}
+    JWT_SECRET: ${file(secret.yml):jwt.secret}
   iamRoleStatements:
     - Effect: Allow
       Action:
