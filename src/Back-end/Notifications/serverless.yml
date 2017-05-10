@@ -15,7 +15,7 @@ functions:
     handler: getChannelList.getChannelList
     events:
       - http:
-          path: notifications
+          path: channels
           method: get
           private: true
 
@@ -23,6 +23,10 @@ functions:
     handler: sendMsg.sendMsg
     events:
       - http:
-          path: notifications
+          path: channels/{channel}
           method: post
           private: true
+          request:
+            parameters:
+              paths:
+                channel: true

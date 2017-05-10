@@ -1,8 +1,10 @@
 /**
 * Questa classe si occupa di implementare l'endpoint dell'API Gateway utilizzato dal client vocale.
 * @author Simeone Pizzi, Nicola Tintorri e Mattia Bottaro
-* @version 0.0.4
+* @version 0.0.5
 * @since 0.0.3-alpha
+* @todo gestione degli errori un po' più pensata
+* @todo retry delle richieste (utilizzando magari promise-retry {@see https://www.npmjs.com/package/promise-retry})
 */
 const Rx = require('rxjs/Rx');
 
@@ -13,6 +15,7 @@ const USERS_SERVICE_KEY = process.env.USERS_SERVICE_KEY;
 const RULES_SERVICE_KEY = process.env.RULES_SERVICE_KEY;
 const VA_SERVICE_KEY = process.env.VA_SERVICE_KEY;
 const SPEAKER_RECOGNITION_KEY = process.env.SPEAKER_RECOGNITION_KEY;
+const SNS_TOPIC_ARN = process.env.SNS_TOPIC_ARN;
 class VocalAPI
 {
   /**
@@ -54,8 +57,8 @@ class VocalAPI
 			});
       return;
     }
-    let audio_buffer = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
-    self.stt.speechToText(audio_buffer, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
+    body.audio = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
+    self.stt.speechToText(body.audio, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
       self.text_request = text;
       let req_options =
@@ -78,16 +81,17 @@ class VocalAPI
         },
         json: true
       }
-      return self.request_promise(req_options)
-        .catch(function(err)
-        {
-          if(err.name === 'StatusCodeError')
-            context.succeed({statusCode: err.statusCode, body: JSON.stringify({message: 'Internal server error.'})});
-          else
-            context.succeed({statusCode: 404, body: JSON.stringify({message: 'Internal server error.'})});
-          throw(null);
-        }); //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
-    }).then(self._onVaResponse(context, audio_buffer).bind(self))
+      return self.request_promise(req_options) //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
+    })
+      .catch(function(err)
+      {
+        if(err.name === 'StatusCodeError')
+          context.succeed({statusCode: err.statusCode, body: JSON.stringify({message: 'Internal server error.'})});
+        else
+          context.succeed({statusCode: 404, body: JSON.stringify({message: 'Internal server error.'})});
+        throw(null);
+      })
+      .then(self._onVaResponse(context, body).bind(self))
       .catch(function(err)
       {
         if(err)
@@ -671,10 +675,10 @@ class VocalAPI
   /**
   * metodo che viene chiamato ogni volta viene ricevuta una risposta dall'assitente virtuale
   * @param {LambdaContext} context - oggetto utilizzato per mandare l'eventuale risposta ad API gateway
-  * @param {Buffer} audio_buffer - Buffer contenente l'audio ricevuto
+  * @param {Buffer} body - corpo della richiesta ricevuta, contenente anche un buffer dell'audio in body.audio (al posto dell'audio codificato in base64 delle richiesta originale)
   * @return {function(VAResponse)} - funzione utilizzata come callback, che accetta come parametro la risposta dell'assistente viruale
   */
-  _onVaResponse(context, audio_buffer)
+  _onVaResponse(context, body)
   {
     console.log('response')
     let self = this;
@@ -688,8 +692,12 @@ class VocalAPI
         json: true,
         body:
         {
-          data: response.data,
-          session_id: response.session_id
+          app: body.app,
+          query:
+          {
+            data: response.data ? response.data : {},
+            session_id: response.session_id
+          },
         }
       }
 
@@ -697,7 +705,7 @@ class VocalAPI
       switch(response.action)
       {
         case 'rule.add':
-          options.body.event =
+          options.body.query.event =
           {
             name: 'addRuleSuccess',  // da definire il vero event come anche i parametri necessari
             data: {}
@@ -720,7 +728,7 @@ class VocalAPI
           {
             complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: error(context)
           });
@@ -735,7 +743,7 @@ class VocalAPI
             complete: function()
             {
               options.body.event.data = { rules: rules };
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self)).catch(console.log);
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             }
           });
           break;
@@ -749,7 +757,7 @@ class VocalAPI
             complete: function()
             {
               options.body.event.data = { rule: rule };
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             }
           });
           break;
@@ -763,7 +771,7 @@ class VocalAPI
           {
             complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: error(context)
           });
@@ -778,7 +786,7 @@ class VocalAPI
           {
             complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: error(context)
           });
@@ -798,18 +806,18 @@ class VocalAPI
           {
             complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: error(context)
           });
           break;
         case 'user.addEnrollment':
           options.body.event = {name: "addUserEnrollmentSuccess"}
-          self._addUserEnrollment({audio: audio_buffer, username: params.username}).subscribe(
+          self._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
           {
             complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: error(context)
           });
@@ -824,7 +832,7 @@ class VocalAPI
             complete: function()
             {
               options.body.event.data = { user: user };
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             }
           });
           break;
@@ -838,32 +846,32 @@ class VocalAPI
             complete: function()
             {
               options.body.event.data = { users: users };
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             }
           });
           break;
         case 'user.login':
-          this._loginUser({audio: audio_buffer, username: params.username}).subscribe(
+          this._loginUser({audio: body.audio, username: params.username}).subscribe(
           {
             next: function(token)
             {
               options.body.data.token = token;
               options.body.event = {name: 'loginUserSuccess'};
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: function(err)
             {
               if(err.error === 2)
               {
                 options.body.event = {name: 'loginUserFailure'};
-                self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
               else
                 (error(context))(err);
             },
 						complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             }
           });
           break;
@@ -877,7 +885,7 @@ class VocalAPI
           {
             complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: error(context)
           });
@@ -888,7 +896,7 @@ class VocalAPI
         {
           complete: function()
           {
-            self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+            self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
           },
           error: error(context)
         });
@@ -903,18 +911,19 @@ class VocalAPI
           {
             complete: function()
             {
-              self.request_promise(options).then(self._onVaResponse(context, audio_buffer).bind(self));
+              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             },
             error: error(context)
           });
           break;
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
-          this.sns.publish({Message: JSON.stringify(response), TopicArn: this.SNS_TOPIC_ARN},(err, data) =>
+          this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
           {
             if(err)
-              (error(context))({ code: 500, msg: 'Cannot notify.'});
+              (error(context))({ code: 500, msg: 'Cannot notify: ' + JSON.stringify(err, null, 2)});
             else
             {
+              response.res.text_request = self.text_request;
               context.succeed({ statusCode: 200, body: JSON.stringify(response) });
             }
           });
@@ -934,6 +943,7 @@ function error(context)
 {
   return function(err)
   {
+    console.log(err);
     context.succeed(
     {
       statusCode: err.code,

@@ -45,7 +45,7 @@ module.exports = function(grunt) {
         },
         files:
         {
-          "./dist/client/main.js": ["./src/Client/main.js"]
+          "./dist/Client/main.js": ["./src/Client/main.js"]
         }
       },
       'test-client':
@@ -146,7 +146,8 @@ module.exports = function(grunt) {
       {
         files:
         {
-          'dist/Back-end/APIGateway': ['src/Back-end/STT/STTWatsonAdapter.js', 'src/Back-end/Users/VocalLoginMicrosoftModule.js']
+          'dist/Back-end/APIGateway': ['src/Back-end/STT/STTWatsonAdapter.js', 'src/Back-end/Users/VocalLoginMicrosoftModule.js'],
+          'dist/Back-end/Events': ['dist/Back-end/Conversations/ConversationsDAODynamoDB.js', 'dist/Back-end/Guests/GuestsDAODynamoDB.js']
         }
       }
     },
@@ -209,8 +210,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('mocha-browser-test-page');
   grunt.loadNpmTasks('modules-copy');
   grunt.loadNpmTasks('grunt-exec');
-  // Default task(s).
-  grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "copy","modules-copy:backend", 'mochaTest']);
+  // Default task(ss
+  grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "copy","modules-copy:backend"]);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
   grunt.registerTask('react', ['babel:react']);
   grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "copy:client"]);

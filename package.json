@@ -4,7 +4,7 @@
   "description": "Accoglienza tramite Assistente Virtuale",
   "main": " ",
   "scripts": {
-    "test": "nyc --reporter html mocha src/test/test_*.js"
+    "test": "nyc --reporter html mocha src/test/test_*.js "
   },
   "repository": {
     "type": "git",
@@ -47,5 +47,9 @@
     "rxjs-es": "^5.0.0-beta.12",
     "uuid": "^3.0.1",
     "map-object-properties" : ">=0.0.1"
+  },
+  "nyc": {
+    "include": "src",
+    "exclude": "src/test/**/*" 
   }
 }

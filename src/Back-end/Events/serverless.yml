@@ -12,7 +12,11 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   profile: default
-
+  environment:
+    RULES_SERVICE_URL: ${file(secret.yml):rules.url}
+    RULES_SERVICE_KEY: ${file(secret.yml):rules.key}
+    NOTIFICATIONS_SERVICE_URL: ${file(secret.yml):notifications.url}
+    NOTIFICATIONS_SERVICE_KEY: ${file(secret.yml):notifications.key}
 functions:
   dispatcher:
     handler: onMessage.onMessage

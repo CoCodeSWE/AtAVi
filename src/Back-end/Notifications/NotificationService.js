@@ -172,15 +172,15 @@ class NotificationService
       });
       return;
     }
-
+    let send_to = event.pathParameters.channel;
 		// Controllo che ci siano i campi obbligatori
-		if(body.msg.text && body.send_to)
+		if(body.msg)
 		{
 			let attachments_filtered = null;
 			if(body.msg.attachments)
 				objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
 
-			self.client.chat.postMessage(body.send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
+			self.client.chat.postMessage(send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
 			{
 				if (err)
 				{
