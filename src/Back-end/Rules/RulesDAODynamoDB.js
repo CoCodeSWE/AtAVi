@@ -100,6 +100,7 @@ class RulesDAODynamoDB
 					params.ExpressionAttributeValues = filter_expression.ExpressionAttributeValues;
 				}
 			}
+			console.log(params);
 			self.client.scan(params, self._onScan(observer, params));
 		});
   }
@@ -203,9 +204,9 @@ function filterExpression(obj)
 
   for(let key in new_obj)
   {
-    filter_expression.FilterExpression += `${key} = :${key} and `;
-		filter_expression.ExpressionAttributeValues[`:${key}`] = new_obj[key];
-  }
+		filter_expression.FilterExpression += `${key} = :${key} and `;
+		filter_expression.ExpressionAttributeValues[`:${key}`] = Boolean(new_obj[key] === 'true');
+	}
 
 	// Tolgo l'and finale dal FilterExpression
 	filter_expression.FilterExpression = filter_expression.FilterExpression.slice(0,-5);
@@ -219,7 +220,7 @@ const attr_map =
 
 const reverse_attr_map =
 {
-  full_name: 'name'
+  rule_name: 'name'
 }
 
 module.exports = RulesDAODynamoDB;
