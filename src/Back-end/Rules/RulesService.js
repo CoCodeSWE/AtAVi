@@ -186,13 +186,46 @@ class RulesService
     };
 
     // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
-		let query = objectFilter(event.queryStringParameters, ['enabled', 'target.name','target.company','target.member']);
+		let query = objectFilter(event.queryStringParameters, ['enabled']);
 		if(Object.keys(query).length === 0)
 			query = null;
 
     this.rules.getRuleList(query).subscribe(
     {
-      next: (rule) => { list.rules.push(rule); },
+      next: function(rule)
+			{
+				let target = objectFilter(event.queryStringParameters, ['target_name', 'target_member', 'target_company']);
+				if(Object.keys(target).length > 0)
+				{
+					let insert = false;
+					for(let i = 0; i < rule.targets.length; ++i)
+					{
+						// Controllo se tutti i tre campi di target sono impostati come filtro
+						if(target['target_name'] && target['target_member'] && target['target_company'])
+						{
+							if(rule.targets[i].name === target['target_name'] && rule.targets[i].member === target['target_member'] && rule.targets[i].company === target['target_company'])
+								list.rules.push(rule);
+						}
+						// Controllo se i campi member e company sono impostati
+						else if(target['target_member'] && target['target_company'])
+						{
+							if(rule.targets[i].member === target['target_member'] && rule.targets[i].company === target['target_company'])
+								list.rules.push(rule);
+						}
+						// Controllo se il campo company è impostato
+						else if(target['target_company'])
+						{
+							if(rule.targets[i].company === target['target_company'])
+								list.rules.push(rule);
+						}
+					}
+				}
+				else
+				{
+					list.rules.push(rule);
+				}
+			},
+			
       error: internalServerError(context),
 
       complete: function()
@@ -226,7 +259,8 @@ class RulesService
 		this.tasks.getTaskList(query).subscribe(
     {
       next: (task) => { list.tasks.push(task); },
-      error: internalServerError(context),
+      
+			error: internalServerError(context),
 
       complete: function()
       {
@@ -258,7 +292,7 @@ class RulesService
 		}
 
 		// Parametro contenente i dati relativi alla rule da aggiungere
-		let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task']);
+		let params = objectFilter(rule, ['enabled', 'targets', 'task']);
 		params.id = event.pathParameters.name;
 
 		this.rules.updateRule(params).subscribe(
@@ -287,7 +321,7 @@ function internalServerError(context)
 {
 	return function(err)
 	{
-    //console.log('internalServerError ', err);
+    console.log('internalServerError ', err);
 		context.succeed(
 		{
 			statusCode: 500,

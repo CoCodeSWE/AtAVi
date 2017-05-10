@@ -74,9 +74,9 @@ functions:
             parameters:
               querystring:
                 enabled: false
-                name: false
-                target: false
-                task: false
+                targets.name: false
+                targets.member: false
+                targets.company: false
 
   getTaskList:
     handler: getTaskList.getTaskList
