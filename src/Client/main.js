@@ -102,7 +102,12 @@ logic.getObservable().subscribe(
 
 //recorder.start(); /**@todo rimuovere e collegarlo ai tasti*/
 
-document.getElementById('start').onclick = recorder.start.bind(recorder);
+document.getElementById('start').onclick = function ()
+{
+  recorder.start();
+  changeValueButton();
+}
+
 
 /**
  * getVoices - funzione che permette di ottenere la lista delle voci disponibili

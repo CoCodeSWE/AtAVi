@@ -3,6 +3,7 @@ this.dispatcher = new Dispatcher();
 var _this = this;
 function render() {
   ReactDOM.render(React.createElement(ConversationView, _this.store), _this.ui);
+  scrollBottom();
 }
 
 this.store.getObservable().subscribe({

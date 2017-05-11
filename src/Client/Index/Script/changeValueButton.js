@@ -1,4 +1,4 @@
-function changeValue()
+function changeValueButton()
 {
   if(document.getElementById( 'start' ) == null)
   {
