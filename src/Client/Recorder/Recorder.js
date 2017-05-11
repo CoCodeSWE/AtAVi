@@ -126,7 +126,7 @@ export default class Recorder
       if(!this.recording)
       this._startRecording();
     }
-    else if(this.max_silence !== -1 && !this.time  && level <= this.threshold)
+    else if(this.max_silence !== -1 && !this.time  && level <= this.threshold && this.recording)
     {
       this.time = setTimeout(() =>
       {
