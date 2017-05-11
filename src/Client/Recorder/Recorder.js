@@ -142,6 +142,7 @@ export default class Recorder
 
   enable()
   {
+    console.log(new Error());
     this.enabled = true;
   }
 
