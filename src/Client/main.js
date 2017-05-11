@@ -74,6 +74,7 @@ recorder.getObservable().subscribe(
           data: {}, /**@todo passare davvero i dati*/
           session_id: session_id
         }
+        recorder.stop();
         logic.sendData(query);
       })
       .catch(console.log)
@@ -92,7 +93,6 @@ logic.getObservable().subscribe(
     let cmd = action[1];
     console.log(action, app, cmd);
     application_manager.runApplication(app, cmd, response.res);
-    recorder.stop();
     player.speak(response.res.text_response);
   },
   error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
