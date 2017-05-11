@@ -63,6 +63,7 @@ recorder.getObservable().subscribe(
   next: function(blob)
   {
     console.log('Recorder next');
+    recorder.stop();
     let app = application_manager.application_name;
     blobToBase64(blob)
       .then(function(audio)
@@ -74,7 +75,6 @@ recorder.getObservable().subscribe(
           data: {}, /**@todo passare davvero i dati*/
           session_id: session_id
         }
-        recorder.stop();
         logic.sendData(query);
       })
       .catch(console.log)
