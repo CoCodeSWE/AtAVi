@@ -29,7 +29,7 @@ const rec_conf =
 }
 
 //URL dell'endpoint
-const API_URL = 'http://localhost:3031/'; /**@todo cambiare url mettendo quello vero*/
+const API_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant'; /**@todo cambiare url mettendo quello vero*/
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
