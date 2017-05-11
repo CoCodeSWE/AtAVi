@@ -133,7 +133,7 @@ export default class Recorder
         if(self.disable_on_data)
           self.stop();
         else
-          self._stopRecording(); 
+          self._stopRecording();
       }, self.max_silence);
     }
     if(this.recording)
@@ -156,6 +156,8 @@ export default class Recorder
   stop()
   {
     this.enabled = false;
+    clearTimeout(this.time);
+    this.time = null;
     this._stopRecording();
   }
 
