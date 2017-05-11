@@ -95,7 +95,7 @@ export default class Player
     utterance.volume = this.options.volume;
     utterance.onstart = () => {console.log('startSpeak');this.subject.next(true)};
     utterance.onresume = () => {console.log('resumeSpeak');this.subject.next(true)};
-    utterance.onend = () => {console.log('end');this.subject.next(false)};
+    utterance.onend = () => {console.log('endSpeak');this.subject.next(false)};
     utterance.onpause = () => {console.log('pause');this.subject.next(false)};
     utterance.onerror = () => {console.log('error');this.subject.next(false)};
     //utterance.onboundary = () => {console.log('boundary')};
@@ -103,7 +103,7 @@ export default class Player
     //fix callback non chiamati
     if(this._time)
       clearTimeout(this._time);
-    this.time = setTimeout(() => {console.log(utterance)}, 60000);  //settando il timeout
+    this._time = setTimeout(() => {console.log(utterance)}, 60000);  //settando il timeout
     // in teoria non viene chiamato il garbage collector su utterance, e quindi
     // i callback vengono chiamati
   }
