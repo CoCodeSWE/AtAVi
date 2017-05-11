@@ -39,7 +39,7 @@ let logic = new Logic(API_URL);
 // application manager e dipendenze
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
-reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
+reg_client.register('conversationsApp', ConversationApp).subscribe({error: console.log});
 reg_client.register('administration', ConversationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
                                                                                         //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
@@ -64,7 +64,7 @@ recorder.getObservable().subscribe(
   next: function(blob)
   {
     console.log('Recorder next');
-    let app = application_manager.application_name;
+    let app = application_manager.application_name || 'conversationsApp';
     blobToBase64(blob)
       .then(function(audio)
       {

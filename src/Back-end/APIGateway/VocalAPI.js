@@ -42,6 +42,7 @@ class VocalAPI
 	*/
   queryLambda(event, context)
   {
+    console.log(event);
     let self = this;
     let body;
     try
@@ -53,7 +54,8 @@ class VocalAPI
       context.succeed(
 			{
 				statusCode: 400,
-				body: JSON.stringify({ "message": "Bad Request" })
+        headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true },
+				body: JSON.stringify({ "message": "Bad Request: \n" + JSON.stringify(err, null, 2) })
 			});
       return;
     }
@@ -81,21 +83,23 @@ class VocalAPI
         },
         json: true
       }
+      console.log(JSON.stringify(req_options, null, 2));
       return self.request_promise(req_options) //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
     })
       .catch(function(err)
       {
+        console.log(err);
         if(err.name === 'StatusCodeError')
-          context.succeed({statusCode: err.statusCode, body: JSON.stringify({message: 'Internal server error.'})});
+          context.succeed({statusCode: err.statusCode, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
         else
-          context.succeed({statusCode: 404, body: JSON.stringify({message: 'Internal server error.'})});
+          context.succeed({statusCode: 404, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
         throw(null);
       })
       .then(self._onVaResponse(context, body).bind(self))
       .catch(function(err)
       {
         if(err)
-          context.succeed({statusCode: 500, body: JSON.stringify({message: 'Internal server error.'})});
+          context.succeed({statusCode: 500, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
       });
   }
   //context.succeed(statusCode: 200, body: JSON.stringify(response));
@@ -114,6 +118,7 @@ class VocalAPI
       context.succeed(
 			{
 				statusCode: 400,
+        headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true },
 				body: JSON.stringify({ "message": "Bad Request" })
 			});
       return;
@@ -924,7 +929,7 @@ class VocalAPI
             else
             {
               response.res.text_request = self.text_request;
-              context.succeed({ statusCode: 200, body: JSON.stringify(response) });
+              context.succeed({ statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response) });
             }
           });
       }
@@ -947,6 +952,7 @@ function error(context)
     context.succeed(
     {
       statusCode: err.code,
+      headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true },
       body: JSON.stringify({ message: err.msg })
     });
   }
