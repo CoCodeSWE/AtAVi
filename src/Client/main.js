@@ -29,7 +29,7 @@ const rec_conf =
 }
 
 //URL dell'endpoint
-const API_URL = 'http://localhost:3031/'; /**@todo cambiare url mettendo quello vero*/
+const API_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant'; /**@todo cambiare url mettendo quello vero*/
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -39,7 +39,7 @@ let logic = new Logic(API_URL);
 // application manager e dipendenze
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
-reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
+reg_client.register('conversationsApp', ConversationApp).subscribe({error: console.log});
 reg_client.register('administration', ConversationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
                                                                                         //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
@@ -64,7 +64,7 @@ recorder.getObservable().subscribe(
   next: function(blob)
   {
     console.log('Recorder next');
-    let app = application_manager.application_name;
+    let app = application_manager.application_name || 'conversationsApp';
     blobToBase64(blob)
       .then(function(audio)
       {

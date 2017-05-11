@@ -12,6 +12,7 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   profile: default
+  timeout: 15
   environment:
     USERS_SERVICE_KEY: ${file(secret.yml):users.key}
     USERS_SERVICE_URL: ${file(secret.yml):users.url}
@@ -33,6 +34,7 @@ provider:
 functions:
   query:
     handler: handler.query
+    timeout: 15
     events:
       - http:
           path: vocal-assistant
@@ -43,6 +45,7 @@ functions:
         - http:
             path: text-assistant
             method: post
+            cors: true
 resources:
   Resources:
     snsTopic:
