@@ -17,14 +17,14 @@ const tts_conf =
   pitch: 1,
   rate: 1,
   voice: getVoices('en-US')[0],
-  volume: 0.5
+  volume: 1
 }
 
 //Recorder
 const rec_conf =
 {
   worker_path: 'Script/RecorderWorker.js',
-  threshold: 15 
+  threshold: 20
 }
 
 //URL dell'endpoint
@@ -39,8 +39,8 @@ let logic = new Logic(API_URL);
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
-reg_client.register('administration', ConversationApp).subscribe({error: console.log});  //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
-                                                         //visto che hanno l'interfaccia condivisa
+reg_client.register('administration', ConversationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
+                                                                                        //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
 
 var session_id = uuidV4();
@@ -51,9 +51,7 @@ player.getObservable().subscribe(
   next: function(playing)
   {
     console.log('Player next', playing);
-    if(playing)
-      recorder.stop();
-    else
+    if(!playing)
       recorder.enable();
   },
   error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
@@ -94,9 +92,10 @@ logic.getObservable().subscribe(
     let cmd = action[1];
     console.log(action, app, cmd);
     application_manager.runApplication(app, cmd, response.res);
+    recorder.stop();
     player.speak(response.res.text_response);
   },
-  error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
+  error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
   complete: console.log
 });
 

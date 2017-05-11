@@ -15,7 +15,7 @@ export default class Recorder
   constructor(conf)
   {
     // FIXME: rimuovere codice per visualizzazione volume
-    this.element = document.getElementById('volume');
+    //this.element = document.getElementById('volume');
     this.WORKER_PATH = 'js/recorderjs/RecorderWorker.js';
 
     this.audio_context = new AudioContext();
@@ -35,7 +35,6 @@ export default class Recorder
     {
       next: function(msg)
       {
-        console.log(msg);
         switch(msg.type)
         {
           case 'buffers': //mi sono stati mandati i buffer della registrazione
@@ -58,12 +57,9 @@ export default class Recorder
 
     if (!navigator.mediaDevices.getUserMedia) //controllo per i browser più vecchi
     navigator.mediaDevices.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    console.log('constructor');
     navigator.mediaDevices.getUserMedia({ audio: true}) // richiedo di poter registrare l'audio
       .then(this._init.bind(this))
       .catch((err) => {self.subject.error(new Error('error getting media device')); console.log(err);});
-    console.log('promise');
-    console.log(navigator.mediaDevices);
   }
 
   /**
@@ -110,7 +106,7 @@ export default class Recorder
   {
     if(!this.enabled)
     {
-      console.log('disabled');
+      console.log('disabled');  //FIXME
       return;
     }
     let self = this;
@@ -118,7 +114,7 @@ export default class Recorder
     this.analiser.getByteFrequencyData(vol_data); //ottengo i dati della frequenza, necessari per calcolare il volume
     //console.log(vol_data);
     let level = vol_data.reduce((acc, val) => {return acc + val}, 0) / vol_data.length;  // calcolo il volume medio
-    this.element.innerHTML = level;
+    //this.element.innerHTML = level; //FIXME eliminare debug volume
     if(level > this.threshold)
     {
       if(this.time)
@@ -139,6 +135,7 @@ export default class Recorder
 
   start()
   {
+    console.log(new Error());
     this.enabled = true;
     this._startRecording();
   }
