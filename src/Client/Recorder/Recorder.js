@@ -100,6 +100,7 @@ export default class Recorder
     this.threshold = conf.threshold || 15;  //limite del volume minimo
     this.max_silence = conf.max_silence || 2500;  //massimo tempo per cui il volume può stare al di sotto della soglia prima di interrompere la registrazione
     this.sample_rate = conf.sample_rate || 16000; //sample rate dell'audio
+    this.disable_on_data = conf.disable_on_data || false;
   }
 
   onAudioProcess(msg)
@@ -127,7 +128,13 @@ export default class Recorder
     }
     else if(this.max_silence !== -1 && !this.time  && level <= this.threshold)
     {
-      this.time = setTimeout(() => {self._stopRecording(); }, self.max_silence);
+      this.time = setTimeout(() =>
+      {
+        if(self.disable_on_data)
+          self.stop();
+        else
+          self._stopRecording(); 
+      }, self.max_silence);
     }
     if(this.recording)
       this.worker.postMessage({command: 'record', buffer: [ msg.inputBuffer.getChannelData(0), msg.inputBuffer.getChannelData(1)]});

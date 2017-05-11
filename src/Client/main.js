@@ -24,7 +24,8 @@ const tts_conf =
 const rec_conf =
 {
   worker_path: 'Script/RecorderWorker.js',
-  threshold: 20
+  threshold: 20,
+  disable_on_data: true
 }
 
 //URL dell'endpoint
@@ -63,7 +64,6 @@ recorder.getObservable().subscribe(
   next: function(blob)
   {
     console.log('Recorder next');
-    recorder.stop();
     let app = application_manager.application_name;
     blobToBase64(blob)
       .then(function(audio)
