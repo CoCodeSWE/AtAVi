@@ -180,6 +180,7 @@ class RulesService
 		*/
   getRuleList(event,context)
   {
+    console.log(event);
     let list =
 		{
       rules: []
@@ -194,28 +195,29 @@ class RulesService
     {
       next: function(rule)
 			{
-				let target = objectFilter(event.queryStringParameters, ['target_name', 'target_member', 'target_company']);
-				if(Object.keys(target).length > 0)
+				let target = objectFilter(event.queryStringParameters, ['target.name', 'target.member', 'target.company']);
+        console.log('target.name: ', target['target.name']);
+        if(Object.keys(target).length > 0)
 				{
 					let insert = false;
 					for(let i = 0; i < rule.targets.length; ++i)
 					{
 						// Controllo se tutti i tre campi di target sono impostati come filtro
-						if(target['target_name'] && target['target_member'] && target['target_company'])
+						if(target['target.name'] && target['target.member'] && target['target.company'])
 						{
-							if(rule.targets[i].name === target['target_name'] && rule.targets[i].member === target['target_member'] && rule.targets[i].company === target['target_company'])
+							if(rule.targets[i].name === target['target.name'] && rule.targets[i].member === target['target.member'] && rule.targets[i].company === target['target.company'])
 								list.rules.push(rule);
 						}
 						// Controllo se i campi member e company sono impostati
-						else if(target['target_member'] && target['target_company'])
+						else if(target['target.member'] && target['target.company'])
 						{
-							if(rule.targets[i].member === target['target_member'] && rule.targets[i].company === target['target_company'])
+							if(rule.targets[i].member === target['target.member'] && rule.targets[i].company === target['target.company'])
 								list.rules.push(rule);
 						}
 						// Controllo se il campo company è impostato
-						else if(target['target_company'])
+						else if(target['target.company'])
 						{
-							if(rule.targets[i].company === target['target_company'])
+							if(rule.targets[i].company === target['target.company'])
 								list.rules.push(rule);
 						}
 					}
@@ -225,7 +227,7 @@ class RulesService
 					list.rules.push(rule);
 				}
 			},
-			
+
       error: internalServerError(context),
 
       complete: function()
@@ -259,7 +261,7 @@ class RulesService
 		this.tasks.getTaskList(query).subscribe(
     {
       next: (task) => { list.tasks.push(task); },
-      
+
 			error: internalServerError(context),
 
       complete: function()

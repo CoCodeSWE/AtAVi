@@ -3,13 +3,14 @@
 * @author Mattia Bottaro
 * @version 0.0.6
 * @since 0.0.3-alpha
+* @todo aggiungere tutti gli encodeURIComponent mancanti
 */
 
 const RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
 const RULES_SERVICE_KEY = process.env.RULES_SERVICE_KEY;
 const NOTIFICATIONS_SERVICE_URL = process.env.NOTIFICATIONS_SERVICE_URL;
 const NOTIFICATIONS_SERVICE_KEY = process.env.NOTIFICATIONS_SERVICE_KEY;
-const DEFAULT_CHANNEL = '#general';   //canale di default in cui mandare il messaggio se non so dove mandarlo
+const DEFAULT_CHANNEL = process.env.DEFAULT_CHANNEL;   //canale di default in cui mandare il messaggio se non so dove mandarlo
 
 class VAMessageListener
 {
@@ -68,13 +69,13 @@ class VAMessageListener
           msg.text = params.name + ' from ' + params.company + ' just arrived and is looking for ' + params.required_person;
           break;
         case 'coffee':
-          msg.text = params.name + ' from ' + params.company + 'would like a coffee';
+          msg.text = params.name + ' from ' + params.company + ' would like a coffee';
           break;
         case 'drink':
-          msg.text = params.name + ' from ' + params.company + 'would like a "' + params.drink + '" to drink';
+          msg.text = params.name + ' from ' + params.company + ' would like a "' + params.drink + '" to drink';
           break;
         case 'general':
-          msg.text = params.name + ' from ' + params.company + 'said they need ' + params.need;
+          msg.text = params.name + ' from ' + params.company + ' said they need ' + params.need;
           break;
       }
     }
@@ -95,15 +96,18 @@ class VAMessageListener
         /**@todo controllare tutto l'array e non solo il primo elemento, perchè al momento abbiamo solo un
         * tipo di task ma in futuro ce ne potrebbero essere altri
         * */
-        if(response.rules && response.rules[0].task.task === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
+        console.log('options: ', rules_options);
+        console.log('response: ', response);
+        if(response.rules && response.rules[0] && response.rules[0].task && response.rules[0].task.task === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
           send_to = Promise.resolve(response.rules[0].task.params);
         else // se non ho una direttiva che mi dica dove mandare il messaggio, devo ricavarmelo io
-          send_to = this.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
+          send_to = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
         send_to.then((receiver) =>
         {
-          if(!receiver)
-            receiver = DEFAULT_CHANNEL;
-          return this.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${receiver}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
+          if(!receiver || !receiver[0])
+            receiver[0] = DEFAULT_CHANNEL;
+          console.log('receiver: ', receiver);
+          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(receiver[0])}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
         }).then((data) => {callback();}).catch(console.log);  /**@todo veraw gestione errori*/
 				/*if(parsed_body.messages[0].task) // notifico la persona desiderata
 				{

@@ -17,6 +17,8 @@ provider:
     RULES_SERVICE_KEY: ${file(secret.yml):rules.key}
     NOTIFICATIONS_SERVICE_URL: ${file(secret.yml):notifications.url}
     NOTIFICATIONS_SERVICE_KEY: ${file(secret.yml):notifications.key}
+    DEFAULT_CHANNEL: ${file(secret.yml):notifications.default_channel}
+
 functions:
   dispatcher:
     handler: onMessage.onMessage
