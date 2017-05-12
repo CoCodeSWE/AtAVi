@@ -1,14 +1,13 @@
 $colSfondo: #3d323e;
 
 @font-face {
-    font-family: Atavi;
-    src: url('../Font/heroesassemble2.ttf');
+  font-family: Atavi;
+  src: url('../Font/heroesassemble2.ttf');
 }
 
 @font-face {
-    font-family: AtaviMessage;
-    src: url('../Font/TakeItOrLeaveItBold.ttf');
-}
+  font-family: AtaviMessage;
+  src: url("../Font/TIMESS__.ttf");}
 
 *
 {
@@ -38,8 +37,8 @@ body
   border-top-left-radius: 2em;
   margin: 1em auto;
   height: 30em;
-  width: 40%;
-  border: 0.2em solid #000000;
+  width: 65%;
+  border: 0.14aem solid #000000;
   background-color: #ffffff;
   overflow-y: scroll;
   &::-webkit-scrollbar-thumb
@@ -134,8 +133,9 @@ $shad: 0.04em;
 {
   padding: 0.5em;
   border: 0.2em;
-  max-width: 40%;
+  max-width: 70%;
   font-size: 1.8em;
+  margin-bottom: 0.5em;
   word-wrap: break-word;
   box-shadow: $shad $shad $shad $shad #888888;
   font-family: AtaviMessage;
@@ -153,6 +153,6 @@ li[data-sender="1"]
 {
   background-color: #99dbdb;
   margin-right: 0.5em;
-  margin-left: 55%;
+  margin-left: 30%;
   border-radius: $br $br 0 $br;
 }
