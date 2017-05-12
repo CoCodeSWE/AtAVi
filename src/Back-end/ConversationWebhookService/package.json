@@ -5,7 +5,7 @@
   "main": "",
   "author": "",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "rxjs": "^5.3.0"
   }
 }

@@ -64,13 +64,14 @@ class ApiAiVAAdapter
     {
       options.body.event = data.event;
     }
-    else if(data.text)
+    else
     {
       options.body.query = data.text;
     }
 		return this.request_promise(options).then(function(response)
 		{
 			// Creo va_response per mappare la risposta di api.ai in un oggetto VAResponse
+      console.log('response api.ai: ', response);
       let action;
       if(response.result.action && !response.result.actionIncomplete)
         action = response.result.action;

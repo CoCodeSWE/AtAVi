@@ -39,13 +39,14 @@ functions:
       - http:
           path: vocal-assistant
           method: post
-    queryText:
-      handler: handler.queryText
-      events:
-        - http:
-            path: text-assistant
-            method: post
-            cors: true
+          cors: true
+  queryText:
+    handler: handler.queryText
+    events:
+      - http:
+          path: text-assistant
+          method: post
+          cors: true
 resources:
   Resources:
     snsTopic:

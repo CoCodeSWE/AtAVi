@@ -37,10 +37,13 @@ class STTWatsonAdapter
 		{
 			self.stt.recognize(params, function(err, res)
 			{
+        console.log('data: ', res);
 				if (err)
-						reject(err);
-				else
-						fulfill(res.results[0].alternatives[0].transcript);
+					reject(err);
+        else if(!(res.results && res.results[0]))
+          fulfill('');
+        else
+					fulfill(res.results[0].alternatives[0].transcript);
 			});
 		});
 	 }

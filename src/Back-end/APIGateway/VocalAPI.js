@@ -62,7 +62,17 @@ class VocalAPI
     body.audio = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
     self.stt.speechToText(body.audio, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
-      self.text_request = text;
+      let query = {data: body.data, session_id: body.session_id};
+      if(text)
+      {
+        self.text_request = text;
+        query.text = text;
+      }
+      else
+      {
+        self.text_request = '';
+        query.event = {name: 'fallbackEvent', data:{}};
+      }
       let req_options =
       {
         method: 'POST',
@@ -70,12 +80,7 @@ class VocalAPI
         body:
         {
           app: body.app,
-          query:
-          {
-            text: text,
-            session_id: body.session_id,
-            data: body.data
-          }
+          query: query
         },
         headers:
         {
@@ -98,6 +103,7 @@ class VocalAPI
       .then(self._onVaResponse(context, body).bind(self))
       .catch(function(err)
       {
+        console.log(err);
         if(err)
           context.succeed({statusCode: 500, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
       });
@@ -145,7 +151,14 @@ class VocalAPI
       },
       json: true
     }
-    return self.request_promise(req_options); //il prossimo then riceverà direttamente la risposta dell'assistente virtuale
+    self.request_promise(req_options)
+      .then(self._onVaResponse(context, body).bind(self))
+      .catch(function(err)
+      {
+        console.log(err);
+        if(err)
+          context.succeed({statusCode: 500, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
+      });
   }
 
   /**
@@ -706,7 +719,7 @@ class VocalAPI
         }
       }
 
-      let params = response.res.contexts ? response.res.contexts[0].parameters : {};
+      let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
       switch(response.action)
       {
         case 'rule.add':

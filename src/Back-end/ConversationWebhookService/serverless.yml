@@ -54,7 +54,6 @@ resources:
   Resources:
     guestsTable:
       Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
       Properties:
         TableName: ${self:provider.environment.GUESTS_TABLE}
         AttributeDefinitions:
@@ -72,7 +71,6 @@ resources:
           WriteCapacityUnits: 1
     conversationsTable:
       Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
       Properties:
         TableName: ${self:provider.environment.CONVERSATIONS_TABLE}
         AttributeDefinitions:

@@ -13,6 +13,7 @@ class MsgStore
 
   onCmd(action)
   {
+    console.log(action);
     switch(action.cmd)
     {
       case 'displayMsgs':
@@ -23,11 +24,10 @@ class MsgStore
         this._onClear();
         break;
       case 'sendMsg':
-        this.msgs.push({text: action.params[0], sender:0});
-        console.log("asdadada");
+        this.msgs.push(action.params[0]);
         break;
       case 'receiveMsg':
-        this.msgs.push({text: action.params[0], sender:1});
+        this.msgs.push(action.params[1]);
         break;
       default: return;
     }

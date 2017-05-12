@@ -184,7 +184,8 @@ class ConversationWebhookService
       {
         speech: body.result.fulfillment.speech,
         displayText: body.result.fulfillment.displayText,
-        data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {}))
+        data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+        followupEvent: {name: "companyQuestionEvent", data: {"name": body.result.parameters.name}}
       })
     });
   }

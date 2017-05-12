@@ -147,7 +147,8 @@ module.exports = function(grunt) {
         files:
         {
           'dist/Back-end/APIGateway': ['src/Back-end/STT/STTWatsonAdapter.js', 'src/Back-end/Users/VocalLoginMicrosoftModule.js'],
-          'dist/Back-end/Events': ['dist/Back-end/Conversations/ConversationsDAODynamoDB.js', 'dist/Back-end/Guests/GuestsDAODynamoDB.js']
+          'dist/Back-end/Events': ['dist/Back-end/Conversations/ConversationsDAODynamoDB.js', 'dist/Back-end/Guests/GuestsDAODynamoDB.js'],
+          'dist/Back-end/ConversationWebhookService': ['dist/Back-end/Conversations/ConversationsDAODynamoDB.js', 'dist/Back-end/Guests/GuestsDAODynamoDB.js', 'dist/Back-end/Users/UsersDAODynamoDB.js']
         }
       }
     },
