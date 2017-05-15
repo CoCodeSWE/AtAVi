@@ -25,7 +25,8 @@ const rec_conf =
 {
   worker_path: 'Script/RecorderWorker.js',
   threshold: 20,
-  disable_on_data: true
+  disable_on_data: true,
+  max_silence: 1500
 }
 
 //URL dell'endpoint
@@ -43,7 +44,7 @@ reg_client.register('conversationsApp', ConversationApp).subscribe({error: conso
 reg_client.register('administration', ConversationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
                                                                                         //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
-
+let enabled = false;
 var session_id = uuidV4();
 console.log('session_id: ', session_id);
 
@@ -52,7 +53,7 @@ player.getObservable().subscribe(
   next: function(playing)
   {
     console.log('Player next', playing);
-    if(!playing)
+    if(!playing && enabled)
       recorder.enable();
   },
   error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
@@ -104,7 +105,11 @@ logic.getObservable().subscribe(
 
 document.getElementById('start').onclick = function ()
 {
-  recorder.start();
+  if(enabled)
+    recorder.stop();
+  else
+    recorder.start();
+  enabled = !enabled;
   changeValueButton();
 }
 

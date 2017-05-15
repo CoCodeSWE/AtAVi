@@ -109,7 +109,7 @@ class NotificationService
               {
                 result.push(
                 {
-                  name: item.name,
+                  name: item.real_name,
                   id: item.id,
                   type: 'user'
                 });
@@ -132,7 +132,7 @@ class NotificationService
       var final_result = [];
       if (event.queryStringParameters && event.queryStringParameters.name)
       {
-          final_result = result.filter(item => item.name === event.queryStringParameters.name);
+          final_result = result.filter(item => item.name.toUpperCase() === event.queryStringParameters.name.toUpperCase());
       }
       else
       {
@@ -180,7 +180,7 @@ class NotificationService
 			if(body.msg.attachments)
 				objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
 
-			self.client.chat.postMessage(send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered)}, function(err,data)
+			self.client.chat.postMessage(send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered), as_user: true}, function(err,data)
 			{
 				if (err)
 				{

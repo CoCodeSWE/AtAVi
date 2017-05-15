@@ -72,7 +72,7 @@ class VAMessageListener
           msg.text = params.name + ' from ' + params.company + ' would like a coffee';
           break;
         case 'drink':
-          msg.text = params.name + ' from ' + params.company + ' would like a "' + params.drink + '" to drink';
+          msg.text = params.name + ' from ' + params.company + ' would like "' + params.drink + '" to drink';
           break;
         case 'general':
           msg.text = params.name + ' from ' + params.company + ' said they need ' + params.need;
@@ -104,10 +104,13 @@ class VAMessageListener
           send_to = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
         send_to.then((receiver) =>
         {
+          let send_to;
           if(!receiver || !receiver[0])
-            receiver[0] = DEFAULT_CHANNEL;
+            send_to = DEFAULT_CHANNEL;
+          else
+            send_to = receiver[0].id;
           console.log('receiver: ', receiver);
-          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(receiver[0])}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
+          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
         }).then((data) => {callback();}).catch(console.log);  /**@todo veraw gestione errori*/
 				/*if(parsed_body.messages[0].task) // notifico la persona desiderata
 				{

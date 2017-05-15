@@ -6,7 +6,7 @@
 * @version 0.0.5
 * @since 0.0.3-alpha
 */
-const DEF_ACTION = 'admin.displayMsgs';
+const DEF_ACTION = '.displayMsgs';
 
 class ApiAiVAAdapter
 {
@@ -76,7 +76,7 @@ class ApiAiVAAdapter
       if(response.result.action && !response.result.actionIncomplete)
         action = response.result.action;
       else
-        action = DEF_ACTION;
+        action = data.app + DEF_ACTION;
       let va_response =
 			{
 				action: action,
@@ -88,7 +88,7 @@ class ApiAiVAAdapter
 				session_id: response.sessionId
 			};
 
-			if(response.result.contexts)
+			if(response.result.contexts && !response.result.actionIncomplete)
 				va_response.res.contexts = response.result.contexts;
 
 			if(response.result.fulfillment.data)
