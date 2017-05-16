@@ -69,22 +69,52 @@ body
 
 #startStop
 {
-	text-align: center;
+  text-align: center;
   margin: 0 auto;
   width: 40%;
-	height: 13em;
+  height: 13em;
+}
+
+.buttonKeyboard
+{
+  margin: 0 auto;
+  display: inline-flex;
+  width: 20%;
+  height: 30%;
+  background-image: url("../Image/keyboard.png");
+  background-size: 100% 100%;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: 0;
+    cursor: pointer;
 }
 
 .buttonSS
 {
   margin: 0 auto;
-  display: block;
+  display: inline-flex;
   width: 25%;
   height: 60%;
   background-size: 100% 100%;
   background-color: transparent;
   background-repeat: no-repeat;
   transition: background-image 1s ease-in-out;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+  margin-right: 2em;
+}
+
+.buttonReminder
+{
+  margin: 0 auto;
+  display: inline-flex;
+  width: 13%;
+  height: 30%;
+  background-size: 100% 100%;
+  background-color: transparent;
+  background-image: url("../Image/reminder.png");
+  background-repeat: no-repeat;
   border: 0;
   cursor: pointer;
   overflow: hidden;
@@ -100,13 +130,6 @@ body
  background-image: url("../Image/stop.png");
 }
 
-#logoApp
-{
-	color: #ffffff;
-	font-family: Atavi;
-	font-size: 4em;
-}
-
 #nomeApp
 {
 	color: #ffffff;
@@ -115,6 +138,51 @@ body
   float:left;
   width: 100%;
   margin-bottom: 0.5em;
+}
+
+#textMsg
+{
+  display: none;
+  position: absolute;
+  width: 50%;
+  height: 8em;
+  top: 20em;
+  left: 25%;
+  border: 0.1em solid black;
+  text-align: center;
+  border-radius: 0.5em;
+  background-color: #3d323e;
+  box-shadow: 0.1em 0.2em 0.2em 0.1em #888888;
+}
+
+.buttonExit
+{
+  position: relative;
+  background-image: url("../Image/exit.png");
+  width: 1.5em;
+  height: 1.5em;
+  background-size: 100% 100%;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: 0;
+  cursor: pointer;
+  overflow: hidden;
+  left: 45%;
+}
+
+#textMsg input
+{
+  width: 90%;
+  padding: 0.8em 0.8em;
+  margin-top: 0.6em;
+}
+
+#textMsg button
+{
+  padding: 0.5em 0.5em;
+  margin-top: 0.5em;
+  border: 0;
+  cursor: pointer;
 }
 
 //Css ConversationApp

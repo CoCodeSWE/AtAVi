@@ -113,6 +113,7 @@ document.getElementById('start').onclick = function ()
   changeValueButton();
 }
 
+document.getElementById('buttonKeyboard').onclick = toggleKeyboard;
 
 /**
  * getVoices - funzione che permette di ottenere la lista delle voci disponibili

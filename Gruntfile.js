@@ -212,7 +212,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('modules-copy');
   grunt.loadNpmTasks('grunt-exec');
   // Default task(ss
-  grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "copy","modules-copy:backend"]);
+  grunt.registerTask('default', ['babel:react','babel:dist', 'atavi-client-bundle-application', "browserify:client", "sass:client", "copy","modules-copy:backend"]);
   grunt.registerTask('bundle', ['babel:react', 'atavi-client-bundle-application']);
   grunt.registerTask('react', ['babel:react']);
   grunt.registerTask('build-client', ["babel:react", "atavi-client-bundle-application", "browserify:client", "sass:client", "copy:client"]);
