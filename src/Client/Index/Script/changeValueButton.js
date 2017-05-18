@@ -19,3 +19,11 @@ function toggleKeyboard()
   else
       document.getElementById( 'textMsg' ).style.display = 'inherit';
 }
+
+function toggleLoading()
+{
+  if(document.getElementById( 'loadingImage' ).style.display === 'inherit')
+    document.getElementById( 'loadingImage' ).style.display = 'none';
+  else
+      document.getElementById( 'loadingImage' ).style.display = 'inherit';
+}

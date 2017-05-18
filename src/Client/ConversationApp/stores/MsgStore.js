@@ -25,9 +25,11 @@ class MsgStore
         break;
       case 'sendMsg':
         this.msgs.push(action.params[0]);
+        loadingImage();
         break;
       case 'receiveMsg':
         this.msgs.push(action.params[1]);
+        loadingImage();
         break;
       default: return;
     }
