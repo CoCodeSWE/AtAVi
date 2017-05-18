@@ -15,10 +15,11 @@ const Promise = require('bluebird');
 
 class STTWatsonAdapter
 {
-	constructor(sb, stt)
+	constructor(sb, stt, model)
 	{
 		this.streamifier = sb;
 		this.stt = stt;
+    this.model = model;
 	}
 
 	/** metodo che contatta il servizio esterno STT di ibm e ritorna una promessa soddisfatta con il testo pronunciato nell'audio
@@ -33,6 +34,8 @@ class STTWatsonAdapter
       audio: this.streamifier.createReadStream(audio),
       content_type: type
     };
+    if(this.model)
+      params.model = this.model;
 		return new Promise(function(fulfill, reject)
 		{
 			self.stt.recognize(params, function(err, res)

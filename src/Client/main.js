@@ -5,6 +5,7 @@ import Logic from './Logic/Logic';
 import ApplicationLocalRegistry from './ApplicationManager/ApplicationLocalRegistry';
 import ApplicationRegistryLocalClient from './ApplicationManager/ApplicationRegistryLocalClient';
 import {ConversationApp} from './Applications/ConversationApp';
+import {AdministrationApp} from './Applications/AdministrationApp';
 import blobToBase64 from './Utility/blobToBase64';
 import Manager from './ApplicationManager/Manager';
 const uuidV4 = require('uuid/v4');
@@ -26,7 +27,7 @@ const rec_conf =
   worker_path: 'Script/RecorderWorker.js',
   threshold: 20,
   disable_on_data: true,
-  max_silence: 1500
+  max_silence: 700
 }
 
 //URL dell'endpoint
@@ -40,9 +41,9 @@ let logic = new Logic(API_URL);
 // application manager e dipendenze
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
-reg_client.register('conversationsApp', ConversationApp).subscribe({error: console.log});
-reg_client.register('administration', ConversationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
-                                                                                        //visto che hanno l'interfaccia condivisa
+reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
+reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
+                                                                                 //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
 let enabled = false;
 var session_id = uuidV4();
@@ -100,9 +101,6 @@ logic.getObservable().subscribe(
   complete: console.log
 });
 
-
-//recorder.start(); /**@todo rimuovere e collegarlo ai tasti*/
-
 document.getElementById('start').onclick = function ()
 {
   if(enabled)
@@ -113,7 +111,7 @@ document.getElementById('start').onclick = function ()
   changeValueButton();
 }
 
-document.getElementById('buttonKeyboard').onclick = toggleKeyboard;
+document.getElementById('buttonKeyboard').onclick = toggleKeyboard; /**@todo creare funzione che cambi anche url*/
 
 /**
  * getVoices - funzione che permette di ottenere la lista delle voci disponibili
