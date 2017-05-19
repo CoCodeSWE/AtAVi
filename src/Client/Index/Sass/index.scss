@@ -67,15 +67,6 @@ body
   }
 }
 
-#loadingImage
-{
-  display: none;
-  width: 15%;
-  height: 15%;
-  margin-left: 85%;
-  margin-top: 46%;
-}
-
 #startStop
 {
   text-align: center;
@@ -142,11 +133,18 @@ body
 #nomeApp
 {
 	color: #ffffff;
-	font-family: Atavi;
-	font-size: 200%;
+/*  background-image: url("../Image/100.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  height: 3.2em;*/
   float:left;
   width: 100%;
   margin-bottom: 0.5em;
+}
+
+#loadingImg
+{
+  width: 100%;
 }
 
 #textMsg

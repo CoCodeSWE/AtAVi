@@ -78,6 +78,7 @@ recorder.getObservable().subscribe(
           session_id: session_id
         }
         logic.sendData(query);
+        toggleLoading();
       })
       .catch(console.log)
   },
@@ -95,6 +96,7 @@ logic.getObservable().subscribe(
     let cmd = action[1];
     console.log(action, app, cmd);
     application_manager.runApplication(app, cmd, response.res);
+    toggleLoading();
     player.speak(response.res.text_response);
   },
   error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
