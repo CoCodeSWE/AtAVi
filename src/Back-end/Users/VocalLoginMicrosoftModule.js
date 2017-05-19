@@ -25,11 +25,11 @@ class VocalLoginMicrosoftModule
 		this.request_promise = rp;
 	}
 
-	/**
-		*	Verification Profile - Create Enrollment (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549c)
-		* @param {String} id - Stringa contenente l'identificativo dell'utente a cui si vuole aggiungere un enrollment
-		* @param {Blob} audio - Blob contenente il file audio dell'enrollment
-		*/
+/**
+	*	Verification Profile - Create Enrollment (https://westus.dev.cognitive.microsoft.com/docs/services/563309b6778daf02acc0a508/operations/56406930e597ed20c8d8549c)
+	* @param {String} id - Stringa contenente l'identificativo dell'utente a cui si vuole aggiungere un enrollment
+	* @param {Blob} audio - Blob contenente il file audio dell'enrollment
+	*/
 	addEnrollment(id, audio)
 	{
 		let self = this;
@@ -142,12 +142,13 @@ class VocalLoginMicrosoftModule
 				{
 					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
-				body: audio,
-				json: true
+				body: audio
 			};
-
-			self.request_promise(options).then(function(data)
+      console.log(options);
+			self.request_promise(options).then(function(response)
 			{
+        let data = JSON.parse(response);
+        console.log('data: ', data);
 				if(data.result === 'Accept' && mapConfidence[data.confidence] >= self.min_confidence)
 					observer.complete();
 				else
@@ -155,6 +156,7 @@ class VocalLoginMicrosoftModule
 			})
 			.catch(function(err)
 			{
+        console.log('err: ', err);
         let error = {error: ERROR_CODES.REQUEST_ERROR, statusCode: err.statusCode};
 				observer.error(error);
 			});

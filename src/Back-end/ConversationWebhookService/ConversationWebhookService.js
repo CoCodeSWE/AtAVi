@@ -92,6 +92,7 @@ class ConversationWebhookService
       error: (err) => {context.succeed(this.error500);},
       complete: () =>
       {
+        console.log('len: ', users.length);
         if(users.length > 0)
         {
           context.succeed(

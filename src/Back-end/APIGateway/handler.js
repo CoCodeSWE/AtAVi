@@ -19,13 +19,13 @@ const STT_CONF =
 const VOCAL_LOGIN_CONF =
 {
   key: process.env.SPEAKER_RECOGNITION_KEY,
-  min_confidence: 2
+  min_confidence: 1
 }
 
 // creazione moduli per dependency injection
 let sns = new SNS({ sns: '2010-03-31' });
 let stt = new STTWatsonAdapter(sb, new SpeechToTextV1(STT_CONF), '99720d30-3b15-11e7-b5ec-0bae065a439e');
-let vocal = new VocalLoginMicrosoftModule(VOCAL_LOGIN_CONF);
+let vocal = new VocalLoginMicrosoftModule(VOCAL_LOGIN_CONF, rp);
 
 let gateway = new VocalAPI(vocal, jwt, rp, stt, sns);
 

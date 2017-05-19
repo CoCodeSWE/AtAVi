@@ -35,6 +35,7 @@ const API_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/v
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
+let data = {};
 let recorder = new Recorder(rec_conf);
 let player = new Player(tts_conf, window.speechSynthesis);
 let logic = new Logic(API_URL);
@@ -74,7 +75,7 @@ recorder.getObservable().subscribe(
         {
           app: app,
           audio: audio,
-          data: {}, /**@todo passare davvero i dati*/
+          data: data, /**@todo passare davvero i dati*/
           session_id: session_id
         }
         logic.sendData(query);
@@ -90,6 +91,7 @@ logic.getObservable().subscribe(
   next: function(response)
   {
     console.log('logic next');
+    data = response.res.data;
     let action = response.action.split('.');
     let app = action[0];
     let cmd = action[1];

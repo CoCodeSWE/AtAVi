@@ -16,6 +16,7 @@ const RULES_SERVICE_KEY = process.env.RULES_SERVICE_KEY;
 const VA_SERVICE_KEY = process.env.VA_SERVICE_KEY;
 const SPEAKER_RECOGNITION_KEY = process.env.SPEAKER_RECOGNITION_KEY;
 const SNS_TOPIC_ARN = process.env.SNS_TOPIC_ARN;
+const JWT_SECRET = process.env.JWT_SECRET;
 class VocalAPI
 {
   /**
@@ -450,6 +451,7 @@ class VocalAPI
 
 			self.request_promise(options).then(function(data)
 			{
+        observer.next(data);
 				observer.complete();
 			})
 			.catch(function(err)
@@ -505,6 +507,7 @@ class VocalAPI
 	*/
   _loginUser(enr)
   {
+    console.log(enr);
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
@@ -513,6 +516,7 @@ class VocalAPI
 			{
 				next: function(user)
 				{
+          console.log(user);
 					if(user.sr_id)
 						id_user = user.sr_id;
 					else
@@ -537,7 +541,8 @@ class VocalAPI
 				complete: function()
 				{
 					// Sono sicuro che l'utente abbia un sr_id, altrimenti verrebbe chiamato observer.error all'interno del metodo next
-					self.vocal.doLogin(id_user, enr.audio).subscribe(
+          console.log('id_user: ', id_user);
+          self.vocal.doLogin(id_user, enr.audio).subscribe(
 					{
 						next: function()
 						{
@@ -552,7 +557,7 @@ class VocalAPI
 						},
 						complete: function()
 						{
-              observer.next(self.jwt.sign({payload:{}, expiresIn: '6h'}));
+              observer.next(self.jwt.sign({payload:{}, JWT_SECRET, expiresIn: '6h'}));
 							observer.complete();
 						}
 					});
