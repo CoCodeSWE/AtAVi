@@ -1,27 +1,10 @@
-'use strict';
+const CuriosityWebhookService = require('./CuriosityWebhookService');
+const CuriosityDAO = require('./CuriosityDAODynamoDB');
+const aws = require('aws-sdk');
 
-module.exports.webhook = (event, context) =>
-{
-  let curiosity_from_db={text:"testolello", type:"sporto"};
-  let body =
-  {
-    "speech":curiosity_from_db.text,
-    "displayText":curiosity_from_db.type,
-    "source": "nope",
-    "data":{},
-    "contextOut":[],
-    "followupEvent":
-    {
-    	"name": "sportCuriosityEvent",
-    	"data":
-      {
-    		"text":"deer?",
-    		"type":"sport"
-    	}
-  	},
-    "timezone": "Europe/Rome",
-    "lang": "en",
-    "sessionId": "1234567890"
-  };
-  context.succeed({statusCode: 200, body: JSON.stringify(body)});
-};
+let client = new aws.DynamoDB.DocumentClient();
+let curiosity = new CuriosityDAO(client);
+
+let service = new CuriosityWebhookService(curiosity);
+
+module.exports.webhook = service.webhook.bind(service);
