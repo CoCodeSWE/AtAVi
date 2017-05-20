@@ -1,25 +1,27 @@
 'use strict';
 
-module.exports.webhook = (event, context) => {
-    let body;
-    let curiosity_from_db={text:"testolello", type:"sporto"};
-
-  context.succeed(
-          {
+module.exports.webhook = (event, context) =>
+{
+  let curiosity_from_db={text:"testolello", type:"sporto"};
+  let body =
+  {
     "speech":curiosity_from_db.text,
     "displayText":curiosity_from_db.type,
     "source": "nope",
     "data":{},
     "contextOut":[],
-    "followupEvent": {
+    "followupEvent":
+    {
     	"name": "sportCuriosityEvent",
-    	"data":{
+    	"data":
+      {
     		"text":"deer?",
     		"type":"sport"
     	}
-    	},
+  	},
     "timezone": "Europe/Rome",
     "lang": "en",
     "sessionId": "1234567890"
-});
+  };
+  context.succeed({statusCode: 200, body: JSON.stringify(body)});
 };
