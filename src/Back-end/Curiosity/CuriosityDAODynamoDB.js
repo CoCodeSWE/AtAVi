@@ -16,15 +16,16 @@ class CuriosityDAODynamoDB
   constructor(client)
   {
     this.client = client;
-    this.table = process.env.CURIOSITIES_TABLE;
+    this.table = process.env.CURIOSITY_TABLE;
   }
 
 
   /**
     * Ottiene una curiosità casuale della categoria scelta
     * @param {String} type - Parametro contenente la categoria scelta
+    * @param {Int} id - Parametro contenente l'id della curiosità
     */
-   getCuriosity(type)
+   getCuriosity(type,id)
    {
      let self = this;
      return new Rx.Observable(function(observer)
@@ -32,44 +33,27 @@ class CuriosityDAODynamoDB
        let params =
        {
          TableName: self.table,
-         ExpressionAttributeValues =
+         ExpressionAttributeValues :
          {
-           {":type", type}
-         }
-         FilterExpression = "type = :type";
+           ":type": type,
+           ":id": id
+         },
+         KeyConditionExpression : "id >= :id",
+         FilterExpression : "category = :type",
+         Limit : 1
        };
-       self.client.scan(params, self._onScan(observer, params));
+       self.client.get(params, function(err, data)
+       {
+         if(err)
+           observer.error(err);
+         else if(!data.Item)
+   				observer.error({ code: 'Not found' });
+         else
+         {
+           observer.next(data.Item);
+           observer.complete();
+         }
+       });
      });
    }
-
-   /**
-     * Viene ritornata la funzione di callback per la gesitone dei blocchi di getCuriosity
-     * @param {CuriosityObserver} observer - Observer da notificare
-     * @param {Object} params - Parametro passato alla funzione scan del DocumentClient
-     */
-   _onScan(observer, params)
-   {
-     let self = this;
-    return function(err, data)
-    {
-      if(err)
-      {
-        observer.error(err);
-      }
-      else
-      {
-        data.Items.forEach((curiosity) => observer.next(curiosity));
-        if(data.LastEvaluatedKey)
-        {
-          params.ExclusiveStartKey= data.LastEvaluatedKey;
-          self.client.scan(params, self._onScan(observer, params));
-        }
-        else
-        {
-          observer.complete();
-        }
-      }
-    }
-   }
-
 }
