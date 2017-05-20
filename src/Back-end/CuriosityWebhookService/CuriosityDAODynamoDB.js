@@ -23,7 +23,7 @@ class CuriosityDAODynamoDB
   /**
     * Ottiene una curiosità casuale della categoria scelta
     * @param {String} type - Parametro contenente la categoria scelta
-    * @param {Int} id - Parametro contenente l'id della curiosità
+    * @param {String} id - Parametro contenente l'id della curiosità
     */
    getCuriosity(type,id)
    {

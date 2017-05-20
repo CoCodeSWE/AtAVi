@@ -94,7 +94,9 @@
 
   _sportCuriosity(body, context)
   {
-    let observable = this.curiosities.getCuriosity('sport');
+    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
+    let id = 'sport' + (numeric_id+1);
+    let observable = this.curiosities.getCuriosity('sport',id);
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
@@ -114,6 +116,7 @@
             });
         }
       });
+      //TO DO: inserire numeric_id in GUEST
   }
 
   /**
@@ -124,7 +127,9 @@
 
   _technologyCuriosity(body, context)
   {
-    let observable = this.curiosities.getCuriosity('technology');
+    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
+    let id = 'technology' + (numeric_id+1);
+    let observable = this.curiosities.getCuriosity('technology',id);
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
@@ -144,6 +149,7 @@
             });
         }
       });
+      //TO DO: inserire numeric_id in GUEST
   }
 
   /**
@@ -154,7 +160,11 @@
 
   _foodCuriosity(body, context)
   {
-    let observable = this.curiosities.getCuriosity('food');
+
+
+    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
+    let id = 'food' + (numeric_id+1);
+    let observable = this.curiosities.getCuriosity('food',id);
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
@@ -174,6 +184,7 @@
             });
         }
       });
+      //TO DO: inserire numeric_id in GUEST
   }
 
   /**
@@ -184,7 +195,9 @@
 
   _generalCuriosity(body, context)
   {
-    let observable = this.curiosities.getCuriosity('general');
+    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
+    let id = 'general' + (numeric_id+1);
+    let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
@@ -204,6 +217,7 @@
             });
         }
       });
+      //TO DO: inserire numeric_id in GUEST
   }
 
   /**
@@ -215,7 +229,9 @@
 
   _firstGeneralCuriosity(body, context)
   {
-    let observable = this.curiosities.getCuriosity('general');
+    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
+    let id = 'general' + (numeric_id+1);
+    let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
@@ -235,6 +251,7 @@
             });
         }
       });
+      //TO DO: inserire numeric_id in GUEST
   }
 }
   module.exports = CuriosityWebhookService;
