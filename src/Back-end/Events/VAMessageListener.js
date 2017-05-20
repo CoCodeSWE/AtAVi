@@ -111,7 +111,7 @@ class VAMessageListener
             send_to = receiver[0].id;
           console.log('receiver: ', receiver);
           return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
-        }).then((data) => {callback();}).catch(callback);  /**@todo veraw gestione errori*/
+        }).then((data) => {callback(null);}).catch(callback);  /**@todo veraw gestione errori*/
 				/*if(parsed_body.messages[0].task) // notifico la persona desiderata
 				{
 					if(parsed_body.messages[0].task === 'send_to_slack') // notifico il member della rule
