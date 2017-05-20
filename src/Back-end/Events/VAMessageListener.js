@@ -43,7 +43,7 @@ class VAMessageListener
     }
 		let session_id = message.session_id;
     let params = message.res.contexts ? message.res.contexts[0].parameters : null;
-    if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicurawmente nessuno di niente.
+    if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
     let rules_query = '?target.name=' +  encodeURIComponent(params.name) + '&target.company=' + encodeURIComponent(params.company);
     /**
@@ -111,7 +111,7 @@ class VAMessageListener
             send_to = receiver[0].id;
           console.log('receiver: ', receiver);
           return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
-        }).then((data) => {callback();}).catch(console.log);  /**@todo veraw gestione errori*/
+        }).then((data) => {callback(null);}).catch(callback);  /**@todo veraw gestione errori*/
 				/*if(parsed_body.messages[0].task) // notifico la persona desiderata
 				{
 					if(parsed_body.messages[0].task === 'send_to_slack') // notifico il member della rule
