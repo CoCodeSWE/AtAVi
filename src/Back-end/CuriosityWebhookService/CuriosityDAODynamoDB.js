@@ -34,7 +34,7 @@ class CuriosityDAODynamoDB
        {
          TableName: self.table,
          ExpressionAttributeValues :
-         {
+         { 
            ":type": type,
            ":id": id
          },
@@ -57,3 +57,5 @@ class CuriosityDAODynamoDB
      });
    }
 }
+
+module.exports = CuriosityDAODynamoDB;

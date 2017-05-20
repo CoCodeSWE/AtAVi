@@ -111,7 +111,8 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type}}
+                  followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
         }
@@ -144,7 +145,8 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type}}
+                  followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
         }
@@ -179,7 +181,8 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type}}
+                  followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
         }
@@ -212,7 +215,8 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type}}
+                  followupEvent: {name: "generalCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
         }
@@ -246,7 +250,8 @@
                   speech: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.speech,
                   displayText: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.type}}
+                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
         }
