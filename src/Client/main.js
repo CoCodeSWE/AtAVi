@@ -49,7 +49,7 @@ reg_client.register('conversation', ConversationApp).subscribe({error: console.l
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
                                                                                  //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
-let sendObservable = new EventObservable('submit', 'sendMessage'); // questo è il form del quale aspetto il submit in modalità testo
+let sendObservable = new EventObservable('submit', 'textMsg'); // questo è il form del quale aspetto il submit in modalità testo
 let enabled = false;
 let keyboard = false;
 var session_id = uuidV4();
@@ -167,9 +167,21 @@ function textInit()
   logic.setUrl(TEXT_URL);
   subscriptions.push(sendObservable.subscribe(
   {
-    next: function()
+    next: function(event)
     {
-      // prendi dati e mandi con ligic
+      event.preventDefault();
+      console.log('Text next');
+      let app = application_manager.application_name || 'conversationsApp';
+      let input_text = document.getElementById("inputText").value;
+      console.log(input_text);
+      let query =
+      {
+        text : input_text,
+        app: app,
+        data: data, /**@todo passare davvero i dati*/
+        session_id: session_id
+      }
+      logic.sendData(query);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -177,9 +189,16 @@ function textInit()
 
   subscriptions.push(logic.getObservable().subscribe(
   {
-    next: function()
+    next: function(response)
     {
-      // gestisci risposta da logic, forse uguale a vocalInit
+      console.log('logic next');
+      data = response.res.data;
+      let action = response.action.split('.');
+      let app = action[0];
+      let cmd = action[1];
+      console.log(action, app, cmd);
+      application_manager.runApplication(app, cmd, response.res);
+      player.speak(response.res.text_response);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -188,5 +207,5 @@ function textInit()
 
 function clearSubscriptions()
 {
-  subscriptions.foreach((sub) => sub.unsubscribe());
+  subscriptions.forEach((sub) => sub.unsubscribe());
 }
