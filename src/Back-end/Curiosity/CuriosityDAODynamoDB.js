@@ -32,11 +32,11 @@ class CuriosityDAODynamoDB
        let params =
        {
          TableName: self.table,
-         ExpressionAttributeValues =
+         ExpressionAttributeValues :
          {
-           {":type", type}
-         }
-         FilterExpression = "type = :type";
+           ":type": type
+         },
+         FilterExpression : "category = :type"
        };
        self.client.scan(params, self._onScan(observer, params));
      });
