@@ -137,6 +137,7 @@ function vocalInit()
             session_id: session_id
           }
           logic.sendData(query);
+          toggleLoading();
         })
         .catch(console.log)
     },
@@ -155,6 +156,7 @@ function vocalInit()
       let cmd = action[1];
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
+      toggleLoading();
       player.speak(response.res.text_response);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
@@ -173,6 +175,7 @@ function textInit()
       console.log('Text next');
       let app = application_manager.application_name || 'conversationsApp';
       let input_text = document.getElementById("inputText").value;
+      document.getElementById("inputText").value="";
       console.log(input_text);
       let query =
       {
@@ -182,6 +185,7 @@ function textInit()
         session_id: session_id
       }
       logic.sendData(query);
+      toggleLoading();
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -198,6 +202,7 @@ function textInit()
       let cmd = action[1];
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
+      toggleLoading();
       player.speak(response.res.text_response);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
