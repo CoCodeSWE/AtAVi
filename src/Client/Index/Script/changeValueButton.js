@@ -26,13 +26,15 @@ function toggleLoading()
   if(toggleload === 0)
   {
     //document.getElementById( 'loading' ).style.backgroundImage = 'url("../Image/loading.gif")';
-    document.getElementById( 'loadingImg' ).src = 'Image/loading.gif';
+    document.getElementById( 'staticTitleApp' ).src = 'Image/loader.gif';
+    document.getElementById( 'staticTitleApp' ).id = 'loadingImg';
     toggleload = 1;
   }
   else
   {
     //document.getElementById( 'loading' ).style.backgroundImage = 'url("../Image/100.png")';
     document.getElementById( 'loadingImg' ).src = 'Image/100.png';
+    document.getElementById( 'loadingImg' ).id = 'staticTitleApp';
     toggleload = 0;
   }
 }
