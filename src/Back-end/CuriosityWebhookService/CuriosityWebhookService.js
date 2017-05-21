@@ -138,7 +138,9 @@
                   guest.sport = parseInt(curiosity_from_db.id.slice(5)); //prendo l'id numerico togliendo SPORT
                   let observable_update = this.guests.updateGuest(guest);
                   observable_update.subscribe(
-                    error: (err) => {context.succeed(this.error500);}
+                    {
+                      error: (err) => {context.succeed(this.error500);}
+                    }
                   );
                   context.succeed(
                   {
@@ -206,7 +208,9 @@ observable_guest.subscribe(
                   guest.technology = parseInt(curiosity_from_db.id.slice(10)); //prendo l'id numerico togliendo TECHNOLOGY
                   let observable_update = this.guests.updateGuest(guest);
                   observable_update.subscribe(
-                    error: (err) => {context.succeed(this.error500);}
+                    {
+                      error: (err) => {context.succeed(this.error500);}
+                    }
                   );
                   context.succeed(
                   {
@@ -274,7 +278,9 @@ observable_guest.subscribe(
                   guest.food = parseInt(curiosity_from_db.id.slice(4)); //prendo l'id numerico togliendo FOOD
                   let observable_update = this.guests.updateGuest(guest);
                   observable_update.subscribe(
-                    error: (err) => {context.succeed(this.error500);}
+                    {
+                      error: (err) => {context.succeed(this.error500);}
+                    }
                   );
                   context.succeed(
                   {
@@ -343,7 +349,10 @@ _generalCuriosity(body, context)
             guest.general = parseInt(curiosity_from_db.id.slice(7)); //prendo l'id numerico togliendo GENERAL
             let observable_update = this.guests.updateGuest(guest);
             observable_update.subscribe(
-              error: (err) => {context.succeed(this.error500);});
+                {
+                  error: (err) => {context.succeed(this.error500);}
+                }
+              );
             context.succeed(
             {
               statusCode: 200,
@@ -410,7 +419,9 @@ _generalCuriosity(body, context)
             guest.general = parseInt(curiosity_from_db.id.slice(7)); //prendo l'id numerico togliendo GENERAL
             let observable_update = this.guests.updateGuest(guest);
             observable_update.subscribe(
-              error: (err) => {context.succeed(this.error500);}
+              {
+                error: (err) => {context.succeed(this.error500);}
+              }
             );
             context.succeed(
             {
@@ -479,7 +490,10 @@ _generalCuriosity(body, context)
             guest.general = parseInt(curiosity_from_db.id.slice(7)); //prendo l'id numerico togliendo GENERAL
             let observable_update = this.guests.updateGuest(guest);
             observable_update.subscribe(
-              error: (err) => {context.succeed(this.error500);});
+              {
+                error: (err) => {context.succeed(this.error500);}
+              }
+            );
             context.succeed(
             {
               statusCode: 200,
@@ -497,4 +511,5 @@ _generalCuriosity(body, context)
       }
     });
   }
+}
   module.exports = CuriosityWebhookService;
