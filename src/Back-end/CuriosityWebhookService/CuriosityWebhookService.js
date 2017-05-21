@@ -100,7 +100,7 @@
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'SPORT' + (numeric_id+1);
-    let curiosity_from_db = {};
+    let curiosity_from_db = {text: "", type: ""};
     let observable = this.curiosities.getCuriosity('sport',id);
     observable.subscribe(
       {
@@ -116,8 +116,8 @@
                     speech: body.result.fulfillment.speech,
                     displayText: body.result.fulfillment.displayText,
                     data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                    followupEvent: {name: "emptySportCuriosityEvent", data: {"name": body.result.parameters.name,
-                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                    followupEvent: {name: "emptySportCuriosityEvent", data: {"name": "Mario Rossi",
+                          "company": "IBM", "required_person": "lUCA tONI"}}
                   })
               });
           }
@@ -133,7 +133,7 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                  followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
@@ -152,7 +152,7 @@
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'TECHNOLOGY' + (numeric_id+1);
-    let curiosity_from_db = {};
+    let curiosity_from_db = {text: "", type: ""};
     let observable = this.curiosities.getCuriosity('technology',id);
     observable.subscribe(
       {
@@ -184,7 +184,7 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                  followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
@@ -205,7 +205,7 @@
 
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'FOOD' + (numeric_id+1);
-    let curiosity_from_db = {};
+    let curiosity_from_db = {text: "", type: ""};
     let observable = this.curiosities.getCuriosity('food',id);
     observable.subscribe(
       {
@@ -238,7 +238,7 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                  followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
@@ -257,7 +257,7 @@
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'GENERAL' + (numeric_id+1);
-    let curiosity_from_db = {};
+    let curiosity_from_db = {text: "", type: ""};
     let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
@@ -289,7 +289,7 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                  followupEvent: {name: "generalCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
@@ -309,7 +309,7 @@
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'general' + (numeric_id+1);
-    let curiosity_from_db = {};
+    let curiosity_from_db = {text: "", type: ""};
     let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
@@ -341,7 +341,7 @@
                   speech: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.speech,
                   displayText: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
@@ -362,7 +362,7 @@
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'general' + (numeric_id+1);
-    let curiosity_from_db = {};
+    let curiosity_from_db = {text: "", type: ""};
     let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
@@ -395,7 +395,7 @@
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "I'm sorry, I don't know anything else about food. Don't worry and listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "I'm sorry, I don't know anything else about food. Don't worry and listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
             });
