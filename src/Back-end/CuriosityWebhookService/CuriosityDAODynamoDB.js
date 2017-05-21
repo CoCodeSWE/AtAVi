@@ -33,8 +33,11 @@ class CuriosityDAODynamoDB
        let params =
        {
          TableName: self.table,
+         Key:{
+        "id": id
+         },
          ExpressionAttributeValues :
-         { 
+         {
            ":type": type,
            ":id": id
          },
@@ -42,14 +45,18 @@ class CuriosityDAODynamoDB
          FilterExpression : "category = :type",
          Limit : 1
        };
+       console.log("NOME TAB:"+self.table);
        self.client.get(params, function(err, data)
        {
-         if(err)
+         if(err){
+           console.log("Errore DAO: "+err);
            observer.error(err);
+         }
          else if(!data.Item)
    				observer.error({ code: 'Not found' });
          else
          {
+           console.log(data.Item);
            observer.next(data.Item);
            observer.complete();
          }

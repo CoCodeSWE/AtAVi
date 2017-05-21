@@ -81,6 +81,11 @@
           this._firstGeneralCuriosity(body, context);
           break;
         }
+        case 'curiosity.emptyFood':
+        {
+          this._foodEmptyCuriosity(body, context);
+          break;
+        }
         // mancherebbe un'azione di default. Ma vorrebbe dire che arriva una action non gestita.
       }
     }
@@ -100,7 +105,24 @@
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {context.succeed(this.error500);},
+        error: (err) =>
+        {
+          if(err.code && err.code === 'Not found'){
+            context.succeed(
+              {
+                statusCode: 200,
+                body: JSON.stringify(
+                  {
+                    speech: body.result.fulfillment.speech,
+                    displayText: body.result.fulfillment.displayText,
+                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                    followupEvent: {name: "emptySportCuriosityEvent", data: {"name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                  })
+              });
+          }
+          context.succeed(this.error500);
+        },
         complete: () =>
         {
           context.succeed(
@@ -134,7 +156,23 @@
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {context.succeed(this.error500);},
+        error: (err) => {
+          if(err.code && err.code === 'Not found'){
+            context.succeed(
+              {
+                statusCode: 200,
+                body: JSON.stringify(
+                  {
+                    speech: body.result.fulfillment.speech,
+                    displayText: body.result.fulfillment.displayText,
+                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                    followupEvent: {name: "emptyTechnologyCuriosityEvent", data: {"name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                  })
+              });
+          }
+          context.succeed(this.error500);
+        },
         complete: () =>
         {
           context.succeed(
@@ -170,7 +208,24 @@
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {context.succeed(this.error500);},
+        error: (err) =>
+        {
+          if(err.code && err.code === 'Not found'){
+            context.succeed(
+              {
+                statusCode: 200,
+                body: JSON.stringify(
+                  {
+                    speech: body.result.fulfillment.speech,
+                    displayText: body.result.fulfillment.displayText,
+                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                    followupEvent: {name: "emptyFoodCuriosityEvent", data: {"name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                  })
+              });
+          }
+          context.succeed(this.error500);
+        },
         complete: () =>
         {
           context.succeed(
@@ -204,7 +259,23 @@
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {context.succeed(this.error500);},
+        error: (err) => {
+          if(err.code && err.code === 'Not found'){
+            context.succeed(
+              {
+                statusCode: 200,
+                body: JSON.stringify(
+                  {
+                    speech: body.result.fulfillment.speech,
+                    displayText: body.result.fulfillment.displayText,
+                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                    followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                  })
+              });
+          }
+          context.succeed(this.error500);
+        },
         complete: () =>
         {
           context.succeed(
@@ -239,7 +310,23 @@
     observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {context.succeed(this.error500);},
+        error: (err) => {
+          if(err.code && err.code === 'Not found'){
+            context.succeed(
+              {
+                statusCode: 200,
+                body: JSON.stringify(
+                  {
+                    speech: body.result.fulfillment.speech,
+                    displayText: body.result.fulfillment.displayText,
+                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                    followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                  })
+              });
+          }
+          context.succeed(this.error500);
+        },
         complete: () =>
         {
           context.succeed(
@@ -258,5 +345,58 @@
       });
       //TO DO: inserire numeric_id in GUEST
   }
+
+  /**
+  * metodo privato utilizzato per restituire una curiosità di tipo "general". Viene invocato solo
+  * se il webhook che recupera una curiosità sul cibo ritorna un risultato vuoto (perchè le ha dette tutte
+  * o perchè non ce ne sono più).
+  * @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
+  * @param {lambdaContext} context - permette di inviare una risposta ad api gateway
+  */
+
+  _foodEmptyCuriosity(body, context)
+  {
+    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
+    let id = 'general' + (numeric_id+1);
+    let observable = this.curiosities.getCuriosity('general',id);
+    observable.subscribe(
+      {
+        next: (curiosity) => {curiosity_from_db = curiosity;},
+        error: (err) =>
+        {
+          if(err.code && err.code === 'Not found'){
+            context.succeed(
+              {
+                statusCode: 200,
+                body: JSON.stringify(
+                  {
+                    speech: body.result.fulfillment.speech,
+                    displayText: body.result.fulfillment.displayText,
+                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                    followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                  })
+              });
+          }
+          context.succeed(this.error500);
+        },
+        complete: () =>
+        {
+          context.succeed(
+            {
+              statusCode: 200,
+              body: JSON.stringify(
+                {
+                  speech: body.result.fulfillment.speech,
+                  displayText: body.result.fulfillment.displayText,
+                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "I'm sorry, I don't know anything else about food. Don't worry and listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                })
+            });
+        }
+      });
+  }
+
 }
   module.exports = CuriosityWebhookService;
