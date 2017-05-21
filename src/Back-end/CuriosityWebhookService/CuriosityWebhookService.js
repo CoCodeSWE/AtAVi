@@ -105,18 +105,20 @@ _sportCuriosity(body, context)
   let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
   observable_guest.subscribe(
   {
-    next: (data) => {guest = data;},
+    next: (data) => {guest = data;console.log("guest")},
     error: (err) => {console.log(err);context.succeed(this.error500);},
     complete:  () =>
     {
       let numeric_id = guest.sport;
       let id = 'SPORT' + (numeric_id + 1);
+      console.log(id);
       let observable = this.curiosities.getCuriosity('sport',id);
       observable.subscribe(
         {
           next: (curiosity) => {curiosity_from_db = curiosity;},
           error: (err) =>
           {
+            console.log(err);
             if(err.code && err.code === 'Not found'){
               context.succeed(
                 {
@@ -150,8 +152,8 @@ _sportCuriosity(body, context)
                         speech: body.result.fulfillment.speech,
                         displayText: body.result.fulfillment.displayText,
                         data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                        followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": "Giacomo Volpe",
-                        "company": "IBM", "required_person": "Luca Gatto"}}
+                        followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                     })
                 });
               }
@@ -220,7 +222,7 @@ observable_guest.subscribe(
                         speech: body.result.fulfillment.speech,
                         displayText: body.result.fulfillment.displayText,
                         data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                        followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                     })
                 });
@@ -290,7 +292,7 @@ observable_guest.subscribe(
                         speech: body.result.fulfillment.speech,
                         displayText: body.result.fulfillment.displayText,
                         data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                        followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                        followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                     })
                 });
@@ -361,7 +363,7 @@ observable_guest.subscribe(
               speech: body.result.fulfillment.speech,
               displayText: body.result.fulfillment.displayText,
               data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-              followupEvent: {name: "genealCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+              followupEvent: {name: "generalCuriosityEvent", data: {"text": "Ok, listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
               "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
             })
           });
@@ -431,7 +433,7 @@ _firstGeneralCuriosity(body, context)
               speech: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.speech,
               displayText: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.displayText,
               data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-              followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+              followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
               "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
             })
           });
@@ -502,7 +504,7 @@ _foodEmptyCuriosity(body, context)
               speech: body.result.fulfillment.speech,
               displayText: body.result.fulfillment.displayText,
               data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-              followupEvent: {name: "generalCuriosityEvent", data: {"text": "I'm sorry, I don't know anything else about food. Don't worry and listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+              followupEvent: {name: "generalCuriosityEvent", data: {"text": "I'm sorry, I don't know anything else about food. Don't worry and listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.category, "name": body.result.parameters.name,
               "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
             })
           });

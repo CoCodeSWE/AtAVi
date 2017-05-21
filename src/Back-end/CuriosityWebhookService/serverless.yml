@@ -5,6 +5,7 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   environment:
+    JWT_SECRET: SECRET #process.env.JWT_SECRET
     CURIOSITY_TABLE: Curiosity-${opt:stage, self:provider.stage}
     GUESTS_TABLE: Guests-${opt:stage, self:provider.stage}
   profile: default
@@ -51,6 +52,23 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    guestsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.GUESTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: guest_name
+            AttributeType: S
+          - AttributeName: company
+            AttributeType: S
+        KeySchema:
+          - AttributeName: guest_name
+            KeyType: HASH
+          - AttributeName: company
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

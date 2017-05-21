@@ -16,7 +16,7 @@ class GuestsDAODynamoDB
   constructor(client)
   {
     this.client = client;
-    this.table = "Guests-dev";
+    this.table = process.env.GUESTS_TABLE;
   }
 
   /**
@@ -51,6 +51,7 @@ class GuestsDAODynamoDB
 	*/
   getGuest(name,company)
   {
+    console.log("GUEST: "+name+ " "+company);
     let self = this;
     return new Rx.Observable(function(observer)
     {
@@ -63,6 +64,7 @@ class GuestsDAODynamoDB
           "company": company
         }
       };
+      console.log(params);
       self.client.get(params, function(err, data)
       {
         if(err)
@@ -260,7 +262,7 @@ const attr_map =
 
 const reverse_attr_map =
 {
-  full_name: 'name'
+  guest_name: 'name'
 }
 
 module.exports = GuestsDAODynamoDB;
