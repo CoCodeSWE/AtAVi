@@ -104,228 +104,262 @@
     let curiosity_from_db = {};
     let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
     observable_guest.subscribe(
+    {
+      next: (data) => {guest = data;},
+      error: (err) => {context.succeed(this.error500);},
+      complete:  () =>
       {
-          next: (data) => {guest = data;},
-          error: (err) =>
+        let numeric_id = guest.sport;
+        let id = 'SPORT' + (numeric_id + 1);
+        let observable = this.curiosities.getCuriosity('sport',id);
+        observable.subscribe(
           {
-            if(err.code && err.code === 'Not found')
-              {
-                let id = 'SPORT1';
-                this._curiosityMaker(curiosity_from_db,id);
-              }
-          },
-          complete:  () =>
-          {
-            let numeric_id = guest.sport; //TO DO: OTTIENI ID FROM GUEST
-            let id = 'SPORT' + (numeric_id+1);
-            this._curiosityMaker(curiosity_from_db,id);
-          }
-      }
-    )
-      //TO DO: inserire numeric_id in GUEST
-  }
-
-  _curiosityMaker(curiosity_from_db,id)
-  {
-    let observable = this.curiosities.getCuriosity('sport',id);
-    observable.subscribe(
-      {
-        next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) =>
-        {
-          if(err.code && err.code === 'Not found'){
-            context.succeed(
-              {
-                statusCode: 200,
-                body: JSON.stringify(
-                  {
-                    speech: body.result.fulfillment.speech,
-                    displayText: body.result.fulfillment.displayText,
-                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                    followupEvent: {name: "emptySportCuriosityEvent", data: {"name": body.result.parameters.name,
-                    "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                  })
-                });
-              }
-              context.succeed(this.error500);
-            },
-            complete: () =>
+            next: (curiosity) => {curiosity_from_db = curiosity;},
+            error: (err) =>
             {
-              guest.sport = parseInt(curiosity_from_db.id.slice(5)); //prendo l'id numerico togliendo SPORT
-              this.guests.updateGuest(guest);
-              context.succeed(
+              if(err.code && err.code === 'Not found'){
+                context.succeed(
+                  {
+                    statusCode: 200,
+                    body: JSON.stringify(
+                      {
+                        speech: body.result.fulfillment.speech,
+                        displayText: body.result.fulfillment.displayText,
+                        data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                        followupEvent: {name: "emptySportCuriosityEvent", data: {"name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                      })
+                    });
+                  }
+                  context.succeed(this.error500);
+                },
+                complete: () =>
                 {
-                  statusCode: 200,
-                  body: JSON.stringify(
-                    {
-                      speech: body.result.fulfillment.speech,
-                      displayText: body.result.fulfillment.displayText,
-                      data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                      followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
-                      "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                    })
+                  guest.sport = parseInt(curiosity_from_db.id.slice(5)); //prendo l'id numerico togliendo SPORT
+                  let observable_update = this.guests.updateGuest(guest);
+                  observable_update.subscribe(
+                    error: (err) => {context.succeed(this.error500);}
+                  );
+                  context.succeed(
+                  {
+                      statusCode: 200,
+                      body: JSON.stringify(
+                      {
+                          speech: body.result.fulfillment.speech,
+                          displayText: body.result.fulfillment.displayText,
+                          data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                          followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                      })
                   });
                 }
               });
 
-
-
+      }
   }
+)
+}
 
-  /**
-  * metodo privato utilizzato per restituire una curiosità di tipo "tecnhology"
-  * @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
-  * @param {lambdaContext} context - permette di inviare una risposta ad api gateway
-  */
+/**
+* metodo privato utilizzato per restituire una curiosità di tipo "tecnhology"
+* @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
+* @param {lambdaContext} context - permette di inviare una risposta ad api gateway
+*/
 
-  _technologyCuriosity(body, context)
+_technologyCuriosity(body, context)
+{
+let guest = {};
+let curiosity_from_db = {};
+let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+observable_guest.subscribe(
   {
-    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'TECHNOLOGY' + (numeric_id+1);
-    let curiosity_from_db = {};
-    let observable = this.curiosities.getCuriosity('technology',id);
-    observable.subscribe(
+      next: (data) => {guest = data;},
+      error: (err) => {context.succeed(this.error500);},
+      complete:  () =>
       {
-        next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {
-          if(err.code && err.code === 'Not found'){
-            context.succeed(
-              {
-                statusCode: 200,
-                body: JSON.stringify(
-                  {
-                    speech: body.result.fulfillment.speech,
-                    displayText: body.result.fulfillment.displayText,
-                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                    followupEvent: {name: "emptyTechnologyCuriosityEvent", data: {"name": body.result.parameters.name,
-                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                  })
-              });
-          }
-          context.succeed(this.error500);
-        },
-        complete: () =>
-        {
-          context.succeed(
+        let numeric_id = guest.technology;
+        let id = 'TECHNOLOGY' + (numeric_id + 1);
+        let observable = this.curiosities.getCuriosity('technology',id);
+        observable.subscribe(
+          {
+            next: (curiosity) => {curiosity_from_db = curiosity;},
+            error: (err) =>
             {
-              statusCode: 200,
-              body: JSON.stringify(
-                {
-                  speech: body.result.fulfillment.speech,
-                  displayText: body.result.fulfillment.displayText,
-                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+              if(err.code && err.code === 'Not found'){
+                context.succeed(
+                  {
+                    statusCode: 200,
+                    body: JSON.stringify(
+                      {
+                        speech: body.result.fulfillment.speech,
+                        displayText: body.result.fulfillment.displayText,
+                        data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                        followupEvent: {name: "emptyTechnologyCuriosityEvent", data: {"name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                })
-            });
-        }
-      });
-      //TO DO: inserire numeric_id in GUEST
+                      })
+                    });
+                  }
+                  context.succeed(this.error500);
+                },
+                complete: () =>
+                {
+                  guest.technology = parseInt(curiosity_from_db.id.slice(10)); //prendo l'id numerico togliendo TECHNOLOGY
+                  let observable_update = this.guests.updateGuest(guest);
+                  observable_update.subscribe(
+                    error: (err) => {context.succeed(this.error500);}
+                  );
+                  context.succeed(
+                  {
+                      statusCode: 200,
+                      body: JSON.stringify(
+                      {
+                          speech: body.result.fulfillment.speech,
+                          displayText: body.result.fulfillment.displayText,
+                          data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                          followupEvent: {name: "technologyCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                      })
+                  });
+                }
+              });
+
+      }
   }
+)
+}
 
-  /**
-  * metodo privato utilizzato per restituire una curiosità di tipo "food"
-  * @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
-  * @param {lambdaContext} context - permette di inviare una risposta ad api gateway
-  */
+/**
+* metodo privato utilizzato per restituire una curiosità di tipo "food"
+* @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
+* @param {lambdaContext} context - permette di inviare una risposta ad api gateway
+*/
 
-  _foodCuriosity(body, context)
+_foodCuriosity(body, context)
+{
+let guest = {};
+let curiosity_from_db = {};
+let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+observable_guest.subscribe(
   {
+      next: (data) => {guest = data;},
+      error: (err) => {context.succeed(this.error500);},
+      complete:  () =>
+      {
+        let numeric_id = guest.food;
+        let id = 'FOOD' + (numeric_id + 1);
+        let observable = this.curiosities.getCuriosity('food',id);
+        observable.subscribe(
+          {
+            next: (curiosity) => {curiosity_from_db = curiosity;},
+            error: (err) =>
+            {
+              if(err.code && err.code === 'Not found'){
+                context.succeed(
+                  {
+                    statusCode: 200,
+                    body: JSON.stringify(
+                      {
+                        speech: body.result.fulfillment.speech,
+                        displayText: body.result.fulfillment.displayText,
+                        data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                        followupEvent: {name: "emptyFoodCuriosityEvent", data: {"name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                      })
+                    });
+                  }
+                  context.succeed(this.error500);
+                },
+                complete: () =>
+                {
+                  guest.food = parseInt(curiosity_from_db.id.slice(4)); //prendo l'id numerico togliendo FOOD
+                  let observable_update = this.guests.updateGuest(guest);
+                  observable_update.subscribe(
+                    error: (err) => {context.succeed(this.error500);}
+                  );
+                  context.succeed(
+                  {
+                      statusCode: 200,
+                      body: JSON.stringify(
+                      {
+                          speech: body.result.fulfillment.speech,
+                          displayText: body.result.fulfillment.displayText,
+                          data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                          followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                      })
+                  });
+                }
+              });
 
+      }
+  }
+)
+}
 
-    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'FOOD' + (numeric_id+1);
-    let curiosity_from_db = {};
-    let observable = this.curiosities.getCuriosity('food',id);
-    observable.subscribe(
+/**
+* metodo privato utilizzato per restituire una curiosità di tipo "general"
+* @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
+* @param {lambdaContext} context - permette di inviare una risposta ad api gateway
+*/
+
+_generalCuriosity(body, context)
+{
+  let guest = {};
+  let curiosity_from_db = {};
+  let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+  observable_guest.subscribe(
+  {
+    next: (data) => {guest = data;},
+    error: (err) => {context.succeed(this.error500);},
+    complete:  () =>
+    {
+      let numeric_id = guest.general;
+      let id = 'GENERAL' + (numeric_id + 1);
+      let observable = this.curiosities.getCuriosity('general',id);
+      observable.subscribe(
       {
         next: (curiosity) => {curiosity_from_db = curiosity;},
         error: (err) =>
         {
-          if(err.code && err.code === 'Not found'){
+          if(err.code && err.code === 'Not found')
+          {
             context.succeed(
-              {
-                statusCode: 200,
-                body: JSON.stringify(
-                  {
-                    speech: body.result.fulfillment.speech,
-                    displayText: body.result.fulfillment.displayText,
-                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                    followupEvent: {name: "emptyFoodCuriosityEvent", data: {"name": body.result.parameters.name,
-                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                  })
-              });
-          }
-          context.succeed(this.error500);
-        },
-        complete: () =>
-        {
-          context.succeed(
             {
               statusCode: 200,
               body: JSON.stringify(
-                {
-                  speech: body.result.fulfillment.speech,
-                  displayText: body.result.fulfillment.displayText,
-                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "foodCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
-                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                })
-            });
-        }
-      });
-      //TO DO: inserire numeric_id in GUEST
-  }
-
-  /**
-  * metodo privato utilizzato per restituire una curiosità di tipo "general"
-  * @param {ApiAiRequestBody} body - contiene i dati della richiesta fatta da api.ai al webhook
-  * @param {lambdaContext} context - permette di inviare una risposta ad api gateway
-  */
-
-  _generalCuriosity(body, context)
-  {
-    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'GENERAL' + (numeric_id+1);
-    let curiosity_from_db = {};
-    let observable = this.curiosities.getCuriosity('general',id);
-    observable.subscribe(
-      {
-        next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {
-          if(err.code && err.code === 'Not found'){
-            context.succeed(
               {
-                statusCode: 200,
-                body: JSON.stringify(
-                  {
-                    speech: body.result.fulfillment.speech,
-                    displayText: body.result.fulfillment.displayText,
-                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                    followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
-                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                  })
-              });
+                speech: body.result.fulfillment.speech,
+                displayText: body.result.fulfillment.displayText,
+                data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
+                "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+              })
+            });
           }
           context.succeed(this.error500);
-        },
-        complete: () =>
-        {
-          context.succeed(
+          },
+          complete: () =>
+          {
+            guest.general = parseInt(curiosity_from_db.id.slice(7)); //prendo l'id numerico togliendo GENERAL
+            let observable_update = this.guests.updateGuest(guest);
+            observable_update.subscribe(
+              error: (err) => {context.succeed(this.error500);});
+            context.succeed(
             {
               statusCode: 200,
               body: JSON.stringify(
-                {
-                  speech: body.result.fulfillment.speech,
-                  displayText: body.result.fulfillment.displayText,
-                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
-                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                })
+              {
+                speech: body.result.fulfillment.speech,
+                displayText: body.result.fulfillment.displayText,
+                data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                followupEvent: {name: "genealCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+              })
             });
-        }
-      });
-      //TO DO: inserire numeric_id in GUEST
+          }
+        });
+      }
+    });
   }
 
   /**
@@ -337,47 +371,63 @@
 
   _firstGeneralCuriosity(body, context)
   {
-    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'general' + (numeric_id+1);
+    let guest = {};
     let curiosity_from_db = {};
-    let observable = this.curiosities.getCuriosity('general',id);
-    observable.subscribe(
+    let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+    observable_guest.subscribe(
+    {
+      next: (data) => {guest = data;},
+      error: (err) => {context.succeed(this.error500);},
+      complete:  () =>
       {
-        next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) => {
-          if(err.code && err.code === 'Not found'){
-            context.succeed(
+        let numeric_id = guest.general;
+        let id = 'GENERAL' + (numeric_id + 1);
+        let observable = this.curiosities.getCuriosity('general',id);
+        observable.subscribe(
+        {
+          next: (curiosity) => {curiosity_from_db = curiosity;},
+          error: (err) =>
+          {
+            if(err.code && err.code === 'Not found')
+            {
+              context.succeed(
               {
                 statusCode: 200,
                 body: JSON.stringify(
-                  {
-                    speech: body.result.fulfillment.speech,
-                    displayText: body.result.fulfillment.displayText,
-                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                    followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
-                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                  })
+                {
+                  speech: body.result.fulfillment.speech,
+                  displayText: body.result.fulfillment.displayText,
+                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                  followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
+                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                })
               });
-          }
-          context.succeed(this.error500);
-        },
-        complete: () =>
-        {
-          context.succeed(
+            }
+            context.succeed(this.error500);
+          },
+          complete: () =>
+          {
+            guest.general = parseInt(curiosity_from_db.id.slice(7)); //prendo l'id numerico togliendo GENERAL
+            let observable_update = this.guests.updateGuest(guest);
+            observable_update.subscribe(
+              error: (err) => {context.succeed(this.error500);}
+            );
+            context.succeed(
             {
               statusCode: 200,
               body: JSON.stringify(
-                {
-                  speech: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.speech,
-                  displayText: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.displayText,
-                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
-                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                })
+              {
+                speech: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.speech,
+                displayText: "Are you kidding me? Everybody loves food! By the way... "+body.result.fulfillment.displayText,
+                data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                followupEvent: {name: "generalCuriosityEvent", data: {"text": "Are you kidding me? Everybody loves food! By the way... "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+              })
             });
-        }
-      });
-      //TO DO: inserire numeric_id in GUEST
+          }
+        });
+      }
+    });
   }
 
   /**
@@ -390,48 +440,61 @@
 
   _foodEmptyCuriosity(body, context)
   {
-    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'general' + (numeric_id+1);
+    let guest = {};
     let curiosity_from_db = {};
-    let observable = this.curiosities.getCuriosity('general',id);
-    observable.subscribe(
+    let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+    observable_guest.subscribe(
+    {
+      next: (data) => {guest = data;},
+      error: (err) => {context.succeed(this.error500);},
+      complete:  () =>
       {
-        next: (curiosity) => {curiosity_from_db = curiosity;},
-        error: (err) =>
+        let numeric_id = guest.general;
+        let id = 'GENERAL' + (numeric_id + 1);
+        let observable = this.curiosities.getCuriosity('general',id);
+        observable.subscribe(
         {
-          if(err.code && err.code === 'Not found'){
-            context.succeed(
+          next: (curiosity) => {curiosity_from_db = curiosity;},
+          error: (err) =>
+          {
+            if(err.code && err.code === 'Not found')
+            {
+              context.succeed(
               {
                 statusCode: 200,
                 body: JSON.stringify(
-                  {
-                    speech: body.result.fulfillment.speech,
-                    displayText: body.result.fulfillment.displayText,
-                    data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                    followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
-                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                  })
-              });
-          }
-          context.succeed(this.error500);
-        },
-        complete: () =>
-        {
-          context.succeed(
-            {
-              statusCode: 200,
-              body: JSON.stringify(
                 {
                   speech: body.result.fulfillment.speech,
                   displayText: body.result.fulfillment.displayText,
                   data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "generalCuriosityEvent", data: {"text": "I'm sorry, I don't know anything else about food. Don't worry and listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                  followupEvent: {name: "emptyGeneralCuriosityEvent", data: {"name": body.result.parameters.name,
                         "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                 })
+              });
+            }
+            context.succeed(this.error500);
+          },
+          complete: () =>
+          {
+            guest.general = parseInt(curiosity_from_db.id.slice(7)); //prendo l'id numerico togliendo GENERAL
+            let observable_update = this.guests.updateGuest(guest);
+            observable_update.subscribe(
+              error: (err) => {context.succeed(this.error500);});
+            context.succeed(
+            {
+              statusCode: 200,
+              body: JSON.stringify(
+              {
+                speech: body.result.fulfillment.speech,
+                displayText: body.result.fulfillment.displayText,
+                data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                followupEvent: {name: "generalCuriosityEvent", data: {"text": "I'm sorry, I don't know anything else about food. Don't worry and listen to this: "+curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+              })
             });
-        }
-      });
+          }
+        });
+      }
+    });
   }
-
-}
   module.exports = CuriosityWebhookService;
