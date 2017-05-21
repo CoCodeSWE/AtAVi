@@ -9,10 +9,12 @@
     /**
      * Costruttore del Webhook relativo all'assistente di conversazione
      * @param {CuriosityDAO} curiosities - DAO utilizzato per l'accesso ai dati relativi alle curiosità
+     * @param {GuestsDAO} guests - DAO utilizzato per l'accesso ai dati relativi ai guests
      */
-    constructor(curiosities)
+    constructor(curiosities,guests)
     {
       this.curiosities = curiosities;
+      this.guests = guests;
     }
 
     /**
@@ -98,9 +100,33 @@
 
   _sportCuriosity(body, context)
   {
-    let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'SPORT' + (numeric_id+1);
+    let guest = {};
     let curiosity_from_db = {};
+    let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+    observable_guest.subscribe(
+      {
+          next: (data) => {guest = data;},
+          error: (err) =>
+          {
+            if(err.code && err.code === 'Not found')
+              {
+                let id = 'SPORT1';
+                this._curiosityMaker(curiosity_from_db,id);
+              }
+          },
+          complete:  () =>
+          {
+            let numeric_id = guest.sport; //TO DO: OTTIENI ID FROM GUEST
+            let id = 'SPORT' + (numeric_id+1);
+            this._curiosityMaker(curiosity_from_db,id);
+          }
+      }
+    )
+      //TO DO: inserire numeric_id in GUEST
+  }
+
+  _curiosityMaker(curiosity_from_db,id)
+  {
     let observable = this.curiosities.getCuriosity('sport',id);
     observable.subscribe(
       {
@@ -117,29 +143,33 @@
                     displayText: body.result.fulfillment.displayText,
                     data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
                     followupEvent: {name: "emptySportCuriosityEvent", data: {"name": body.result.parameters.name,
-                          "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                    "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
                   })
-              });
-          }
-          context.succeed(this.error500);
-        },
-        complete: () =>
-        {
-          context.succeed(
+                });
+              }
+              context.succeed(this.error500);
+            },
+            complete: () =>
             {
-              statusCode: 200,
-              body: JSON.stringify(
+              guest.sport = parseInt(curiosity_from_db.id.slice(5)); //prendo l'id numerico togliendo SPORT
+              this.guests.updateGuest(guest);
+              context.succeed(
                 {
-                  speech: body.result.fulfillment.speech,
-                  displayText: body.result.fulfillment.displayText,
-                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                  followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
-                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
-                })
-            });
-        }
-      });
-      //TO DO: inserire numeric_id in GUEST
+                  statusCode: 200,
+                  body: JSON.stringify(
+                    {
+                      speech: body.result.fulfillment.speech,
+                      displayText: body.result.fulfillment.displayText,
+                      data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                      followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
+                      "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                    })
+                  });
+                }
+              });
+
+
+
   }
 
   /**
