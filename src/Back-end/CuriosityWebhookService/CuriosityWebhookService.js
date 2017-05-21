@@ -106,7 +106,7 @@ _sportCuriosity(body, context)
   observable_guest.subscribe(
   {
     next: (data) => {guest = data;},
-    error: (err) => {context.succeed(this.error500);},
+    error: (err) => {console.log(err);context.succeed(this.error500);},
     complete:  () =>
     {
       let numeric_id = guest.sport;
@@ -150,8 +150,8 @@ _sportCuriosity(body, context)
                         speech: body.result.fulfillment.speech,
                         displayText: body.result.fulfillment.displayText,
                         data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
-                        followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": body.result.parameters.name,
-                        "company": body.result.parameters.company, "required_person": body.result.parameters.required_person}}
+                        followupEvent: {name: "sportCuriosityEvent", data: {"text": curiosity_from_db.text, "type": curiosity_from_db.type, "name": "Giacomo Volpe",
+                        "company": "IBM", "required_person": "Luca Gatto"}}
                     })
                 });
               }
