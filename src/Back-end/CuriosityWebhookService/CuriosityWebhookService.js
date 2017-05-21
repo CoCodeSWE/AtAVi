@@ -53,7 +53,6 @@
 
         })
       };
-      let curiosity_from_db = {};
       switch(body.result.action)
       {
         case 'curiosity.sport':
@@ -100,7 +99,8 @@
   _sportCuriosity(body, context)
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'sport' + (numeric_id+1);
+    let id = 'SPORT' + (numeric_id+1);
+    let curiosity_from_db = {};
     let observable = this.curiosities.getCuriosity('sport',id);
     observable.subscribe(
       {
@@ -151,7 +151,8 @@
   _technologyCuriosity(body, context)
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'technology' + (numeric_id+1);
+    let id = 'TECHNOLOGY' + (numeric_id+1);
+    let curiosity_from_db = {};
     let observable = this.curiosities.getCuriosity('technology',id);
     observable.subscribe(
       {
@@ -203,7 +204,8 @@
 
 
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'food' + (numeric_id+1);
+    let id = 'FOOD' + (numeric_id+1);
+    let curiosity_from_db = {};
     let observable = this.curiosities.getCuriosity('food',id);
     observable.subscribe(
       {
@@ -254,7 +256,8 @@
   _generalCuriosity(body, context)
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
-    let id = 'general' + (numeric_id+1);
+    let id = 'GENERAL' + (numeric_id+1);
+    let curiosity_from_db = {};
     let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
@@ -306,6 +309,7 @@
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'general' + (numeric_id+1);
+    let curiosity_from_db = {};
     let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
@@ -358,6 +362,7 @@
   {
     let numeric_id = 4; //TO DO: OTTIENI ID FROM GUEST
     let id = 'general' + (numeric_id+1);
+    let curiosity_from_db = {};
     let observable = this.curiosities.getCuriosity('general',id);
     observable.subscribe(
       {
