@@ -77,7 +77,13 @@ class VAMessageListener
         case 'general':
           msg.text = params.name + ' from ' + params.company + ' said they need ' + params.need;
           break;
-      }
+				case 'auto_solicitous':
+					msg.text = 'I\'m trying to entertain ' + params.name + ' as much as possible, but I\'m running out of ideas. Please, come here!';
+					break;
+				case 'solicitous_from_guest':
+					msg.text = params.name + ' is tired of waiting. Please, come here!';
+					break;
+			}
     }
     /*
     if(message.res.contexts[0] && message.res.contexts[0].name === 'guest.warnedRequiredPerson') // notificare la persona desiderata dell'arrivo dell'ospite
