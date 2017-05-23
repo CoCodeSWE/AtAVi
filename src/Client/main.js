@@ -58,6 +58,7 @@ console.log('session_id: ', session_id);
 // Observable per i click
 let startObservable = new EventObservable('click', 'start');
 let keyboardObservable = new EventObservable('click', 'buttonKeyboard');
+let reminderObservable = new EventObservable('click', 'buttonReminder')
 
 // iscrizione a observable per i click
 startObservable.subscribe(function()
@@ -84,6 +85,12 @@ keyboardObservable.subscribe(function()
     disableKeyboard();
     vocalInit();
   }
+});
+
+reminderObservable.subscribe(function()
+{
+  clearSubscriptions();
+  reminderInit();
 });
 
 vocalInit();
@@ -190,6 +197,39 @@ function textInit()
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
   }));
+
+  subscriptions.push(logic.getObservable().subscribe(
+  {
+    next: function(response)
+    {
+      console.log('logic next');
+      data = response.res.data;
+      let action = response.action.split('.');
+      let app = action[0];
+      let cmd = action[1];
+      console.log(action, app, cmd);
+      application_manager.runApplication(app, cmd, response.res);
+      toggleLoading();
+      player.speak(response.res.text_response);
+    },
+    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    complete: console.log
+  }));
+}
+
+function reminderInit()
+{
+  logic.setUrl(TEXT_URL);
+  let app = application_manager.application_name || 'conversationsApp';
+  let query =
+  {
+    text : 'where required_person is?',
+    app: app,
+    data: data, /**@todo passare davvero i dati*/
+    session_id: session_id
+  }
+  logic.sendData(query);
+  toggleLoading();
 
   subscriptions.push(logic.getObservable().subscribe(
   {
