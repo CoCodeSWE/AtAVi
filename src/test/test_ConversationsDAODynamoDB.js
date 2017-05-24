@@ -55,11 +55,11 @@ describe('Back-end', function()
 					expect(complete.callCount).to.equal(1);
         });
       });
-      describe('addMessage', function()
+      describe('addMessages', function()
       {
         it("Nel caso in cui un messaggio non venga aggiunta alla conversazione a causa di un errore del DB, l'Observable ritornato deve chiamare il metodo error dell'Observer iscritto.", function()
         {
-          conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
+          conv.addMessages({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
           {
             next: next,
             error: error,
@@ -74,7 +74,7 @@ describe('Back-end', function()
         });
         it("Nel caso in cui un messaggio venga aggiunto correttamente alla conversazione, l'Observable restituito deve chiamare il metodo complete dell'Observer iscritto un'unica volta.", function()
         {
-          conv.addMessage({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
+          conv.addMessages({sender:'mock_sender',text: 'mock_text', timestamp: '2000-10-10'},2).subscribe(
           {
             next: next,
             error: error,

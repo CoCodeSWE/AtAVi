@@ -8,5 +8,5 @@ module.exports = {
   getConversationList: sinon.stub(),
   removeConversation: sinon.stub(),
   updateConversation: sinon.stub(),
-  addMessage: sinon.stub()
+  addMessages: sinon.stub()
 }
