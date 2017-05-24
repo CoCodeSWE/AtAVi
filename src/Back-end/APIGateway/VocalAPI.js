@@ -65,7 +65,7 @@ class VocalAPI
     body.audio = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
     self.stt.speechToText(body.audio, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
-      let query = {data: body.data, session_id: body.session_id};
+      let query = {data: body.query.data, session_id: body.session_id};
       if(text)
       {
         self.text_request = text;
@@ -145,7 +145,7 @@ class VocalAPI
         {
           text: self.text_request,
           session_id: body.session_id,
-          data: body.data
+          data: body.query.data
         }
       },
       headers:
@@ -604,7 +604,7 @@ class VocalAPI
 	* Metodo che permette di eliminare tutti gli enrollments di un utente del sistema
 	* @param {String} username - Parametro contenente l'username dell utente a cui si vogliono eliminare tutti gli enrollments
 	*/
-  _resetUserEnrollment(username)
+  _resetUserEnrollments(username)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -774,7 +774,7 @@ class VocalAPI
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { rules: rules };
+                options.body.query.event.data = { rules: rules };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -793,7 +793,7 @@ class VocalAPI
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { rule: rule };
+                options.body.query.event.data = { rule: rule };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -829,7 +829,21 @@ class VocalAPI
               name: 'updateRuleSuccess',
               data: {}
             };
-            self._updateRule().subscribe(
+            self._updateRule(
+						{
+							name: params.rule_name,
+              task:
+              {
+                type: params.task_name
+              },
+              targets:[
+              {
+                name: params.target_name,
+                member: params.target_member,
+                company: params.target_company
+              }],
+              enabled: true
+						}).subscribe(
             {
               complete: function()
               {
@@ -852,7 +866,6 @@ class VocalAPI
             self._addUser(
             {
               name: params.name,
-              company: params.company,
               username: params.username
             }).subscribe(
             {
@@ -893,7 +906,7 @@ class VocalAPI
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { user: user };
+                options.body.query.event.data = { user: user };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -912,7 +925,7 @@ class VocalAPI
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { users: users };
+                options.body.query.event.data = { users: users };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -972,11 +985,11 @@ class VocalAPI
           else
             (error(context))(WRONG_APP);
           break;
-        case 'user.resetEnrollment':
+        case 'user.resetEnrollments':
           if(body.app === 'admin')
           {
-            options.body.event = {name: "resetUserEnrollmentSuccess"}
-            this._resetUserEnrollment(params.username).subscribe(
+            options.body.event = {name: "resetUserEnrollmentsSuccess"}
+            self._resetUserEnrollments(params.username).subscribe(
             {
               complete: function()
               {
@@ -996,14 +1009,31 @@ class VocalAPI
               name: 'userUpdateSuccess',
               data: {}
             };
-            self._updateUser(''/*dd*/).subscribe(
-            {
-              complete: function()
-              {
-                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-              },
-              error: error(context)
-            });
+						
+						let user;
+						self._getUser(params.username).subscribe(
+						{
+							next: function(data)
+							{
+								user = data;
+								if(params.name)
+									user.name = params.name;
+							},
+							
+							error: error(context),
+							
+							complete: function()
+							{
+								self._updateUser(user).subscribe(
+								{
+									complete: function()
+									{
+										self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+									},
+									error: error(context)
+								});
+							}
+						});
           }
           else
             (error(context))(WRONG_APP);
