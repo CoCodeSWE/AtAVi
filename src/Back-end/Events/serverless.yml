@@ -20,7 +20,15 @@ provider:
     DEFAULT_CHANNEL: ${file(secret.yml):notifications.default_channel}
 
 functions:
-  dispatcher:
-    handler: onMessage.onMessage
+  notify:
+    handler: handler.notify
+    events:
+      - sns: ${file(secret.yml):sns.arn}
+  saveConvesation:
+    handler: handler.saveConvesation
+    events:
+      - sns: ${file(secret.yml):sns.arn}
+  updateGuest:
+    handler: handler.updateGuest
     events:
       - sns: ${file(secret.yml):sns.arn}
