@@ -19,3 +19,13 @@ function toggleKeyboard()
   else
       document.getElementById( 'textMsg' ).style.display = 'inherit';
 }
+
+function enableKeyboard()
+{
+  document.getElementById( 'textMsg' ).style.display = 'inherit';
+}
+
+function disableKeyboard()
+{
+  document.getElementById( 'textMsg' ).style.display = 'none';
+}

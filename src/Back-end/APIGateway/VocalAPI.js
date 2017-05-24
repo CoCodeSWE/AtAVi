@@ -17,6 +17,8 @@ const VA_SERVICE_KEY = process.env.VA_SERVICE_KEY;
 const SPEAKER_RECOGNITION_KEY = process.env.SPEAKER_RECOGNITION_KEY;
 const SNS_TOPIC_ARN = process.env.SNS_TOPIC_ARN;
 const JWT_SECRET = process.env.JWT_SECRET;
+const WRONG_APP = { code: 400, msg: 'Reserved action name' }
+
 class VocalAPI
 {
   /**
@@ -557,7 +559,7 @@ class VocalAPI
 						},
 						complete: function()
 						{
-              observer.next(self.jwt.sign({payload:{}, JWT_SECRET, expiresIn: '6h'}));
+              observer.next(self.jwt.sign({}, JWT_SECRET, {expiresIn: '6h'}));
 							observer.complete();
 						}
 					});
@@ -703,10 +705,10 @@ class VocalAPI
   */
   _onVaResponse(context, body)
   {
-    console.log('response')
     let self = this;
     return function(response) //restituisce
     {
+      console.log('response: ', response);
       let options =
       {
         method: 'POST',
@@ -715,12 +717,12 @@ class VocalAPI
         json: true,
         body:
         {
-          app: body.app,
+          app: body.app,  //body.app contiene il nome dell'applicazione originale
           query:
           {
-            data: response.data ? response.data : {},
+            data: response.data ? response.data : {}, //copio  i dati della risposta dell'assistente virtuale
             session_id: response.session_id
-          },
+          }
         }
       }
 
@@ -728,217 +730,295 @@ class VocalAPI
       switch(response.action)
       {
         case 'rule.add':
-          options.body.query.event =
+          if(body.app === 'admin')
           {
-            name: 'addRuleSuccess',  // da definire il vero event come anche i parametri necessari
-            data: {}
-          };
-          self._addRule(
-          {
-            name: params.rule_name,
-            task:
+            options.body.query.event =
             {
-              type: params.task_name
-            },
-            targets:[
+              name: 'addRuleSuccess',  // da definire il vero event come anche i parametri necessari
+              data: {}
+            };
+            self._addRule(
             {
-              name: params.target_name,
-              member: params.target_member,
-              company: params.target_company
-            }],
-            enabled: true
-          }).subscribe(
-          {
-            complete: function()
+              name: params.rule_name,
+              task:
+              {
+                type: params.task_name
+              },
+              targets:[
+              {
+                name: params.target_name,
+                member: params.target_member,
+                company: params.target_company
+              }],
+              enabled: true
+            }).subscribe(
             {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: error(context)
-          });
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
           break;
         case 'rule.getList':
-          let rules;
-          options.body.event = {name: 'getRuleListSuccess'};
-          self._getRuleList(/*dd*/).subscribe(
+          if(body.app === 'admin')
           {
-            next: (data) => {rules = data},
-            error: error(context),
-            complete: function()
+            let rules;
+            options.body.event = {name: 'getRuleListSuccess'};
+            self._getRuleList(/*dd*/).subscribe(
             {
-              options.body.event.data = { rules: rules };
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            }
-          });
-          break;
-        case 'rule.get':
-          let rule;
-          options.body.event = {name: 'getSuccess'};
-          self._getRule(params.id).subscribe(
-          {
-            next: (data) => {rule = data;},
-            error: error(context),
-            complete: function()
-            {
-              options.body.event.data = { rule: rule };
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            }
-          });
-          break;
-        case 'rule.remove':
-          options.body.event =
-          {
-            name: 'removeRuleSuccess',
-            data: {}
-          };
-          self._removeRule(params.rule_id).subscribe(
-          {
-            complete: function()
-            {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: error(context)
-          });
-          break;
-        case 'rule.update':
-          options.body.event =
-          {
-            name: 'updateRuleSuccess',
-            data: {}
-          };
-          self._updateRule().subscribe(
-          {
-            complete: function()
-            {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: error(context)
-          });
-          break;
-        case 'user.add':
-          options.body.event =
-          {
-            name: 'addUserSuccess',  // da definire il vero event come anche i parametri necessari
-            data: {}
-          };
-          self._addUser(
-          {
-            name: params.name,
-            company: params.company,
-            username: params.username
-          }).subscribe(
-          {
-            complete: function()
-            {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: error(context)
-          });
-          break;
-        case 'user.addEnrollment':
-          options.body.event = {name: "addUserEnrollmentSuccess"}
-          self._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
-          {
-            complete: function()
-            {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: error(context)
-          });
-          break;
-        case 'user.get':
-          let user;
-          options.body.event = {name: 'getUserSuccess'};
-          self._getUser(params.username).subscribe(
-          {
-            next: (data) => {user = data;},
-            error: error(context),
-            complete: function()
-            {
-              options.body.event.data = { user: user };
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            }
-          });
-          break;
-        case 'user.getList':
-          let users;
-          options.body.event = {name: 'getUserListSuccess'};
-          self._getUserList(/**@todo add query parametr*/).subscribe(
-          {
-            next: (data) => {users = data},
-            error: error(context),
-            complete: function()
-            {
-              options.body.event.data = { users: users };
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            }
-          });
-          break;
-        case 'user.login':
-          this._loginUser({audio: body.audio, username: params.username}).subscribe(
-          {
-            next: function(token)
-            {
-              options.body.data.token = token;
-              options.body.event = {name: 'loginUserSuccess'};
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: function(err)
-            {
-              if(err.error === 2)
+              next: (data) => {rules = data},
+              error: error(context),
+              complete: function()
               {
-                options.body.event = {name: 'loginUserFailure'};
+                options.body.event.data = { rules: rules };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
-              else
-                (error(context))(err);
-            },
-						complete: function()
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'rule.get':
+          if(body.app === 'admin')
+          {
+            let rule;
+            options.body.event = {name: 'getSuccess'};
+            self._getRule(params.id).subscribe(
             {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            }
-          });
+              next: (data) => {rule = data;},
+              error: error(context),
+              complete: function()
+              {
+                options.body.event.data = { rule: rule };
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              }
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'rule.remove':
+          if(body.app === 'admin')
+          {
+            options.body.event =
+            {
+              name: 'removeRuleSuccess',
+              data: {}
+            };
+            self._removeRule(params.rule_id).subscribe(
+            {
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'rule.update':
+          if(body.app)
+          {
+            options.body.event =
+            {
+              name: 'updateRuleSuccess',
+              data: {}
+            };
+            self._updateRule().subscribe(
+            {
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'user.add':
+          if(body.app === 'admin')
+          {
+            options.body.event =
+            {
+              name: 'addUserSuccess',  // da definire il vero event come anche i parametri necessari
+              data: {}
+            };
+            self._addUser(
+            {
+              name: params.name,
+              company: params.company,
+              username: params.username
+            }).subscribe(
+            {
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'user.addEnrollment':
+          if(body.app === 'admin')
+          {
+            options.body.query.event = {name: "addUserEnrollmentSuccess"}
+            self._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
+            {
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'user.get':
+          if(body.app === 'admin')
+          {
+            let user;
+            options.body.event = {name: 'getUserSuccess'};
+            self._getUser(params.username).subscribe(
+            {
+              next: (data) => {user = data;},
+              error: error(context),
+              complete: function()
+              {
+                options.body.event.data = { user: user };
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              }
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'user.getList':
+          if(body.app === 'admin')
+          {
+            let users;
+            options.body.event = {name: 'getUserListSuccess'};
+            self._getUserList(/**@todo add query parametr*/).subscribe(
+            {
+              next: (data) => {users = data},
+              error: error(context),
+              complete: function()
+              {
+                options.body.event.data = { users: users };
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              }
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+            break;
+        case 'user.login':
+          if(options.body.app)
+          {
+            this._loginUser({audio: body.audio, username: params.username}).subscribe(
+            {
+              next: function(token)
+              {
+                console.log('options: ', JSON.stringify(options, null, 2));
+                options.body.query.data.token = token;
+                options.body.query.event = {name: 'loginUserSuccess', data: {'username': params.username}};
+                console.log('options: ', JSON.stringify(options, null, 2));
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: function(err)
+              {
+                if(err.error === 2)
+                {
+                  options.body.event = {name: 'loginUserFailure'};
+                  self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+                }
+                else
+                  (error(context))(err);
+              },
+  						complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              }
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
           break;
         case 'user.remove':
-          options.body.event =
+          if(body.app === 'admin')
           {
-            name: 'removeUserSuccess',
-            data: {}
-          };
-          self._removeUser(params.username).subscribe(
-          {
-            complete: function()
+            options.body.event =
             {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: error(context)
-          });
+              name: 'removeUserSuccess',
+              data: {}
+            };
+            self._removeUser(params.username).subscribe(
+            {
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
           break;
         case 'user.resetEnrollment':
-        options.body.event = {name: "resetUserEnrollmentSuccess"}
-        this._resetUserEnrollment(params.username).subscribe(
-        {
-          complete: function()
+          if(body.app === 'admin')
           {
-            self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-          },
-          error: error(context)
-        });
-        break;
-        case 'user.update':
-          options.body.event =
-          {
-            name: 'userUpdateSuccess',
-            data: {}
-          };
-          self._updateUser(''/*dd*/).subscribe(
-          {
-            complete: function()
+            options.body.event = {name: "resetUserEnrollmentSuccess"}
+            this._resetUserEnrollment(params.username).subscribe(
             {
-              self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-            },
-            error: error(context)
-          });
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
           break;
+        case 'user.update':
+          if(body.app === 'admin')
+          {
+            options.body.event =
+            {
+              name: 'userUpdateSuccess',
+              data: {}
+            };
+            self._updateUser(''/*dd*/).subscribe(
+            {
+              complete: function()
+              {
+                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+              },
+              error: error(context)
+            });
+          }
+          else
+            (error(context))(WRONG_APP);
+          break;
+        case 'app.switch':  // transizione tra diverse applicazioni
+          if(params.new_app)
+          {
+            options.body.app = params.new_app;  //cambio app, in modo che venga interrogato l'agent adeguato
+            body.app = params.new_app;  //in questo caso il cambiamento di agent è permesso, quindi aggiorno il nome dell'applicazione originale
+            delete params.new_app;
+            options.body.query.event = { name: 'init', data: params };
+            console.log('options: ', options);
+            self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+            break;
+          }
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
           this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
           {
@@ -984,5 +1064,7 @@ function queryString(obj)
 		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
   return str.join("&");
 }
+
+
 
 module.exports = VocalAPI;
