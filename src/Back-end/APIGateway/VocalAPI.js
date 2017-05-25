@@ -705,10 +705,10 @@ class VocalAPI
   */
   _onVaResponse(context, body)
   {
-    console.log('response')
     let self = this;
     return function(response) //restituisce
     {
+      console.log('response: ', response);
       let options =
       {
         method: 'POST',
@@ -717,13 +717,12 @@ class VocalAPI
         json: true,
         body:
         {
-          app: body.app,
+          app: body.app,  //body.app contiene il nome dell'applicazione originale
           query:
           {
-            data: response.data ? response.data : {},
+            data: response.data ? response.data : {}, //copio  i dati della risposta dell'assistente virtuale
             session_id: response.session_id
-          },
-          data: body.data ? body.data : {}
+          }
         }
       }
 
@@ -928,8 +927,10 @@ class VocalAPI
             {
               next: function(token)
               {
-                options.body.data.token = token;
+                console.log('options: ', JSON.stringify(options, null, 2));
+                options.body.query.data.token = token;
                 options.body.query.event = {name: 'loginUserSuccess', data: {'username': params.username}};
+                console.log('options: ', JSON.stringify(options, null, 2));
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               },
               error: function(err)
@@ -1007,6 +1008,17 @@ class VocalAPI
           else
             (error(context))(WRONG_APP);
           break;
+        case 'app.switch':  // transizione tra diverse applicazioni
+          if(params.new_app)
+          {
+            options.body.app = params.new_app;  //cambio app, in modo che venga interrogato l'agent adeguato
+            body.app = params.new_app;  //in questo caso il cambiamento di agent è permesso, quindi aggiorno il nome dell'applicazione originale
+            delete params.new_app;
+            options.body.query.event = { name: 'init', data: params };
+            console.log('options: ', options);
+            self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+            break;
+          }
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
           this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
           {
@@ -1052,5 +1064,7 @@ function queryString(obj)
 		str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
   return str.join("&");
 }
+
+
 
 module.exports = VocalAPI;

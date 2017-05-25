@@ -66,7 +66,7 @@ startObservable.subscribe(function()
   if(enabled)
     recorder.stop();
   else
-    recorder.start();
+    recorder.enable();
   enabled = !enabled;
   changeValueButton();
 });
