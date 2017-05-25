@@ -205,9 +205,10 @@ function filterExpression(obj)
   for(let key in new_obj)
   {
 		filter_expression.FilterExpression += `${key} = :${key} and `;
-		filter_expression.ExpressionAttributeValues[`:${key}`] = Boolean(new_obj[key] === 'true');
-	}
+    filter_expression.ExpressionAttributeValues[`:${key}`] = Boolean(new_obj[key] === 'true');
+    //filter_expression.ExpressionAttributeValues[`:${key}`] = new_obj[key];
 
+  }
 	// Tolgo l'and finale dal FilterExpression
 	filter_expression.FilterExpression = filter_expression.FilterExpression.slice(0,-5);
   return filter_expression;

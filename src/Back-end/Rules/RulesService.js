@@ -185,7 +185,6 @@ class RulesService
 		{
       rules: []
     };
-
     // Controllo se ci sono filtri da applicare nell'ottenimento delle rule
 		let query = objectFilter(event.queryStringParameters, ['enabled']);
 		if(Object.keys(query).length === 0)
@@ -196,14 +195,19 @@ class RulesService
       next: function(rule)
 			{
 				let target = objectFilter(event.queryStringParameters, ['target.name', 'target.member', 'target.company']);
-        console.log('target.name: ', target['target.name']);
         if(Object.keys(target).length > 0)
 				{
 					let insert = false;
 					for(let i = 0; i < rule.targets.length; ++i)
 					{
+            // Controllo se solo il campo company è impostato
+            if(target['target.company'] && !(rule.targets[i].member) && !(rule.targets[i].name))
+            {
+              if(rule.targets[i].company === target['target.company'] && !(rule.targets[i].member) && !(rule.targets[i].name))
+                list.rules.push(rule);
+            }
 						// Controllo se tutti i tre campi di target sono impostati come filtro
-						if(target['target.name'] && target['target.member'] && target['target.company'])
+						else if(target['target.name'] && target['target.member'] && target['target.company'])
 						{
 							if(rule.targets[i].name === target['target.name'] && rule.targets[i].member === target['target.member'] && rule.targets[i].company === target['target.company'])
 								list.rules.push(rule);
@@ -214,10 +218,10 @@ class RulesService
 							if(rule.targets[i].member === target['target.member'] && rule.targets[i].company === target['target.company'])
 								list.rules.push(rule);
 						}
-						// Controllo se il campo company è impostato
-						else if(target['target.company'])
+						// Controllo se i campi company e name sono impostati
+						else if(target['target.company'] && target['target.name'])
 						{
-							if(rule.targets[i].company === target['target.company'])
+							if(rule.targets[i].company === target['target.company'] && rule.targets[i].name === target['target.name'])
 								list.rules.push(rule);
 						}
 					}
