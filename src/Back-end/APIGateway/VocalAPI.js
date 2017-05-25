@@ -65,7 +65,7 @@ class VocalAPI
     body.audio = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
     self.stt.speechToText(body.audio, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
-      let query = {data: body.query.data, session_id: body.session_id};
+      let query = {data: body.data, session_id: body.session_id};
       if(text)
       {
         self.text_request = text;
@@ -145,7 +145,7 @@ class VocalAPI
         {
           text: self.text_request,
           session_id: body.session_id,
-          data: body.query.data
+          data: body.data
         }
       },
       headers:
@@ -440,6 +440,7 @@ class VocalAPI
 	*/
   _getUser(username)
   {
+    console.log(username);
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
@@ -458,6 +459,7 @@ class VocalAPI
 			})
 			.catch(function(err)
 			{
+        console.log(err);
 				observer.error(
 				{
 					code: err.statusCode,
@@ -708,7 +710,7 @@ class VocalAPI
     let self = this;
     return function(response) //restituisce
     {
-      console.log('response: ', response);
+      console.log('response: ', JSON.stringify(response, null, 2));
       let options =
       {
         method: 'POST',
@@ -720,7 +722,7 @@ class VocalAPI
           app: body.app,  //body.app contiene il nome dell'applicazione originale
           query:
           {
-            data: response.data ? response.data : {}, //copio  i dati della risposta dell'assistente virtuale
+            data: response.res.data ? response.res.data : {}, //copio  i dati della risposta dell'assistente virtuale
             session_id: response.session_id
           }
         }
@@ -896,17 +898,18 @@ class VocalAPI
             (error(context))(WRONG_APP);
           break;
         case 'user.get':
+          console.log(body.app);
           if(body.app === 'admin')
           {
             let user;
-            options.body.event = {name: 'getUserSuccess'};
-            self._getUser(params.username).subscribe(
+            options.body.query.event = {name: 'getUserSuccess'};
+            self._getUser(params.user_username).subscribe(
             {
               next: (data) => {user = data;},
               error: error(context),
               complete: function()
               {
-                options.body.query.event.data = { user: user };
+                options.body.query.event.data = { user: JSON.stringify(user, null, 2) };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -1009,7 +1012,7 @@ class VocalAPI
               name: 'userUpdateSuccess',
               data: {}
             };
-						
+
 						let user;
 						self._getUser(params.username).subscribe(
 						{
@@ -1019,9 +1022,9 @@ class VocalAPI
 								if(params.name)
 									user.name = params.name;
 							},
-							
+
 							error: error(context),
-							
+
 							complete: function()
 							{
 								self._updateUser(user).subscribe(
