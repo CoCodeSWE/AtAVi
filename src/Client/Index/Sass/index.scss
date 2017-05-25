@@ -11,20 +11,20 @@ $colSfondo: #3d323e;
 
 *
 {
-	margin: 0em;
-	padding: 0em;
+ margin: 0em;
+ padding: 0em;
 }
 
 html
 {
-	font-family: "Palatino Linotype", "Courier New", "Verdana", "Sans-Serif";
+ font-family: "Palatino Linotype", "Courier New", "Verdana", "Sans-Serif";
 }
 
 .hide
 {
   text-indent:100%;
-	white-space:nowrap;
-	overflow:hidden;
+ white-space:nowrap;
+ overflow:hidden;
 }
 
 body
@@ -35,34 +35,37 @@ body
 #mainFrame
 {
   border-top-left-radius: 2em;
-  margin: 1em auto;
+  margin: 0 auto;
+  margin-top: 1em;
   height: 30em;
   width: 65%;
-  border: 0.14aem solid #000000;
+  border-top: 0.14em solid #000000;
+  border-left: 0.14em solid #000000;
+  border-right: 0.14em solid #000000;
   background-color: #ffffff;
   overflow-y: scroll;
   &::-webkit-scrollbar-thumb
   {
-  	background-color: #fff;
+   background-color: #fff;
   }
   &:hover
   {
     &::-webkit-scrollbar-thumb
     {
       border: 2px solid #FFF;
-    	border-radius: 10px;
-    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    	background-color: darken($colSfondo, 10%);
+     border-radius: 10px;
+     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+     background-color: darken($colSfondo, 10%);
     }
   }
   &::-webkit-scrollbar
   {
-  	width: 12px;
-  	background-color: #FFF;
+   width: 12px;
+   background-color: #FFF;
   }
   &::-webkit-scrollbar-track
   {
-  	background-color: #FFF;//#F5F5F5;
+   background-color: #FFF;//#F5F5F5;
     display:none;
   }
 }
@@ -132,56 +135,53 @@ body
 
 #nomeApp
 {
-	color: #ffffff;
-	font-family: Atavi;
-	font-size: 200%;
+ color: #ffffff;
+/*  background-image: url("../Image/100.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  height: 3.2em;*/
   float:left;
   width: 100%;
   margin-bottom: 0.5em;
 }
 
+#staticTitleApp
+{
+  width: 100%;
+}
+
+#loadingImg
+{
+  width: 50%;
+}
+
+#divKeyboard
+{
+  height: 3.2em;
+}
+
 #textMsg
 {
   display: none;
-  position: absolute;
-  width: 50%;
-  height: 8em;
-  top: 20em;
-  left: 25%;
-  border: 0.1em solid black;
-  text-align: center;
-  border-radius: 0.5em;
-  background-color: #3d323e;
-  box-shadow: 0.1em 0.2em 0.2em 0.1em #888888;
-}
-
-.buttonExit
-{
-  position: relative;
-  background-image: url("../Image/exit.png");
-  width: 1.5em;
-  height: 1.5em;
-  background-size: 100% 100%;
-  background-color: transparent;
-  background-repeat: no-repeat;
-  border: 0;
-  cursor: pointer;
-  overflow: hidden;
-  left: 45%;
+  margin: 0 auto;
+  width: 65%;
+  margin: 0 auto;
 }
 
 #textMsg input
 {
-  width: 90%;
-  padding: 0.8em 0.8em;
-  margin-top: 0.6em;
+  width: 91%;
+  padding: 0.5em 0.5em;
 }
 
 #textMsg button
 {
-  padding: 0.5em 0.5em;
-  margin-top: 0.5em;
-  border: 0;
+  background-color: transparent;
+  background-image: url("../Image/send.png");
+  background-repeat: no-repeat;
+  border: 0em;
+  background-size: 100%;
+  height: 3.2em;
   cursor: pointer;
 }
 
