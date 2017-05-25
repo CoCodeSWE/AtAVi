@@ -35,7 +35,7 @@ class STTWatsonAdapter
       content_type: type
     };
     if(this.model)
-      params.model = this.model;
+      params.customization_id = this.model;
 		return new Promise(function(fulfill, reject)
 		{
 			self.stt.recognize(params, function(err, res)

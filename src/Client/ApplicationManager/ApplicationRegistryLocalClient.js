@@ -33,14 +33,14 @@ export default class ApplicationRegistryLocalClient
 
     return new Rx.Observable(function(observer)
     {
-			if(pkg.setup !== undefined && pkg.name !== undefined && pkg.cmdHandler !== undefined && pkg.ui !== undefined)
+			if(pkg.name !== undefined)
 			{
 				self.registry.register(name, pkg);
 				observer.complete();
 			}
 			else
 			{
-				observer.error('Package parziale');
+				observer.error('Package must have a name');
 			}
 		});
   }

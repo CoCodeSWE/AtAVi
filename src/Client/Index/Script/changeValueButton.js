@@ -38,3 +38,13 @@ function toggleLoading()
     toggleload = 0;
   }
 }
+
+function enableKeyboard()
+{
+  document.getElementById( 'textMsg' ).style.display = 'inherit';
+}
+
+function disableKeyboard()
+{
+  document.getElementById( 'textMsg' ).style.display = 'none';
+}

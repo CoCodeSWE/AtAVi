@@ -45,11 +45,11 @@ class ConversationsDAODynamoDB
   }
 
   /**
-	* Aggiunge un nuovo messaggio ad una conversazione in DynamoDB
-	* @param {ConversationMsg} msg - messaggio che si vuole aggiungere alla conversazione
+	* Aggiunge un array di nuovi messaggi ad una conversazione in DynamoDB
+	* @param {ConversationMsgArray} msgs - messaggi che si vogliono aggiungere alla conversazione
 	* @param {String} session_id - id della sessione della conversazione dove aggiungere il messaggio
 	*/
-  addMessage(msg, session_id)
+  addMessages(msgs, session_id)
   {
     let self = this;
     return new Rx.Observable(function(observer)
@@ -62,13 +62,13 @@ class ConversationsDAODynamoDB
 				},
         ExpressionAttributeValues:
         {
-          ":msg": msg
+          ":msgs": msgs
         },
         ExpressionAttributeNames:
         {
           "#messages": 'messages'
         },
-        UpdateExpression: "set #messages= list_append(#messages, :msg)"
+        UpdateExpression: "set #messages = list_append(#messages, :msgs)"
       };
 
       self.client.update(params, function(err, data)

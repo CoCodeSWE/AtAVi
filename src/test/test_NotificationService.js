@@ -40,7 +40,6 @@ describe('Back-end', function()
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sugli utenti a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
 					let ev = {body: '', queryStringParameters: ''};
-          service.getChannelList(ev, context);
           client.groups.list.yields(null, groups);
           client.users.list.yields('errore');
           client.channels.list.yields(null, channels);
@@ -48,13 +47,13 @@ describe('Back-end', function()
           {
             expect(args).to.have.property('statusCode', 500);
             done();
-          }
+          };
+					service.getChannelList(ev, context);
         });
 
         it("Nel caso in cui si verifichi un errore nella richiesta delle informazioni sui gruppi a Slack, il campo statusCode della risposta deve essere impostato a 500.", function(done)
         {
 					let ev = {body: '', queryStringParameters: ''};
-          service.getChannelList(ev, context);
           client.groups.list.yields('errore');
           client.users.list.yields(null, users);
           client.channels.list.yields(null, channels);
@@ -62,13 +61,13 @@ describe('Back-end', function()
           {
             expect(args).to.have.property('statusCode', 500);
             done();
-          }
+          };
+					service.getChannelList(ev, context);
         });
 
         it("Nel caso in cui non si verifichino errori, il campo statusCode della risposta deve essere impostato a 200 ed il corpo della risposta deve contenere la lista dei canali Slack (utenti, canali pubblici e gruppi privati) in formato JSON.", function(done)
         {
           let ev = {body: '', queryStringParameters: null};
-          service.getChannelList(ev, context);
           client.groups.list.yields(null, groups);
           client.users.list.yields(null, users);
           client.channels.list.yields(null, channels);
@@ -76,15 +75,16 @@ describe('Back-end', function()
           {
             expect(args).to.have.property('statusCode', 200);
             done();
-          }
+          };
+					service.getChannelList(ev, context);
         });
       });
 
-      describe('sendMsg', function(done)
+      describe('sendMsg', function()
       {
         it("Nel caso in cui si verifichi un errore, il campo statusCode della risposta deve essere impostato a 500.", function()
 				{
-					let ev = {request_event};
+					let ev = request_event;
 					service.sendMsg(ev, context);
 					client.chat.postMessage.yield('errore');
 
@@ -96,7 +96,7 @@ describe('Back-end', function()
 
         it("Nel caso in cui non si verifichi alcun errore, il campo statusCode della risposta deve essere impostato a 200.", function()
 				{
-					let ev = {request_event};
+					let ev = request_event;
 					service.sendMsg(ev, context);
 					client.chat.postMessage.yield(null, responseSendMsg);
 
@@ -108,7 +108,7 @@ describe('Back-end', function()
 
 				it("Nel caso in cui sia passato un parametro non atteso, il campo statusCode della risposta deve essere impostato a 400.", function()
 				{
-					let ev = {body: JSON.stringify(bad_request)};
+					let ev = {pathParameters: {channel: 'channel'}, body: JSON.stringify(bad_request)};
 					service.sendMsg(ev, context);
 
 					expect(context.succeed.callCount).to.equal(1);
@@ -260,7 +260,7 @@ const request_event =
 
 const bad_request =
 {
-	msg:
+	errore:
 	{
 		"text": "testo di prova"
 	}
