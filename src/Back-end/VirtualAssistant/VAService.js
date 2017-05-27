@@ -50,7 +50,7 @@ class VAService
 				},
 				error: function(err)
 				{
-          console.log("error: ", err);
+          console.log("error on getagent: ", err);
 					context.succeed(
 					{
 						statusCode: err.statusCode,
