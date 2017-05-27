@@ -27,7 +27,7 @@ class VAMessageListener
 	 * @param context {JSON} - parametro per inviare il corpo della risposta. In realtà non viene utilizzato
 	 * @param callback {function} - funzione di callback utilizzata per informare il chiamate del successo o del fallimento del metodo
 	 */
-	onMessage(event, context, callback)
+	notify(event, context, callback)
 	{
     console.log(JSON.stringify(event, null, 2));
 		let self = this;
@@ -85,16 +85,6 @@ class VAMessageListener
 					break;
 			}
     }
-    /*
-    if(message.res.contexts[0] && message.res.contexts[0].name === 'guest.warnedRequiredPerson') // notificare la persona desiderata dell'arrivo dell'ospite
-			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" is arrived and looking for ' + message.res.contexts[0].parameters.required_person + '.';
-		else if(message.action && message.action === 'guest.coffee') // l'ospite vuole un caffè
-			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" wants a coffee.';
-		else if(message.action && message.action === 'guest.drink') // l'ospite vuole qualcos'altro da bere
-			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" wants \"' + message.res.contexts[0].parameters.another_drink + '\"';
-		else if(message.action && message.action === 'guest.need') // l'ospite ha bisogno di qualcosa
-			text = message.res.contexts[0].parameters.name + ' from \"' + message.res.contexts[0].parameters.company + '\" needs \"' + message.res.contexts[0].parameters.need + '\"';
-    */
 		if(msg.text) // se text è definito => bisogna notifica qualcuno di qualcosa
 		{
 			this.request_promise(rules_options).then(function(response)
@@ -117,109 +107,102 @@ class VAMessageListener
             send_to = receiver[0].id;
           console.log('receiver: ', receiver);
           return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
-        }).then((data) => {callback(null);}).catch(callback);  /**@todo veraw gestione errori*/
-				/*if(parsed_body.messages[0].task) // notifico la persona desiderata
-				{
-					if(parsed_body.messages[0].task === 'send_to_slack') // notifico il member della rule
-					{
-						// Ottengo il canale slack del member
-						let notifications_options = // dato il nome del member, ottengo il canale slack grazie alla chiamata HTTP al microservizio Notifications
-						{
-							method: 'GET',
-							uri: NOTIFICATIONS_SERVICE_URL + '?name=' + parsed_body.member,
-							json: true
-						};
-						rp(notifications_options).then(function(parsed_body)
-						{
-							// parametri per la richiesta HTTP POST al microservizio Notifications
-							let notifications_param_member =
-							{
-								msg:
-								{
-									attachments_array:[],
-									text: text
-								},
-								send_to: parsed_body.messages[0].id
-							};
-							let notifications_send_to_slack = // mando il messaggio a slack con la chiamata HTTP al microservizio Notifications
-							{
-								method: 'POST',
-								uri: NOTIFICATIONS_SERVICE_URL,
-								body: notifications_param_member,
-								json: true
-							};
-							this.request_promise(notifications_send_to_slack).then().catch(callback);
-						}).catch(callback);
-					}
-					//  Messaggio inviato al member
-
-					//  Ottengo il canale slack della persona desiderata
-					let notifications_options = // dato il nome della persona desiderata, ottengo il canale slack grazie alla chiamata HTTP al microservizio Notifications
-					{
-						method: 'GET',
-						uri: NOTIFICATIONS_SERVICE_URL+'?name='+message.res.contexts[0].parameters.required_person,
-						json: true
-					};
-					rp(notifications_options).then(function(parsed_body)
-					{
-						// notifico la persona desiderata
-						let notifications_param_required_person =
-						{
-							msg:
-							{
-								attachments_array:[],
-								text: text
-							},
-							send_to: parsed_body.messages[0].id
-						};
-						let notifications_send_to_slack = // mando il messaggio a slack con la chiamata HTTP al microservizio Notifications
-						{
-							method: 'POST',
-							uri: NOTIFICATIONS_SERVICE_URL,
-							body: notifications_param_required_person,
-							json: true
-						};
-						this.request_promise(notifications_send_to_slack).then().catch(callback);
-					}).catch(callback);
-			  }*/
+        }).then((data) => {callback(null);}).catch(callback);  /**@todo vera gestione errori*/
 			}).catch(callback);
 		}
-    /*
-		// MESSAGGIO INVIATO DALL'UTENTE
-		let user_conversation_message =
-		{
-			'text': message.text_request,
-			'sender': 'User',
-			'timestamp': event.Records[0].Timestamp
-		};
-
-		self.conversations.addMessage(user_conversation_message, session_id).subscribe(
-			{
-				error: callback,
-				complete:  () => {callback(null);}
-			});
-
-	 	// MESSAGGIO INVIATO DA VA
-		let VA_conversation_message =
-		{
-			'text': event.Records[0].Sns.Message.text_response,
-			'sender': 'VirtualAssistant',
-			'timestamp': event.Records[0].Timestamp
-		};
-		self.conversations.addMessage(VA_conversation_message, session_id).subscribe(
-			{
-				error: callback,
-				complete:  () => {callback(null);}
-			});
-    */
-		/*self.guests.addConversation(name, company, session_id).subscribe(
-		{
-			error: callback,
-			complete:  () => {callback(null);}
-		});*/
-
+    else
+      callback(null); //non ci sono dati da salvare e non devo notificare nessuno, quindi esco senza errori
 	}
 
+  saveConversation(event, context, callback)
+  {
+    console.log(JSON.stringify(event, null, 2));
+		let self = this;
+		let message;
+    try
+    {
+      message  = JSON.parse(event.Records[0].Sns.Message);
+    }
+    catch(err)
+    {
+      callback(err);
+      return;
+    }
+		let session_id = message.session_id;
+    let params = message.res.contexts ? message.res.contexts[0].parameters : null;
+    if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+      callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
+    this.conversations.addMessage([message.res.text_request, message.res.text_response], session_id).subscribe(
+    {
+      complete: () => callback(null),
+      error: callback
+    });
+  }
+
+  updateGuest(event, context, callback)
+  {
+    console.log(JSON.stringify(event, null, 2));
+		let self = this;
+		let message;
+    try
+    {
+      message  = JSON.parse(event.Records[0].Sns.Message);
+    }
+    catch(err)
+    {
+      callback(err);
+      return;
+    }
+		let session_id = message.session_id;
+    let params = message.res.contexts ? message.res.contexts[0].parameters : null;
+    if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+      callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
+    if(params.request)
+    {
+      let guest = null;
+      this.guests.getGuest(params.name, params.company).subscribe(
+      {
+        next: (data) => {guest = data},
+        error: (err) =>
+        {
+          if(err.code === 404)  //non esiste ancora questo ospite, lo creaimo
+            guest = { name: params.name, company: params.company, welcome: { coffee: 0, drink: {}, person: {}, general: null } }
+        }
+      })
+      if(!guest)
+        callback('errore');
+      else
+      {
+        switch(params.request)
+        {
+          case 'person':
+            if(guest.welcome.person[params.required_person])  // se ha già incontrato questa persona, incrementiamo il numero di incontri
+              guest.welcome.person[params.required_person]++;
+            else  // altrimenti salviamo il primo incontro
+              guest.welcome.person[params.required_person] = 1;
+            break;
+          case 'coffee':
+            guest.welcome.coffee++;
+            break;
+          case 'drink':
+          if(guest.welcome.drink[params.drink])  // se ha già incontrato questa persona, incrementiamo il numero di incontri
+            guest.welcome.drink[params.drink]++;
+          else  // altrimenti salviamo il primo incontro
+            guest.welcome.drink[params.drink] = 1;
+          break;
+          case 'general':
+            guest.welcome.general = params.need;
+        }
+        this.guests.updateGuest(guest).subscribe(
+        {
+          complete: () => callback(null),
+          error: callback
+        });
+      }
+    }
+    else
+      callback(null); // nessuna richiesta, non dobbiamo aggiornare nulla
+  }
 }
 
 module.exports = VAMessageListener;

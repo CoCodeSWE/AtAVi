@@ -441,6 +441,7 @@ class VocalAPI
 	*/
   _getUser(username)
   {
+    console.log(username);
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
@@ -459,6 +460,7 @@ class VocalAPI
 			})
 			.catch(function(err)
 			{
+        console.log(err);
 				observer.error(
 				{
 					code: err.statusCode,
@@ -605,7 +607,7 @@ class VocalAPI
 	* Metodo che permette di eliminare tutti gli enrollments di un utente del sistema
 	* @param {String} username - Parametro contenente l'username dell utente a cui si vogliono eliminare tutti gli enrollments
 	*/
-  _resetUserEnrollment(username)
+  _resetUserEnrollments(username)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -709,7 +711,7 @@ class VocalAPI
     let self = this;
     return function(response) //restituisce
     {
-      console.log('response: ', response);
+      console.log('response on Var Response: ', JSON.stringify(response, null, 2));
       let options =
       {
         method: 'POST',
@@ -721,12 +723,13 @@ class VocalAPI
           app: body.app,  //body.app contiene il nome dell'applicazione originale
           query:
           {
-            data: response.data ? response.data : {}, //copio  i dati della risposta dell'assistente virtuale
+            data: response.res.data ? response.res.data : {}, //copio  i dati della risposta dell'assistente virtuale
             session_id: response.session_id
           }
         }
       }
-
+      console.log("action= ");
+      console.log(response.action);
       let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
       switch(response.action)
       {
@@ -775,7 +778,7 @@ class VocalAPI
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { rules: rules };
+                options.body.query.event.data = { rules: rules };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -794,7 +797,7 @@ class VocalAPI
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { rule: rule };
+                options.body.query.event.data = { rule: rule };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -830,7 +833,21 @@ class VocalAPI
               name: 'updateRuleSuccess',
               data: {}
             };
-            self._updateRule().subscribe(
+            self._updateRule(
+						{
+							name: params.rule_name,
+              task:
+              {
+                type: params.task_name
+              },
+              targets:[
+              {
+                name: params.target_name,
+                member: params.target_member,
+                company: params.target_company
+              }],
+              enabled: true
+						}).subscribe(
             {
               complete: function()
               {
@@ -853,7 +870,6 @@ class VocalAPI
             self._addUser(
             {
               name: params.name,
-              company: params.company,
               username: params.username
             }).subscribe(
             {
@@ -884,17 +900,18 @@ class VocalAPI
             (error(context))(WRONG_APP);
           break;
         case 'user.get':
+          console.log(body.app);
           if(body.app === 'admin')
           {
             let user;
-            options.body.event = {name: 'getUserSuccess'};
-            self._getUser(params.username).subscribe(
+            options.body.query.event = {name: 'getUserSuccess'};
+            self._getUser(params.user_username).subscribe(
             {
               next: (data) => {user = data;},
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { user: user };
+                options.body.query.event.data = { user: JSON.stringify(user, null, 2) };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -913,7 +930,7 @@ class VocalAPI
               error: error(context),
               complete: function()
               {
-                options.body.event.data = { users: users };
+                options.body.query.event.data = { users: users };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -973,11 +990,11 @@ class VocalAPI
           else
             (error(context))(WRONG_APP);
           break;
-        case 'user.resetEnrollment':
+        case 'user.resetEnrollments':
           if(body.app === 'admin')
           {
-            options.body.event = {name: "resetUserEnrollmentSuccess"}
-            this._resetUserEnrollment(params.username).subscribe(
+            options.body.event = {name: "resetUserEnrollmentsSuccess"}
+            self._resetUserEnrollments(params.username).subscribe(
             {
               complete: function()
               {
@@ -997,26 +1014,45 @@ class VocalAPI
               name: 'userUpdateSuccess',
               data: {}
             };
-            self._updateUser(''/*dd*/).subscribe(
-            {
-              complete: function()
-              {
-                self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
-              },
-              error: error(context)
-            });
+
+						let user;
+						self._getUser(params.username).subscribe(
+						{
+							next: function(data)
+							{
+								user = data;
+								if(params.name)
+									user.name = params.name;
+							},
+
+							error: error(context),
+
+							complete: function()
+							{
+								self._updateUser(user).subscribe(
+								{
+									complete: function()
+									{
+										self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
+									},
+									error: error(context)
+								});
+							}
+						});
           }
           else
             (error(context))(WRONG_APP);
           break;
         case 'app.switch':  // transizione tra diverse applicazioni
+        console.log("new app?");
           if(params.new_app)
           {
+            console.log("NEW APP!");
             options.body.app = params.new_app;  //cambio app, in modo che venga interrogato l'agent adeguato
             body.app = params.new_app;  //in questo caso il cambiamento di agent è permesso, quindi aggiorno il nome dell'applicazione originale
             delete params.new_app;
             options.body.query.event = { name: 'init', data: params };
-            console.log('options: ', options);
+            console.log('options app switch: ', options);
             self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             break;
           }

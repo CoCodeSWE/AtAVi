@@ -68,7 +68,7 @@ class GuestsDAODynamoDB
         if(err)
           observer.error(err);
 				else if(!data.Item)
-					observer.error({ code: 'Not found' });
+					observer.error({ code: 404, msg: 'Not found' });
         else
 				{
           observer.next(mapProperties(data.Item, reverse_attr_map));
@@ -255,7 +255,7 @@ function filterExpression(obj)
 
 const attr_map =
 {
-  name: 'guest_name'
+  name: 'full_name'
 }
 
 const reverse_attr_map =
