@@ -132,7 +132,7 @@ function vocalInit()
     next: function(blob)
     {
       console.log('Recorder next');
-      let app = application_manager.application_name || 'conversationsApp';
+      let app = application_manager.application_name || 'conversation';
       blobToBase64(blob)
         .then(function(audio)
         {
@@ -180,7 +180,7 @@ function textInit()
     {
       event.preventDefault();
       console.log('Text next');
-      let app = application_manager.application_name || 'conversationsApp';
+      let app = application_manager.application_name || 'conversation';
       let input_text = document.getElementById("inputText").value;
       document.getElementById("inputText").value="";
       console.log(input_text);
@@ -220,7 +220,7 @@ function textInit()
 function reminderInit()
 {
   logic.setUrl(TEXT_URL);
-  let app = application_manager.application_name || 'conversationsApp';
+  let app = application_manager.application_name || 'conversation';
   let query =
   {
     text : 'where required_person is?',
