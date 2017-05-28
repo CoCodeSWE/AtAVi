@@ -81,7 +81,10 @@ export default class Manager
       }
     }
     else
+    {
+      this.application_name = name;
       this.application.runCmd(cmd, params);
+    }
   }
 
   /**
