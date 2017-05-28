@@ -123,6 +123,7 @@ _sportCuriosity(body, context)
           {
             console.log(err);
             if(err.code && err.code === 'Not found'){
+              console.log(err.code);
               context.succeed(
                 {
                   statusCode: 200,
