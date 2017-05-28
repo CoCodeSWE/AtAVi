@@ -55,39 +55,42 @@ class CuriosityWebhookService
 
       })
     };
-    switch(body.result.action)
+    if(body.result.parameters.category)
     {
-      case 'curiosity.sport':
+      switch(body.result.parameters.category)
       {
-        this._sportCuriosity(body, context);
-        break;
+        case 'sport':
+        {
+          this._sportCuriosity(body, context);
+          break;
+        }
+        case 'technology':
+        {
+          this._technologyCuriosity(body, context);
+          break;
+        }
+        case 'food':
+        {
+          this._foodCuriosity(body, context);
+          break;
+        }
+        case 'general':
+        {
+          this._generalCuriosity(body, context);
+          break;
+        }
+        case 'firstGeneral':
+        {
+          this._firstGeneralCuriosity(body, context);
+          break;
+        }
+        case 'emptyFood':
+        {
+          this._foodEmptyCuriosity(body, context);
+          break;
+        }
+        // mancherebbe un'azione di default. Ma vorrebbe dire che arriva una action non gestita.
       }
-      case 'curiosity.technology':
-      {
-        this._technologyCuriosity(body, context);
-        break;
-      }
-      case 'curiosity.food':
-      {
-        this._foodCuriosity(body, context);
-        break;
-      }
-      case 'curiosity.general':
-      {
-        this._generalCuriosity(body, context);
-        break;
-      }
-      case 'curiosity.firstGeneral':
-      {
-        this._firstGeneralCuriosity(body, context);
-        break;
-      }
-      case 'curiosity.emptyFood':
-      {
-        this._foodEmptyCuriosity(body, context);
-        break;
-      }
-      // mancherebbe un'azione di default. Ma vorrebbe dire che arriva una action non gestita.
     }
   }
 

@@ -48,6 +48,7 @@ class VAService
 			{
 				next: function(data)
 				{
+					console.log("setto agent: ",data);
 					self.va_module.setAgent(data);
 				},
 				error: function(err)
@@ -65,7 +66,7 @@ class VAService
 					{
             if(!data.action)
               data.action = request.app + DEF_ACTION;
-            console.log('data', data);
+            console.log('data: ', data);
 						success(context, data);
 					})
 					.catch(function(err)

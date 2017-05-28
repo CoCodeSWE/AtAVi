@@ -728,6 +728,7 @@ class VocalAPI
           }
         }
       }
+      console.log("_onVaResponse called", body);
       console.log("action= ");
       console.log(response.action);
       let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
@@ -1053,9 +1054,11 @@ class VocalAPI
             delete params.new_app;
             options.body.query.event = { name: 'init', data: params };
             console.log('options app switch: ', options);
+            console.log('event on change: ', options.body.query.event);
             self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             break;
           }
+          console.log('event NO change: ', options.body.query.event);
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
           this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
           {
@@ -1063,6 +1066,7 @@ class VocalAPI
               (error(context))({ code: 500, msg: 'Cannot notify: ' + JSON.stringify(err, null, 2)});
             else
             {
+              console.log("response to client: ", response);
               response.res.text_request = self.text_request;
               context.succeed({ statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response) });
             }

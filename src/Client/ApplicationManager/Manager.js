@@ -36,8 +36,10 @@ export default class Manager
     console.log('params: ', app, cmd, params, name);
     let self = this;
     //se l'applicazione istanziata non è quella desiderata, devo cambiarla salvando nello state quella attuale e istanziando l'applicazione richiesta
-    if(!name || typeof(name) !== 'string')
+    if(!name || typeof(name) !== 'string'){
       name = app;
+      console.log("Non esiste "+name+" e app= "+app);
+    }
     if (this.application_name !== app)
     {
       let new_app = this.state.getApp(app);

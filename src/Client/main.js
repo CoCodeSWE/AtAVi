@@ -182,6 +182,7 @@ function textInit()
       event.preventDefault();
       console.log('Text next');
       let app = application_manager.application_name || 'conversation';
+      console.log(app);
       let input_text = document.getElementById("inputText").value;
       document.getElementById("inputText").value="";
       console.log(input_text);
