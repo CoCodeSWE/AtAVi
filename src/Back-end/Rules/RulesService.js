@@ -201,29 +201,50 @@ class RulesService
 					for(let i = 0; i < rule.targets.length; ++i)
 					{
             // Controllo se solo il campo company è impostato
-            if(target['target.company'] && !(rule.targets[i].member) && !(rule.targets[i].name))
+            /*if(target['target.company'] && !(target['target.member']) && !(target['target.name']))
             {
               if(rule.targets[i].company === target['target.company'] && !(rule.targets[i].member) && !(rule.targets[i].name))
                 list.rules.push(rule);
-            }
+            }*/
 						// Controllo se tutti i tre campi di target sono impostati come filtro
-						else if(target['target.name'] && target['target.member'] && target['target.company'])
+						if(target['target.name'] && target['target.member'] && target['target.company'])
 						{
 							if(rule.targets[i].name === target['target.name'] && rule.targets[i].member === target['target.member'] && rule.targets[i].company === target['target.company'])
+              {
+                rule.priority = 3;
 								list.rules.push(rule);
+                continue;
+              }
 						}
 						// Controllo se i campi member e company sono impostati
-						else if(target['target.member'] && target['target.company'])
+						if(target['target.member'] && target['target.company'])
 						{
 							if(rule.targets[i].member === target['target.member'] && rule.targets[i].company === target['target.company'])
+              {
+                rule.priority = 2;
 								list.rules.push(rule);
+                continue;
+              }
 						}
 						// Controllo se i campi company e name sono impostati
-						else if(target['target.company'] && target['target.name'])
+						if(target['target.company'] && target['target.name'])
 						{
 							if(rule.targets[i].company === target['target.company'] && rule.targets[i].name === target['target.name'])
+              {
+                rule.priority = 1;
 								list.rules.push(rule);
+                continue;
+              }
 						}
+            if(target['target.company'])
+            {
+              if(rule.targets[i].company === target['target.company'])
+              {
+                rule.priority = 0;
+                list.rules.push(rule);
+                continue;
+              }
+            }
 					}
 				}
 				else
@@ -236,6 +257,7 @@ class RulesService
 
       complete: function()
       {
+        list.rules.sort(function(a,b){return b.priority - a.priority;});
         context.succeed(
         {
           statusCode: 200,

@@ -42,7 +42,7 @@ class VAMessageListener
       return;
     }
 		let session_id = message.session_id;
-    let params = message.res.contexts ? message.res.contexts[0].parameters : null;
+    let params = message.res.contexts && message.res.contexts[0] ? message.res.contexts[0].parameters : null;
     if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
     let rules_query = '?target.name=' +  encodeURIComponent(params.name) + '&target.company=' + encodeURIComponent(params.company);
@@ -61,6 +61,11 @@ class VAMessageListener
 		};
 		let msg = {}; // messaggio da inviare alla persona desiderata
     let send_to;
+		console.log("RUOLESSS QUERY");
+		console.log(rules_query);
+
+		console.log("PARAMSSSSSSSSSSSSS");
+		console.log(params);
     if(params.request)
     {
       switch(params.request)
@@ -88,20 +93,20 @@ class VAMessageListener
         * */
         console.log('options: ', rules_options);
         console.log('response: ', response);
-        if(response.rules && response.rules[0] && response.rules[0].task && response.rules[0].task.task === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
-          send_to = Promise.resolve(response.rules[0].task.params);
-        else // se non ho una direttiva che mi dica dove mandare il messaggio, devo ricavarmelo io
-          send_to = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
-        send_to.then((receiver) =>
-        {
-          let send_to;
-          if(!receiver || !receiver[0])
-            send_to = DEFAULT_CHANNEL;
-          else
-            send_to = receiver[0].id;
-          console.log('receiver: ', receiver);
-          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
-        }).then((data) => {callback(null);}).catch(callback);  /**@todo vera gestione errori*/
+	        if(response.rules && response.rules[0] && response.rules[0].task && response.rules[0].task.type === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
+	          send_to = Promise.resolve([{id: response.rules[0].task.params}]);
+	        else // se non ho una direttiva che mi dica dove mandare il messaggio, devo ricavarmelo io
+	          send_to = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
+		        send_to.then((receiver) =>
+		        {
+		          let send_to;
+		          if(!receiver || !receiver[0])
+		            send_to = DEFAULT_CHANNEL;
+		          else
+		            send_to = receiver[0].id;
+		          console.log('receiver: ', receiver);
+		          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
+		        }).then((data) => {callback(null);}).catch(callback);  /**@todo vera gestione errori*/
 			}).catch(callback);
 		}
     else
