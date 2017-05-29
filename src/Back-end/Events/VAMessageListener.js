@@ -43,8 +43,13 @@ class VAMessageListener
     }
 		let session_id = message.session_id;
     let params = message.res.contexts && message.res.contexts[0] ? message.res.contexts[0].parameters : null;
-    if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+    console.log(params);
+    console.log(!params || !params.name || !params.company)
+    if(!(params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+    {
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
+      return;
+    }
     let rules_query = '?target.name=' +  encodeURIComponent(params.name) + '&target.company=' + encodeURIComponent(params.company);
     /**
      ** @todo abilitare questi parametri della query quando rules è sistemato
