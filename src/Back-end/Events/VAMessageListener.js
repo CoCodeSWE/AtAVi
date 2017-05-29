@@ -66,11 +66,6 @@ class VAMessageListener
 		};
 		let msg = {}; // messaggio da inviare alla persona desiderata
     let send_to;
-		console.log("RUOLESSS QUERY");
-		console.log(rules_query);
-
-		console.log("PARAMSSSSSSSSSSSSS");
-		console.log(params);
     if(params.request)
     {
       switch(params.request)
@@ -98,20 +93,25 @@ class VAMessageListener
         * */
         console.log('options: ', rules_options);
         console.log('response: ', response);
-	        if(response.rules && response.rules[0] && response.rules[0].task && response.rules[0].task.type === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
-	          send_to = Promise.resolve([{id: response.rules[0].task.params}]);
+				console.log('target', response.targets);
+				console.log('task', response.task);
+				for(let i = 0; i<response.rules.length; ++i)
+				{
+	        if(response.rules && response.rules[i] && response.rules[i].task && response.rules[i].type === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
+						send_to = Promise.resolve([{id: response.rules[i].task.params}]);
 	        else // se non ho una direttiva che mi dica dove mandare il messaggio, devo ricavarmelo io
 	          send_to = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
 		        send_to.then((receiver) =>
 		        {
 		          let send_to;
-		          if(!receiver || !receiver[0])
+		          if(!receiver || !receiver[i])
 		            send_to = DEFAULT_CHANNEL;
 		          else
-		            send_to = receiver[0].id;
+		            send_to = receiver[i].id;
 		          console.log('receiver: ', receiver);
 		          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
 		        }).then((data) => {callback(null);}).catch(callback);  /**@todo vera gestione errori*/
+				}
 			}).catch(callback);
 		}
     else
