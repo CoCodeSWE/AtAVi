@@ -4,11 +4,16 @@ class AppSwitchHandler extends CmdRunner
 {
   handler(response, body)
   {
-    let action = response.action;
-    let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
     return new Promise((resolve, reject) =>
     {
-      if(action === 'app.switch' && params.new_app)
+      let action;
+      let params;
+      if(response)
+      {
+        action = response.action;
+        params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
+      }
+      if(action && params && action === 'app.switch' && params.new_app)
       {
         body.app = params.new_app;
         delete params.new_app;

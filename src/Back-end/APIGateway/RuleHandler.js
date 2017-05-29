@@ -13,128 +13,133 @@ class RuleHandler extends CmdRunner
 
   handler(response, body)
   {
-    let action = response.action;
-    let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
     return new Promise((resolve, reject) =>
     {
-      switch(action)
+      if(!response)
+        resolve(super.handler(null, body));
+      else
       {
-        case 'rule.add':
-          if(body.app === 'admin')
-          {
-            let query = { event: { name: 'addRuleSuccess', data: {} } };
-            this._addRule(
+        let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
+        let action = response.action;
+        switch(action)
+        {
+          case 'rule.add':
+            if(body.app === 'admin')
             {
-              name: params.rule_name,
-              task:
+              let query = { event: { name: 'addRuleSuccess', data: {} } };
+              this._addRule(
               {
-                type: params.task_name
-              },
-              targets:[
+                name: params.rule_name,
+                task:
+                {
+                  type: params.task_name
+                },
+                targets:[
+                {
+                  name: params.target_name,
+                  member: params.target_member,
+                  company: params.target_company
+                }],
+                enabled: true
+              }).subscribe(
               {
-                name: params.target_name,
-                member: params.target_member,
-                company: params.target_company
-              }],
-              enabled: true
-            }).subscribe(
+                complete: () =>
+                {
+                  resolve(query);
+                },
+                error: reject
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'rule.getList':
+            if(body.app === 'admin')
             {
-              complete: () =>
+              let rules;
+              let query = { event: {name: 'getRuleListSuccess'} };
+              this._getRuleList(/*dd*/).subscribe(
               {
-                resolve(query);
-              },
-              error: reject
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'rule.getList':
-          if(body.app === 'admin')
-          {
-            let rules;
-            let query = { event: {name: 'getRuleListSuccess'} };
-            this._getRuleList(/*dd*/).subscribe(
+                next: (data) => {rules = data},
+                error: reject,
+                complete: () =>
+                {
+                  query.event.data = { rules: rules };
+                  resolve(query);
+                }
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'rule.get':
+            if(body.app === 'admin')
             {
-              next: (data) => {rules = data},
-              error: reject,
-              complete: () =>
+              let rule;
+              let query = { event: {name: 'getSuccess'} };
+              this._getRule(params.id).subscribe(
               {
-                query.event.data = { rules: rules };
-                resolve(query);
-              }
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'rule.get':
-          if(body.app === 'admin')
-          {
-            let rule;
-            let query = { event: {name: 'getSuccess'} };
-            this._getRule(params.id).subscribe(
+                next: (data) => {rule = data;},
+                error: reject,
+                complete: () =>
+                {
+                  query.event.data = { rule: rule };
+                  resolve(query);
+                }
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'rule.remove':
+            if(body.app === 'admin')
             {
-              next: (data) => {rule = data;},
-              error: reject,
-              complete: () =>
+              let query = { event: {name: 'removeRuleSuccess', data: {} }};
+              this._removeRule(params.rule_id).subscribe(
               {
-                query.event.data = { rule: rule };
-                resolve(query);
-              }
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'rule.remove':
-          if(body.app === 'admin')
-          {
-            let query = { event: {name: 'removeRuleSuccess', data: {} }};
-            this._removeRule(params.rule_id).subscribe(
+                complete: () =>
+                {
+                  resolve(query);
+                },
+                error: reject
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'rule.update':
+            if(body.app)
             {
-              complete: () =>
+              let query = { event: {name: 'updateRuleSuccess', data: {}}};
+              this._updateRule(
               {
-                resolve(query);
-              },
-              error: reject
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'rule.update':
-          if(body.app)
-          {
-            let query = { event: {name: 'updateRuleSuccess', data: {}}};
-            this._updateRule(
-            {
-              name: params.rule_name,
-              task:
+                name: params.rule_name,
+                task:
+                {
+                  type: params.task_name
+                },
+                targets:[
+                {
+                  name: params.target_name,
+                  member: params.target_member,
+                  company: params.target_company
+                }],
+                enabled: true
+              }).subscribe(
               {
-                type: params.task_name
-              },
-              targets:[
-              {
-                name: params.target_name,
-                member: params.target_member,
-                company: params.target_company
-              }],
-              enabled: true
-            }).subscribe(
-            {
-              complete: () =>
-              {
-                resolve(query);
-              },
-              error: error(context)
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        default:
-          resolve(super.handler(response, body));
+                complete: () =>
+                {
+                  resolve(query);
+                },
+                error: error(context)
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          default:
+            resolve(super.handler(response, body));
+        }
       }
     });
   }

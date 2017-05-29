@@ -25,185 +25,190 @@ class UserHandler extends CmdRunner
 
   handler(response, body)
   {
-    let action = response.action;
-    let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
     return new Promise((resolve, reject) =>
     {
-      switch(action)
+      if(!response)
+        resolve(super.handler(null, body));
+      else
       {
-        case 'user.add':
-          if(body.app === 'admin')
-          {
-            let query =
+        let action = response.action;
+        let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
+        switch(action)
+        {
+          case 'user.add':
+            if(body.app === 'admin')
             {
-              event:
+              let query =
               {
-                name: 'addUserSuccess',  // da definire il vero event come anche i parametri necessari
-                data: {}
-              }
-            };
-            this._addUser(
-            {
-              name: params.name,
-              username: params.username
-            }).subscribe(
-            {
-              complete: () => { resolve(query);},
-              error: reject
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'user.addEnrollment':
-          if(body.app === 'admin')
-          {
-            let query = {event :{name: "addUserEnrollmentSuccess", data: {}}};
-            this._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
-            {
-              complete: () => { resolve(query);},
-              error: reject
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'user.get':
-          console.log(body.app);
-          if(body.app === 'admin')
-          {
-            let user;
-            let query = { event: {name: 'getUserSuccess'} };
-            this._getUser(params.user_username).subscribe(
-            {
-              next: (data) => {user = data;},
-              error: reject,
-              complete: () =>
-              {
-                query.event.data = { user: JSON.stringify(user, null, 2) };
-                resolve(query);
-              }
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'user.getList':
-          if(body.app === 'admin')
-          {
-            let users;
-            let query = { event: {name: 'getUserListSuccess'} };
-            this._getUserList(/**@todo add query parametr*/).subscribe(
-            {
-              next: (data) => {users = data},
-              error: reject,
-              complete: function()
-              {
-                query.event.data = { users: users };
-                resolve(query);
-              }
-            });
-          }
-          else
-            reject(WRONG_APP);
-            break;
-        case 'user.login':
-          if(options.body.app)
-          {
-
-            this._loginUser({audio: body.audio, username: params.username}).subscribe(
-            {
-              next: (token) =>
-              {
-                let query = {event :{ name: 'loginUserSuccess', data: {'username': params.username}}, token: token };
-                resolve(query);
-              },
-              error: (err) =>
-              {
-                if(err.error === 2)
+                event:
                 {
-                  let query = { event :{name: 'loginUserFailure'} };
+                  name: 'addUserSuccess',  // da definire il vero event come anche i parametri necessari
+                  data: {}
+                }
+              };
+              this._addUser(
+              {
+                name: params.name,
+                username: params.username
+              }).subscribe(
+              {
+                complete: () => { resolve(query);},
+                error: reject
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'user.addEnrollment':
+            if(body.app === 'admin')
+            {
+              let query = {event :{name: "addUserEnrollmentSuccess", data: {}}};
+              this._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
+              {
+                complete: () => { resolve(query);},
+                error: reject
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'user.get':
+            console.log(body.app);
+            if(body.app === 'admin')
+            {
+              let user;
+              let query = { event: {name: 'getUserSuccess'} };
+              this._getUser(params.user_username).subscribe(
+              {
+                next: (data) => {user = data;},
+                error: reject,
+                complete: () =>
+                {
+                  query.event.data = { user: JSON.stringify(user, null, 2) };
                   resolve(query);
                 }
-                else
-                  reject(err);
-              }
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'user.remove':
-          if(body.app === 'admin')
-          {
-            let query =
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'user.getList':
+            if(body.app === 'admin')
             {
-              event :
+              let users;
+              let query = { event: {name: 'getUserListSuccess'} };
+              this._getUserList(/**@todo add query parametr*/).subscribe(
               {
-                name: 'removeUserSuccess',
-                data: {}
-              }
-            };
-            this._removeUser(params.username).subscribe(
-            {
-              complete: () =>
-              {
-                resolve(query);
-              },
-              error: reject
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'user.resetEnrollments':
-          if(body.app === 'admin')
-          {
-            let query = { event : {name: "resetUserEnrollmentsSuccess"} };
-            self._resetUserEnrollments(params.username).subscribe(
-            {
-              complete: () =>
-              {
-                resolve(query);
-              },
-              error: reject
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        case 'user.update':
-          if(body.app === 'admin')
-          {
-            let query = { event: { name: 'userUpdateSuccess', data: {} }};
-            let user;
-            self._getUser(params.username).subscribe(
-            {
-              next: (data) =>
-              {
-                user = data;
-                if(params.name)
-                  user.name = params.name;
-              },
-              error: reject,
-              complete: () =>
-              {
-                this._updateUser(user).subscribe(
+                next: (data) => {users = data},
+                error: reject,
+                complete: function()
                 {
-                  complete: () =>
+                  query.event.data = { users: users };
+                  resolve(query);
+                }
+              });
+            }
+            else
+              reject(WRONG_APP);
+              break;
+          case 'user.login':
+            if(options.body.app)
+            {
+
+              this._loginUser({audio: body.audio, username: params.username}).subscribe(
+              {
+                next: (token) =>
+                {
+                  let query = {event :{ name: 'loginUserSuccess', data: {'username': params.username}}, token: token };
+                  resolve(query);
+                },
+                error: (err) =>
+                {
+                  if(err.error === 2)
                   {
+                    let query = { event :{name: 'loginUserFailure'} };
                     resolve(query);
-                  },
-                  error: reject
-                });
-              }
-            });
-          }
-          else
-            reject(WRONG_APP);
-          break;
-        default:
-          resolve(super.handler(response, body));
+                  }
+                  else
+                    reject(err);
+                }
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'user.remove':
+            if(body.app === 'admin')
+            {
+              let query =
+              {
+                event :
+                {
+                  name: 'removeUserSuccess',
+                  data: {}
+                }
+              };
+              this._removeUser(params.username).subscribe(
+              {
+                complete: () =>
+                {
+                  resolve(query);
+                },
+                error: reject
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'user.resetEnrollments':
+            if(body.app === 'admin')
+            {
+              let query = { event : {name: "resetUserEnrollmentsSuccess"} };
+              self._resetUserEnrollments(params.username).subscribe(
+              {
+                complete: () =>
+                {
+                  resolve(query);
+                },
+                error: reject
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          case 'user.update':
+            if(body.app === 'admin')
+            {
+              let query = { event: { name: 'userUpdateSuccess', data: {} }};
+              let user;
+              self._getUser(params.username).subscribe(
+              {
+                next: (data) =>
+                {
+                  user = data;
+                  if(params.name)
+                    user.name = params.name;
+                },
+                error: reject,
+                complete: () =>
+                {
+                  this._updateUser(user).subscribe(
+                  {
+                    complete: () =>
+                    {
+                      resolve(query);
+                    },
+                    error: reject
+                  });
+                }
+              });
+            }
+            else
+              reject(WRONG_APP);
+            break;
+          default:
+            resolve(super.handler(response, body));
+        }
       }
     });
   }

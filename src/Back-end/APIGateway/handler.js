@@ -32,7 +32,7 @@ const VOCAL_LOGIN_CONF =
 let sns = new SNS({ sns: '2010-03-31' });
 let stt = new STTWatsonAdapter(sb, new SpeechToTextV1(STT_CONF), '99720d30-3b15-11e7-b5ec-0bae065a439e');
 let vocal = new VocalLoginMicrosoftModule(VOCAL_LOGIN_CONF, rp);
-let runner = new RuleHandler(new UserHandler(new AppSwitchHandler(new NotifyHandler(sns)), jwt, rp, vocal), rp);  // costruisco la catena che gestisce la action supportate dal backend
+let runner = new RuleHandler(new UserHandler(new AppSwitchHandler(new NotifyHandler(null, sns)), jwt, rp, vocal), rp);  // costruisco la catena che gestisce la action supportate dal backend
 let gateway = new VocalAPI(vocal, jwt, rp, stt, sns, runner);
 
 module.exports.query = gateway.queryLambda.bind(gateway);

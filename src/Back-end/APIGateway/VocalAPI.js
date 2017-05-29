@@ -151,12 +151,7 @@ class VocalAPI
     }
     self.request_promise(req_options)
       .then(self._onResponse(context, body).bind(self))
-      .catch(function(err)
-      {
-        console.log(err);
-        if(err)
-          context.succeed({statusCode: 500, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
-      });
+      .catch(self._onError(context));
   }
 
   _onError(context)
@@ -164,11 +159,27 @@ class VocalAPI
     return function(err)
     {
       console.log(err);
-      context.succeed({statusCode: err.code, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(err.msg)});
+      context.succeed({statusCode: err.code ? err.code : 500, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({msg: (err.msg ? err.msg : 'Internal server error')})});
     }
   }
 
   _onResponse(context, body)
+  {
+    let self = this;
+    return function(response)
+    {
+      console.log("context: ", context);
+      console.log("response: ", response);
+      let promise = this.runner.handler(response, body);
+      console.log("promise: ", promise);
+      if(promise)
+        return promise;
+      else
+        context.succeed({statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response)});
+    }
+  }
+
+  _run(context, body)
   {
     let self = this;
     return function(query)
@@ -194,16 +205,10 @@ class VocalAPI
           },
           json: true
         }
-        self.request_promise(options).then(function(response)
-        {
-          let action = response.action;
-          let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
-          let promise = self.runner.handle(action, body, params);
-          if(promise)
-            promise.then(self._onResponse(context, body).bind(self)).catch(self._onError(context));
-          else  /**@todo forse bisogna aggiungere la richiesta*/
-            context.succeed({statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response)});
-        }).catch(console.log);
+        self.request_promise(options)
+          .then(self._onResponse(context, body).bind(self))
+          .then(self._run(context, body).bind(self))
+          .catch(console.log);
       }
     }
   }
