@@ -13,14 +13,19 @@ class NotifyHandler extends CmdRunner
   {
     return new Promise((resolve, reject) =>
     {
-      this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
+      if(response)
       {
-        if(err)
-          reject(err);
-        else
-          resolve(super.handler(response, body));
-        //this.callback(null, null, { statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response) });
-      });
+        this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
+        {
+          if(err)
+            reject(err);
+          else
+            resolve(super.handler(response, body));
+          //this.callback(null, null, { statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response) });
+        });
+      }
+      else
+        resolve(super.handler(null, body));
     });
   }
 }

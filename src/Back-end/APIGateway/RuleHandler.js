@@ -15,6 +15,8 @@ class RuleHandler extends CmdRunner
   {
     return new Promise((resolve, reject) =>
     {
+      let query = { event:{}, data: response.data ? response.data : {}};
+      console.log(response);
       if(!response)
         resolve(super.handler(null, body));
       else
@@ -26,7 +28,7 @@ class RuleHandler extends CmdRunner
           case 'rule.add':
             if(body.app === 'admin')
             {
-              let query = { event: { name: 'addRuleSuccess', data: {} } };
+              query.event = { name: 'addRuleSuccess', data: {} };
               this._addRule(
               {
                 name: params.rule_name,
@@ -57,7 +59,7 @@ class RuleHandler extends CmdRunner
             if(body.app === 'admin')
             {
               let rules;
-              let query = { event: {name: 'getRuleListSuccess'} };
+              query.event = { name: 'getRuleListSuccess'};
               this._getRuleList(/*dd*/).subscribe(
               {
                 next: (data) => {rules = data},
@@ -76,7 +78,7 @@ class RuleHandler extends CmdRunner
             if(body.app === 'admin')
             {
               let rule;
-              let query = { event: {name: 'getSuccess'} };
+              query.event = {name: 'getSuccess'};
               this._getRule(params.id).subscribe(
               {
                 next: (data) => {rule = data;},
@@ -94,7 +96,7 @@ class RuleHandler extends CmdRunner
           case 'rule.remove':
             if(body.app === 'admin')
             {
-              let query = { event: {name: 'removeRuleSuccess', data: {} }};
+              query.event = {name: 'removeRuleSuccess', data: {} };
               this._removeRule(params.rule_id).subscribe(
               {
                 complete: () =>
@@ -110,7 +112,7 @@ class RuleHandler extends CmdRunner
           case 'rule.update':
             if(body.app)
             {
-              let query = { event: {name: 'updateRuleSuccess', data: {}}};
+              query.event = {name: 'updateRuleSuccess', data: {}};
               this._updateRule(
               {
                 name: params.rule_name,

@@ -17,8 +17,7 @@ class AppSwitchHandler extends CmdRunner
       {
         body.app = params.new_app;
         delete params.new_app;
-        let query = { event: { name: 'init', data: params } };
-        console.log('options: ', options);
+        let query = { event: { name: 'init', data: params }, data: response.res.data ? response.res.data : {} };
         resolve(query);
       }
       else

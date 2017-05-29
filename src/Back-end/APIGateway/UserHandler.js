@@ -1,4 +1,5 @@
 const CmdRunner = require('./CmdRunner');
+const Rx = require('rxjs/Rx');
 
 const USERS_SERVICE_URL = process.env.USERS_SERVICE_URL;
 const USERS_SERVICE_KEY = process.env.USERS_SERVICE_KEY;
@@ -33,19 +34,13 @@ class UserHandler extends CmdRunner
       {
         let action = response.action;
         let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
+        let query = {event: {}, data: response.data ? response.data : {}};
         switch(action)
         {
           case 'user.add':
             if(body.app === 'admin')
             {
-              let query =
-              {
-                event:
-                {
-                  name: 'addUserSuccess',  // da definire il vero event come anche i parametri necessari
-                  data: {}
-                }
-              };
+              query.event = { name: 'addUserSuccess', data: {}};
               this._addUser(
               {
                 name: params.name,
@@ -62,7 +57,7 @@ class UserHandler extends CmdRunner
           case 'user.addEnrollment':
             if(body.app === 'admin')
             {
-              let query = {event :{name: "addUserEnrollmentSuccess", data: {}}};
+              query.event = {name: "addUserEnrollmentSuccess", data: {}};
               this._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
               {
                 complete: () => { resolve(query);},
@@ -77,7 +72,7 @@ class UserHandler extends CmdRunner
             if(body.app === 'admin')
             {
               let user;
-              let query = { event: {name: 'getUserSuccess'} };
+              query.event = {name: 'getUserSuccess'};
               this._getUser(params.user_username).subscribe(
               {
                 next: (data) => {user = data;},
@@ -96,7 +91,7 @@ class UserHandler extends CmdRunner
             if(body.app === 'admin')
             {
               let users;
-              let query = { event: {name: 'getUserListSuccess'} };
+              query.event = {name: 'getUserListSuccess'};
               this._getUserList(/**@todo add query parametr*/).subscribe(
               {
                 next: (data) => {users = data},
@@ -112,21 +107,22 @@ class UserHandler extends CmdRunner
               reject(WRONG_APP);
               break;
           case 'user.login':
-            if(options.body.app)
+            if(body.app)
             {
 
               this._loginUser({audio: body.audio, username: params.username}).subscribe(
               {
                 next: (token) =>
                 {
-                  let query = {event :{ name: 'loginUserSuccess', data: {'username': params.username}}, token: token };
+                  query.event = { name: 'loginUserSuccess', data: {'username': params.username}}
+                  query.data = Object.assign(query.data, {token: token });
                   resolve(query);
                 },
                 error: (err) =>
                 {
                   if(err.error === 2)
                   {
-                    let query = { event :{name: 'loginUserFailure'} };
+                    query.event = {name: 'loginUserFailure'};
                     resolve(query);
                   }
                   else
@@ -140,14 +136,7 @@ class UserHandler extends CmdRunner
           case 'user.remove':
             if(body.app === 'admin')
             {
-              let query =
-              {
-                event :
-                {
-                  name: 'removeUserSuccess',
-                  data: {}
-                }
-              };
+              query.event = { name: 'removeUserSuccess', data: {} };
               this._removeUser(params.username).subscribe(
               {
                 complete: () =>
@@ -163,7 +152,7 @@ class UserHandler extends CmdRunner
           case 'user.resetEnrollments':
             if(body.app === 'admin')
             {
-              let query = { event : {name: "resetUserEnrollmentsSuccess"} };
+              query.event = {name: "resetUserEnrollmentsSuccess"};
               self._resetUserEnrollments(params.username).subscribe(
               {
                 complete: () =>
@@ -179,7 +168,7 @@ class UserHandler extends CmdRunner
           case 'user.update':
             if(body.app === 'admin')
             {
-              let query = { event: { name: 'userUpdateSuccess', data: {} }};
+              query.event = { name: 'userUpdateSuccess', data: {} };
               let user;
               self._getUser(params.username).subscribe(
               {

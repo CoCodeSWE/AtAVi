@@ -151,6 +151,7 @@ class VocalAPI
     }
     self.request_promise(req_options)
       .then(self._onResponse(context, body).bind(self))
+      .then(self._run(context, body).bind(self))
       .catch(self._onError(context));
   }
 
@@ -168,14 +169,8 @@ class VocalAPI
     let self = this;
     return function(response)
     {
-      console.log("context: ", context);
-      console.log("response: ", response);
-      let promise = this.runner.handler(response, body);
-      console.log("promise: ", promise);
-      if(promise)
-        return promise;
-      else
-        context.succeed({statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response)});
+      self.response = response;
+      return this.runner.handler(response, body);
     }
   }
 
@@ -184,12 +179,14 @@ class VocalAPI
     let self = this;
     return function(query)
     {
+      console.log('query: ', query);
       if(query)
       {
         if(query.data)
           query.data = Object.assign(query.data, body.data)
         else
           query.data = body.data;
+        query.session_id = body.session_id;
         let options =
         {
           method: 'POST',
@@ -209,6 +206,11 @@ class VocalAPI
           .then(self._onResponse(context, body).bind(self))
           .then(self._run(context, body).bind(self))
           .catch(console.log);
+      }
+      else
+      {
+        console.log('self.response: ', self.response);
+        context.succeed({statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(self.response)});
       }
     }
   }
