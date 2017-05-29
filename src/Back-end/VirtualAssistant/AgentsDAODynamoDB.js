@@ -63,8 +63,11 @@ class AgentsDAODynamoDB
 			};
 			self.client.get(params, function(err, data)
 			{
-				if(err)
+				if(err){
+					console.log("errore obs");
+					console.log(err);
 					observer.error(err);
+				}
 				else if(!data.Item)
 					observer.error({ code: 'Not found'});
 				else

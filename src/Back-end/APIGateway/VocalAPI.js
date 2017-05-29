@@ -96,6 +96,7 @@ class VocalAPI
     })
       .catch(function(err)
       {
+        console.log("error catch VA request promise");
         console.log(err);
         if(err.name === 'StatusCodeError')
           context.succeed({statusCode: err.statusCode, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
@@ -710,7 +711,7 @@ class VocalAPI
     let self = this;
     return function(response) //restituisce
     {
-      console.log('response: ', JSON.stringify(response, null, 2));
+      console.log('response on Var Response: ', JSON.stringify(response, null, 2));
       let options =
       {
         method: 'POST',
@@ -727,7 +728,9 @@ class VocalAPI
           }
         }
       }
-
+      console.log("_onVaResponse called", body);
+      console.log("action= ");
+      console.log(response.action);
       let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
       switch(response.action)
       {
@@ -1042,16 +1045,20 @@ class VocalAPI
             (error(context))(WRONG_APP);
           break;
         case 'app.switch':  // transizione tra diverse applicazioni
+        console.log("new app?");
           if(params.new_app)
           {
+            console.log("NEW APP!");
             options.body.app = params.new_app;  //cambio app, in modo che venga interrogato l'agent adeguato
             body.app = params.new_app;  //in questo caso il cambiamento di agent è permesso, quindi aggiorno il nome dell'applicazione originale
             delete params.new_app;
             options.body.query.event = { name: 'init', data: params };
-            console.log('options: ', options);
+            console.log('options app switch: ', options);
+            console.log('event on change: ', options.body.query.event);
             self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             break;
           }
+          console.log('event NO change: ', options.body.query.event);
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
           this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
           {
@@ -1059,6 +1066,7 @@ class VocalAPI
               (error(context))({ code: 500, msg: 'Cannot notify: ' + JSON.stringify(err, null, 2)});
             else
             {
+              console.log("response to client: ", response);
               response.res.text_request = self.text_request;
               context.succeed({ statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response) });
             }

@@ -24,6 +24,8 @@ export default class ApplicationLocalRegistry
   */
   query(name)
   {
+    console.log("registro più interno query con "+name);
+    console.log("ritorno ",this.pkgs[name]);
     return this.pkgs[name];
   }
 
@@ -34,7 +36,9 @@ export default class ApplicationLocalRegistry
   */
   register(name, pkg)
   {
+    console.log("registro: "+name);
     this.pkgs[name] = pkg;
+    console.log("lunghezza: ",this.pkgs.length);
   }
 
   /**

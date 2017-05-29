@@ -32,8 +32,8 @@ const rec_conf =
 }
 
 //URL degli endpoint
-const VOCAL_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
-const TEXT_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
+const VOCAL_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
+const TEXT_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -47,7 +47,8 @@ let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
-                                                                                 //visto che hanno l'interfaccia condivisa
+reg_client.register('curiosity', AdministrationApp).subscribe({error: console.log});
+                                                                             //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
 let sendObservable = new EventObservable('submit', 'textMsg'); // questo è il form del quale aspetto il submit in modalità testo
 let enabled = false;
@@ -181,6 +182,7 @@ function textInit()
       event.preventDefault();
       console.log('Text next');
       let app = application_manager.application_name || 'conversation';
+      console.log(app);
       let input_text = document.getElementById("inputText").value;
       document.getElementById("inputText").value="";
       console.log(input_text);
