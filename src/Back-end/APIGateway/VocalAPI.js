@@ -60,7 +60,7 @@ class VocalAPI
     body.audio = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
     self.stt.speechToText(body.audio, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
-      let query = {data: body.data, session_id: body.session_id};
+      let query = {data: body.data ? body.data : {}, session_id: body.session_id};
       if(text)
       {
         self.text_request = text;
@@ -95,15 +95,15 @@ class VocalAPI
         if(err.name === 'StatusCodeError')
           context.succeed({statusCode: err.statusCode, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
         else
-          context.succeed({statusCode: 404, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
+          context.succeed({statusCode: 500, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
         throw(null);
       })
       .then(self._onResponse(context, body).bind(self))
+      .then(self._run(context, body).bind(self))
       .catch(function(err)
       {
-        console.log(err);
         if(err)
-          context.succeed({statusCode: 500, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
+          (self._onError(context))(err);
       });
   }
   //context.succeed(statusCode: 200, body: JSON.stringify(response));
