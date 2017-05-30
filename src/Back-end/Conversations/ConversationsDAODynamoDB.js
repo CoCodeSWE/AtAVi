@@ -36,8 +36,10 @@ class ConversationsDAODynamoDB
       };
       self.client.put(params, function(err, data)
       {
-        if(err)
+        if(err){
+			console.log("add conv", err);
           observer.error(err);
+	    }
         else
           observer.complete();
       });
@@ -51,6 +53,7 @@ class ConversationsDAODynamoDB
 	*/
   addMessages(msgs, session_id)
   {
+	console.log("addMessages called", msgs);
     let self = this;
     return new Rx.Observable(function(observer)
     {
@@ -60,21 +63,22 @@ class ConversationsDAODynamoDB
 				{
 					"session_id": session_id
 				},
+		UpdateExpression: "SET #messages = list_append(#messages, :msgs)",
+		ExpressionAttributeNames:
+        {
+          "#messages": 'messages'
+        },
         ExpressionAttributeValues:
         {
           ":msgs": msgs
         },
-        ExpressionAttributeNames:
-        {
-          "#messages": 'messages'
-        },
-        UpdateExpression: "set #messages = list_append(#messages, :msgs)"
       };
-
+      
       self.client.update(params, function(err, data)
       {
-          if(err)
-            observer.error(err);
+          if(err){
+			observer.error(err);
+		  }
           else
           {
             observer.next(data.Item);

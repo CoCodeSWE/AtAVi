@@ -116,9 +116,9 @@ class VAMessageListener
 
   saveConversation(event, context, callback)
   {
-    console.log(JSON.stringify(event, null, 2));
-		let self = this;
-		let message;
+    console.log("event saveConv", JSON.stringify(event, null, 2));
+	let self = this;
+	let message;
     try
     {
       message  = JSON.parse(event.Records[0].Sns.Message);
@@ -128,16 +128,63 @@ class VAMessageListener
       callback(err);
       return;
     }
-		let session_id = message.session_id;
+	  let session_id = message.session_id;
     let params = message.res.contexts ? message.res.contexts[0].parameters : null;
     if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+		{
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
-    this.conversations.addMessage([message.res.text_request, message.res.text_response], session_id).subscribe(
+			return;
+		}
+		let name_required_person;
+		if(params.required_person)
+			name_required_person = params.required_person.toLowerCase().split(" ").join("");
+		console.log(name_required_person);
+		// => tutto in minuscolo e senza spazi (es: Mario Rossi => mariorossi).
+
+    self.conversations.addMessages([message.res.text_request, message.res.text_response], session_id).subscribe(
     {
       complete: () => callback(null),
-      error: callback
+      error: (err) =>
+      {
+			  if(err.message === "The provided expression refers to an attribute that does not exist in the item")
+			  { // abbiamo tentato di aggiungere un messaggio ad una conversazione non esistente
+				console.log("abbiamo tentato di aggiungere un messaggio ad una conversazione non esistente. In questo punto dovremmo anche registrare l'ospite");
+				let met = {};
+				if(name_required_person && met[name_required_person])
+					met[name_required_person]++;
+				else if(name_required_person)
+					met[name_required_person]=1;
+
+				self.guests.addGuest({"guest_name":params.name, "company":params.company, "met": met,"food":0, "technology":0, "sport":0, "general": 0}).subscribe(
+					{
+						error: (err) =>
+						{
+							console.log("addguest error", err);
+							if(err.code === "ConditionalCheckFailedException")
+							{
+								console.log("in condition error")
+								if(name_required_person && !guest.met[name_required_person])
+								{
+									guest.met[name_required_person] = 1;
+									console.log(guest);
+									self.updateGuest(guest).subscribe({err: console.log});
+								}
+								else if(name_required_person)
+								{
+									guest.met[name_required_person]++;
+									console.log(guest);
+									self.updateGuest(guest).subscribe({err: console.log});
+								}
+							}
+						}
+					});
+				self.conversations.addConversation({"guest_name":params.name,"company":params.company,"session_id": session_id, "messages":[]}).subscribe({err: console.log});
+			  }
+			  else
+					callback();
+	  }
     });
-  }
+   }
 
   updateGuest(event, context, callback)
   {
