@@ -44,7 +44,7 @@ class UserHandler extends CmdRunner
               this._addUser(
               {
                 name: params.name,
-                username: params.username
+                username: params.user_username
               }).subscribe(
               {
                 complete: () => { resolve(query);},
