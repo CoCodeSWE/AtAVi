@@ -63,12 +63,12 @@ class VocalAPI
       let query = {data: body.data ? body.data : {}, session_id: body.session_id};
       if(text)
       {
-        self.text_request = text;
+        body.text = text;
         query.text = text;
       }
       else
       {
-        self.text_request = '';
+        body.text = '';
         query.event = {name: 'fallbackEvent', data:{}};
       }
       let req_options =
@@ -127,8 +127,6 @@ class VocalAPI
 			});
       return;
     }
-    self.text_request = body.text;
-    console.log("text: ", self.text_request);
     let req_options =
     {
       method: 'POST',
@@ -138,7 +136,7 @@ class VocalAPI
         app: body.app,
         query:
         {
-          text: self.text_request,
+          text: body.text,
           session_id: body.session_id,
           data: body.data
         }
@@ -169,7 +167,7 @@ class VocalAPI
     let self = this;
     return function(response)
     {
-      self.response = response;
+      body._response = response;
       return this.runner.handler(response, body);
     }
   }
@@ -209,8 +207,9 @@ class VocalAPI
       }
       else
       {
-        console.log('self.response: ', self.response);
-        context.succeed({statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(self.response)});
+        console.log('response: ', body._response);
+        body._response.text_request = body.text;
+        context.succeed({statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(body._response)});
       }
     }
   }
