@@ -44,7 +44,7 @@ class UserHandler extends CmdRunner
               this._addUser(
               {
                 name: params.name,
-                username: params.username
+                username: params.user_username
               }).subscribe(
               {
                 complete: () => { resolve(query);},
@@ -76,7 +76,12 @@ class UserHandler extends CmdRunner
               this._getUser(params.user_username).subscribe(
               {
                 next: (data) => {user = data;},
-                error: reject,
+                error: (err) => 
+								{
+									query.event.name = "error404";
+									query.event.data = { username: params.username };
+									resolve(query);
+								},
                 complete: () =>
                 {
                   query.event.data = { user: JSON.stringify(user, null, 2) };
