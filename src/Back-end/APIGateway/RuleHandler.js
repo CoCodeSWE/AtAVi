@@ -1,3 +1,4 @@
+const Rx = require('rxjs/Rx');
 const CmdRunner = require('./CmdRunner');
 const RULES_SERVICE_KEY = process.env.RULES_SERVICE_KEY;
 const RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
@@ -59,10 +60,10 @@ class RuleHandler extends CmdRunner
             if(body.app === 'admin')
             {
               let rules;
-              query.event = { name: 'getRuleListSuccess'};
+              query.event = { name: 'getRuleListSuccess' };
               this._getRuleList(/*dd*/).subscribe(
               {
-                next: (data) => {rules = data},
+                next: (data) => { rules = data },
                 error: reject,
                 complete: () =>
                 {
@@ -79,10 +80,15 @@ class RuleHandler extends CmdRunner
             {
               let rule;
               query.event = {name: 'getSuccess'};
-              this._getRule(params.id).subscribe(
+              this._getRule(params.rule_name).subscribe(
               {
-                next: (data) => {rule = data;},
-                error: reject,
+                next: (data) => { rule = JSON.stringify(data, null, 2); },
+                error: (err) =>
+								{
+									query.event.name = "error404";
+									query.event.data = { username: params.username };
+									resolve(query);
+								},
                 complete: () =>
                 {
                   query.event.data = { rule: rule };
@@ -96,14 +102,18 @@ class RuleHandler extends CmdRunner
           case 'rule.remove':
             if(body.app === 'admin')
             {
-              query.event = {name: 'removeRuleSuccess', data: {} };
-              this._removeRule(params.rule_id).subscribe(
+              query.event = {name: 'removeRuleSuccess', data: { username: params.username } };
+              this._removeRule(params.rule_name).subscribe(
               {
                 complete: () =>
                 {
                   resolve(query);
                 },
-                error: reject
+                error: (err) =>
+								{
+									query.event.name = "error404";
+									resolve(query);
+								}
               });
             }
             else
@@ -183,9 +193,9 @@ class RuleHandler extends CmdRunner
 
   /**
   * Metodo che permette di ottenere una direttiva al sistema
-  * @param {String} id - id della direttiva richiesta
+  * @param {String} name - nome della direttiva richiesta
   */
-  _getRule(id)
+  _getRule(name)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -193,7 +203,7 @@ class RuleHandler extends CmdRunner
 			let options =
 			{
 				method: 'GET',
-				uri: `${RULES_SERVICE_URL}/${id}`,
+				uri: `${RULES_SERVICE_URL}/${name}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
@@ -247,9 +257,9 @@ class RuleHandler extends CmdRunner
 
 	/**
   * Metodo che permette di rimuovere una direttiva dal sistema
-  * @param {String} id - id della direttiva da rimuovere
+  * @param {String} name - nome della direttiva da rimuovere
   */
-  _removeRule(id)
+  _removeRule(name)
   {
 		let self = this;
 		return new Rx.Observable(function(observer)
@@ -257,7 +267,7 @@ class RuleHandler extends CmdRunner
 			let options =
 			{
 				method: 'DELETE',
-				uri: `${RULES_SERVICE_URL}/${id}`,
+				uri: `${RULES_SERVICE_URL}/${name}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				json: true
 			};
@@ -291,7 +301,7 @@ class RuleHandler extends CmdRunner
 			let options =
 			{
 				method: 'PUT',
-				uri: `${RULES_SERVICE_URL}/${rule.id}`,
+				uri: `${RULES_SERVICE_URL}/${rule.name}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
 				body: rule,
 				json: true

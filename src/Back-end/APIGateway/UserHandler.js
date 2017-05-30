@@ -48,7 +48,12 @@ class UserHandler extends CmdRunner
               }).subscribe(
               {
                 complete: () => { resolve(query);},
-                error: reject
+                error: (err) =>
+								{
+									query.event.name = "error409_user";
+									query.event.data = { username: params.username, user_username: params.user_username };
+									resolve(query);
+								}
               });
             }
             else
@@ -103,7 +108,7 @@ class UserHandler extends CmdRunner
                 error: reject,
                 complete: function()
                 {
-                  query.event.data = { users: users };
+                  query.event.data = { users: users.users, username: params.username };
                   resolve(query);
                 }
               });
@@ -114,7 +119,6 @@ class UserHandler extends CmdRunner
           case 'user.login':
             if(body.app)
             {
-
               this._loginUser({audio: body.audio, username: params.username}).subscribe(
               {
                 next: (token) =>
@@ -141,14 +145,18 @@ class UserHandler extends CmdRunner
           case 'user.remove':
             if(body.app === 'admin')
             {
-              query.event = { name: 'removeUserSuccess', data: {} };
-              this._removeUser(params.username).subscribe(
+              query.event = { name: 'removeUserSuccess', data: { username: params.username } };
+              this._removeUser(params.user_username).subscribe(
               {
                 complete: () =>
                 {
                   resolve(query);
                 },
-                error: reject
+                error: (err) =>
+								{
+									query.event.name = "error404";
+									resolve(query);
+								}
               });
             }
             else
@@ -158,7 +166,7 @@ class UserHandler extends CmdRunner
             if(body.app === 'admin')
             {
               query.event = {name: "resetUserEnrollmentsSuccess"};
-              self._resetUserEnrollments(params.username).subscribe(
+              this._resetUserEnrollments(params.username).subscribe(
               {
                 complete: () =>
                 {
@@ -173,9 +181,9 @@ class UserHandler extends CmdRunner
           case 'user.update':
             if(body.app === 'admin')
             {
-              query.event = { name: 'userUpdateSuccess', data: {} };
+              query.event = { name: 'userUpdateSuccess', data: { username: params.username } };
               let user;
-              self._getUser(params.username).subscribe(
+              this._getUser(params.user_username).subscribe(
               {
                 next: (data) =>
                 {
@@ -183,7 +191,11 @@ class UserHandler extends CmdRunner
                   if(params.name)
                     user.name = params.name;
                 },
-                error: reject,
+                error: (err) =>
+								{
+									query.event.name = "error404";
+									resolve(query);
+								},
                 complete: () =>
                 {
                   this._updateUser(user).subscribe(
@@ -192,7 +204,11 @@ class UserHandler extends CmdRunner
                     {
                       resolve(query);
                     },
-                    error: reject
+                    error: (err) =>
+										{
+											query.event.name = "error500";
+											resolve(query);
+										}
                   });
                 }
               });
