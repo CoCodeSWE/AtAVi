@@ -11,7 +11,7 @@ const UserHandler = require('./UserHandler');
 const RuleHandler = require('./RuleHandler');
 const AppSwitchHandler = require('./AppSwitchHandler');
 const NotifyHandler = require('./NotifyHandler');
-
+const SlackAPI = require('./slack.js');
 const SPEAKER_RECOGNITION_KEY = process.env.SPEAKER_RECOGNITION_KEY;
 
 // configurazioni
@@ -34,6 +34,8 @@ let stt = new STTWatsonAdapter(sb, new SpeechToTextV1(STT_CONF), '99720d30-3b15-
 let vocal = new VocalLoginMicrosoftModule(VOCAL_LOGIN_CONF, rp);
 let runner = new RuleHandler(new UserHandler(new AppSwitchHandler(new NotifyHandler(null, sns)), jwt, rp, vocal), rp);  // costruisco la catena che gestisce la action supportate dal backend
 let gateway = new VocalAPI(vocal, jwt, rp, stt, sns, runner);
+let bot = new SlackAPI();
 
 module.exports.query = gateway.queryLambda.bind(gateway);
 module.exports.queryText = gateway.queryText.bind(gateway);
+module.exports.bot = bot.post.bind(bot);

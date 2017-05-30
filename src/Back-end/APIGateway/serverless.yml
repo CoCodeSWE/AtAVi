@@ -26,6 +26,7 @@ provider:
     WATSON_USERNAME: ${file(secret.yml):watson.username}
     WATSON_PASSWORD: ${file(secret.yml):watson.password}
     JWT_SECRET: ${file(secret.yml):jwt.secret}
+    VER_TOK: ${file(secret.yml):slack.token}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -45,6 +46,13 @@ functions:
     events:
       - http:
           path: text-assistant
+          method: post
+          cors: true
+  slack:
+    handler: handler.bot
+    events:
+      - http:
+          path: slack
           method: post
           cors: true
 resources:
