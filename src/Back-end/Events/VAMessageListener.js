@@ -91,11 +91,8 @@ class VAMessageListener
         /**@todo controllare tutto l'array e non solo il primo elemento, perchè al momento abbiamo solo un
         * tipo di task ma in futuro ce ne potrebbero essere altri
         * */
-        console.log('options: ', rules_options);
-        console.log('response: ', response);
-				console.log('target', response.targets);
-				console.log('task', response.task);
-				for(let i = 0; i<response.rules.length; ++i)
+				let stop = 0;
+				for(let i = 0; i<response.rules.length && stop===0; ++i)
 				{
 	        if(response.rules && response.rules[i] && response.rules[i].task && response.rules[i].type === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
 						send_to = Promise.resolve([{id: response.rules[i].task.params}]);
@@ -109,6 +106,8 @@ class VAMessageListener
 		          else
 		            send_to = receiver[i].id;
 		          console.log('receiver: ', receiver);
+							if(response.rules[i].override)
+								stop=1;
 		          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
 		        }).then((data) => {callback(null);}).catch(callback);  /**@todo vera gestione errori*/
 				}
