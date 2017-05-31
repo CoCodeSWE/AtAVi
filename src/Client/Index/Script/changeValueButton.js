@@ -17,7 +17,7 @@ function toggleKeyboard()
   if(document.getElementById( 'textMsg' ).style.display === 'inherit')
     document.getElementById( 'textMsg' ).style.display = 'none';
   else
-      document.getElementById( 'textMsg' ).style.display = 'inherit';
+    document.getElementById( 'textMsg' ).style.display = 'inherit';
 }
 
 function enableKeyboard()
@@ -47,4 +47,9 @@ function toggleLoading()
     document.getElementById( 'loadingImg' ).id = 'staticTitleApp';
     toggleload = 0;
   }
+}
+
+function buttonKeyboard(button)
+{
+  button.disabled = !button.disabled;
 }
