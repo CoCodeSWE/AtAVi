@@ -29,13 +29,14 @@ class RuleHandler extends CmdRunner
           case 'rule.add':
             if(body.app === 'admin')
             {
-              query.event = { name: 'addRuleSuccess', data: {} };
+              query.event = { name: 'addRuleSuccess', data: { username: params.username } };
               this._addRule(
               {
                 name: params.rule_name,
+								type: params.task_name,
                 task:
                 {
-                  type: params.task_name
+                  params: 'prendere il valore dal DB'
                 },
                 targets:[
                 {
@@ -43,14 +44,20 @@ class RuleHandler extends CmdRunner
                   member: params.target_member,
                   company: params.target_company
                 }],
-                enabled: true
+                enabled: true,
+								override: false
               }).subscribe(
               {
                 complete: () =>
                 {
                   resolve(query);
                 },
-                error: reject
+                error: (err) =>
+								{
+									query.event.name = "error409_rule";
+									query.event.data = { username: params.username, rule_name: params.rule_name };
+									resolve(query);
+								}
               });
             }
             else
@@ -61,13 +68,14 @@ class RuleHandler extends CmdRunner
             {
               let rules;
               query.event = { name: 'getRuleListSuccess' };
-              this._getRuleList(/*dd*/).subscribe(
+              this._getRuleList().subscribe(
               {
                 next: (data) => { rules = data },
                 error: reject,
                 complete: () =>
                 {
-                  query.event.data = { rules: rules };
+									console.log(rules);
+                  query.event.data = { rules: JSON.stringify(rules, null, 2) };
                   resolve(query);
                 }
               });
@@ -122,13 +130,14 @@ class RuleHandler extends CmdRunner
           case 'rule.update':
             if(body.app)
             {
-              query.event = {name: 'updateRuleSuccess', data: {}};
+              query.event = {name: 'updateRuleSuccess', data: { username: params.username }};
               this._updateRule(
               {
                 name: params.rule_name,
+								type: params.task_name,
                 task:
                 {
-                  type: params.task_name
+                  params: 'prendere il valore dal DB'
                 },
                 targets:[
                 {
@@ -136,14 +145,20 @@ class RuleHandler extends CmdRunner
                   member: params.target_member,
                   company: params.target_company
                 }],
-                enabled: true
+                enabled: true,
+								override: false
               }).subscribe(
               {
                 complete: () =>
                 {
                   resolve(query);
                 },
-                error: error(context)
+                error: (err) =>
+								{
+									query.event.name = "error404";
+									query.event.data = { username: params.username };
+									resolve(query);
+								}
               });
             }
             else
@@ -176,7 +191,6 @@ class RuleHandler extends CmdRunner
 
 			self.request_promise(options).then(function(data)
 			{
-        console.log(data);
 				observer.complete();
 			})
 			.catch(function(err)
@@ -242,6 +256,7 @@ class RuleHandler extends CmdRunner
 
 			self.request_promise(options).then(function(data)
 			{
+				observer.next(data);
 				observer.complete();
 			})
 			.catch(function(err)
