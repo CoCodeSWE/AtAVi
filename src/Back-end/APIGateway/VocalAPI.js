@@ -178,6 +178,8 @@ class VocalAPI
     return function(query)
     {
       console.log('query: ', query);
+      if(!body._response)
+        query = {event: {name: 'errorFallback'}, data: {}} /**@todo aggiungere a data i dati relativi all'errore*/
       if(query)
       {
         if(query.data)

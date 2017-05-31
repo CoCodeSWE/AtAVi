@@ -32,8 +32,8 @@ const rec_conf =
 }
 
 //URL degli endpoint
-const VOCAL_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
-const TEXT_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
+const VOCAL_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/vocal-assistant';
+const TEXT_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -166,7 +166,10 @@ function vocalInit()
       toggleLoading();
       player.speak(response.res.text_response);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication('conversation', 'receiveMsg', 'Error: ' + err.status_text);
+    },
     complete: console.log
   }));
 }

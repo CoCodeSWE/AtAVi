@@ -7,11 +7,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 class SlackAPI
 {
-  constructor(va_module, rp, jwt)
+  constructor(va_module, rp, jwt, runner)
   {
     this.va_module = va_module;
     this.request_promise = rp;
     this.jwt = jwt;
+    this.runner = runner;
   }
 
   post(event, context)
@@ -51,33 +52,31 @@ class SlackAPI
 
   _message(body, context)
   {
+    this._send(context, 200, '');
+    if(body.event && body.event.type && body.event.type === 'message')
     {
-      if(body.event && body.event.type && body.event.type === 'message')
+      let options =
       {
-        let options =
+        method: 'POST',
+        uri: VA_SERVICE_URL,
+        headers: {'x-api-key': VA_SERVICE_KEY},
+        body:
         {
-          method: 'POST',
-          uri: VA_SERVICE_URL,
-          headers: {'x-api-key': VA_SERVICE_KEY},
-          body:
+          app: 'admin',
+          query:
           {
-            app: 'admin',
-            query:
+            data:
             {
-              data:
-              {
-                token: VER_TOKEN
-              }
-              text: body.event.text,
-              session_id: body.event.user //usiamo user id come id di sessione, tanto dopo 20 minuti circa la sessione scade e non ci sono più sessioni per utente
-            }
+              token: VER_TOKEN
+            },
+            text: body.event.text,
+            session_id: body.event.user //usiamo user id come id di sessione, tanto dopo 20 minuti circa la sessione scade e non ci sono più sessioni per utente
           }
-        };
-        this.request_promise(options).then(response)
-        {
-          
         }
-        this._send(context, 200, '');
+      };
+      this.request_promise(options).then(response)
+      {
+
       }
     }
   }
