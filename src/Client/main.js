@@ -32,8 +32,8 @@ const rec_conf =
 }
 
 //URL degli endpoint
-const VOCAL_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
-const TEXT_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
+const VOCAL_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/vocal-assistant';
+const TEXT_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -134,6 +134,7 @@ function getVoices(lang)
 function vocalInit()
 {
   logic.setUrl(VOCAL_URL);
+  if(enabled) recorder.enable();
   subscriptions.push(player.getObservable().subscribe(
   {
     next: function(playing)
@@ -160,7 +161,7 @@ function vocalInit()
           {
             app: app,
             audio: audio,
-            data: data, /**@todo passare davvero i dati*/
+            data: {},//data, /**@todo passare davvero i dati*/
             session_id: session_id
           }
           logic.sendData(query);
@@ -190,7 +191,10 @@ function vocalInit()
         resetInterface();
       }, max_silence_time);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication('conversation', 'receiveMsg', 'Error: ' + err.status_text);
+    },
     complete: console.log
   }));
 }
@@ -216,13 +220,16 @@ function textInit()
       {
         text : input_text,
         app: app,
-        data: data, /**@todo passare davvero i dati*/
+        data: {},//data, /**@todo passare davvero i dati*/
         session_id: session_id
       }
       logic.sendData(query);
       toggleLoading();
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication('conversation', 'receiveMsg', 'Error: ' + err.status_text);
+    },
     complete: console.log
   }));
 
@@ -261,7 +268,7 @@ function reminderInit()
   {
     text : 'where required_person is?',
     app: app,
-    data: data, /**@todo passare davvero i dati*/
+    data: {},//data, /**@todo passare davvero i dati*/
     session_id: session_id
   }
   logic.sendData(query);
