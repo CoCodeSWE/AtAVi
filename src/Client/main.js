@@ -116,6 +116,7 @@ function getVoices(lang)
 function vocalInit()
 {
   logic.setUrl(VOCAL_URL);
+  if(enabled) recorder.enable();
   subscriptions.push(player.getObservable().subscribe(
   {
     next: function(playing)
@@ -141,7 +142,7 @@ function vocalInit()
           {
             app: app,
             audio: audio,
-            data: data, /**@todo passare davvero i dati*/
+            data: {},//data, /**@todo passare davvero i dati*/
             session_id: session_id
           }
           logic.sendData(query);
@@ -193,13 +194,16 @@ function textInit()
       {
         text : input_text,
         app: app,
-        data: data, /**@todo passare davvero i dati*/
+        data: {},//data, /**@todo passare davvero i dati*/
         session_id: session_id
       }
       logic.sendData(query);
       toggleLoading();
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication('conversation', 'receiveMsg', 'Error: ' + err.status_text);
+    },
     complete: console.log
   }));
 
@@ -230,7 +234,7 @@ function reminderInit()
   {
     text : 'where required_person is?',
     app: app,
-    data: data, /**@todo passare davvero i dati*/
+    data: {},//data, /**@todo passare davvero i dati*/
     session_id: session_id
   }
   logic.sendData(query);
