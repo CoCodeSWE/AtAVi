@@ -165,7 +165,7 @@ function vocalInit()
           {
             app: app,
             audio: audio,
-            data: {},//data, /**@todo passare davvero i dati*/
+            data: data, /**@todo passare davvero i dati*/
             session_id: session_id
           }
           logic.sendData(query);
@@ -224,7 +224,7 @@ function textInit()
       {
         text : input_text,
         app: app,
-        data: {},//data, /**@todo passare davvero i dati*/
+        data: data, /**@todo passare davvero i dati*/
         session_id: session_id
       }
       logic.sendData(query);
@@ -272,7 +272,7 @@ function reminderInit()
   {
     text : 'where required_person is?',
     app: app,
-    data: {},//data, /**@todo passare davvero i dati*/
+    data: data, /**@todo passare davvero i dati*/
     session_id: session_id
   }
   logic.sendData(query);
