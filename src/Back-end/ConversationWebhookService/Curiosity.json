@@ -1,0 +1,605 @@
+{
+    "Curiosity-dev": [
+        {
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT1"
+                    },
+                    "text": {
+                        "S": "Only 10 other quarterbacks in nfl history have thrown half as many touchdown passes as peyton manning."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT2"
+                    },
+                    "text": {
+                        "S": "At the first modern olympics, winners were awarded silver medals."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT3"
+                    },
+                    "text": {
+                        "S": "Neil Armstrong originally wanted to take a football to the moon - but NASA deemed it to be un-American."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT4"
+                    },
+                    "text": {
+                        "S": "The first and only goalkeeper in history to win the World Cup Golden Ball was German goalKeeper Oliver Khan in 2002."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT5"
+                    },
+                    "text": {
+                        "S": "Frenchman Just Fontaine holds the record for most World Cup goals in one tournament from 1958 when he scored an astonishing 13 goals."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT6"
+                    },
+                    "text": {
+                        "S": "In 2015/2016 Gonzalo Higuain scored the most numbers of goals in one Serie A championship, with 36 goals."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT7"
+                    },
+                    "text": {
+                        "S": "Silvio Piola holds the record for most Serie A goals in history, with 274 goals."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT8"
+                    },
+                    "text": {
+                        "S": "The city of Lusail, host of the 2022 FIFA World Cup Final game, does not exist yet."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "SPORT9"
+                    },
+                    "text": {
+                        "S": "The large crowd ever to see a football game, were the 200.000 people that saw the World Cup final between Brazil and Uruguay in 1950 at Maracanà Stadium."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "SPORT10"
+                    },
+                    "text": {
+                        "S": "The record of most points scored by a player in an NBA game is 100, holds by Wilt Chamberlain since 1962."
+                    },
+                    "category": {
+                        "S": "sport"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "TECHNOLOGY1"
+                    },
+                    "text": {
+                        "S": "If Bill Gates was a country he wuold be the 63rd richest on earth."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY2"
+                    },
+                    "text": {
+                        "S": "Facebook is primarily blue because Mark Zuckerberg suffers red-green color blindness."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY3"
+                    },
+                    "text": {
+                        "S": "Your mobile phone has more computing power than the computers used for the Apollo 11 moon landing."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY4"
+                    },
+                    "text": {
+                        "S": "The average person unlocks his or her smartphone 110 times each day."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY5"
+                    },
+                    "text": {
+                        "S": "Over 250 million Nokia 1100 devices were sold, making it the bestselling electrical gadget in history."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY6"
+                    },
+                    "text": {
+                        "S": "Every day, 16% of the searches that occur, are ones that Google has never seen before."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY7"
+                    },
+                    "text": {
+                        "S": "Google hired a camel to create the Street View of a desert."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY8"
+                    },
+                    "text": {
+                        "S": "Google's First Computer Storage Was Made From LEGO."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY9"
+                    },
+                    "text": {
+                        "S": "Steve Jobs never wrote a single line of programming code."
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "TECHNOLOGY10"
+                    },
+                    "text": {
+                        "S": "A secretary once told Steve Jobs she was late for work because her car wouldn't start. That afternoon, Jobs threw her a set of keys for a brand new Jaguar, saying: "Here, don't be late anymore.""
+                    },
+                    "category": {
+                        "S": "technology"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD1"
+                    },
+                    "text": {
+                        "S": "Scientists can turn peanut butter into diamonds."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD2"
+                    },
+                    "text": {
+                        "S": "Eskimos use refrigerators to stop their food from freezing."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD3"
+                    },
+                    "text": {
+                        "S": "The jars of Nutella sold in a year could cover The Great Wall of China 8 times."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD4"
+                    },
+                    "text": {
+                        "S": "Americans eat 500 million pounds of peanut butter a year, enough to coat the floor, of the Grand Canyon."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD5"
+                    },
+                    "text": {
+                        "S": "One of the most expensive pizzas ever made cost £4200. The “Pizza Royale 007” featured caviar, lobster, and 24-carat gold dust."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD6"
+                    },
+                    "text": {
+                        "S": "Eating dark chocolate every day reduces the risk of heart disease by one-third."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD7"
+                    },
+                    "text": {
+                        "S": "48% of the world's population older than 15 claim to have never consumed alcohol."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD8"
+                    },
+                    "text": {
+                        "S": "Each Russian consumes 18 litres of alcohol per year, doubling what experts consider dangerous."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD9"
+                    },
+                    "text": {
+                        "S": "New Yorkers drink almost 7 times more coffee than other cities in the US.
+"
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "FOOD10"
+                    },
+                    "text": {
+                        "S": "It has been estimated it would take 70 cups of coffee to kill a 70 kilogram person."
+                    },
+                    "category": {
+                        "S": "food"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL1"
+                    },
+                    "text": {
+                        "S": "Abraham Lincoln, Walt Disney, Bill Gates, Mark Zuckerberg, Henry Ford, Thomas Edison and Steve Jobs, all of them had no college degree."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL2"
+                    },
+                    "text": {
+                        "S": "About 3,000 Euros are thrown into the Trevi fountain, in Italy, each day."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL3"
+                    },
+                    "text": {
+                        "S": "It takes about 50 glasses of water to grow the oranges to make one glass of orange juice."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL4"
+                    },
+                    "text": {
+                        "S": "The sun is the most perfectly round natural object known in the universe."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL5"
+                    },
+                    "text": {
+                        "S": "The animal in the Firefox logo isn't a Fox. It's a Red Panda."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL6"
+                    },
+                    "text": {
+                        "S": "The probability that you in any glass of water will find at least 1 molecule of water once drunk by Cleopatra is practically 100%."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL7"
+                    },
+                    "text": {
+                        "S": "The Pentagon has a plan for combating a zombie apocalypse."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL8"
+                    },
+                    "text": {
+                        "S": "Iran arrested 14 squirrels for spying in 2007."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL9"
+                    },
+                    "text": {
+                        "S": "The Golden Gate uses the largest bridge cables ever made, long enough to encircle the world more than 3 times at the equator."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+		{
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "N": "GENERAL10"
+                    },
+                    "text": {
+                        "S": "In 2013, PayPal accidentally credited 92 quadrillion dollars to a Pennsylvania man."
+                    },
+                    "category": {
+                        "S": "general"
+                    }
+                }
+            }
+        },
+    ]
+}

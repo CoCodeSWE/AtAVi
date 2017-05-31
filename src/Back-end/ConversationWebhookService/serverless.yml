@@ -57,12 +57,12 @@ resources:
       Properties:
         TableName: ${self:provider.environment.GUESTS_TABLE}
         AttributeDefinitions:
-          - AttributeName: name
+          - AttributeName: guest_name
             AttributeType: S
           - AttributeName: company
             AttributeType: S
         KeySchema:
-          - AttributeName: name
+          - AttributeName: guest_name
             KeyType: HASH
           - AttributeName: company
             KeyType: RANGE

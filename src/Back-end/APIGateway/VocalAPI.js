@@ -91,6 +91,7 @@ class VocalAPI
     })
       .catch(function(err)
       {
+        console.log("error catch VA request promise");
         console.log(err);
         if(err.name === 'StatusCodeError')
           context.succeed({statusCode: err.statusCode, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});

@@ -47,7 +47,8 @@ let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
-                                                                                 //visto che hanno l'interfaccia condivisa
+reg_client.register('curiosity', AdministrationApp).subscribe({error: console.log});
+                                                                             //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
 let sendObservable = new EventObservable('submit', 'textMsg'); // questo è il form del quale aspetto il submit in modalità testo
 let enabled = false;
@@ -132,7 +133,7 @@ function vocalInit()
     next: function(blob)
     {
       console.log('Recorder next');
-      let app = application_manager.application_name || 'conversationsApp';
+      let app = application_manager.application_name || 'conversation';
       blobToBase64(blob)
         .then(function(audio)
         {
@@ -183,7 +184,8 @@ function textInit()
     {
       event.preventDefault();
       console.log('Text next');
-      let app = application_manager.application_name || 'conversationsApp';
+      let app = application_manager.application_name || 'conversation';
+      console.log(app);
       let input_text = document.getElementById("inputText").value;
       document.getElementById("inputText").value="";
       console.log(input_text);
@@ -223,7 +225,7 @@ function textInit()
 function reminderInit()
 {
   logic.setUrl(TEXT_URL);
-  let app = application_manager.application_name || 'conversationsApp';
+  let app = application_manager.application_name || 'conversation';
   let query =
   {
     text : 'where required_person is?',
