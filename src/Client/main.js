@@ -61,7 +61,7 @@ console.log('session_id: ', session_id);
 // Observable per i click
 let startObservable = new EventObservable('click', 'start');
 let keyboardObservable = new EventObservable('click', 'buttonKeyboard');
-let reminderObservable = new EventObservable('click', 'buttonReminder')
+let reminderObservable = new EventObservable('click', 'buttonReminder');
 
 // iscrizione a observable per i click
 startObservable.subscribe(function()
@@ -80,9 +80,13 @@ startObservable.subscribe(function()
       disableKeyboard();
       keyboard = false;
     }
+    buttonKeyboard(document.getElementById("buttonKeyboard"));
   }
   else
+  {
     recorder.enable();
+    buttonKeyboard(document.getElementById("buttonKeyboard"));
+  }
   enabled = !enabled;
   changeValueButton();
 });
@@ -316,4 +320,5 @@ function resetInterface()
     keyboard = false;
     disableKeyboard();
   }
+  buttonKeyboard(document.getElementById("buttonKeyboard"));
 }
