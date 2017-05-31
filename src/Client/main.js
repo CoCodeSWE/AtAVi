@@ -170,7 +170,8 @@ function vocalInit()
     },
     error: function(err)
     {
-      application_manager.runApplication('conversation', 'receiveMsg', 'Error: ' + err.status_text);
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => vocalInit());  // riavvio l'observable dopo l'errore
     },
     complete: console.log
   }));
@@ -200,10 +201,7 @@ function textInit()
       logic.sendData(query);
       toggleLoading();
     },
-    error: function(err)
-    {
-      application_manager.runApplication('conversation', 'receiveMsg', 'Error: ' + err.status_text);
-    },
+    error: console.log,
     complete: console.log
   }));
 
@@ -221,7 +219,11 @@ function textInit()
       toggleLoading();
       player.speak(response.res.text_response);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => textInit());
+    },  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
   }));
 }
