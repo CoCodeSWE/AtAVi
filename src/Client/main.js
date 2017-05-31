@@ -45,6 +45,8 @@ let logic = new Logic();
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
+let time = null; //timeout per fare lo shutdown dopo un certo lasso di tempo
+let max_silence_time = 20000;
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
 reg_client.register('curiosity', AdministrationApp).subscribe({error: console.log});
@@ -65,7 +67,18 @@ let reminderObservable = new EventObservable('click', 'buttonReminder')
 startObservable.subscribe(function()
 {
   if(enabled)
+  {
     recorder.stop();
+    player.cancel();
+    application_manager.resetState();
+    application_manager.runApplication("conversation", "clear", {})
+    session_id = uuidV4();
+    if (keyboard)
+    {
+      disableKeyboard();
+      keyboard = false;
+    }
+  }
   else
     recorder.enable();
   enabled = !enabled;
@@ -74,6 +87,7 @@ startObservable.subscribe(function()
 
 keyboardObservable.subscribe(function()
 {
+  clearTimeout(time);
   clearSubscriptions();
   keyboard = !keyboard;
   if(keyboard)
@@ -115,6 +129,7 @@ function getVoices(lang)
 
 function vocalInit()
 {
+  //startTimeout();
   logic.setUrl(VOCAL_URL);
   subscriptions.push(player.getObservable().subscribe(
   {
@@ -144,6 +159,7 @@ function vocalInit()
             data: data, /**@todo passare davvero i dati*/
             session_id: session_id
           }
+          clearTimeout(time);
           logic.sendData(query);
           toggleLoading();
         })
@@ -166,6 +182,7 @@ function vocalInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
+      //startTimeout();
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -174,11 +191,14 @@ function vocalInit()
 
 function textInit()
 {
+  startTimeout();
   logic.setUrl(TEXT_URL);
   subscriptions.push(sendObservable.subscribe(
   {
     next: function(event)
     {
+      if(player.isPlaying())
+        player.cancel();
       event.preventDefault();
       console.log('Text next');
       let app = application_manager.application_name || 'conversation';
@@ -193,6 +213,7 @@ function textInit()
         data: data, /**@todo passare davvero i dati*/
         session_id: session_id
       }
+      clearTimeout(time);
       logic.sendData(query);
       toggleLoading();
     },
@@ -213,6 +234,7 @@ function textInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
+      //startTimeout();
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -221,6 +243,8 @@ function textInit()
 
 function reminderInit()
 {
+  if(player.isPlaying())
+    player.cancel();
   logic.setUrl(TEXT_URL);
   let app = application_manager.application_name || 'conversation';
   let query =
@@ -230,6 +254,7 @@ function reminderInit()
     data: data, /**@todo passare davvero i dati*/
     session_id: session_id
   }
+  clearTimeout(time);
   logic.sendData(query);
   toggleLoading();
 
@@ -246,6 +271,7 @@ function reminderInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
+      //startTimeout();
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -255,4 +281,19 @@ function reminderInit()
 function clearSubscriptions()
 {
   subscriptions.forEach((sub) => sub.unsubscribe());
+}
+
+function startTimeout()
+{
+  time = setTimeout(() =>
+  {
+    console.log("TOGGLEEEEEEEEEEEEEEEEEE");
+    enabled = !enabled;
+    changeValueButton();
+    recorder.stop();
+    player.cancel();
+    application_manager.resetState();
+    application_manager.runApplication("conversation", "clear", {})
+    session_id = uuidV4();
+  }, max_silence_time);
 }
