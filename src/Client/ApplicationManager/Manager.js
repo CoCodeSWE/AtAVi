@@ -36,10 +36,8 @@ export default class Manager
     console.log('params: ', app, cmd, params, name);
     let self = this;
     //se l'applicazione istanziata non è quella desiderata, devo cambiarla salvando nello state quella attuale e istanziando l'applicazione richiesta
-    if(!name || typeof(name) !== 'string'){
+    if(!name || typeof(name) !== 'string')
       name = app;
-      console.log("Non esiste "+name+" e app= "+app);
-    }
     if (this.application_name !== app)
     {
       let new_app = this.state.getApp(app);
@@ -58,8 +56,8 @@ export default class Manager
             else
             {
               new_app = new Application(pkg);
-              self._changeApplication(new_app);
               self.application_name = name; //cambio il nome dell'applicazione attualmente in esecuzione.
+              self._changeApplication(new_app);
               new_app.onload = function()
               {
                 //in questo modo se viene richiesta nuovamente l'esecuzione di un'azione da parte di
@@ -105,8 +103,7 @@ export default class Manager
   _changeApplication(app)
   {
     //salvo l'applicazione da sostituire nello state
-    if(this.application)
-      this.state.addApp(this.application, this.application_name);
+    this.state.addApp(app, this.application_name);
     //elimino il div contenente l'applicazione
     if(this.ui)
       this.frame.removeChild(this.ui);
