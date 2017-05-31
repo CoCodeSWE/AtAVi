@@ -68,8 +68,10 @@ startObservable.subscribe(function()
 {
   if(enabled)
   {
+    clearTimeout(time);
     recorder.stop();
-    player.cancel();
+    if(player.isPlaying())
+      player.cancel();
     application_manager.resetState();
     application_manager.runApplication("conversation", "clear", {})
     session_id = uuidV4();
@@ -92,11 +94,13 @@ keyboardObservable.subscribe(function()
   keyboard = !keyboard;
   if(keyboard)
   {
+    recorder.stop();
     enableKeyboard();
     textInit();
   }
   else
   {
+    recorder.enable();
     disableKeyboard();
     vocalInit();
   }
@@ -129,7 +133,6 @@ function getVoices(lang)
 
 function vocalInit()
 {
-  //startTimeout();
   logic.setUrl(VOCAL_URL);
   subscriptions.push(player.getObservable().subscribe(
   {
@@ -147,6 +150,7 @@ function vocalInit()
   {
     next: function(blob)
     {
+      clearTimeout(time);
       console.log('Recorder next');
       let app = application_manager.application_name || 'conversation';
       blobToBase64(blob)
@@ -159,7 +163,6 @@ function vocalInit()
             data: data, /**@todo passare davvero i dati*/
             session_id: session_id
           }
-          clearTimeout(time);
           logic.sendData(query);
           toggleLoading();
         })
@@ -182,7 +185,10 @@ function vocalInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
-      //startTimeout();
+      time = setTimeout(() =>
+      {
+        resetInterface();
+      }, max_silence_time);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -191,12 +197,12 @@ function vocalInit()
 
 function textInit()
 {
-  startTimeout();
   logic.setUrl(TEXT_URL);
   subscriptions.push(sendObservable.subscribe(
   {
     next: function(event)
     {
+      clearTimeout(time);
       if(player.isPlaying())
         player.cancel();
       event.preventDefault();
@@ -213,7 +219,6 @@ function textInit()
         data: data, /**@todo passare davvero i dati*/
         session_id: session_id
       }
-      clearTimeout(time);
       logic.sendData(query);
       toggleLoading();
     },
@@ -234,7 +239,10 @@ function textInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
-      //startTimeout();
+      time = setTimeout(() =>
+      {
+        resetInterface();
+      }, max_silence_time);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -243,6 +251,8 @@ function textInit()
 
 function reminderInit()
 {
+
+  clearTimeout(time);
   if(player.isPlaying())
     player.cancel();
   logic.setUrl(TEXT_URL);
@@ -254,7 +264,6 @@ function reminderInit()
     data: data, /**@todo passare davvero i dati*/
     session_id: session_id
   }
-  clearTimeout(time);
   logic.sendData(query);
   toggleLoading();
 
@@ -271,7 +280,10 @@ function reminderInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
-      //startTimeout();
+      time = setTimeout(() =>
+      {
+        resetInterface();
+      }, max_silence_time);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -283,17 +295,18 @@ function clearSubscriptions()
   subscriptions.forEach((sub) => sub.unsubscribe());
 }
 
-function startTimeout()
+function resetInterface()
 {
-  time = setTimeout(() =>
+  clearTimeout(time);
+  enabled = !enabled;
+  changeValueButton();
+  recorder.stop();
+  application_manager.resetState();
+  application_manager.runApplication("conversation", "clear", {})
+  session_id = uuidV4();
+  if (keyboard)
   {
-    console.log("TOGGLEEEEEEEEEEEEEEEEEE");
-    enabled = !enabled;
-    changeValueButton();
-    recorder.stop();
-    player.cancel();
-    application_manager.resetState();
-    application_manager.runApplication("conversation", "clear", {})
-    session_id = uuidV4();
-  }, max_silence_time);
+    keyboard = false;
+    disableKeyboard();
+  }
 }
