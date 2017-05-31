@@ -8,7 +8,7 @@ class AppSwitchHandler extends CmdRunner
     {
       let action;
       let params;
-      if(response)
+      if(response && response.res)
       {
         action = response.action;
         params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};

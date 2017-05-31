@@ -13,7 +13,7 @@ class NotifyHandler extends CmdRunner
   {
     return new Promise((resolve, reject) =>
     {
-      if(response)
+      if(response && response.res)
       {
         this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
         {

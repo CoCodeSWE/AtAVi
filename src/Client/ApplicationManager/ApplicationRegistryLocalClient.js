@@ -56,6 +56,7 @@ export default class ApplicationRegistryLocalClient
 
     return new Rx.Observable(function(observer)
     {
+      console.log("query registro con "+name);
       let app = self.registry.query(name);
 
       observer.next(app);

@@ -18,7 +18,7 @@ class RuleHandler extends CmdRunner
     {
       let query = { event:{}, data: response.data ? response.data : {}};
       console.log(response);
-      if(!response)
+      if(!response || !response.res)
         resolve(super.handler(null, body));
       else
       {

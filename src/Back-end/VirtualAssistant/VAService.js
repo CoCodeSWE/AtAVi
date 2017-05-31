@@ -48,11 +48,12 @@ class VAService
 			{
 				next: function(data)
 				{
+					console.log("setto agent: ",data);
 					self.va_module.setAgent(data);
 				},
 				error: function(err)
 				{
-          console.log("error: ", err);
+          console.log("error on getagent: ", err);
 					context.succeed(
 					{
 						statusCode: err.statusCode,
@@ -65,7 +66,7 @@ class VAService
 					{
             if(!data.action)
               data.action = request.app + DEF_ACTION;
-            console.log('data', data);
+            console.log('data: ', data);
 						success(context, data);
 					})
 					.catch(function(err)

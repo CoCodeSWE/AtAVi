@@ -32,8 +32,8 @@ const rec_conf =
 }
 
 //URL degli endpoint
-const VOCAL_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
-const TEXT_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
+const VOCAL_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/vocal-assistant';
+const TEXT_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -47,7 +47,8 @@ let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
-                                                                                 //visto che hanno l'interfaccia condivisa
+reg_client.register('curiosity', AdministrationApp).subscribe({error: console.log});
+                                                                             //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
 let sendObservable = new EventObservable('submit', 'textMsg'); // questo è il form del quale aspetto il submit in modalità testo
 let enabled = false;
@@ -115,6 +116,7 @@ function getVoices(lang)
 function vocalInit()
 {
   logic.setUrl(VOCAL_URL);
+  if(enabled) recorder.enable();
   subscriptions.push(player.getObservable().subscribe(
   {
     next: function(playing)
@@ -132,7 +134,7 @@ function vocalInit()
     next: function(blob)
     {
       console.log('Recorder next');
-      let app = application_manager.application_name || 'conversationsApp';
+      let app = application_manager.application_name || 'conversation';
       blobToBase64(blob)
         .then(function(audio)
         {
@@ -140,7 +142,7 @@ function vocalInit()
           {
             app: app,
             audio: audio,
-            data: data, /**@todo passare davvero i dati*/
+            data: {},//data, /**@todo passare davvero i dati*/
             session_id: session_id
           }
           logic.sendData(query);
@@ -166,7 +168,11 @@ function vocalInit()
       toggleLoading();
       player.speak(response.res.text_response);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => vocalInit());  // riavvio l'observable dopo l'errore
+    },
     complete: console.log
   }));
 }
@@ -180,7 +186,8 @@ function textInit()
     {
       event.preventDefault();
       console.log('Text next');
-      let app = application_manager.application_name || 'conversationsApp';
+      let app = application_manager.application_name || 'conversation';
+      console.log(app);
       let input_text = document.getElementById("inputText").value;
       document.getElementById("inputText").value="";
       console.log(input_text);
@@ -188,13 +195,13 @@ function textInit()
       {
         text : input_text,
         app: app,
-        data: data, /**@todo passare davvero i dati*/
+        data: {},//data, /**@todo passare davvero i dati*/
         session_id: session_id
       }
       logic.sendData(query);
       toggleLoading();
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: console.log,
     complete: console.log
   }));
 
@@ -212,7 +219,11 @@ function textInit()
       toggleLoading();
       player.speak(response.res.text_response);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => textInit());
+    },  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
   }));
 }
@@ -220,12 +231,12 @@ function textInit()
 function reminderInit()
 {
   logic.setUrl(TEXT_URL);
-  let app = application_manager.application_name || 'conversationsApp';
+  let app = application_manager.application_name || 'conversation';
   let query =
   {
     text : 'where required_person is?',
     app: app,
-    data: data, /**@todo passare davvero i dati*/
+    data: {},//data, /**@todo passare davvero i dati*/
     session_id: session_id
   }
   logic.sendData(query);

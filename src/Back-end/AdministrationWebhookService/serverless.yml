@@ -6,6 +6,7 @@ provider:
   region: eu-central-1
   environment:
     JWT_SECRET: ${file(secret.yml):secret}
+    VER_TOKEN: ${file(secret.yml):token}
   profile: default
   apiKeys:
     - administration-webhook-key

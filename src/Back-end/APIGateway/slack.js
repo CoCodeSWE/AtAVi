@@ -1,13 +1,18 @@
 const VER_TOK = process.env.VER_TOK; // token di verifica di slack, utilizzato per essere sicuri che la chiamata provenga da slack
 const NOTIFICATIONS_SERVICE_URL = process.env.NOTIFICATIONS_SERVICE_URL;
 const NOTIFICATIONS_SERVICE_KEY = process.env.NOTIFICATIONS_SERVICE_KEY;
+const USERS_SERVICE_URL = process.env.USERS_SERVICE_URL;
+const USERS_SERVICE_KEY = process.env.USERS_SERVICE_KEY;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 class SlackAPI
 {
-  constructor(va_module, rp)
+  constructor(va_module, rp, jwt, runner)
   {
     this.va_module = va_module;
     this.request_promise = rp;
+    this.jwt = jwt;
+    this.runner = runner;
   }
 
   post(event, context)
@@ -47,14 +52,31 @@ class SlackAPI
 
   _message(body, context)
   {
+    this._send(context, 200, '');
+    if(body.event && body.event.type && body.event.type === 'message')
     {
-      if(body.event && body.event.type && body.event.type === 'message')
+      let options =
       {
-        let options =
+        method: 'POST',
+        uri: VA_SERVICE_URL,
+        headers: {'x-api-key': VA_SERVICE_KEY},
+        body:
         {
-          method: 'POST'
+          app: 'admin',
+          query:
+          {
+            data:
+            {
+              token: VER_TOKEN
+            },
+            text: body.event.text,
+            session_id: body.event.user //usiamo user id come id di sessione, tanto dopo 20 minuti circa la sessione scade e non ci sono più sessioni per utente
+          }
         }
-        this._send(context, 200, '');
+      };
+      this.request_promise(options).then(response)
+      {
+
       }
     }
   }

@@ -28,7 +28,7 @@ class UserHandler extends CmdRunner
   {
     return new Promise((resolve, reject) =>
     {
-      if(!response)
+      if(!response || !response.res)
         resolve(super.handler(null, body));
       else
       {
@@ -81,7 +81,7 @@ class UserHandler extends CmdRunner
               this._getUser(params.user_username).subscribe(
               {
                 next: (data) => {user = data;},
-                error: (err) => 
+                error: (err) =>
 								{
 									query.event.name = "error404";
 									query.event.data = { username: params.username };
