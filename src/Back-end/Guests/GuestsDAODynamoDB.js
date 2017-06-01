@@ -157,8 +157,10 @@ class GuestsDAODynamoDB
       self.client.put(params, function(err, data)
       {
         if(err)
+        {
+          console.log("updgaegues err",err);
           observer.error(err);
-        else
+        }else
           observer.complete();
       });
     });

@@ -126,6 +126,7 @@ class ConversationWebhookService
   */
   _checkGuest(body, context)
   {
+    console.log("checkGuest called",body);
     let self = this;
     let observable = this.guests.getGuestList({name: body.result.parameters.name});
     let guests = [];
