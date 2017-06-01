@@ -33,7 +33,7 @@ class RulesService
         return;
     }
     // Parametro contenente i dati relativi alla rule da aggiungere
-    let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task', 'override']);
+    let params = objectFilter(rule, ['enabled', 'override', 'name', 'targets', 'task', 'type']);
     // controllo che rule abbia tutti i campi definiti
     if(('enabled' in params) && params.name && params.targets && params.task)
     {
@@ -87,7 +87,7 @@ class RulesService
 		*/
   deleteRule(event, context)
   {
-    let rule_name = event.pathParameters.name;
+    let rule_name = event.pathParameters.name.replace(/%20/g, ' ');
 		this.rules.removeRule(rule_name).subscribe(
 		{
 			next: function(data)
@@ -133,7 +133,7 @@ class RulesService
 		*/
   getRule(event, context)
   {
-    let rule_name = event.pathParameters.name;
+    let rule_name = event.pathParameters.name.replace(/%20/g, ' ');
     let rule; //conterrà la rule che verrà ottenuta
 		this.rules.getRule(rule_name).subscribe(
 		{
@@ -180,7 +180,6 @@ class RulesService
 		*/
   getRuleList(event,context)
   {
-    console.log(event);
     let list =
 		{
       rules: []
@@ -195,17 +194,12 @@ class RulesService
       next: function(rule)
 			{
 				let target = objectFilter(event.queryStringParameters, ['target.name', 'target.member', 'target.company']);
+
         if(Object.keys(target).length > 0)
 				{
 					let insert = false;
 					for(let i = 0; i < rule.targets.length; ++i)
 					{
-            // Controllo se solo il campo company è impostato
-            /*if(target['target.company'] && !(target['target.member']) && !(target['target.name']))
-            {
-              if(rule.targets[i].company === target['target.company'] && !(rule.targets[i].member) && !(rule.targets[i].name))
-                list.rules.push(rule);
-            }*/
 						// Controllo se tutti i tre campi di target sono impostati come filtro
 						if(target['target.name'] && target['target.member'] && target['target.company'])
 						{
@@ -320,8 +314,8 @@ class RulesService
 		}
 
 		// Parametro contenente i dati relativi alla rule da aggiungere
-		let params = objectFilter(rule, ['enabled', 'targets', 'task', 'override']);
-		params.id = event.pathParameters.name;
+		let params = objectFilter(rule, ['enabled', 'targets', 'task', 'override','type']);
+		params.id = event.pathParameters.name.replace(/%20/g, ' ');
 
 		this.rules.updateRule(params).subscribe(
 		{

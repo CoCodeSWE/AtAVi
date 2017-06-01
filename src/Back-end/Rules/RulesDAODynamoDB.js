@@ -216,12 +216,14 @@ function filterExpression(obj)
 
 const attr_map =
 {
-  name: 'rule_name'
+  name: 'rule_name',
+  override: 'overr'
 }
 
 const reverse_attr_map =
 {
-  rule_name: 'name'
+  rule_name: 'name',
+  overr: 'override'
 }
 
 module.exports = RulesDAODynamoDB;

@@ -51,11 +51,8 @@ class VAMessageListener
       return;
     }
     let rules_query = '?target.name=' +  encodeURIComponent(params.name) + '&target.company=' + encodeURIComponent(params.company);
-    /**
-     ** @todo abilitare questi parametri della query quando rules è sistemato
     if(params.required_person)
       rules_query += '&target.member=' + encodeURIComponent(params.required_person);
-    */
     // parametri per la richiesta HTTP GET al microservizio Rules
 		let rules_options =
 		{
@@ -88,26 +85,26 @@ class VAMessageListener
 		{
 			this.request_promise(rules_options).then(function(response)
 			{
-        /**@todo controllare tutto l'array e non solo il primo elemento, perchè al momento abbiamo solo un
-        * tipo di task ma in futuro ce ne potrebbero essere altri
-        * */
-				let stop = 0;
-				for(let i = 0; i<response.rules.length && stop===0; ++i)
+				/**ciclo che conta quante rules permettono l'override.
+				se una rule con priorità j lo permette ma una con priorità i > j no, questa non viene considerata**/
+				let rule_to_apply = 0;
+				while (rule_to_apply < response.rules.length && response.rules[rule_to_apply].override === true) {
+					rule_to_apply++;
+				}
+
+				for(let i = 0; i <= rule_to_apply; ++i)
 				{
-	        if(response.rules && response.rules[i] && response.rules[i].task && response.rules[i].type === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
+					if(response.rules && response.rules[i] && response.rules[i].task && response.rules[i].type === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
 						send_to = Promise.resolve([{id: response.rules[i].task.params}]);
 	        else // se non ho una direttiva che mi dica dove mandare il messaggio, devo ricavarmelo io
 	          send_to = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
 		        send_to.then((receiver) =>
 		        {
 		          let send_to;
-		          if(!receiver || !receiver[i])
+		          if(!receiver || !receiver[0])
 		            send_to = DEFAULT_CHANNEL;
 		          else
-		            send_to = receiver[i].id;
-		          console.log('receiver: ', receiver);
-							if(response.rules[i].override)
-								stop=1;
+		            send_to = receiver[0].id;
 		          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
 		        }).then((data) => {callback(null);}).catch(callback);  /**@todo vera gestione errori*/
 				}
