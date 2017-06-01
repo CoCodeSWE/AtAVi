@@ -25,7 +25,6 @@ class NotificationService
       types = ['groups', 'users', 'channels'];
 
     let promise  = new Promise(function(resolve,reject){resolve([]);});
-    let trovato = true;
 
     const type_functions =
     {
@@ -47,12 +46,16 @@ class NotificationService
             {
               data.channels.forEach(function(item)
               {
-                result.push(
-                {
-                  name: item.name,
-                  id: item.id,
-                  type: 'channel'
-                });
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === '')
+								{
+									result.push(
+									{
+										name: item.name,
+										id: item.id,
+										username: '',
+										type: 'channel'
+									});
+								}
               });
               resolve(result);
             }
@@ -77,12 +80,16 @@ class NotificationService
             {
               data.groups.forEach(function(item)
               {
-                result.push(
-                {
-                  name: item.name,
-                  id: item.id,
-                  type: 'group'
-                });
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === '')
+								{
+									result.push(
+									{
+										name: item.name,
+										id: item.id,
+										username: '',
+										type: 'group'
+									});
+								}
               });
               resolve(result);
             }
@@ -107,12 +114,16 @@ class NotificationService
             {
               data.members.forEach(function(item)
               {
-                result.push(
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === item.name)
                 {
-                  name: item.real_name,
-                  id: item.id,
-                  type: 'user'
-                });
+									result.push(
+									{
+										name: item.real_name,
+										id: item.id,
+										username: item.name,
+										type: 'user'
+									});
+								}
               });
               resolve(result);
             }
