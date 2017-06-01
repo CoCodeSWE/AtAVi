@@ -128,42 +128,83 @@ class RuleHandler extends CmdRunner
               reject(WRONG_APP);
             break;
           case 'rule.update':
-            if(body.app)
+            if(body.app === 'admin')
             {
+							let rule;
               query.event = {name: 'updateRuleSuccess', data: { username: params.username }};
-              this._updateRule(
-              {
-                name: params.rule_name,
-								type: params.task_name,
-                task:
-                {
-                  params: 'prendere il valore dal DB'
-                },
-                targets:[
-                {
-                  name: params.target_name,
-                  member: params.target_member,
-                  company: params.target_company
-                }],
-                enabled: true,
-								override: false
-              }).subscribe(
-              {
-                complete: () =>
-                {
-                  resolve(query);
-                },
-                error: (err) =>
+              this._getRule(params.rule_name).subscribe(
+							{
+								next: (data) =>
+								{
+									rule = data;
+									rule.type = params.rule_task;
+									rule.enabled = Boolean(params.rule_isEnabled.toUpperCase() === 'TRUE');
+								},
+								error: (err) =>
 								{
 									query.event.name = "error404";
 									query.event.data = { username: params.username };
 									resolve(query);
+								},
+								complete: () =>
+								{
+									this._updateRule(rule).subscribe(
+									{
+										complete: () =>
+										{
+											resolve(query);
+										},
+										error: (err) =>
+										{
+											query.event.name = "error500";
+											query.event.data = { username: params.username };
+											resolve(query);
+										}
+									});
 								}
-              });
+							});
             }
             else
               reject(WRONG_APP);
             break;
+					case 'rule.updateTurget':
+						if(body.app === 'admin')
+						{
+							let rule;
+							query.event = {name: 'updateRuleTargetSuccess', data: { username: params.username }};
+							this._getRule(params.rule_name).subscribe(
+							{
+								next: (data) =>
+								{
+									rule = data;
+									rule.target = { name: params.name, company: params.company, member: params.company };
+								},
+								error: (err) =>
+								{
+									query.event.name = "error404";
+									query.event.data = { username: params.username };
+									resolve(query);
+								},
+								complete: () =>
+								{
+									this._updateRule(rule).subscribe(
+									{
+										complete: () =>
+										{
+											resolve(query);
+										},
+										error: (err) =>
+										{
+											query.event.name = "error500";
+											query.event.data = { username: params.username };
+											resolve(query);
+										}
+									});
+								}
+							});
+						}
+						else
+							reject(WRONG_APP);
           default:
             resolve(super.handler(response, body));
         }

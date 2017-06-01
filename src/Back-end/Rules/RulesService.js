@@ -33,7 +33,7 @@ class RulesService
         return;
     }
     // Parametro contenente i dati relativi alla rule da aggiungere
-    let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task']);
+    let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task', '']);
     // controllo che rule abbia tutti i campi definiti
     if(('enabled' in params) && params.name && params.targets && params.task)
     {
@@ -87,7 +87,7 @@ class RulesService
 		*/
   deleteRule(event, context)
   {
-    let rule_name = event.pathParameters.name;
+    let rule_name = event.pathParameters.name.replace(/%20/g, ' ');
 		this.rules.removeRule(rule_name).subscribe(
 		{
 			next: function(data)
@@ -133,7 +133,7 @@ class RulesService
 		*/
   getRule(event, context)
   {
-    let rule_name = event.pathParameters.name;
+    let rule_name = event.pathParameters.name.replace(/%20/g, ' ');
     let rule; //conterrà la rule che verrà ottenuta
 		this.rules.getRule(rule_name).subscribe(
 		{
@@ -295,7 +295,7 @@ class RulesService
 
 		// Parametro contenente i dati relativi alla rule da aggiungere
 		let params = objectFilter(rule, ['enabled', 'targets', 'task']);
-		params.id = event.pathParameters.name;
+		params.name = event.pathParameters.name.replace(/%20/g, ' ');
 
 		this.rules.updateRule(params).subscribe(
 		{
