@@ -53,3 +53,13 @@ function buttonKeyboard(button)
 {
   button.disabled = !button.disabled;
 }
+
+function enableButtonReminder(button)
+{
+  button.disabled = false;
+}
+
+function disableButtonReminder(button)
+{
+  button.disabled = true;
+}

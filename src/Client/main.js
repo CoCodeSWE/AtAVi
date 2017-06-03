@@ -45,8 +45,16 @@ let logic = new Logic();
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
-let time = null; //timeout per fare lo shutdown dopo un certo lasso di tempo
-let max_silence_time = 20000;
+let patt = new RegExp("Can I tell you something?"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
+let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
+let time_reminder = null; // timeout per riabilitare il bottone del sollecito
+let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
+let max_silence_time = 40000;
+let refresh_reminder_time = 20000;
+let start_reminder_button = 10000;
+let buttonKeyboard = document.getElementById("buttonKeyboard");
+let buttonReminder = document.getElementById("buttonReminder");
+
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
 reg_client.register('curiosity', AdministrationApp).subscribe({error: console.log});
@@ -68,7 +76,10 @@ startObservable.subscribe(function()
 {
   if(enabled)
   {
+    clearTimeout(time_reminder);
     clearTimeout(time);
+    clearTimeout(start_reminder_button);
+    disableButtonReminder(buttonReminder);
     recorder.stop();
     if(player.isPlaying())
       player.cancel();
@@ -80,12 +91,12 @@ startObservable.subscribe(function()
       disableKeyboard();
       keyboard = false;
     }
-    buttonKeyboard(document.getElementById("buttonKeyboard"));
+    buttonKeyboard(buttonKeyboard); //disabilita pulsante per inserimento tramite tastiera
   }
   else
   {
     recorder.enable();
-    buttonKeyboard(document.getElementById("buttonKeyboard"));
+    buttonKeyboard(buttonKeyboard); //abilita pulsante per inserimento tramite tastiera
   }
   enabled = !enabled;
   changeValueButton();
@@ -189,6 +200,14 @@ function vocalInit()
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
+      let res = patt.test(response.res.text_response);
+      if (res)
+      {
+        start_time = setTimeout(() =>
+        {
+          enableButtonReminder(buttonReminder);
+        }, start_reminder_button);
+      }
       player.speak(response.res.text_response);
       time = setTimeout(() =>
       {
@@ -249,6 +268,14 @@ function textInit()
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
+      let res = patt.test(response.res.text_response);
+      if (res)
+      {
+        start_time = setTimeout(() =>
+        {
+          enableButtonReminder(buttonReminder);
+        }, start_reminder_button);
+      }
       player.speak(response.res.text_response);
       time = setTimeout(() =>
       {
@@ -262,7 +289,7 @@ function textInit()
 
 function reminderInit()
 {
-
+  disableButtonReminder(buttonReminder);
   clearTimeout(time);
   if(player.isPlaying())
     player.cancel();
@@ -291,6 +318,10 @@ function reminderInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
+      time_reminder = setTimeout(() =>
+      {
+        enableButtonReminder(buttonReminder);
+      }, disable_reminder_time);
       time = setTimeout(() =>
       {
         resetInterface();
@@ -309,6 +340,7 @@ function clearSubscriptions()
 function resetInterface()
 {
   clearTimeout(time);
+  clearTimeout(time_reminder);
   enabled = !enabled;
   changeValueButton();
   recorder.stop();
@@ -320,5 +352,5 @@ function resetInterface()
     keyboard = false;
     disableKeyboard();
   }
-  buttonKeyboard(document.getElementById("buttonKeyboard"));
+  buttonKeyboard(buttonKeyboard);
 }
