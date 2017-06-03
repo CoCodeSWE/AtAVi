@@ -36,7 +36,7 @@ class RuleHandler extends CmdRunner
 								type: params.task_name,
                 task:
                 {
-                  params: 'prendere il valore dal DB'
+                  'params': params.username_slack
                 },
                 targets:[
                 {
@@ -74,7 +74,6 @@ class RuleHandler extends CmdRunner
                 error: reject,
                 complete: () =>
                 {
-									console.log(rules);
                   query.event.data = { rules: JSON.stringify(rules, null, 2) };
                   resolve(query);
                 }
@@ -99,7 +98,7 @@ class RuleHandler extends CmdRunner
 								},
                 complete: () =>
                 {
-                  query.event.data = { rule: rule };
+                  query.event.data = { rule: rule, username: params.username };
                   resolve(query);
                 }
               });
@@ -138,6 +137,10 @@ class RuleHandler extends CmdRunner
 								{
 									rule = data;
 									rule.type = params.rule_task;
+									rule.task = 
+									{
+										'params': params.username_slack
+									};
 									rule.enabled = Boolean(params.rule_isEnabled.toUpperCase() === 'TRUE');
 								},
 								error: (err) =>
@@ -167,7 +170,7 @@ class RuleHandler extends CmdRunner
             else
               reject(WRONG_APP);
             break;
-					case 'rule.updateTurget':
+					case 'rule.updateTarget':
 						if(body.app === 'admin')
 						{
 							let rule;
@@ -354,6 +357,7 @@ class RuleHandler extends CmdRunner
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
+			console.log(rule);
 			let options =
 			{
 				method: 'PUT',

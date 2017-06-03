@@ -73,7 +73,6 @@ class UserHandler extends CmdRunner
               reject(WRONG_APP);
             break;
           case 'user.get':
-            console.log(body.app);
             if(body.app === 'admin')
             {
               let user;
@@ -89,7 +88,7 @@ class UserHandler extends CmdRunner
 								},
                 complete: () =>
                 {
-                  query.event.data = { user: JSON.stringify(user, null, 2) };
+                  query.event.data = { user: JSON.stringify(user, null, 2), username: params.username };
                   resolve(query);
                 }
               });
@@ -183,13 +182,14 @@ class UserHandler extends CmdRunner
             {
               query.event = { name: 'userUpdateSuccess', data: { username: params.username } };
               let user;
+							console.log('Andiamo a fare un update');
+							console.log(params);
               this._getUser(params.user_username).subscribe(
               {
                 next: (data) =>
                 {
                   user = data;
-                  if(params.name)
-                    user.name = params.name;
+                  user.name = params.name;
                 },
                 error: (err) =>
 								{
@@ -325,7 +325,6 @@ class UserHandler extends CmdRunner
 	*/
   _getUser(username)
   {
-    console.log(username);
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
