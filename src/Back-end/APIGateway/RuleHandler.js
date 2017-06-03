@@ -180,7 +180,7 @@ class RuleHandler extends CmdRunner
 								next: (data) =>
 								{
 									rule = data;
-									rule.target = { name: params.name, company: params.company, member: params.company };
+									rule.targets = [{ name: params.name, company: params.company, member: params.company }];
 								},
 								error: (err) =>
 								{
@@ -208,6 +208,7 @@ class RuleHandler extends CmdRunner
 						}
 						else
 							reject(WRONG_APP);
+						break;
           default:
             resolve(super.handler(response, body));
         }
