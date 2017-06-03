@@ -32,8 +32,8 @@ const rec_conf =
 }
 
 //URL degli endpoint
-const VOCAL_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/vocal-assistant';
-const TEXT_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/text-assistant';
+const VOCAL_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
+const TEXT_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
