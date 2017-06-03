@@ -32,8 +32,8 @@ const rec_conf =
 }
 
 //URL degli endpoint
-const VOCAL_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
-const TEXT_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
+const VOCAL_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/vocal-assistant';
+const TEXT_URL = 'https://6ihlvh6dug.execute-api.eu-central-1.amazonaws.com/newdev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -116,6 +116,7 @@ function getVoices(lang)
 function vocalInit()
 {
   logic.setUrl(VOCAL_URL);
+  if(enabled) recorder.enable();
   subscriptions.push(player.getObservable().subscribe(
   {
     next: function(playing)
@@ -167,7 +168,11 @@ function vocalInit()
       toggleLoading();
       player.speak(response.res.text_response);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => vocalInit());  // riavvio l'observable dopo l'errore
+    },
     complete: console.log
   }));
 }
@@ -190,13 +195,13 @@ function textInit()
       {
         text : input_text,
         app: app,
-        data: data, /**@todo passare davvero i dati*/
+        data: {},//data, /**@todo passare davvero i dati*/
         session_id: session_id
       }
       logic.sendData(query);
       toggleLoading();
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: console.log,
     complete: console.log
   }));
 
@@ -214,7 +219,11 @@ function textInit()
       toggleLoading();
       player.speak(response.res.text_response);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => textInit());
+    },  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
   }));
 }

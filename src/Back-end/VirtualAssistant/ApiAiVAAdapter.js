@@ -93,7 +93,7 @@ class ApiAiVAAdapter
 			if(response.result.fulfillment.data)
 			{
         if(response.result.fulfillment.data._status !== 200)
-          throw {statusCode: response.result.fulfillment.data.statusCode}
+          throw {statusCode: response.result.fulfillment.data._status}
         delete response.result.fulfillment.data._status;  //rimuovo lo stato della risposta settato dal webhook
         va_response.res.data = response.result.fulfillment.data;
       }

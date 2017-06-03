@@ -4,6 +4,8 @@
 * @version 0.0.4
 * @since 0.0.3-alpha
 */
+const VET_TOKEN = process.env.VER_TOKEN;
+
 class AdministrationWebhookService
 {
   /**
@@ -63,6 +65,8 @@ class AdministrationWebhookService
   */
   _checkToken(token)
   {
+    if(token === VER_TOKEN) //client slack
+      return true;
     try
     {
       this.jwt.verify(token, process.env.JWT_SECRET);

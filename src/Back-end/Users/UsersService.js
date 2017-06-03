@@ -27,10 +27,11 @@ class UsersService
 		catch(exception)
 		{
 			//user non valido: errore 400 (Bad request)
-			badRequest(context);
+      console.log(exception);
+      badRequest(context);
 			return;
 		}
-
+    console.log(event);
 		// Parametro contenente i dati relativi all'user da aggiungere
 		let params = objectFilter(user, ['username', 'name', 'sr_id', 'password', 'slack_channel']);
 		// Controllo che user abbia almeno i campi obbligatori (name e username)
@@ -45,6 +46,7 @@ class UsersService
 
 				error: function(err)
 				{
+          console.log(err);
 					if(err.code === 'ConditionalCheckFailedException')
 					{
 						context.succeed(

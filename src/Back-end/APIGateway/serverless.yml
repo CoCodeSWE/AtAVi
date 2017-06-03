@@ -12,7 +12,7 @@ provider:
   runtime: nodejs6.10
   region: eu-central-1
   profile: default
-  timeout: 15
+  timeout: 30
   environment:
     USERS_SERVICE_KEY: ${file(secret.yml):users.key}
     USERS_SERVICE_URL: ${file(secret.yml):users.url}
@@ -26,6 +26,7 @@ provider:
     WATSON_USERNAME: ${file(secret.yml):watson.username}
     WATSON_PASSWORD: ${file(secret.yml):watson.password}
     JWT_SECRET: ${file(secret.yml):jwt.secret}
+    VER_TOK: ${file(secret.yml):slack.token}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -34,7 +35,7 @@ provider:
 functions:
   query:
     handler: handler.query
-    timeout: 15
+    timeout: 30
     events:
       - http:
           path: vocal-assistant
@@ -45,6 +46,13 @@ functions:
     events:
       - http:
           path: text-assistant
+          method: post
+          cors: true
+  slack:
+    handler: handler.bot
+    events:
+      - http:
+          path: slack
           method: post
           cors: true
 resources:
