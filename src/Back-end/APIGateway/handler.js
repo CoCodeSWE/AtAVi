@@ -1,6 +1,6 @@
 // sarebbero tutti require, quelli che dobbiamo fare noi li lascio oggetti vuoti
 const SNS = require('aws-sdk').SNS;
-const VocalLoginMicrosoftModule = require('./MockLogin');//require('VocalLoginMicrosoftModule');
+const VocalLoginMicrosoftModule = require('VocalLoginMicrosoftModule');//require('VocalLoginMicrosoftModule');
 const STTWatsonAdapter = require('./STTWatsonAdapter');
 const rp = require('request-promise');
 const jwt = require('jsonwebtoken');
@@ -35,7 +35,7 @@ let vocal = new VocalLoginMicrosoftModule(VOCAL_LOGIN_CONF, rp);
 let runner = new RuleHandler(new UserHandler(new AppSwitchHandler(new NotifyHandler(null, sns)), jwt, rp, vocal), rp);  // costruisco la catena che gestisce la action supportate dal backend
 let gateway = new VocalAPI(vocal, jwt, rp, stt, sns, runner);
 let bot = new SlackAPI();
-
+console.log("KEY SPEK REC: "+SPEAKER_RECOGNITION_KEY);
 module.exports.query = gateway.queryLambda.bind(gateway);
 module.exports.queryText = gateway.queryText.bind(gateway);
 module.exports.bot = bot.post.bind(bot);

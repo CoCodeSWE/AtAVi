@@ -441,7 +441,7 @@ class VocalAPI
 	*/
   _getUser(username)
   {
-    console.log(username);
+    console.log("username: ",username);
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
@@ -456,11 +456,11 @@ class VocalAPI
 			self.request_promise(options).then(function(data)
 			{
         observer.next(data);
+        console.log("Recuperato user: ",data);
 				observer.complete();
 			})
 			.catch(function(err)
 			{
-        console.log(err);
 				observer.error(
 				{
 					code: err.statusCode,
@@ -521,7 +521,7 @@ class VocalAPI
 			{
 				next: function(user)
 				{
-          console.log(user);
+          console.log("user: ",user);
 					if(user.sr_id)
 						id_user = user.sr_id;
 					else
@@ -562,6 +562,7 @@ class VocalAPI
 						},
 						complete: function()
 						{
+              console.log("Login success!");
               observer.next(self.jwt.sign({}, JWT_SECRET, {expiresIn: '6h'}));
 							observer.complete();
 						}
@@ -731,6 +732,7 @@ class VocalAPI
       console.log("_onVaResponse called", body);
       console.log("action= ");
       console.log(response.action);
+      console.log("responso",response,response.res,response.res.contexts[0]);
       let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
       switch(response.action)
       {
@@ -942,13 +944,14 @@ class VocalAPI
         case 'user.login':
           if(options.body.app)
           {
+            console.log("inside user.login switch", params);
             this._loginUser({audio: body.audio, username: params.username}).subscribe(
             {
               next: function(token)
               {
                 console.log('options: ', JSON.stringify(options, null, 2));
                 options.body.query.data.token = token;
-                options.body.query.event = {name: 'loginUserSuccess', data: {'username': params.username}};
+                options.body.query.event = {name: 'loginUserSuccess', data: {'username': params.username,'new_app': 'admin'}};
                 console.log('options: ', JSON.stringify(options, null, 2));
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               },

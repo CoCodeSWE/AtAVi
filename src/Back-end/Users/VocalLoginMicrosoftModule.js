@@ -148,7 +148,7 @@ class VocalLoginMicrosoftModule
 			self.request_promise(options).then(function(response)
 			{
         let data = JSON.parse(response);
-        console.log('data: ', data);
+        console.log('data doLogin: ', data, data.alternatives);
 				if(data.result === 'Accept' && mapConfidence[data.confidence] >= self.min_confidence)
 					observer.complete();
 				else
@@ -156,7 +156,7 @@ class VocalLoginMicrosoftModule
 			})
 			.catch(function(err)
 			{
-        console.log('err: ', err);
+        console.log('err doLogin: ', err);
         let error = {error: ERROR_CODES.REQUEST_ERROR, statusCode: err.statusCode};
 				observer.error(error);
 			});
