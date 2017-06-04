@@ -56,7 +56,11 @@ export default class Recorder
     });
 
     if (!navigator.mediaDevices.getUserMedia) //controllo per i browser più vecchi
-    navigator.mediaDevices.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      navigator.mediaDevices.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    if(!window.AudioContext)
+      window.AudioContext = window.webkitAudioContext || window.mozAudioContext;
+    if(!window.OfflineAudioContext)
+      window.OfflineAudioContext = window.webkitOfflineAudioContext || window.mozOfflineAudioContext;
     navigator.mediaDevices.getUserMedia({ audio: true}) // richiedo di poter registrare l'audio
       .then(this._init.bind(this))
       .catch((err) => {self.subject.error(new Error('error getting media device')); console.log(err);});

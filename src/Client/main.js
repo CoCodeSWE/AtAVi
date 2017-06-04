@@ -154,13 +154,8 @@ function vocalInit()
   {
     next: function(playing)
     {
-      if (keyboard)
-      {
-        keyboard = false;
-        vocalInit();
-      }
       console.log('Player next', playing);
-      if(!playing && enabled)
+      if(enabled && !playing)
         recorder.enable();
     },
     error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
@@ -199,7 +194,19 @@ function vocalInit()
     {
       if (keyboard)
       {
+        clearSubscriptions();
         disableKeyboard();
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if(keyboard && !playing)
+            {
+              keyboard = false;
+              vocalInit();
+            }
+          }
+        });
       }
       console.log('logic next');
       data = response.res.data;
@@ -269,9 +276,19 @@ function textInit()
     {
       if (keyboard)
       {
-        keyboard = !keyboard;
+        clearSubscriptions();
         disableKeyboard();
-        vocalInit();
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if(keyboard && !playing)
+            {
+              keyboard = false;
+              vocalInit();
+            }
+          }
+        });
       }
       console.log('logic next');
       data = response.res.data;
@@ -329,7 +346,6 @@ function reminderInit()
       if (keyboard)
       {
         keyboard = !keyboard;
-        recorder.enable();
         disableKeyboard();
         vocalInit();
       }
