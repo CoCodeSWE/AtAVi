@@ -52,8 +52,8 @@ let start_time = null; // timeout per abilitare il bottone del sollecito la prim
 let max_silence_time = 40000;
 let refresh_reminder_time = 20000;
 let start_reminder_button = 10000;
-let buttonKeyboard = document.getElementById("buttonKeyboard");
-let buttonReminder = document.getElementById("buttonReminder");
+let buttonKey = document.getElementById("buttonKeyboard");
+let buttonRem = document.getElementById("buttonReminder");
 
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
@@ -79,7 +79,7 @@ startObservable.subscribe(function()
     clearTimeout(time_reminder);
     clearTimeout(time);
     clearTimeout(start_reminder_button);
-    disableButtonReminder(buttonReminder);
+    disableButtonReminder(buttonRem);
     recorder.stop();
     if(player.isPlaying())
       player.cancel();
@@ -91,12 +91,12 @@ startObservable.subscribe(function()
       disableKeyboard();
       keyboard = false;
     }
-    buttonKeyboard(buttonKeyboard); //disabilita pulsante per inserimento tramite tastiera
+    buttonKeyboard(buttonKey); //disabilita pulsante per inserimento tramite tastiera
   }
   else
   {
     recorder.enable();
-    buttonKeyboard(buttonKeyboard); //abilita pulsante per inserimento tramite tastiera
+    buttonKeyboard(buttonKey); //abilita pulsante per inserimento tramite tastiera
   }
   enabled = !enabled;
   changeValueButton();
@@ -205,7 +205,7 @@ function vocalInit()
       {
         start_time = setTimeout(() =>
         {
-          enableButtonReminder(buttonReminder);
+          enableButtonReminder(buttonRem);
         }, start_reminder_button);
       }
       player.speak(response.res.text_response);
@@ -273,7 +273,7 @@ function textInit()
       {
         start_time = setTimeout(() =>
         {
-          enableButtonReminder(buttonReminder);
+          enableButtonReminder(buttonRem);
         }, start_reminder_button);
       }
       player.speak(response.res.text_response);
@@ -289,7 +289,7 @@ function textInit()
 
 function reminderInit()
 {
-  disableButtonReminder(buttonReminder);
+  disableButtonReminder(buttonRem);
   clearTimeout(time);
   if(player.isPlaying())
     player.cancel();
@@ -320,7 +320,7 @@ function reminderInit()
       player.speak(response.res.text_response);
       time_reminder = setTimeout(() =>
       {
-        enableButtonReminder(buttonReminder);
+        enableButtonReminder(buttonRem);
       }, disable_reminder_time);
       time = setTimeout(() =>
       {
