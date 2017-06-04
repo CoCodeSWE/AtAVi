@@ -32,12 +32,14 @@ class GuestsDAODynamoDB
       {
         TableName: self.table,
         Item:  mapProperties(guest, attr_map),
-				ConditionExpression: 'attribute_not_exists(guest_name) && attribute_not_exists(company)'
+				ConditionExpression: 'attribute_not_exists(guest_name) AND attribute_not_exists(company)'
       };
       self.client.put(params, function(err, data)
       {
-        if(err)
+        if(err){
+          console.log("putguest",params);
           observer.error(err);
+        }
         else
           observer.complete();
       });
@@ -51,7 +53,6 @@ class GuestsDAODynamoDB
 	*/
   getGuest(name,company)
   {
-    console.log("GUEST: "+name+ " "+company);
     let self = this;
     return new Rx.Observable(function(observer)
     {
@@ -64,13 +65,14 @@ class GuestsDAODynamoDB
           "company": company
         }
       };
-      console.log(params);
       self.client.get(params, function(err, data)
       {
-        if(err)
+        if(err){
+          console.log("getguest",err,params);
           observer.error(err);
+        }
 				else if(!data.Item)
-					observer.error({ code: 'Not found' });
+					observer.error({ code: 404, msg: 'Not found' });
         else
 				{
           observer.next(mapProperties(data.Item, reverse_attr_map));
@@ -155,8 +157,10 @@ class GuestsDAODynamoDB
       self.client.put(params, function(err, data)
       {
         if(err)
+        {
+          console.log("updgaegues err",err);
           observer.error(err);
-        else
+        }else
           observer.complete();
       });
     });

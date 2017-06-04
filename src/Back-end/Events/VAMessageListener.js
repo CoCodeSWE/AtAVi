@@ -45,7 +45,11 @@ class VAMessageListener
     let params = message.res.contexts ? message.res.contexts[0].parameters : null;
     if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
-    let rules_query = '?target.name=' +  encodeURIComponent(params.name) + '&target.company=' + encodeURIComponent(params.company);
+
+		let name_required_person = params.required_person.toLowerCase();
+		let guest_name = params.name.toLowerCase();
+		let company_name = params.company.toLowerCase();
+    let rules_query = '?target.name=' +  encodeURIComponent(guest_name) + '&target.company=' + encodeURIComponent(company_name);
     /**
      ** @todo abilitare questi parametri della query quando rules è sistemato
     if(params.required_person)
@@ -116,9 +120,9 @@ class VAMessageListener
 
   saveConversation(event, context, callback)
   {
-    console.log(JSON.stringify(event, null, 2));
-		let self = this;
-		let message;
+    console.log("event saveConv", JSON.stringify(event, null, 2));
+	let self = this;
+	let message;
     try
     {
       message  = JSON.parse(event.Records[0].Sns.Message);
@@ -128,16 +132,86 @@ class VAMessageListener
       callback(err);
       return;
     }
-		let session_id = message.session_id;
+	  let session_id = message.session_id;
+		console.log("message params",message);
+
     let params = message.res.contexts ? message.res.contexts[0].parameters : null;
-    if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+    if(! (params && params.name && params.company && params.required_person && (params.confirm_required_person === 'true' || !params.confirm_required_person)))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+		{
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
-    this.conversations.addMessage([message.res.text_request, message.res.text_response], session_id).subscribe(
+			return;
+		}
+
+		let name_required_person = params.required_person.toLowerCase();
+		let guest_name = params.name.toLowerCase();
+		let company_name = params.company.toLowerCase();
+		console.log(name_required_person);
+		// => tutto in minuscolo e senza spazi (es: Mario Rossi => mariorossi).
+
+    self.conversations.addMessages([message.res.text_request, message.res.text_response], session_id).subscribe(
     {
       complete: () => callback(null),
-      error: callback
+      error: (err) =>
+      {
+			  if(err.message === "The provided expression refers to an attribute that does not exist in the item")
+			  { // abbiamo tentato di aggiungere un messaggio ad una conversazione non esistente
+				console.log("abbiamo tentato di aggiungere un messaggio ad una conversazione non esistente. In questo punto dovremmo anche registrare l'ospite");
+				self.guests.addGuest({"guest_name": guest_name, "company": company_name}).subscribe(
+					{
+						complete: () => // se l'aggiunta ha avuto successo => era la prima registrazione dell'ospite
+						{
+							console.log("complete addguest save conv");
+							let met = {};
+							let guest = {"guest_name": guest_name, "company": company_name, "met": met, "food": 0, "technology": 0, "sport": 0, "general": 0};
+							guest.met[name_required_person] = 1;
+							self.guests.updateGuest(guest).subscribe(
+								{
+									error: (err) =>
+									{
+										console.log("error update guest complete",err);
+									}
+								});
+						},
+						error: (err) => // se l'aggiunta ha avuto un errore => vuol dire che il guest è già stato registrato
+						{
+							console.log("addguest error", err);
+							if(err.code === "ConditionalCheckFailedException")
+							{
+								self.guests.getGuest(guest_name, company_name).subscribe(
+								{
+									next: (item) =>
+									{
+										console.log("in condition error")
+										if(name_required_person && !item.met[name_required_person])
+										{
+											item.met[name_required_person] = 1;
+											console.log("name req && !array",item);
+											self.guests.updateGuest(item).subscribe(
+												{
+													error: (err) =>
+													{
+													 console.log("err update guest error",err);
+												 	}
+												});
+										}
+										else if(name_required_person)
+										{
+											item.met[name_required_person]++;
+											console.log("name req",item);
+											self.guests.updateGuest(item).subscribe({err: console.log});
+										}
+									}
+								});
+							}
+						}
+					});
+				self.conversations.addConversation({"guest_name":guest_name,"company":company_name,"session_id": session_id, "messages":[]}).subscribe({err: console.log});
+			  }
+			  else
+					callback();
+	  }
     });
-  }
+   }
 
   updateGuest(event, context, callback)
   {
@@ -157,16 +231,20 @@ class VAMessageListener
     let params = message.res.contexts ? message.res.contexts[0].parameters : null;
     if(! (params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
+
+		let name_required_person = params.required_person.toLowerCase();
+		let guest_name = params.name.toLowerCase();
+		let company_name = params.company.toLowerCase();
     if(params.request)
     {
       let guest = null;
-      this.guests.getGuest(params.name, params.company).subscribe(
+      this.guests.getGuest(guest_name, company_name).subscribe(
       {
         next: (data) => {guest = data},
         error: (err) =>
         {
           if(err.code === 404)  //non esiste ancora questo ospite, lo creaimo
-            guest = { name: params.name, company: params.company, welcome: { coffee: 0, drink: {}, person: {}, general: null } }
+            guest = { name: guest_name, company: company_name, welcome: { coffee: 0, drink: {}, person: {}, general: null } }
         }
       })
       if(!guest)

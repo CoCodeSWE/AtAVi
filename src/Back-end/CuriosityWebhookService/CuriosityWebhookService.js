@@ -103,9 +103,12 @@ class CuriosityWebhookService
 
 _sportCuriosity(body, context)
 {
+  let guest_name = body.result.parameters.name.toLowerCase();
+  let company_name = body.result.parameters.company.toLowerCase();
+  console.log(guest_name,company_name);
   let guest = {};
   let curiosity_from_db = {};
-  let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+  let observable_guest = this.guests.getGuest(guest_name, company_name);
   observable_guest.subscribe(
   {
     next: (data) => {guest = data;console.log("guest")},
@@ -122,7 +125,8 @@ _sportCuriosity(body, context)
           error: (err) =>
           {
             console.log(err);
-            if(err.code && err.code === 'Not found'){
+            if(err.code && err.code === 'Not found')
+            {
               console.log(err.code);
               context.succeed(
                 {
@@ -176,9 +180,11 @@ _sportCuriosity(body, context)
 
 _technologyCuriosity(body, context)
 {
+let guest_name = body.result.parameters.name.toLowerCase();
+let company_name = body.result.parameters.company.toLowerCase();
 let guest = {};
 let curiosity_from_db = {};
-let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+let observable_guest = this.guests.getGuest(guest_name, company_name);
 observable_guest.subscribe(
 {
     next: (data) => {guest = data;},
@@ -246,9 +252,11 @@ observable_guest.subscribe(
 
 _foodCuriosity(body, context)
 {
+let guest_name = body.result.parameters.name.toLowerCase();
+let company_name = body.result.parameters.company.toLowerCase();
 let guest = {};
 let curiosity_from_db = {};
-let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+let observable_guest = this.guests.getGuest(guest_name, company_name);
 observable_guest.subscribe(
 {
     next: (data) => {guest = data;},
@@ -316,9 +324,11 @@ observable_guest.subscribe(
 
 _generalCuriosity(body, context)
 {
+let guest_name = body.result.parameters.name.toLowerCase();
+let company_name = body.result.parameters.company.toLowerCase();
 let guest = {};
 let curiosity_from_db = {};
-let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+let observable_guest = this.guests.getGuest(guest_name, company_name);
 observable_guest.subscribe(
 {
   next: (data) => {guest = data;},
@@ -386,9 +396,11 @@ se l'utente ha detto che non gli piace il cibo (lo capiamo tramite una appostia 
 
 _firstGeneralCuriosity(body, context)
 {
+  let guest_name = body.result.parameters.name.toLowerCase();
+  let company_name = body.result.parameters.company.toLowerCase();
   let guest = {};
   let curiosity_from_db = {};
-  let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+  let observable_guest = this.guests.getGuest(guest_name, company_name);
   observable_guest.subscribe(
   {
     next: (data) => {guest = data;},
@@ -457,9 +469,11 @@ _firstGeneralCuriosity(body, context)
 
 _foodEmptyCuriosity(body, context)
 {
+  let guest_name = body.result.parameters.name.toLowerCase();
+  let company_name = body.result.parameters.company.toLowerCase();
   let guest = {};
   let curiosity_from_db = {};
-  let observable_guest = this.guests.getGuest(body.result.parameters.name, body.result.parameters.company);
+  let observable_guest = this.guests.getGuest(guest_name, company_name);
   observable_guest.subscribe(
   {
     next: (data) => {guest = data;},

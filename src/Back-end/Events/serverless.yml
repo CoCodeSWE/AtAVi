@@ -18,7 +18,27 @@ provider:
     NOTIFICATIONS_SERVICE_URL: ${file(secret.yml):notifications.url}
     NOTIFICATIONS_SERVICE_KEY: ${file(secret.yml):notifications.key}
     DEFAULT_CHANNEL: ${file(secret.yml):notifications.default_channel}
-
+    CONVERSATIONS_TABLE: Conversations-${opt:stage, self:provider.stage}
+    GUESTS_TABLE: Guests-${opt:stage, self:provider.stage}  
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CONVERSATIONS_TABLE}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.GUESTS_TABLE}"  
 functions:
   notify:
     handler: handler.notify

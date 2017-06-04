@@ -108,7 +108,7 @@ class UserHandler extends CmdRunner
                 error: reject,
                 complete: function()
                 {
-                  query.event.data = { users: users.users, username: params.username };
+                  query.event.data = { users: JSON.stringify(users.users, null, 2), username: params.username };
                   resolve(query);
                 }
               });
