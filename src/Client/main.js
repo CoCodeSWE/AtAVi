@@ -154,6 +154,11 @@ function vocalInit()
   {
     next: function(playing)
     {
+      if (keyboard)
+      {
+        keyboard = false;
+        vocalInit();
+      }
       console.log('Player next', playing);
       if(!playing && enabled)
         recorder.enable();
@@ -194,10 +199,7 @@ function vocalInit()
     {
       if (keyboard)
       {
-        keyboard = !keyboard;
-        recorder.enable();
         disableKeyboard();
-        vocalInit();
       }
       console.log('logic next');
       data = response.res.data;
@@ -268,7 +270,6 @@ function textInit()
       if (keyboard)
       {
         keyboard = !keyboard;
-        recorder.enable();
         disableKeyboard();
         vocalInit();
       }
