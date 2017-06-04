@@ -45,13 +45,13 @@ let logic = new Logic();
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
-let patt = new RegExp("Can I tell you something?"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
+let patt = new RegExp("Do you like sport?"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
 let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
 let time_reminder = null; // timeout per riabilitare il bottone del sollecito
 let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
-let max_silence_time = 40000;
+let max_silence_time = 90000;
 let refresh_reminder_time = 20000;
-let start_reminder_button = 10000;
+let start_reminder_button = 30000;
 let buttonKey = document.getElementById("buttonKeyboard");
 let buttonRem = document.getElementById("buttonReminder");
 
@@ -323,7 +323,7 @@ function reminderInit()
       time_reminder = setTimeout(() =>
       {
         enableButtonReminder(buttonRem);
-      }, disable_reminder_time);
+      }, refresh_reminder_time);
       time = setTimeout(() =>
       {
         resetInterface();
