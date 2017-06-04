@@ -192,6 +192,13 @@ function vocalInit()
   {
     next: function(response)
     {
+      if (keyboard)
+      {
+        keyboard = !keyboard;
+        recorder.enable();
+        disableKeyboard();
+        vocalInit();
+      }
       console.log('logic next');
       data = response.res.data;
       let action = response.action.split('.');
@@ -258,6 +265,13 @@ function textInit()
   {
     next: function(response)
     {
+      if (keyboard)
+      {
+        keyboard = !keyboard;
+        recorder.enable();
+        disableKeyboard();
+        vocalInit();
+      }
       console.log('logic next');
       data = response.res.data;
       let action = response.action.split('.');
@@ -311,6 +325,13 @@ function reminderInit()
   {
     next: function(response)
     {
+      if (keyboard)
+      {
+        keyboard = !keyboard;
+        recorder.enable();
+        disableKeyboard();
+        vocalInit();
+      }
       console.log('logic next');
       data = response.res.data;
       let action = response.action.split('.');
