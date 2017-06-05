@@ -76,7 +76,7 @@ startObservable.subscribe(function()
   {
     clearTimeout(time);
     clearTimeout(start_reminder_button);
-    disableButtonReminder(buttonRem);
+    enableButtonReminder(buttonRem);
     recorder.stop();
     if(player.isPlaying())
       player.cancel();
