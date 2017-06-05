@@ -47,10 +47,8 @@ let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
 let patt = new RegExp("Do you like sport?"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
 let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
-let time_reminder = null; // timeout per riabilitare il bottone del sollecito
 let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
 let max_silence_time = 90000;
-let refresh_reminder_time = 20000;
 let start_reminder_button = 30000;
 let buttonKey = document.getElementById("buttonKeyboard");
 let buttonRem = document.getElementById("buttonReminder");
@@ -76,7 +74,6 @@ startObservable.subscribe(function()
 {
   if(enabled)
   {
-    clearTimeout(time_reminder);
     clearTimeout(time);
     clearTimeout(start_reminder_button);
     disableButtonReminder(buttonRem);
@@ -358,10 +355,6 @@ function reminderInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
-      time_reminder = setTimeout(() =>
-      {
-        enableButtonReminder(buttonRem);
-      }, refresh_reminder_time);
       time = setTimeout(() =>
       {
         resetInterface();
@@ -380,7 +373,6 @@ function clearSubscriptions()
 function resetInterface()
 {
   clearTimeout(time);
-  clearTimeout(time_reminder);
   enabled = !enabled;
   changeValueButton();
   recorder.stop();

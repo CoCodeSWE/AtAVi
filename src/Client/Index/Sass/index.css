@@ -92,7 +92,7 @@ body {
 
 .buttonReminder {
   margin: 0 auto;
-  display: inline-flex;
+  display: none;
   width: 13%;
   height: 30%;
   background-size: 100% 100%;

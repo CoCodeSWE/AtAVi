@@ -56,10 +56,10 @@ function buttonKeyboard(button)
 
 function enableButtonReminder(button)
 {
-  button.disabled = false;
+  button.style.display = "inline-flex";
 }
 
 function disableButtonReminder(button)
 {
-  button.disabled = true;
+  button.style.display = "none";
 }
