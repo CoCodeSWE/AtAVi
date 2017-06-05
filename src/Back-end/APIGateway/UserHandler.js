@@ -277,9 +277,6 @@ class UserHandler extends CmdRunner
 			{
 				next: function(user)
 				{
-					console.log('prima');
-					console.log(user);
-					console.log('dopo');
 					console.log(user);
 					if(user.sr_id)
 					{
