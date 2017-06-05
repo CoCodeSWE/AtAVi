@@ -315,7 +315,7 @@ class RulesService
 
 		// Parametro contenente i dati relativi alla rule da aggiungere
 		let params = objectFilter(rule, ['enabled', 'targets', 'task', 'override','type']);
-		params.id = event.pathParameters.name.replace(/%20/g, ' ');
+		params.name = event.pathParameters.name.replace(/%20/g, ' ');
 
 		this.rules.updateRule(params).subscribe(
 		{
