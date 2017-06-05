@@ -43,8 +43,7 @@ class VocalLoginMicrosoftModule
 				{
 					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
-				body: audio,
-				json: true // Automaticamente passa un JSON come risposta (non serve fare JSON.parse)
+				body: audio
 			};
 
 			self.request_promise(options).then(function()

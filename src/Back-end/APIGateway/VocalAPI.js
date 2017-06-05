@@ -25,7 +25,7 @@ class VocalAPI
   */
   constructor(vocal, jwt, rp, stt, sns, runner)
   {
-    //this.vocal = vocal;
+    this.vocal = vocal;
     this.request_promise = rp;
     //this.sns = sns;
     this.stt = stt;

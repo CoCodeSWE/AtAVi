@@ -47,9 +47,10 @@ class UserHandler extends CmdRunner
                 username: params.user_username
               }).subscribe(
               {
-                complete: () => { resolve(query);},
+								complete: () => { resolve(query); },
                 error: (err) =>
 								{
+									console.log(err);
 									query.event.name = "error409_user";
 									query.event.data = { username: params.username, user_username: params.user_username };
 									resolve(query);
@@ -62,10 +63,10 @@ class UserHandler extends CmdRunner
           case 'user.addEnrollment':
             if(body.app === 'admin')
             {
-              query.event = {name: "addUserEnrollmentSuccess", data: {}};
-              this._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
+              query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
+              this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
               {
-                complete: () => { resolve(query);},
+                complete: () => { resolve(query); },
                 error: reject
               });
             }
@@ -79,7 +80,7 @@ class UserHandler extends CmdRunner
               query.event = {name: 'getUserSuccess'};
               this._getUser(params.user_username).subscribe(
               {
-                next: (data) => {user = data;},
+                next: (data) => {user = data; },
                 error: (err) =>
 								{
 									query.event.name = "error404";
@@ -164,16 +165,13 @@ class UserHandler extends CmdRunner
           case 'user.resetEnrollments':
             if(body.app === 'admin')
             {
-              query.event = {name: "resetUserEnrollmentsSuccess"};
-              this._resetUserEnrollments(params.username).subscribe(
-              {
-                complete: () =>
-                {
-                  resolve(query);
-                },
-                error: reject
-              });
-            }
+              query.event = {name: "resetUserEnrollmentsSuccess", data: { username: params.username } };
+							this._resetUserEnrollments(params.user_username).subscribe(
+							{
+								error: reject,
+								complete: () => { resolve(query); }
+							});
+						}						
             else
               reject(WRONG_APP);
             break;
@@ -182,8 +180,6 @@ class UserHandler extends CmdRunner
             {
               query.event = { name: 'userUpdateSuccess', data: { username: params.username } };
               let user;
-							console.log('Andiamo a fare un update');
-							console.log(params);
               this._getUser(params.user_username).subscribe(
               {
                 next: (data) =>
@@ -232,26 +228,37 @@ class UserHandler extends CmdRunner
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			let options =
+			self.vocal.createUser().subscribe(
 			{
-				method: 'POST',
-				uri: USERS_SERVICE_URL,
-        headers:{'x-api-key': USERS_SERVICE_KEY},
-				body: user,
-				json: true
-			};
-
-			self.request_promise(options).then(function(data)
-			{
-				observer.complete();
-			})
-			.catch(function(err)
-			{
-				observer.error(
+				next: (data) =>
 				{
-					code: err.statusCode,
-					msg: err.message
-				});
+					if(!user.sr_id)
+						user.sr_id = data.verificationProfileId;
+				},
+				error: (err) =>
+				{
+					observer.error(err);
+				},
+				complete: () =>
+				{
+					let options =
+					{
+						method: 'POST',
+						uri: USERS_SERVICE_URL,
+						headers:{'x-api-key': USERS_SERVICE_KEY},
+						body: user,
+						json: true
+					};
+
+					self.request_promise(options).then(function(data)
+					{
+						observer.complete();
+					})
+					.catch(function(err)
+					{
+						observer.error(err);
+					});
+				}
 			});
 		});
   }
@@ -270,8 +277,14 @@ class UserHandler extends CmdRunner
 			{
 				next: function(user)
 				{
+					console.log('prima');
+					console.log(user);
+					console.log('dopo');
+					console.log(user);
 					if(user.sr_id)
+					{
 						id_user = user.sr_id;
+					}
 					else
 					{
 						observer.error(
@@ -335,7 +348,7 @@ class UserHandler extends CmdRunner
         headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
-
+			console.log(options);
 			self.request_promise(options).then(function(data)
 			{
         observer.next(data);
