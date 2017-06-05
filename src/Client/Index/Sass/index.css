@@ -94,6 +94,7 @@ body {
   margin: 0 auto;
   width: 13%;
   height: 30%;
+  display: none;
   background-size: 100% 100%;
   background-color: transparent;
   background-image: url("../Image/reminder.png");
@@ -125,8 +126,9 @@ body {
 #imgSollecito {
   height: 8em;
   position: absolute;
-  left: 64%;
-  top: 83%;
+  left: 55em;
+  top: 37em;
+  display: none;
 }
 
 #staticTitleApp {

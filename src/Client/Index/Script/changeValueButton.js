@@ -63,3 +63,15 @@ function disableButtonReminder(button)
 {
   button.style.display = "none";
 }
+
+function showAlert()
+{
+  setTimeout(showAlert,5000);
+  document.getElementById('imgSollecito').style.display = "inherit";
+  setTimeout(hideAlert,5000);
+}
+
+function hideAlert()
+{
+  document.getElementById('imgSollecito').style.display = "none";
+}
