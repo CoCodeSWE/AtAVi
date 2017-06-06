@@ -51,9 +51,18 @@ class UserHandler extends CmdRunner
                 error: (err) =>
 								{
 									console.log(err);
-									query.event.name = "error409_user";
-									query.event.data = { username: params.username, user_username: params.user_username };
-									resolve(query);
+									if(err.code === 409)
+									{
+										query.event.name = "error409_user";
+										query.event.data = { username: params.username, user_username: params.user_username };
+										resolve(query);
+									}
+									else
+									{
+										query.event.name = "error500";
+										query.event.data = { username: params.username };
+										resolve(query);
+									}
 								}
               });
             }
@@ -266,7 +275,11 @@ class UserHandler extends CmdRunner
 				},
 				error: (err) =>
 				{
-					observer.error(err);
+					observer.error(
+					{
+						code: err.statusCode,
+						msg: err.message
+					});
 				},
 				complete: () =>
 				{
@@ -285,7 +298,13 @@ class UserHandler extends CmdRunner
 					})
 					.catch(function(err)
 					{
-						observer.error(err);
+						// Elimino sr_id precedentemente creato perchè l'utente non è stato inserito nel DB
+						self.vocal.deleteUser(user.sr_id).subscribe({});
+						observer.error(
+						{
+							code: err.statusCode,
+							msg: err.message
+						});
 					});
 				}
 			});
