@@ -12,17 +12,10 @@ function changeValueButton()
   }
 }
 
-function toggleKeyboard()
-{
-  if(document.getElementById( 'textMsg' ).style.display === 'inherit')
-    document.getElementById( 'textMsg' ).style.display = 'none';
-  else
-    document.getElementById( 'textMsg' ).style.display = 'inherit';
-}
-
 function enableKeyboard()
 {
   document.getElementById( 'textMsg' ).style.display = 'inherit';
+  document.getElementById( 'inputText' ).focus();
 }
 
 function disableKeyboard()
@@ -57,6 +50,7 @@ function buttonKeyboard(button)
 function enableButtonReminder(button)
 {
   button.style.display = "inline-flex";
+  showAlert();
 }
 
 function disableButtonReminder(button)
@@ -66,12 +60,9 @@ function disableButtonReminder(button)
 
 function showAlert()
 {
-  setTimeout(showAlert,5000);
   document.getElementById('imgSollecito').style.display = "inherit";
-  setTimeout(hideAlert,5000);
-}
-
-function hideAlert()
-{
-  document.getElementById('imgSollecito').style.display = "none";
+  setTimeout(() =>
+  {
+    document.getElementById('imgSollecito').style.display = "none";
+  },8000);
 }
