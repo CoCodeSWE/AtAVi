@@ -37,6 +37,7 @@ class ApiAiVAAdapter
 	{
 		if(this.agent === null)
 			return Promise.reject({'error': 'Agent not defined'});
+		console.log("data ApiAiadapter query");
     console.log("data: ", JSON.stringify(data, null, 2));
 		let options =
 		{

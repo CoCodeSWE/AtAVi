@@ -152,7 +152,10 @@ class VocalLoginMicrosoftModule
 				if(data.result === 'Accept' && mapConfidence[data.confidence] >= self.min_confidence)
 					observer.complete();
 				else
+        {
+          console.log("LOGIN FALLITO "+ERROR_CODES.LOGIN_FAILED);
 					observer.error({error: ERROR_CODES.LOGIN_FAILED});
+        }
 			})
 			.catch(function(err)
 			{

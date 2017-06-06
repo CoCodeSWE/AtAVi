@@ -47,12 +47,22 @@ class UserHandler extends CmdRunner
                 username: params.user_username
               }).subscribe(
               {
-                complete: () => { resolve(query);},
+								complete: () => { resolve(query); },
                 error: (err) =>
 								{
-									query.event.name = "error409_user";
-									query.event.data = { username: params.username, user_username: params.user_username };
-									resolve(query);
+									console.log(err);
+									if(err.code === 409)
+									{
+										query.event.name = "error409_user";
+										query.event.data = { username: params.username, user_username: params.user_username };
+										resolve(query);
+									}
+									else
+									{
+										query.event.name = "error500";
+										query.event.data = { username: params.username };
+										resolve(query);
+									}
 								}
               });
             }
@@ -62,25 +72,41 @@ class UserHandler extends CmdRunner
           case 'user.addEnrollment':
             if(body.app === 'admin')
             {
-              query.event = {name: "addUserEnrollmentSuccess", data: {}};
-              this._addUserEnrollment({audio: body.audio, username: params.username}).subscribe(
+              query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
+              this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
               {
-                complete: () => { resolve(query);},
-                error: reject
+                complete: () => { resolve(query); },
+                error: (err) =>
+								{
+									if(err.code === 400 || err.message === 'TooNoisy')
+									{
+										query.event.name = 'addUserEnrollmentFailure';
+										resolve(query);
+									}
+									else if(err.code === 404)
+									{
+										query.event.name = 'error404';
+										resolve(query);
+									}
+									else
+									{
+										query.event.name = 'error500';
+										resolve(query);
+									}
+								}
               });
             }
             else
               reject(WRONG_APP);
             break;
           case 'user.get':
-            console.log(body.app);
             if(body.app === 'admin')
             {
               let user;
               query.event = {name: 'getUserSuccess'};
               this._getUser(params.user_username).subscribe(
               {
-                next: (data) => {user = data;},
+                next: (data) => {user = data; },
                 error: (err) =>
 								{
 									query.event.name = "error404";
@@ -89,7 +115,7 @@ class UserHandler extends CmdRunner
 								},
                 complete: () =>
                 {
-                  query.event.data = { user: JSON.stringify(user, null, 2) };
+                  query.event.data = { user: JSON.stringify(user, null, 2), username: params.username };
                   resolve(query);
                 }
               });
@@ -131,7 +157,7 @@ class UserHandler extends CmdRunner
                 {
                   if(err.error === 2)
                   {
-                    query.event = {name: 'loginUserFailure'};
+                    query.event = { name: 'loginUserSuccess', data: {'username': params.username, 'name': params.name, 'text': 'Your voice doesn\'t match with voice print. Repeat recognition phrase, please.'}}
                     resolve(query);
                   }
                   else
@@ -165,16 +191,25 @@ class UserHandler extends CmdRunner
           case 'user.resetEnrollments':
             if(body.app === 'admin')
             {
-              query.event = {name: "resetUserEnrollmentsSuccess"};
-              this._resetUserEnrollments(params.username).subscribe(
-              {
-                complete: () =>
-                {
-                  resolve(query);
-                },
-                error: reject
-              });
-            }
+              query.event = {name: "resetUserEnrollmentsSuccess", data: { username: params.username } };
+							this._resetUserEnrollments(params.user_username).subscribe(
+							{
+								error: (err) =>
+								{
+									if(err.code === 404)
+									{
+										query.event.name = 'error404';
+										resolve(query);
+									}
+									else
+									{
+										query.event.name = 'error500';
+										resolve(query);
+									}
+								},
+								complete: () => { resolve(query); }
+							});
+						}
             else
               reject(WRONG_APP);
             break;
@@ -188,8 +223,7 @@ class UserHandler extends CmdRunner
                 next: (data) =>
                 {
                   user = data;
-                  if(params.name)
-                    user.name = params.name;
+                  user.name = params.name;
                 },
                 error: (err) =>
 								{
@@ -232,26 +266,47 @@ class UserHandler extends CmdRunner
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
-			let options =
+			self.vocal.createUser().subscribe(
 			{
-				method: 'POST',
-				uri: USERS_SERVICE_URL,
-        headers:{'x-api-key': USERS_SERVICE_KEY},
-				body: user,
-				json: true
-			};
-
-			self.request_promise(options).then(function(data)
-			{
-				observer.complete();
-			})
-			.catch(function(err)
-			{
-				observer.error(
+				next: (data) =>
 				{
-					code: err.statusCode,
-					msg: err.message
-				});
+					if(!user.sr_id)
+						user.sr_id = data.verificationProfileId;
+				},
+				error: (err) =>
+				{
+					observer.error(
+					{
+						code: err.statusCode,
+						msg: err.message
+					});
+				},
+				complete: () =>
+				{
+					let options =
+					{
+						method: 'POST',
+						uri: USERS_SERVICE_URL,
+						headers:{'x-api-key': USERS_SERVICE_KEY},
+						body: user,
+						json: true
+					};
+
+					self.request_promise(options).then(function(data)
+					{
+						observer.complete();
+					})
+					.catch(function(err)
+					{
+						// Elimino sr_id precedentemente creato perchè l'utente non è stato inserito nel DB
+						self.vocal.deleteUser(user.sr_id).subscribe({});
+						observer.error(
+						{
+							code: err.statusCode,
+							msg: err.message
+						});
+					});
+				}
 			});
 		});
   }
@@ -270,8 +325,11 @@ class UserHandler extends CmdRunner
 			{
 				next: function(user)
 				{
+					console.log(user);
 					if(user.sr_id)
+					{
 						id_user = user.sr_id;
+					}
 					else
 					{
 						observer.error(
@@ -286,8 +344,8 @@ class UserHandler extends CmdRunner
 				{
 					observer.error(
 					{
-						code: err.statusCode,
-						msg: err.message
+						code: 404,
+						msg: 'Not found'
 					});
 				},
 
@@ -325,7 +383,6 @@ class UserHandler extends CmdRunner
 	*/
   _getUser(username)
   {
-    console.log(username);
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
@@ -336,7 +393,7 @@ class UserHandler extends CmdRunner
         headers:{'x-api-key': USERS_SERVICE_KEY},
 				json: true
 			};
-
+			console.log(options);
 			self.request_promise(options).then(function(data)
 			{
         observer.next(data);
@@ -517,8 +574,8 @@ class UserHandler extends CmdRunner
 				{
 					observer.error(
 					{
-						code: err.statusCode,
-						msg: err.message
+						code: 404,
+						msg: 'Not found'
 					});
 				},
 
