@@ -63,6 +63,7 @@ class UserHandler extends CmdRunner
           case 'user.addEnrollment':
             if(body.app === 'admin')
             {
+							console.log('ci sono e ora stampo params');
 							console.log(params);
               query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
               this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
