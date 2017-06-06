@@ -63,13 +63,28 @@ class UserHandler extends CmdRunner
           case 'user.addEnrollment':
             if(body.app === 'admin')
             {
-							console.log('ci sono e ora stampo params');
-							console.log(params);
               query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
               this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
               {
                 complete: () => { resolve(query); },
-                error: reject
+                error: (err) => 
+								{
+									if(err.code === 400 || err.message === 'TooNoisy')
+									{
+										query.event.name = 'addUserEnrollmentFailure';
+										resolve(query);
+									}
+									else if(err.code === 404)
+									{
+										query.event.name = 'error404';
+										resolve(query);
+									}
+									else
+									{
+										query.event.name = 'error500';
+										resolve(query);
+									}
+								}
               });
             }
             else
@@ -170,7 +185,19 @@ class UserHandler extends CmdRunner
               query.event = {name: "resetUserEnrollmentsSuccess", data: { username: params.username } };
 							this._resetUserEnrollments(params.user_username).subscribe(
 							{
-								error: reject,
+								error: (err) =>
+								{
+									if(err.code === 404)
+									{
+										query.event.name = 'error404';
+										resolve(query);
+									}
+									else
+									{
+										query.event.name = 'error500';
+										resolve(query);
+									}
+								},
 								complete: () => { resolve(query); }
 							});
 						}						
@@ -298,8 +325,8 @@ class UserHandler extends CmdRunner
 				{
 					observer.error(
 					{
-						code: err.statusCode,
-						msg: err.message
+						code: 404,
+						msg: 'Not found'
 					});
 				},
 
@@ -528,8 +555,8 @@ class UserHandler extends CmdRunner
 				{
 					observer.error(
 					{
-						code: err.statusCode,
-						msg: err.message
+						code: 404,
+						msg: 'Not found'
 					});
 				},
 
