@@ -42,9 +42,16 @@ function toggleLoading()
   }
 }
 
-function buttonKeyboard(button)
+function enableButtonKeyboard(button)
 {
-  button.disabled = !button.disabled;
+  button.disabled = false;
+  button.style.opacity = "1";
+}
+
+function disableButtonKeyboard(button)
+{
+  button.disabled = true;
+  button.style.opacity = "0.2";
 }
 
 function enableButtonReminder(button)

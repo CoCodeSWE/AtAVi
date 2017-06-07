@@ -87,12 +87,12 @@ startObservable.subscribe(function()
       disableKeyboard();
       keyboard = false;
     }
-    buttonKeyboard(buttonKey); //disabilita pulsante per inserimento tramite tastiera
+    disableButtonKeyboard(buttonKey); //disabilita pulsante per inserimento tramite tastiera
   }
   else
   {
     recorder.enable();
-    buttonKeyboard(buttonKey); //abilita pulsante per inserimento tramite tastiera
+    enableButtonKeyboard(buttonKey); //abilita pulsante per inserimento tramite tastiera
   }
   enabled = !enabled;
   changeValueButton();
@@ -188,21 +188,32 @@ function vocalInit()
   {
     next: function(response)
     {
+      disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
       if (keyboard)
       {
         clearSubscriptions();
         disableKeyboard();
-        buttonKeyboard(buttonKey); // disabilito pulsante tastiera
         player.getObservable().subscribe(
         {
           next: (playing) =>
           {
             if(keyboard && !playing)
             {
-              buttonKeyboard(buttonKey); // abilito pulsante tastiera
               keyboard = false;
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
               vocalInit();
             }
+          }
+        });
+      }
+      else
+      {
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if (!playing)
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
           }
         });
       }
@@ -276,14 +287,14 @@ function textInit()
       {
         clearSubscriptions();
         disableKeyboard();
-        buttonKeyboard(buttonKey); // disabilito pulsante tastiera
+        disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
         player.getObservable().subscribe(
         {
           next: (playing) =>
           {
             if(keyboard && !playing)
             {
-              buttonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
               keyboard = false;
               vocalInit();
             }
@@ -387,5 +398,5 @@ function resetInterface()
     keyboard = false;
     disableKeyboard();
   }
-  buttonKeyboard(buttonKeyboard);
+  disableButtonKeyboard(buttonKeyboard);
 }
