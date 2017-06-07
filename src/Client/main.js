@@ -192,12 +192,14 @@ function vocalInit()
       {
         clearSubscriptions();
         disableKeyboard();
+        buttonKeyboard(buttonKey); // disabilito pulsante tastiera
         player.getObservable().subscribe(
         {
           next: (playing) =>
           {
             if(keyboard && !playing)
             {
+              buttonKeyboard(buttonKey); // abilito pulsante tastiera
               keyboard = false;
               vocalInit();
             }
@@ -274,12 +276,14 @@ function textInit()
       {
         clearSubscriptions();
         disableKeyboard();
+        buttonKeyboard(buttonKey); // disabilito pulsante tastiera
         player.getObservable().subscribe(
         {
           next: (playing) =>
           {
             if(keyboard && !playing)
             {
+              buttonKeyboard(buttonKey); // abilito pulsante tastiera
               keyboard = false;
               vocalInit();
             }
