@@ -43,8 +43,7 @@ class VocalLoginMicrosoftModule
 				{
 					'Ocp-Apim-Subscription-Key': self.key	// Credenziali per accedere al servizio
 				},
-				body: audio,
-				json: true // Automaticamente passa un JSON come risposta (non serve fare JSON.parse)
+				body: audio
 			};
 
 			self.request_promise(options).then(function()
@@ -148,15 +147,18 @@ class VocalLoginMicrosoftModule
 			self.request_promise(options).then(function(response)
 			{
         let data = JSON.parse(response);
-        console.log('data: ', data);
+        console.log('data doLogin: ', data, data.alternatives);
 				if(data.result === 'Accept' && mapConfidence[data.confidence] >= self.min_confidence)
 					observer.complete();
 				else
+        {
+          console.log("LOGIN FALLITO "+ERROR_CODES.LOGIN_FAILED);
 					observer.error({error: ERROR_CODES.LOGIN_FAILED});
+        }
 			})
 			.catch(function(err)
 			{
-        console.log('err: ', err);
+        console.log('err doLogin: ', err);
         let error = {error: ERROR_CODES.REQUEST_ERROR, statusCode: err.statusCode};
 				observer.error(error);
 			});

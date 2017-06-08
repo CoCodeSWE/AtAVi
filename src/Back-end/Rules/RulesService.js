@@ -33,7 +33,7 @@ class RulesService
         return;
     }
     // Parametro contenente i dati relativi alla rule da aggiungere
-    let params = objectFilter(rule, ['enabled', 'override', 'name', 'targets', 'task', 'type']);
+    let params = objectFilter(rule, ['enabled', 'name', 'targets', 'task', 'override', 'type']);
     // controllo che rule abbia tutti i campi definiti
     if(('enabled' in params) && params.name && params.targets && params.task)
     {
@@ -314,7 +314,11 @@ class RulesService
 		}
 
 		// Parametro contenente i dati relativi alla rule da aggiungere
+<<<<<<< HEAD
 		let params = objectFilter(rule, ['enabled', 'targets', 'task', 'override','type']);
+=======
+		let params = objectFilter(rule, ['enabled', 'targets', 'task', 'override', 'type']);
+>>>>>>> vocalrecognitionTINTO
 		params.name = event.pathParameters.name.replace(/%20/g, ' ');
 
 		this.rules.updateRule(params).subscribe(

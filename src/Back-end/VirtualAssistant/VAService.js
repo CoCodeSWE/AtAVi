@@ -36,6 +36,7 @@ class VAService
 		catch(exception)
 		{
 			// La stringa passata non corrisponde ad un JSON
+			console.log("LA STRINGA PASSATA NON CORRISPONDE AD UN JSON");
 			badRequest(context);
 			return;
 		}
@@ -64,6 +65,7 @@ class VAService
 				{
 					self.va_module.query(request.query).then(function(data)
 					{
+						console.log("complete get agent");
             if(!data.action)
               data.action = request.app + DEF_ACTION;
             console.log('data: ', data);
@@ -71,7 +73,7 @@ class VAService
 					})
 					.catch(function(err)
 					{
-            console.log('err', err);
+            console.log('err server', err);
 						ServerError(context, err.statusCode);
 					});
 				}
@@ -79,6 +81,7 @@ class VAService
 		}
 		else
 		{
+			console.log("!(request.app && request.query)");
 			badRequest(context);
 		}
 	}
@@ -97,6 +100,7 @@ function badRequest(context)
 // Funzione per gestire lo status code 500
 function ServerError(context, status)
 {
+	console.log("error server function");
 	context.succeed(
 	{
 		statusCode: status,

@@ -36,7 +36,7 @@ class RuleHandler extends CmdRunner
 								type: params.task_name,
                 task:
                 {
-                  params: 'prendere il valore dal DB'
+                  'params': params.username_slack
                 },
                 targets:[
                 {
@@ -74,7 +74,6 @@ class RuleHandler extends CmdRunner
                 error: reject,
                 complete: () =>
                 {
-									console.log(rules);
                   query.event.data = { rules: JSON.stringify(rules, null, 2) };
                   resolve(query);
                 }
@@ -99,7 +98,7 @@ class RuleHandler extends CmdRunner
 								},
                 complete: () =>
                 {
-                  query.event.data = { rule: rule };
+                  query.event.data = { rule: rule, username: params.username };
                   resolve(query);
                 }
               });
@@ -128,42 +127,90 @@ class RuleHandler extends CmdRunner
               reject(WRONG_APP);
             break;
           case 'rule.update':
-            if(body.app)
+            if(body.app === 'admin')
             {
+							let rule;
               query.event = {name: 'updateRuleSuccess', data: { username: params.username }};
-              this._updateRule(
-              {
-                name: params.rule_name,
-								type: params.task_name,
-                task:
-                {
-                  params: 'prendere il valore dal DB'
-                },
-                targets:[
-                {
-                  name: params.target_name,
-                  member: params.target_member,
-                  company: params.target_company
-                }],
-                enabled: true,
-								override: false
-              }).subscribe(
-              {
-                complete: () =>
-                {
-                  resolve(query);
-                },
-                error: (err) =>
+              this._getRule(params.rule_name).subscribe(
+							{
+								next: (data) =>
+								{
+									rule = data;
+									rule.type = params.rule_task;
+
+									rule.task =
+
+									{
+										'params': params.username_slack
+									};
+									rule.enabled = Boolean(params.rule_isEnabled.toUpperCase() === 'TRUE');
+								},
+								error: (err) =>
 								{
 									query.event.name = "error404";
 									query.event.data = { username: params.username };
 									resolve(query);
+								},
+								complete: () =>
+								{
+									this._updateRule(rule).subscribe(
+									{
+										complete: () =>
+										{
+											resolve(query);
+										},
+										error: (err) =>
+										{
+											query.event.name = "error500";
+											query.event.data = { username: params.username };
+											resolve(query);
+										}
+									});
 								}
-              });
+							});
             }
             else
               reject(WRONG_APP);
             break;
+					case 'rule.updateTarget':
+						if(body.app === 'admin')
+						{
+							let rule;
+							query.event = {name: 'updateRuleTargetSuccess', data: { username: params.username }};
+							this._getRule(params.rule_name).subscribe(
+							{
+								next: (data) =>
+								{
+									rule = data;
+									rule.targets = [{ name: params.name, company: params.company, member: params.company }];
+								},
+								error: (err) =>
+								{
+									query.event.name = "error404";
+									query.event.data = { username: params.username };
+									resolve(query);
+								},
+								complete: () =>
+								{
+									this._updateRule(rule).subscribe(
+									{
+										complete: () =>
+										{
+											resolve(query);
+										},
+										error: (err) =>
+										{
+											query.event.name = "error500";
+											query.event.data = { username: params.username };
+											resolve(query);
+										}
+									});
+								}
+							});
+						}
+						else
+							reject(WRONG_APP);
+						break;
           default:
             resolve(super.handler(response, body));
         }
@@ -313,6 +360,7 @@ class RuleHandler extends CmdRunner
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
+			console.log(rule);
 			let options =
 			{
 				method: 'PUT',

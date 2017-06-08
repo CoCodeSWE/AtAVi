@@ -19,7 +19,7 @@ class NotificationService
     let self = this;
     let list = [];
     let types;
-    if (event.queryStringParameters && event.queryStringParameters.type)
+    if (event.queryStringParameters && event.queryStringParameters.type )
       types = event.queryStringParameters.type.split(',');
     else
       types = ['groups', 'users', 'channels'];
@@ -46,13 +46,16 @@ class NotificationService
             {
               data.channels.forEach(function(item)
               {
-                result.push(
-                {
-                  name: item.name,
-                  id: item.id,
-									username: '',
-                  type: 'channel'
-                });
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === '')
+								{
+									result.push(
+									{
+										name: item.name,
+										id: item.id,
+										username: '',
+										type: 'channel'
+									});
+								}
               });
               resolve(result);
             }
@@ -77,13 +80,16 @@ class NotificationService
             {
               data.groups.forEach(function(item)
               {
-                result.push(
-                {
-                  name: item.name,
-                  id: item.id,
-									username: '',
-                  type: 'group'
-                });
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === '')
+								{
+									result.push(
+									{
+										name: item.name,
+										id: item.id,
+										username: '',
+										type: 'group'
+									});
+								}
               });
               resolve(result);
             }
@@ -108,13 +114,16 @@ class NotificationService
             {
               data.members.forEach(function(item)
               {
-                result.push(
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === item.name)
                 {
-                  name: item.real_name,
-                  id: item.id,
-									username: item.name,
-                  type: 'user'
-                });
+									result.push(
+									{
+										name: item.real_name,
+										id: item.id,
+										username: item.name,
+										type: 'user'
+									});
+								}
               });
               resolve(result);
             }
@@ -180,7 +189,7 @@ class NotificationService
 		{
 			let attachments_filtered = null;
 			if(body.msg.attachments)
-				attachments_filtered = objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
+				objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
 
 			self.client.chat.postMessage(send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered), as_user: true}, function(err,data)
 			{

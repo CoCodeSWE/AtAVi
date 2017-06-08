@@ -1,7 +1,7 @@
 grunt;
 grunt build-client;
 echo DEPLOY VIRTUAL ASSISTANT ;
-cd VirtualAssistant;
+cd ../dist/Back-end/VirtualAssistant;
 sls deploy;
 echo  DEPLOY RULES ;
 cd ../Rules;
