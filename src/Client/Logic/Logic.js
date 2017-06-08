@@ -33,6 +33,6 @@ export default class Logic
   {
     HttpPromise('POST', this.url, {'content-type': 'application/json'}, JSON.stringify(data))  // faccio la richiesta http e configuro l'observer per notificare quando arrivano i dati o quando si verifica un errore
       .then((data) => this.subject.next(JSON.parse(data)))
-      .catch((err) => this.subject.error(err));
+      .catch((err) => {this.subject.error(err); this.subject = new Rx.Subject();});
   }
 }

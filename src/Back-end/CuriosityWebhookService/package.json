@@ -1,0 +1,11 @@
+{
+  "name": "curiosity-webhook-service",
+  "version": "0.0.1",
+  "description": "Webhook for curiosity agent",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^5.3.0"
+  }
+}

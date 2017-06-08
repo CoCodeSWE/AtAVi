@@ -65,7 +65,7 @@ class VocalAPI
     body.audio = Buffer.from(body.audio, 'base64'); //converto da stringa in base64 a Buffer
     self.stt.speechToText(body.audio, 'audio/l16; rate=16000').then(function(text)  //quando ho il testo interrogo l'assistente virtuale
     {
-      let query = {data: body.query.data, session_id: body.session_id};
+      let query = {data: body.data, session_id: body.session_id};
       if(text)
       {
         self.text_request = text;
@@ -96,6 +96,7 @@ class VocalAPI
     })
       .catch(function(err)
       {
+        console.log("error catch VA request promise");
         console.log(err);
         if(err.name === 'StatusCodeError')
           context.succeed({statusCode: err.statusCode, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify({message: 'Internal server error.'})});
@@ -145,7 +146,7 @@ class VocalAPI
         {
           text: self.text_request,
           session_id: body.session_id,
-          data: body.query.data
+          data: body.data
         }
       },
       headers:
@@ -440,6 +441,7 @@ class VocalAPI
 	*/
   _getUser(username)
   {
+    console.log(username);
 		let self = this;
 		return new Rx.Observable(function(observer)
 		{
@@ -458,6 +460,7 @@ class VocalAPI
 			})
 			.catch(function(err)
 			{
+        console.log(err);
 				observer.error(
 				{
 					code: err.statusCode,
@@ -708,7 +711,7 @@ class VocalAPI
     let self = this;
     return function(response) //restituisce
     {
-      console.log('response: ', response);
+      console.log('response on Var Response: ', JSON.stringify(response, null, 2));
       let options =
       {
         method: 'POST',
@@ -720,12 +723,14 @@ class VocalAPI
           app: body.app,  //body.app contiene il nome dell'applicazione originale
           query:
           {
-            data: response.data ? response.data : {}, //copio  i dati della risposta dell'assistente virtuale
+            data: response.res.data ? response.res.data : {}, //copio  i dati della risposta dell'assistente virtuale
             session_id: response.session_id
           }
         }
       }
-
+      console.log("_onVaResponse called", body);
+      console.log("action= ");
+      console.log(response.action);
       let params = (response.res.contexts && response.res.contexts[0]) ? response.res.contexts[0].parameters : {};
       switch(response.action)
       {
@@ -896,17 +901,18 @@ class VocalAPI
             (error(context))(WRONG_APP);
           break;
         case 'user.get':
+          console.log(body.app);
           if(body.app === 'admin')
           {
             let user;
-            options.body.event = {name: 'getUserSuccess'};
-            self._getUser(params.username).subscribe(
+            options.body.query.event = {name: 'getUserSuccess'};
+            self._getUser(params.user_username).subscribe(
             {
               next: (data) => {user = data;},
               error: error(context),
               complete: function()
               {
-                options.body.query.event.data = { user: user };
+                options.body.query.event.data = { user: JSON.stringify(user, null, 2) };
                 self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
               }
             });
@@ -1009,7 +1015,7 @@ class VocalAPI
               name: 'userUpdateSuccess',
               data: {}
             };
-						
+
 						let user;
 						self._getUser(params.username).subscribe(
 						{
@@ -1019,9 +1025,9 @@ class VocalAPI
 								if(params.name)
 									user.name = params.name;
 							},
-							
+
 							error: error(context),
-							
+
 							complete: function()
 							{
 								self._updateUser(user).subscribe(
@@ -1039,16 +1045,20 @@ class VocalAPI
             (error(context))(WRONG_APP);
           break;
         case 'app.switch':  // transizione tra diverse applicazioni
+        console.log("new app?");
           if(params.new_app)
           {
+            console.log("NEW APP!");
             options.body.app = params.new_app;  //cambio app, in modo che venga interrogato l'agent adeguato
             body.app = params.new_app;  //in questo caso il cambiamento di agent è permesso, quindi aggiorno il nome dell'applicazione originale
             delete params.new_app;
             options.body.query.event = { name: 'init', data: params };
-            console.log('options: ', options);
+            console.log('options app switch: ', options);
+            console.log('event on change: ', options.body.query.event);
             self.request_promise(options).then(self._onVaResponse(context, body).bind(self)).catch(error(context));
             break;
           }
+          console.log('event NO change: ', options.body.query.event);
         default:  //nel caso in cui l'azione non sia da gestire nel back-end, inoltro la risposta dell'assistente virtuale al client
           this.sns.publish({Message: JSON.stringify(response), TopicArn: SNS_TOPIC_ARN},(err, data) =>
           {
@@ -1056,6 +1066,7 @@ class VocalAPI
               (error(context))({ code: 500, msg: 'Cannot notify: ' + JSON.stringify(err, null, 2)});
             else
             {
+              console.log("response to client: ", response);
               response.res.text_request = self.text_request;
               context.succeed({ statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(response) });
             }

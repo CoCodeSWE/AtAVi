@@ -32,8 +32,8 @@ const rec_conf =
 }
 
 //URL degli endpoint
-const VOCAL_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
-const TEXT_URL = 'https://6rbo2t40q3.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
+const VOCAL_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/vocal-assistant';
+const TEXT_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
 /** @todo forse da mettere tutto in window.onload*/
@@ -47,9 +47,10 @@ let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
-                                                                                 //visto che hanno l'interfaccia condivisa
+reg_client.register('curiosity', AdministrationApp).subscribe({error: console.log});
+                                                                             //visto che hanno l'interfaccia condivisa
 let application_manager = new Manager(reg_client, document.getElementById('mainFrame'));
-let sendObservable = new EventObservable('submit', 'sendMessage'); // questo è il form del quale aspetto il submit in modalità testo
+let sendObservable = new EventObservable('submit', 'textMsg'); // questo è il form del quale aspetto il submit in modalità testo
 let enabled = false;
 let keyboard = false;
 var session_id = uuidV4();
@@ -58,6 +59,7 @@ console.log('session_id: ', session_id);
 // Observable per i click
 let startObservable = new EventObservable('click', 'start');
 let keyboardObservable = new EventObservable('click', 'buttonKeyboard');
+let reminderObservable = new EventObservable('click', 'buttonReminder')
 
 // iscrizione a observable per i click
 startObservable.subscribe(function()
@@ -86,6 +88,12 @@ keyboardObservable.subscribe(function()
   }
 });
 
+reminderObservable.subscribe(function()
+{
+  clearSubscriptions();
+  reminderInit();
+});
+
 vocalInit();
 
 /**
@@ -108,6 +116,7 @@ function getVoices(lang)
 function vocalInit()
 {
   logic.setUrl(VOCAL_URL);
+  if(enabled) recorder.enable();
   subscriptions.push(player.getObservable().subscribe(
   {
     next: function(playing)
@@ -125,7 +134,7 @@ function vocalInit()
     next: function(blob)
     {
       console.log('Recorder next');
-      let app = application_manager.application_name || 'conversationsApp';
+      let app = application_manager.application_name || 'conversation';
       blobToBase64(blob)
         .then(function(audio)
         {
@@ -137,6 +146,7 @@ function vocalInit()
             session_id: session_id
           }
           logic.sendData(query);
+          toggleLoading();
         })
         .catch(console.log)
     },
@@ -155,9 +165,14 @@ function vocalInit()
       let cmd = action[1];
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
+      toggleLoading();
       player.speak(response.res.text_response);
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: function(err)
+    {
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => vocalInit());  // riavvio l'observable dopo l'errore
+    },
     complete: console.log
   }));
 }
@@ -167,19 +182,79 @@ function textInit()
   logic.setUrl(TEXT_URL);
   subscriptions.push(sendObservable.subscribe(
   {
-    next: function()
+    next: function(event)
     {
-      // prendi dati e mandi con ligic
+      event.preventDefault();
+      console.log('Text next');
+      let app = application_manager.application_name || 'conversation';
+      console.log(app);
+      let input_text = document.getElementById("inputText").value;
+      document.getElementById("inputText").value="";
+      console.log(input_text);
+      let query =
+      {
+        text : input_text,
+        app: app,
+        data: {},//data, /**@todo passare davvero i dati*/
+        session_id: session_id
+      }
+      logic.sendData(query);
+      toggleLoading();
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: console.log,
     complete: console.log
   }));
 
   subscriptions.push(logic.getObservable().subscribe(
   {
-    next: function()
+    next: function(response)
     {
-      // gestisci risposta da logic, forse uguale a vocalInit
+      console.log('logic next');
+      data = response.res.data;
+      let action = response.action.split('.');
+      let app = action[0];
+      let cmd = action[1];
+      console.log(action, app, cmd);
+      application_manager.runApplication(app, cmd, response.res);
+      toggleLoading();
+      player.speak(response.res.text_response);
+    },
+    error: function(err)
+    {
+      application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
+      setTimeout(() => textInit());
+    },  /**@todo implementare un vero modo di gestire gli errori*/
+    complete: console.log
+  }));
+}
+
+function reminderInit()
+{
+  logic.setUrl(TEXT_URL);
+  let app = application_manager.application_name || 'conversation';
+  let query =
+  {
+    text : 'where required_person is?',
+    app: app,
+    data: data, /**@todo passare davvero i dati*/
+    session_id: session_id
+  }
+  logic.sendData(query);
+  toggleLoading();
+
+  subscriptions.push(logic.getObservable().subscribe(
+  {
+    next: function(response)
+    {
+      console.log('logic next');
+      data = response.res.data;
+      let action = response.action.split('.');
+      let app = action[0];
+      let cmd = action[1];
+      console.log(action, app, cmd);
+      application_manager.runApplication(app, cmd, response.res);
+      toggleLoading();
+      player.speak(response.res.text_response);
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -188,5 +263,5 @@ function textInit()
 
 function clearSubscriptions()
 {
-  subscriptions.foreach((sub) => sub.unsubscribe());
+  subscriptions.forEach((sub) => sub.unsubscribe());
 }

@@ -6,7 +6,6 @@
 * @version 0.0.5
 * @since 0.0.3-alpha
 */
-const DEF_ACTION = '.displayMsgs';
 
 class ApiAiVAAdapter
 {
@@ -38,7 +37,7 @@ class ApiAiVAAdapter
 	{
 		if(this.agent === null)
 			return Promise.reject({'error': 'Agent not defined'});
-
+    console.log("data: ", JSON.stringify(data, null, 2));
 		let options =
 		{
 			method: 'POST',
@@ -76,7 +75,7 @@ class ApiAiVAAdapter
       if(response.result.action && !response.result.actionIncomplete)
         action = response.result.action;
       else
-        action = data.app + DEF_ACTION;
+        action = '';
       let va_response =
 			{
 				action: action,
@@ -94,9 +93,11 @@ class ApiAiVAAdapter
 			if(response.result.fulfillment.data)
 			{
         if(response.result.fulfillment.data._status !== 200)
-          throw {statusCode: response.result.fulfillment.data.statusCode}
-      	va_response.res.data = response.result.fulfillment.data;
+          throw {statusCode: response.result.fulfillment.data._status}
+        delete response.result.fulfillment.data._status;  //rimuovo lo stato della risposta settato dal webhook
+        va_response.res.data = response.result.fulfillment.data;
       }
+      va_response.res.data = Object.assign({}, va_response.res.data, data.data);
 			return va_response;
 		}); //no catch perchè mi va bene l'eccezione che viene sollevata
 	}

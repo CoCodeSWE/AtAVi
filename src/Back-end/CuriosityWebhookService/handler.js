@@ -1,16 +1,12 @@
-'use strict';
+const CuriosityWebhookService = require('./CuriosityWebhookService');
+const CuriosityDAO = require('./CuriosityDAODynamoDB');
+const GuestsDAO = require('./GuestsDAODynamoDB');
+const aws = require('aws-sdk');
 
-module.exports.hello = (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Go Serverless v1.0! Your function executed successfully!',
-      input: event,
-    }),
-  };
+let client = new aws.DynamoDB.DocumentClient();
+let curiosity = new CuriosityDAO(client);
+let guests = new GuestsDAO(client);
 
-  callback(null, response);
+let service = new CuriosityWebhookService(curiosity,guests);
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
-};
+module.exports.webhook = service.webhook.bind(service);

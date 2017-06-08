@@ -11,20 +11,20 @@ $colSfondo: #3d323e;
 
 *
 {
-	margin: 0em;
-	padding: 0em;
+ margin: 0em;
+ padding: 0em;
 }
 
 html
 {
-	font-family: "Palatino Linotype", "Courier New", "Verdana", "Sans-Serif";
+ font-family: "Palatino Linotype", "Courier New", "Verdana", "Sans-Serif";
 }
 
 .hide
 {
   text-indent:100%;
-	white-space:nowrap;
-	overflow:hidden;
+ white-space:nowrap;
+ overflow:hidden;
 }
 
 body
@@ -46,26 +46,26 @@ body
   overflow-y: scroll;
   &::-webkit-scrollbar-thumb
   {
-  	background-color: #fff;
+   background-color: #fff;
   }
   &:hover
   {
     &::-webkit-scrollbar-thumb
     {
       border: 2px solid #FFF;
-    	border-radius: 10px;
-    	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    	background-color: darken($colSfondo, 10%);
+     border-radius: 10px;
+     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+     background-color: darken($colSfondo, 10%);
     }
   }
   &::-webkit-scrollbar
   {
-  	width: 12px;
-  	background-color: #FFF;
+   width: 12px;
+   background-color: #FFF;
   }
   &::-webkit-scrollbar-track
   {
-  	background-color: #FFF;//#F5F5F5;
+   background-color: #FFF;//#F5F5F5;
     display:none;
   }
 }
@@ -135,7 +135,7 @@ body
 
 #nomeApp
 {
-	color: #ffffff;
+ color: #ffffff;
 /*  background-image: url("../Image/100.png");
   background-repeat: no-repeat;
   background-size: 100%;

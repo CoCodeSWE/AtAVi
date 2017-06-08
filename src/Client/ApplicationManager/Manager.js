@@ -56,8 +56,8 @@ export default class Manager
             else
             {
               new_app = new Application(pkg);
-              self._changeApplication(new_app);
               self.application_name = name; //cambio il nome dell'applicazione attualmente in esecuzione.
+              self._changeApplication(new_app);
               new_app.onload = function()
               {
                 //in questo modo se viene richiesta nuovamente l'esecuzione di un'azione da parte di
@@ -79,7 +79,10 @@ export default class Manager
       }
     }
     else
+    {
+      this.application_name = name;
       this.application.runCmd(cmd, params);
+    }
   }
 
   /**
@@ -100,8 +103,7 @@ export default class Manager
   _changeApplication(app)
   {
     //salvo l'applicazione da sostituire nello state
-    if(this.application)
-      this.state.addApp(this.application, this.application_name);
+    this.state.addApp(app, this.application_name);
     //elimino il div contenente l'applicazione
     if(this.ui)
       this.frame.removeChild(this.ui);

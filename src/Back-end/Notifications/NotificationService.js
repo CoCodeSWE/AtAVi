@@ -19,13 +19,12 @@ class NotificationService
     let self = this;
     let list = [];
     let types;
-    if (event.queryStringParameters && event.queryStringParameters.type )
+    if (event.queryStringParameters && event.queryStringParameters.type)
       types = event.queryStringParameters.type.split(',');
     else
       types = ['groups', 'users', 'channels'];
 
     let promise  = new Promise(function(resolve,reject){resolve([]);});
-    let trovato = true;
 
     const type_functions =
     {
@@ -51,6 +50,7 @@ class NotificationService
                 {
                   name: item.name,
                   id: item.id,
+									username: '',
                   type: 'channel'
                 });
               });
@@ -81,6 +81,7 @@ class NotificationService
                 {
                   name: item.name,
                   id: item.id,
+									username: '',
                   type: 'group'
                 });
               });
@@ -111,6 +112,7 @@ class NotificationService
                 {
                   name: item.real_name,
                   id: item.id,
+									username: item.name,
                   type: 'user'
                 });
               });
@@ -178,7 +180,7 @@ class NotificationService
 		{
 			let attachments_filtered = null;
 			if(body.msg.attachments)
-				objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
+				attachments_filtered = objectFilter(body.msg.attachments, ['actions','callback_id','color','fallback','title']);
 
 			self.client.chat.postMessage(send_to, body.msg.text, {attachments: JSON.stringify(attachments_filtered), as_user: true}, function(err,data)
 			{

@@ -29,7 +29,7 @@ export var HttpPromise = function(method, url, headers, data)
           reject(
           {
             status: xhr.status,
-            status_text: xhr.statusText
+            status_text: xhr.responseText
           });
       }
     }

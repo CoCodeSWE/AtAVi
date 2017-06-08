@@ -4,6 +4,8 @@
 * @version 0.0.4
 * @since 0.0.3-alpha
 */
+const DEF_ACTION = '.displayMsgs';
+
 class VAService
 {
 	/**
@@ -37,7 +39,7 @@ class VAService
 			badRequest(context);
 			return;
 		}
-
+    console.log(JSON.stringify(request, null, 2));
 		// Controllo che ci siano i campi necessari a effettuare la richiesta
 		if(request.app && request.query)
 		{
@@ -46,11 +48,12 @@ class VAService
 			{
 				next: function(data)
 				{
+					console.log("setto agent: ",data);
 					self.va_module.setAgent(data);
 				},
 				error: function(err)
 				{
-          console.log("error: ", err);
+          console.log("error on getagent: ", err);
 					context.succeed(
 					{
 						statusCode: err.statusCode,
@@ -61,7 +64,9 @@ class VAService
 				{
 					self.va_module.query(request.query).then(function(data)
 					{
-						console.log('data', data);
+            if(!data.action)
+              data.action = request.app + DEF_ACTION;
+            console.log('data: ', data);
 						success(context, data);
 					})
 					.catch(function(err)

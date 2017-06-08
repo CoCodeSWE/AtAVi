@@ -126,8 +126,11 @@ class ConversationWebhookService
   */
   _checkGuest(body, context)
   {
+    console.log("checkGuest called",body);
+    let guest_name = body.result.parameters.name.toLowerCase();
+    // let company_name = body.result.parameters.company.toLowerCase();
     let self = this;
-    let observable = this.guests.getGuestList({name: body.result.parameters.name});
+    let observable = this.guests.getGuestList({name: guest_name});
     let guests = [];
     observable.subscribe(
     {
@@ -137,32 +140,20 @@ class ConversationWebhookService
       {
         if(guests.length > 0)
         {
+          // ottengo la persona più desiderata dall'ospite conosciuto e gli chiedo se vuole incontrarla
+          let most_required_person = self._getMostRequiredPerson(guests[0].met);
           context.succeed(
-          {
-            statusCode: 200,
-            body: JSON.stringify(
             {
-              //come sopra
-              contextOut: [
-              {
-                name: 'welcome',  //forse da cambiare, welcome è già context di default per facebook e simili
-                lifespan: 0,  //dura solo 1 interazione e poi sparisce
-                parameters:
+              statusCode: 200,
+              body: JSON.stringify(
                 {
-                  company: guests[0].company //metto come possibile azienda la prima. Nel caso l'utente potrà dire che appartiene ad un'altra azienda
-                }
-              }],
-              data: Object.assign({ _status: 200}, (body.originalRequest ? body.originalRequest.data : {})),
-              followupEvent:
-              {
-                name: "eventoOspiteRiconosciuto",
-                data:
-                {
-                  //metto azienda qua?
-                }
-              }
-            })
-          });
+                  speech: body.result.fulfillment.speech,
+                  displayText: body.result.fulfillment.displayText,
+                  data: Object.assign({ _status: 200 }, (body.originalRequest ? body.originalRequest.data : {})),
+                  followupEvent: {name: "recognizeKnownGuestEvent", data: {"name": body.result.parameters.name,
+                  "company": guests[0].company, "required_person": most_required_person}}
+                })
+              });
         }
         else
           self._defaultResponse(body, context);
@@ -190,7 +181,33 @@ class ConversationWebhookService
       })
     });
   }
+
+  /**
+  * metodo privato utilizzato che ritorna la persona maggiormente desiderata contenuta nel parametro passato
+  * @param {JSON Object} met - oggetto (array associativo) contenente quali persone sono state desiderate e con quale frequenza
+  */
+  _getMostRequiredPerson(met)
+  {
+    let max = 0;
+    let most_required_person;
+    let index = [];
+    for(var x in met)
+      index.push(x);
+
+    let i;
+    for(i=0;i<index.length;i++)
+    {
+      if(met[index[i]] > max)
+      {
+        max = met[index[i]];
+        most_required_person = index[i];
+      }
+    }
+    return most_required_person;
+  }
 }
+
+
 
 module.exports = ConversationWebhookService;
 
