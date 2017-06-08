@@ -1,6 +1,5 @@
 #!/bin/sh
 grunt;
-grunt build-client;
 echo "DEPLOY VIRTUAL ASSISTANT \n";
 cd ../dist/Back-end/VirtualAssistant;
 sls deploy;

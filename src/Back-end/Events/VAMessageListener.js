@@ -45,8 +45,8 @@ class VAMessageListener
     let params = message.res.contexts && message.res.contexts[0] ? message.res.contexts[0].parameters : null;
     console.log(params);
     console.log(!params || !params.name || !params.company)
-    if(!(params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
-    {
+		if(! (params && params.name && params.company && params.required_person && (params.confirm_required_person === 'true' || !params.confirm_required_person)))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
+		{
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
 			return;
 		}

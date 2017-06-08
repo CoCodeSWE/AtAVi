@@ -19,7 +19,7 @@ provider:
     NOTIFICATIONS_SERVICE_KEY: ${file(secret.yml):notifications.key}
     DEFAULT_CHANNEL: ${file(secret.yml):notifications.default_channel}
     CONVERSATIONS_TABLE: Conversations-${opt:stage, self:provider.stage}
-    GUESTS_TABLE: Guests-${opt:stage, self:provider.stage}  
+    GUESTS_TABLE: Guests-${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
       Action:
