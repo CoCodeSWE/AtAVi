@@ -48,13 +48,12 @@ class VAMessageListener
     if(!(params && params.name && params.company))  // se non so ancora il nome o l'azienda dell'ospite, allora non devo notificare sicuramente nessuno di niente.
     {
       callback(null); // successo, non dovevo notificare nessuno e non l'ho fatto.
-
+			return;
+		}
 		let name_required_person = params.required_person.toLowerCase();
 		let guest_name = params.name.toLowerCase();
 		let company_name = params.company.toLowerCase();
     let rules_query = '?target.name=' +  encodeURIComponent(guest_name) + '&target.company=' + encodeURIComponent(company_name);
-    /**
-     ** @todo abilitare questi parametri della query quando rules è sistemato
     if(params.required_person)
       rules_query += '&target.member=' + encodeURIComponent(params.required_person);
     // parametri per la richiesta HTTP GET al microservizio Rules
