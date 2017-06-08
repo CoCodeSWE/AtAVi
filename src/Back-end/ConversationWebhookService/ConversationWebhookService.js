@@ -84,7 +84,7 @@ class ConversationWebhookService
   {
     console.log(body);
     let self = this;
-    let observable = this.users.getUserList({name: body.result.parameters.name});
+    let observable = this.users.getUserList({name: body.result.parameters.name.toLowerCase()});
     let users = [];
     observable.subscribe(
     {

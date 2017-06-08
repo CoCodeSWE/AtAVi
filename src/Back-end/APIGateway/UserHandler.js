@@ -159,11 +159,14 @@ class UserHandler extends CmdRunner
                 {
                   if(err.error === 2)
                   {
-                    query.event = { name: 'loginUserSuccess', data: {'username': params.username, 'name': params.name, 'text': 'Your voice doesn\'t match with voice print. Repeat recognition phrase, please.'}}
+                    query.event = { name: 'loginUserFailure', data: {'username': params.username, 'name': params.name, 'text': 'Your voice doesn\'t match with voice print. Repeat recognition phrase, please.'}}
                     resolve(query);
                   }
                   else
-                    reject(err);
+                  {
+                    query.event = { name: 'loginUserFailure', data: {'username': params.username, 'name': params.name, 'text': 'An error has occurred.'}}
+                    resolve(query);
+                  }
                 }
               });
             }
