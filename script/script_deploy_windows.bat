@@ -1,5 +1,4 @@
 grunt
-echo "DEPLOY VIRTUAL ASSISTANT"
 cd ../dist/Back-end/VirtualAssistant
 sls deploy
 echo  "DEPLOY RULES"
