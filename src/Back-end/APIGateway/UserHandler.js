@@ -76,7 +76,9 @@ class UserHandler extends CmdRunner
               this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
               {
                 complete: () => { resolve(query); },
+
                 error: (err) =>
+
 								{
 									if(err.code === 400 || err.message === 'TooNoisy')
 									{
@@ -209,7 +211,9 @@ class UserHandler extends CmdRunner
 								},
 								complete: () => { resolve(query); }
 							});
+
 						}
+
             else
               reject(WRONG_APP);
             break;

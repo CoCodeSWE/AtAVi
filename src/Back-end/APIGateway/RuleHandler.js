@@ -137,7 +137,9 @@ class RuleHandler extends CmdRunner
 								{
 									rule = data;
 									rule.type = params.rule_task;
+
 									rule.task =
+
 									{
 										'params': params.username_slack
 									};

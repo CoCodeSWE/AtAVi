@@ -1,6 +1,8 @@
 // sarebbero tutti require, quelli che dobbiamo fare noi li lascio oggetti vuoti
 const SNS = require('aws-sdk').SNS;
-const VocalLoginMicrosoftModule = require('VocalLoginMicrosoftModule');//require('VocalLoginMicrosoftModule');
+
+const VocalLoginMicrosoftModule = require('VocalLoginMicrosoftModule');
+
 const STTWatsonAdapter = require('./STTWatsonAdapter');
 const rp = require('request-promise');
 const jwt = require('jsonwebtoken');

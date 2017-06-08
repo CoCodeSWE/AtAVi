@@ -18,6 +18,11 @@ functions:
           path: channels
           method: get
           private: true
+          request:
+            parameters:
+                querystring:
+                    type: false
+                    username: false
 
   sendMsg:
     handler: sendMsg.sendMsg
