@@ -45,11 +45,11 @@ let logic = new Logic();
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
-let patt = new RegExp("welcome in"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
+let patt = new RegExp("Do you like sport"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
 let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
 let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
-let max_silence_time = 20000;
-let start_reminder_button = 10000;
+let max_silence_time = 90000;
+let start_reminder_button = 30000;
 let buttonKey = document.getElementById("buttonKeyboard");
 let buttonRem = document.getElementById("buttonReminder");
 
@@ -342,8 +342,6 @@ function reminderInit()
 {
   hideButtonReminder(buttonRem);
   clearTimeout(time);
-  if(player.isPlaying())
-    player.cancel();
   logic.setUrl(TEXT_URL);
   let app = application_manager.application_name || 'conversation';
   let query =
