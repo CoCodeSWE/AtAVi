@@ -45,11 +45,11 @@ let logic = new Logic();
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
-let patt = new RegExp("Do you like sport?"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
+let patt = new RegExp("welcome in"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
 let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
 let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
-let max_silence_time = 90000;
-let start_reminder_button = 30000;
+let max_silence_time = 20000;
+let start_reminder_button = 10000;
 let buttonKey = document.getElementById("buttonKeyboard");
 let buttonRem = document.getElementById("buttonReminder");
 
@@ -76,6 +76,7 @@ startObservable.subscribe(function()
   {
     clearTimeout(time);
     clearTimeout(start_reminder_button);
+    hideButtonReminder(buttonRem);
     recorder.stop();
     if(player.isPlaying())
       player.cancel();
@@ -189,6 +190,7 @@ function vocalInit()
     next: function(response)
     {
       disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
+      disableButtonReminder(buttonRem);
       if (keyboard)
       {
         clearSubscriptions();
@@ -201,6 +203,7 @@ function vocalInit()
             {
               keyboard = false;
               enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
               vocalInit();
             }
           }
@@ -213,7 +216,10 @@ function vocalInit()
           next: (playing) =>
           {
             if (!playing)
+            {
               enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+            }
           }
         });
       }
@@ -230,7 +236,7 @@ function vocalInit()
       {
         start_time = setTimeout(() =>
         {
-          enableButtonReminder(buttonRem);
+          showButtonReminder(buttonRem);
         }, start_reminder_button);
       }
       player.speak(response.res.text_response);
@@ -256,8 +262,6 @@ function textInit()
     next: function(event)
     {
       clearTimeout(time);
-      if(player.isPlaying())
-        player.cancel();
       event.preventDefault();
       console.log('Text next');
       let app = application_manager.application_name || 'conversation';
@@ -288,6 +292,7 @@ function textInit()
         clearSubscriptions();
         disableKeyboard();
         disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
+        disableButtonReminder(buttonRem);
         player.getObservable().subscribe(
         {
           next: (playing) =>
@@ -295,6 +300,7 @@ function textInit()
             if(keyboard && !playing)
             {
               enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
               keyboard = false;
               vocalInit();
             }
@@ -314,7 +320,7 @@ function textInit()
       {
         start_time = setTimeout(() =>
         {
-          enableButtonReminder(buttonRem);
+          showButtonReminder(buttonRem);
         }, start_reminder_button);
       }
       player.speak(response.res.text_response);
@@ -334,7 +340,7 @@ function textInit()
 
 function reminderInit()
 {
-  disableButtonReminder(buttonRem);
+  hideButtonReminder(buttonRem);
   clearTimeout(time);
   if(player.isPlaying())
     player.cancel();
@@ -354,11 +360,39 @@ function reminderInit()
   {
     next: function(response)
     {
+      disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
+      disableButtonReminder(buttonRem);
       if (keyboard)
       {
-        keyboard = !keyboard;
+        clearSubscriptions();
         disableKeyboard();
-        vocalInit();
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if(keyboard && !playing)
+            {
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+              keyboard = false;
+              vocalInit();
+            }
+          }
+        });
+      }
+      else
+      {
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if (!playing)
+            {
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+            }
+          }
+        });
       }
       console.log('logic next');
       data = response.res.data;
@@ -386,6 +420,7 @@ function clearSubscriptions()
 
 function resetInterface()
 {
+  hideButtonReminder(buttonRem);
   clearTimeout(time);
   enabled = !enabled;
   changeValueButton();

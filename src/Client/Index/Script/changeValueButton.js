@@ -54,15 +54,27 @@ function disableButtonKeyboard(button)
   button.style.opacity = "0.2";
 }
 
-function enableButtonReminder(button)
+function showButtonReminder(button)
 {
   button.style.display = "inline-flex";
   showAlert();
 }
 
-function disableButtonReminder(button)
+function hideButtonReminder(button)
 {
   button.style.display = "none";
+}
+
+function enableButtonReminder(button)
+{
+  button.disabled = false;
+  button.style.opacity = "1";
+}
+
+function disableButtonReminder(button)
+{
+  button.disabled = true;
+  button.style.opacity = "0.2";
 }
 
 function showAlert()
