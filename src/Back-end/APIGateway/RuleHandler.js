@@ -2,6 +2,10 @@ const Rx = require('rxjs/Rx');
 const CmdRunner = require('./CmdRunner');
 const RULES_SERVICE_KEY = process.env.RULES_SERVICE_KEY;
 const RULES_SERVICE_URL = process.env.RULES_SERVICE_URL;
+const NOTIFICATIONS_SERVICE_KEY = process.env.NOTIFICATIONS_SERVICE_KEY;
+const NOTIFICATIONS_SERVICE_URL = process.env.NOTIFICATIONS_SERVICE_URL;
+const DEFAULT_CHANNEL = process.env.NOTIFICATIONS_DEFAULT_CHANNEL;
+
 const WRONG_APP = { code: 400, msg: 'Reserved action name' }
 
 class RuleHandler extends CmdRunner
@@ -31,31 +35,35 @@ class RuleHandler extends CmdRunner
             {
                             let id_slack;
               query.event = { name: 'addRuleSuccess', data: { username: params.username } };
+              console.log("rule.add");
               this._getChannelList(params.username_slack).subscribe(
                             {
                                 next: (data) =>
                                 {
+									console.log("next _getChannelList",data);
                                     if(data.length === 0)
-                                        id_slack = 'DEFAULT';
+                                        id_slack = DEFAULT_CHANNEL;
                                     else
                                         id_slack = data[0].id;
                                 },
 
                                 error: (err) =>
                                 {
+									console.log("error _getChannelList",err);
                                     query.event.name = "error500";
                                     resolve(query);
                                 },
 
                                 complete: () =>
                                 {
+									console.log("complete _getChannelList");
                                     this._addRule(
                                     {
                                         name: params.rule_name,
-                                        type: params.task_name,
                                         task:
                                         {
-                                            'params': id_slack
+                                            'params': id_slack,
+                                            'type': params.task_name
                                         },
                                         targets:[
                                         {
@@ -69,10 +77,12 @@ class RuleHandler extends CmdRunner
                                     {
                                         complete: () =>
                                         {
+											console.log("complete _addRule IN _getChannelList");
                                             resolve(query);
                                         },
                                         error: (err) =>
                                         {
+											console.log("error _addRule IN _getChannelList",err);
                                             query.event.name = "error409_rule";
                                             query.event.data = { username: params.username, rule_name: params.rule_name };
                                             resolve(query);
@@ -150,39 +160,60 @@ class RuleHandler extends CmdRunner
           case 'rule.update':
             if(body.app === 'admin')
             {
-                            let rule;
+                            let rule, id_slack;
               query.event = {name: 'updateRuleSuccess', data: { username: params.username }};
-              this._getRule(params.rule_name).subscribe(
+              this._getChannelList(params.username_slack).subscribe(
                             {
                                 next: (data) =>
                                 {
-                                    rule = data;
-                                    rule.type = params.rule_task;
-                                    rule.task =
-                                    {
-                                        'params': params.username_slack
-                                    };
-                                    rule.enabled = Boolean(params.rule_isEnabled.toUpperCase() === 'TRUE');
+                                    if(data.length === 0)
+                                        id_slack = DEFAULT_CHANNEL;
+                                    else
+                                        id_slack = data[0].id;
                                 },
+                               
                                 error: (err) =>
                                 {
-                                    query.event.name = "error404";
-                                    query.event.data = { username: params.username };
+                                    query.event.name = "error500";
                                     resolve(query);
                                 },
+                           
                                 complete: () =>
                                 {
-                                    this._updateRule(rule).subscribe(
+									console.log("rule update complete _getChannelList");
+                                    this._getRule(params.rule_name).subscribe(
                                     {
-                                        complete: () =>
+                                        next: (data) =>
                                         {
-                                            resolve(query);
+                                            rule = data;
+                                            rule.task =
+                                            {
+                                                'params': id_slack,
+                                                'type': params.rule_task
+                                            };
+                                            rule.enabled = Boolean(params.rule_isEnabled.toUpperCase() === 'TRUE');
                                         },
                                         error: (err) =>
                                         {
-                                            query.event.name = "error500";
+                                            query.event.name = "error404";
                                             query.event.data = { username: params.username };
                                             resolve(query);
+                                        },
+                                        complete: () =>
+                                        {
+                                            this._updateRule(rule).subscribe(
+                                            {
+                                                complete: () =>
+                                                {
+                                                    resolve(query);
+                                                },
+                                                error: (err) =>
+                                                {
+                                                    query.event.name = "error500";
+                                                    query.event.data = { username: params.username };
+                                                    resolve(query);
+                                                }
+                                            });
                                         }
                                     });
                                 }
@@ -412,7 +443,7 @@ class RuleHandler extends CmdRunner
             let options =
             {
                 method: 'GET',
-                uri: `${NOTIFICATIONS_SERVICE_URL}?username=${username}`,
+                uri: `${NOTIFICATIONS_SERVICE_URL}/channels?username=${username}`,
                 headers:{'x-api-key': NOTIFICATIONS_SERVICE_KEY},
                 json: true
             };

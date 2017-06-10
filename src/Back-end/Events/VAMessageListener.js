@@ -113,7 +113,7 @@ class VAMessageListener
           rules = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}}).then((data) => (data.length > 0) ? [data[0].id] : [DEFAULT_CHANNEL]); // creo rule fittizia
         rules.then((send_to) =>
         {
-          for(let i = 0; i <= send_to.length; ++i)
+          for(let i = 0; i < send_to.length; ++i)
   				{
   	        self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to[i])}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}})
               .then((data) => {callback(null);})

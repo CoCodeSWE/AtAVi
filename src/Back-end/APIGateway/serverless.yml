@@ -16,6 +16,8 @@ provider:
   environment:
     USERS_SERVICE_KEY: ${file(secret.yml):users.key}
     USERS_SERVICE_URL: ${file(secret.yml):users.url}
+    NOTIFICATIONS_SERVICE_KEY: ${file(secret.yml):notifications.key}
+    NOTIFICATIONS_SERVICE_URL: ${file(secret.yml):notifications.url}
     VA_SERVICE_KEY: ${file(secret.yml):va.key}
     VA_SERVICE_URL: ${file(secret.yml):va.url}
     RULES_SERVICE_URL: ${file(secret.yml):rules.url}
@@ -26,6 +28,7 @@ provider:
     WATSON_USERNAME: ${file(secret.yml):watson.username}
     WATSON_PASSWORD: ${file(secret.yml):watson.password}
     JWT_SECRET: ${file(secret.yml):jwt.secret}
+    NOTIFICATIONS_DEFAULT_CHANNEL: ${file(secret.yml):notifications.default_channel}
   iamRoleStatements:
     - Effect: Allow
       Action:

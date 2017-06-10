@@ -40,6 +40,7 @@ class UserHandler extends CmdRunner
           case 'user.add':
             if(body.app === 'admin')
             {
+			  params.name = params.name.toLowerCase();
               query.event = { name: 'addUserSuccess', data: {}};
               this._addUser(
               {
@@ -72,7 +73,12 @@ class UserHandler extends CmdRunner
           case 'user.addEnrollment':
             if(body.app === 'admin')
             {
-              query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
+			  console.log("user.addEnrollement params: ",params);
+			  if(params.num_repeat < 3)
+				query.event = {name: "repeatEnrollment", data: { username: params.username, num_repeat: params.num_repeat + 1, user_username: params.user_username }};
+			  else
+				query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
+				
               this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
               {
                 complete: () => { resolve(query); },
@@ -223,6 +229,7 @@ class UserHandler extends CmdRunner
           case 'user.update':
             if(body.app === 'admin')
             {
+			  params.name = params.name.toLowerCase();
               query.event = { name: 'userUpdateSuccess', data: { username: params.username } };
               let user;
               this._getUser(params.user_username).subscribe(

@@ -88,7 +88,7 @@ class UsersService
 		*/
 	deleteUser(event, context)
 	{
-		let username = event.pathParameters.username;
+		let username = event.pathParameters.username.replace(/%20/g, ' ');
 		this.users.removeUser(username).subscribe(
 		{
 			next: function(data)
@@ -134,7 +134,7 @@ class UsersService
 		*/
 	getUser(event, context)
 	{
-		let username = event.pathParameters.username;
+		let username = event.pathParameters.username.replace(/%20/g, ' ');
 		let user; // Conterrà i dati relativi all'user
 		this.users.getUser(username).subscribe(
 		{
@@ -227,7 +227,7 @@ class UsersService
 
 		// Parametro contenente i dati relativi all'user da aggiornare
 		let params = objectFilter(user, ['name', 'sr_id', 'password', 'slack_channel']);
-		params.username = event.pathParameters.username;
+		params.username = event.pathParameters.username.replace(/%20/g, ' ');
 
 		this.users.updateUser(params).subscribe(
 		{
