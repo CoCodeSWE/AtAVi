@@ -29,36 +29,57 @@ class RuleHandler extends CmdRunner
           case 'rule.add':
             if(body.app === 'admin')
             {
+                            let id_slack;
               query.event = { name: 'addRuleSuccess', data: { username: params.username } };
-              this._addRule(
-              {
-                name: params.rule_name,
-								type: params.task_name,
-                task:
-                {
-                  'params': params.username_slack
-                },
-                targets:[
-                {
-                  name: params.target_name,
-                  member: params.target_member,
-                  company: params.target_company
-                }],
-                enabled: true,
-								override: false
-              }).subscribe(
-              {
-                complete: () =>
-                {
-                  resolve(query);
-                },
-                error: (err) =>
-								{
-									query.event.name = "error409_rule";
-									query.event.data = { username: params.username, rule_name: params.rule_name };
-									resolve(query);
-								}
-              });
+              this._getChannelList(params.username_slack).subscribe(
+                            {
+                                next: (data) =>
+                                {
+                                    if(data.length === 0)
+                                        id_slack = 'DEFAULT';
+                                    else
+                                        id_slack = data[0].id;
+                                },
+
+                                error: (err) =>
+                                {
+                                    query.event.name = "error500";
+                                    resolve(query);
+                                },
+
+                                complete: () =>
+                                {
+                                    this._addRule(
+                                    {
+                                        name: params.rule_name,
+                                        type: params.task_name,
+                                        task:
+                                        {
+                                            'params': id_slack
+                                        },
+                                        targets:[
+                                        {
+                                            name: params.target_name,
+                                            member: params.target_member,
+                                            company: params.target_company
+                                        }],
+                                        enabled: true,
+                                        override: false
+                                    }).subscribe(
+                                    {
+                                        complete: () =>
+                                        {
+                                            resolve(query);
+                                        },
+                                        error: (err) =>
+                                        {
+                                            query.event.name = "error409_rule";
+                                            query.event.data = { username: params.username, rule_name: params.rule_name };
+                                            resolve(query);
+                                        }
+                                    });
+                                }
+                            });
             }
             else
               reject(WRONG_APP);
@@ -91,11 +112,11 @@ class RuleHandler extends CmdRunner
               {
                 next: (data) => { rule = JSON.stringify(data, null, 2); },
                 error: (err) =>
-								{
-									query.event.name = "error404";
-									query.event.data = { username: params.username };
-									resolve(query);
-								},
+                                {
+                                    query.event.name = "error404";
+                                    query.event.data = { username: params.username };
+                                    resolve(query);
+                                },
                 complete: () =>
                 {
                   query.event.data = { rule: rule, username: params.username };
@@ -117,10 +138,10 @@ class RuleHandler extends CmdRunner
                   resolve(query);
                 },
                 error: (err) =>
-								{
-									query.event.name = "error404";
-									resolve(query);
-								}
+                                {
+                                    query.event.name = "error404";
+                                    resolve(query);
+                                }
               });
             }
             else
@@ -129,88 +150,86 @@ class RuleHandler extends CmdRunner
           case 'rule.update':
             if(body.app === 'admin')
             {
-							let rule;
+                            let rule;
               query.event = {name: 'updateRuleSuccess', data: { username: params.username }};
               this._getRule(params.rule_name).subscribe(
-							{
-								next: (data) =>
-								{
-									rule = data;
-									rule.type = params.rule_task;
-
-									rule.task =
-
-									{
-										'params': params.username_slack
-									};
-									rule.enabled = Boolean(params.rule_isEnabled.toUpperCase() === 'TRUE');
-								},
-								error: (err) =>
-								{
-									query.event.name = "error404";
-									query.event.data = { username: params.username };
-									resolve(query);
-								},
-								complete: () =>
-								{
-									this._updateRule(rule).subscribe(
-									{
-										complete: () =>
-										{
-											resolve(query);
-										},
-										error: (err) =>
-										{
-											query.event.name = "error500";
-											query.event.data = { username: params.username };
-											resolve(query);
-										}
-									});
-								}
-							});
+                            {
+                                next: (data) =>
+                                {
+                                    rule = data;
+                                    rule.type = params.rule_task;
+                                    rule.task =
+                                    {
+                                        'params': params.username_slack
+                                    };
+                                    rule.enabled = Boolean(params.rule_isEnabled.toUpperCase() === 'TRUE');
+                                },
+                                error: (err) =>
+                                {
+                                    query.event.name = "error404";
+                                    query.event.data = { username: params.username };
+                                    resolve(query);
+                                },
+                                complete: () =>
+                                {
+                                    this._updateRule(rule).subscribe(
+                                    {
+                                        complete: () =>
+                                        {
+                                            resolve(query);
+                                        },
+                                        error: (err) =>
+                                        {
+                                            query.event.name = "error500";
+                                            query.event.data = { username: params.username };
+                                            resolve(query);
+                                        }
+                                    });
+                                }
+                            });
             }
             else
               reject(WRONG_APP);
             break;
-					case 'rule.updateTarget':
-						if(body.app === 'admin')
-						{
-							let rule;
-							query.event = {name: 'updateRuleTargetSuccess', data: { username: params.username }};
-							this._getRule(params.rule_name).subscribe(
-							{
-								next: (data) =>
-								{
-									rule = data;
-									rule.targets = [{ name: params.name, company: params.company, member: params.company }];
-								},
-								error: (err) =>
-								{
-									query.event.name = "error404";
-									query.event.data = { username: params.username };
-									resolve(query);
-								},
-								complete: () =>
-								{
-									this._updateRule(rule).subscribe(
-									{
-										complete: () =>
-										{
-											resolve(query);
-										},
-										error: (err) =>
-										{
-											query.event.name = "error500";
-											query.event.data = { username: params.username };
-											resolve(query);
-										}
-									});
-								}
-							});
-						}
-						else
-							reject(WRONG_APP);
-						break;
+                    case 'rule.updateTarget':
+                        if(body.app === 'admin')
+                        {
+                            let rule;
+                            query.event = {name: 'updateRuleTargetSuccess', data: { username: params.username }};
+                            this._getRule(params.rule_name).subscribe(
+                            {
+                                next: (data) =>
+                                {
+                                    rule = data;
+                                    rule.targets = [{ name: params.name, company: params.company, member: params.company }];
+                                },
+                                error: (err) =>
+                                {
+                                    query.event.name = "error404";
+                                    query.event.data = { username: params.username };
+                                    resolve(query);
+                                },
+                                complete: () =>
+                                {
+                                    this._updateRule(rule).subscribe(
+                                    {
+                                        complete: () =>
+                                        {
+                                            resolve(query);
+                                        },
+                                        error: (err) =>
+                                        {
+                                            query.event.name = "error500";
+                                            query.event.data = { username: params.username };
+                                            resolve(query);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else
+                            reject(WRONG_APP);
+                        break;
           default:
             resolve(super.handler(response, body));
         }
@@ -224,32 +243,32 @@ class RuleHandler extends CmdRunner
   */
   _addRule(rule)
   {
-		let self = this;
-		return new Rx.Observable(function(observer)
-		{
-			let options =
-			{
-				method: 'POST',
-				uri: RULES_SERVICE_URL,
-				body: rule,
+        let self = this;
+        return new Rx.Observable(function(observer)
+        {
+            let options =
+            {
+                method: 'POST',
+                uri: RULES_SERVICE_URL,
+                body: rule,
         headers:{'x-api-key': RULES_SERVICE_KEY},
-				json: true
-			};
+                json: true
+            };
 
-			self.request_promise(options).then(function(data)
-			{
-				observer.complete();
-			})
-			.catch(function(err)
-			{
+            self.request_promise(options).then(function(data)
+            {
+                observer.complete();
+            })
+            .catch(function(err)
+            {
         console.log('error: ', err)
-				observer.error(
-				{
-					code: err.statusCode,
-					msg: err.message
-				});
-			});
-		});
+                observer.error(
+                {
+                    code: err.statusCode,
+                    msg: err.message
+                });
+            });
+        });
   }
 
   /**
@@ -258,31 +277,31 @@ class RuleHandler extends CmdRunner
   */
   _getRule(name)
   {
-		let self = this;
-		return new Rx.Observable(function(observer)
-		{
-			let options =
-			{
-				method: 'GET',
-				uri: `${RULES_SERVICE_URL}/${name}`,
+        let self = this;
+        return new Rx.Observable(function(observer)
+        {
+            let options =
+            {
+                method: 'GET',
+                uri: `${RULES_SERVICE_URL}/${name}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
-				json: true
-			};
+                json: true
+            };
 
-			self.request_promise(options).then(function(data)
-			{
+            self.request_promise(options).then(function(data)
+            {
         observer.next(data);
-				observer.complete();
-			})
-			.catch(function(err)
-			{
-				observer.error(
-				{
-					code: err.statusCode,
-					msg: err.message
-				});
-			});
-		});
+                observer.complete();
+            })
+            .catch(function(err)
+            {
+                observer.error(
+                {
+                    code: err.statusCode,
+                    msg: err.message
+                });
+            });
+        });
   }
 
   /**
@@ -290,100 +309,130 @@ class RuleHandler extends CmdRunner
   */
   _getRuleList()
   {
-		let self = this;
-		return new Rx.Observable(function(observer)
-		{
-			let options =
-			{
-				method: 'GET',
-				uri: RULES_SERVICE_URL,
+        let self = this;
+        return new Rx.Observable(function(observer)
+        {
+            let options =
+            {
+                method: 'GET',
+                uri: RULES_SERVICE_URL,
         headers:{'x-api-key': RULES_SERVICE_KEY},
-				json: true
-			};
+                json: true
+            };
 
-			self.request_promise(options).then(function(data)
-			{
-				observer.next(data);
-				observer.complete();
-			})
-			.catch(function(err)
-			{
-				observer.error(
-				{
-					code: err.statusCode,
-					msg: err.message
-				});
-			});
-		});
+            self.request_promise(options).then(function(data)
+            {
+                observer.next(data);
+                observer.complete();
+            })
+            .catch(function(err)
+            {
+                observer.error(
+                {
+                    code: err.statusCode,
+                    msg: err.message
+                });
+            });
+        });
   }
 
-	/**
+    /**
   * Metodo che permette di rimuovere una direttiva dal sistema
   * @param {String} name - nome della direttiva da rimuovere
   */
   _removeRule(name)
   {
-		let self = this;
-		return new Rx.Observable(function(observer)
-		{
-			let options =
-			{
-				method: 'DELETE',
-				uri: `${RULES_SERVICE_URL}/${name}`,
+        let self = this;
+        return new Rx.Observable(function(observer)
+        {
+            let options =
+            {
+                method: 'DELETE',
+                uri: `${RULES_SERVICE_URL}/${name}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
-				json: true
-			};
+                json: true
+            };
 
-			self.request_promise(options).then(function(data)
-			{
+            self.request_promise(options).then(function(data)
+            {
         console.log(data);
-				observer.complete();
-			})
-			.catch(function(err)
-			{
+                observer.complete();
+            })
+            .catch(function(err)
+            {
         console.log("error ", err)
-				observer.error(
-				{
-					code: err.statusCode,
-					msg: err.message
-				});
-			});
-		});
+                observer.error(
+                {
+                    code: err.statusCode,
+                    msg: err.message
+                });
+            });
+        });
   }
 
-	/**
+    /**
   * Metodo che permette di aggiornare una direttiva dal sistema
   * @param {Rule} rule - Rule da aggiornare
   */
   _updateRule(rule)
   {
-		let self = this;
-		return new Rx.Observable(function(observer)
-		{
-			console.log(rule);
-			let options =
-			{
-				method: 'PUT',
-				uri: `${RULES_SERVICE_URL}/${rule.name}`,
+        let self = this;
+        return new Rx.Observable(function(observer)
+        {
+            console.log(rule);
+            let options =
+            {
+                method: 'PUT',
+                uri: `${RULES_SERVICE_URL}/${rule.name}`,
         headers:{'x-api-key': RULES_SERVICE_KEY},
-				body: rule,
-				json: true
-			};
+                body: rule,
+                json: true
+            };
 
-			self.request_promise(options).then(function(data)
-			{
-				observer.complete();
-			})
-			.catch(function(err)
-			{
-				observer.error(
-				{
-					code: err.statusCode,
-					msg: err.message
-				});
-			});
-		});
+            self.request_promise(options).then(function(data)
+            {
+                observer.complete();
+            })
+            .catch(function(err)
+            {
+                observer.error(
+                {
+                    code: err.statusCode,
+                    msg: err.message
+                });
+            });
+        });
   }
+
+    _getChannelList(username)
+    {
+        let self = this;
+        return new Rx.Observable(function(observer)
+        {
+            let options =
+            {
+                method: 'GET',
+                uri: `${NOTIFICATIONS_SERVICE_URL}?username=${username}`,
+                headers:{'x-api-key': NOTIFICATIONS_SERVICE_KEY},
+                json: true
+            };
+
+            console.log(options);
+            self.request_promise(options).then(function(data)
+            {
+                observer.next(data);
+                observer.complete();
+            })
+            .catch(function(err)
+            {
+                observer.error(
+                {
+                    code: err.statusCode,
+                    msg: err.message
+                });
+            });
+        });
+    }
 }
 
 module.exports = RuleHandler;
