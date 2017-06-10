@@ -33,6 +33,9 @@ class RuleHandler extends CmdRunner
 					case 'rule.add':
 						if(body.app === 'admin')
 						{
+							params.target_name = params.target_name.toLowerCase();
+							params.target_member = params.target_member.toLowerCase();
+							params.target_company = params.target_company.toLowerCase();
 							let id_slack;
 							query.event = { name: 'addRuleSuccess', data: { username: params.username } };
 							console.log("rule.add");
