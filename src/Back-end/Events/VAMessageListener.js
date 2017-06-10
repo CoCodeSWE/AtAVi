@@ -96,27 +96,32 @@ class VAMessageListener
 			{
 				/**ciclo che conta quante rules permettono l'override.
 				se una rule con priorità j lo permette ma una con priorità i > j no, questa non viene considerata**/
-				let rule_to_apply = 0;
-				while (rule_to_apply < response.rules.length && response.rules[rule_to_apply].override === true) {
-					rule_to_apply++;
-				}
-
-				for(let i = 0; i <= rule_to_apply; ++i)
-				{
-					if(response.rules && response.rules[i] && response.rules[i].task && response.rules[i].type === 'send_to_slack')  // mi dice la direttiva. due volte task perchè una rule contiene TaskInstance
-						send_to = Promise.resolve([{id: response.rules[i].task.params}]);
-	        else // se non ho una direttiva che mi dica dove mandare il messaggio, devo ricavarmelo io
-	          send_to = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
-		        send_to.then((receiver) =>
-		        {
-		          let send_to;
-		          if(!receiver || !receiver[0])
-		            send_to = DEFAULT_CHANNEL;
-		          else
-		            send_to = receiver[0].id;
-		          return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}});
-		        }).then((data) => {callback(null);}).catch(callback);  /**@todo vera gestione errori*/
-				}
+				let rule_to_apply = [];
+        for(let i in response.rules)
+        {
+          if(response.rules[i].task && response.rules[i].task.type === 'send_to_slack')
+          {
+            rule_to_apply.push(response.rules[i].task.params);
+            if(response.rules[i].override === true)
+              break;
+          }
+        }
+        let rules;
+        if(rule_to_apply.length > 0)
+          rules = Promise.resolve(rule_to_apply);
+        else
+          rules = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}}).then((data) => (data.length > 0) ? [data[0].id] : [DEFAULT_CHANNEL]); // creo rule fittizia
+        rules.then((send_to) =>
+        {
+          for(let i = 0; i <= send_to.length; ++i)
+  				{
+  	        self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to[i])}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}})
+              .then((data) => {callback(null);})
+              .catch(() => { return self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(DEFAULT_CHANNEL)}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}}); })
+              .then((data) => {callback(null);})
+              .catch(callback);
+  				}
+        });
 			}).catch(callback);
 		}
     else
