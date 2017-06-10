@@ -33,6 +33,9 @@ class RuleHandler extends CmdRunner
 					case 'rule.add':
 						if(body.app === 'admin')
 						{
+							params.target_name = params.target_name.toLowerCase();
+							params.target_member = params.target_member.toLowerCase();
+							params.target_company = params.target_company.toLowerCase();
 							let id_slack;
 							query.event = { name: 'addRuleSuccess', data: { username: params.username } };
 							console.log("rule.add");
@@ -225,6 +228,9 @@ class RuleHandler extends CmdRunner
 					case 'rule.updateTarget':
 						if(body.app === 'admin')
 						{
+							params.name = params.name.toLowerCase();
+							params.member = params.member.toLowerCase();
+							params.company = params.company.toLowerCase();
 							let rule;
 							query.event = {name: 'updateRuleTargetSuccess', data: { username: params.username }};
 							this._getRule(params.rule_name).subscribe(
@@ -232,7 +238,7 @@ class RuleHandler extends CmdRunner
 								next: (data) =>
 								{
 									rule = data;
-									rule.targets = [{ name: params.name, company: params.company, member: params.company }];
+									rule.targets = [{ name: params.name, company: params.company, member: params.member }];
 								},
 					
 								error: (err) =>
