@@ -96,7 +96,8 @@ class UserHandler extends CmdRunner
                   else
                     query.event = {name: 'error500'};
                   resolve(query);
-                }, complete: () =>
+                },
+								complete: () =>
                 {
                   this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
                   {
