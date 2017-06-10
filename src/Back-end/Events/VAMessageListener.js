@@ -96,7 +96,8 @@ class VAMessageListener
 			{
 				/**ciclo che conta quante rules permettono l'override.
 				se una rule con priorità j lo permette ma una con priorità i > j no, questa non viene considerata**/
-				let rule_to_apply = [];
+        console.log(response.rules);
+        let rule_to_apply = [];
         for(let i in response.rules)
         {
           if(response.rules[i].task && response.rules[i].task.type === 'send_to_slack')
@@ -106,6 +107,7 @@ class VAMessageListener
               break;
           }
         }
+        console.log(rule_to_apply);
         let rules;
         if(rule_to_apply.length > 0)
           rules = Promise.resolve(rule_to_apply);
@@ -113,6 +115,7 @@ class VAMessageListener
           rules = self.request_promise({method: 'GET', uri: NOTIFICATIONS_SERVICE_URL + '/channels?name=' + params.required_person, json: true, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}}).then((data) => (data.length > 0) ? [data[0].id] : [DEFAULT_CHANNEL]); // creo rule fittizia
         rules.then((send_to) =>
         {
+          console.log(send_to);
           for(let i = 0; i < send_to.length; ++i)
   				{
   	        self.request_promise({method: 'POST', uri: `${NOTIFICATIONS_SERVICE_URL}/channels/${encodeURIComponent(send_to[i])}`, json: true, body: {msg: msg}, headers:{ 'x-api-key': NOTIFICATIONS_SERVICE_KEY}})
