@@ -267,16 +267,19 @@ function textInit()
       console.log(app);
       let input_text = document.getElementById("inputText").value;
       document.getElementById("inputText").value="";
-      console.log(input_text);
-      let query =
+      if (input_text !== "")
       {
-        text : input_text,
-        app: app,
-        data: data, /**@todo passare davvero i dati*/
-        session_id: session_id
+        console.log(input_text);
+        let query =
+        {
+          text : input_text,
+          app: app,
+          data: data, /**@todo passare davvero i dati*/
+          session_id: session_id
+        }
+        logic.sendData(query);
+        toggleLoading();
       }
-      logic.sendData(query);
-      toggleLoading();
     },
     error: console.log,
     complete: console.log
