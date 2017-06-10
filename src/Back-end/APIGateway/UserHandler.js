@@ -82,7 +82,7 @@ class UserHandler extends CmdRunner
                   this.vocal.getUser(sr_id).subscribe((sr_user) =>
                   {
                     if(sr_user.enrollmentStatus === 'Enrolling')
-                      query.event = {name: "repeatEnrollment", data: { username: params.username, num_repeat: params.num_repeat + 1, user_username: params.user_username }};
+                      query.event = {name: "repeatEnrollment", data: { username: params.username, user_username: params.user_username }};
                     else
                       query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
                   });
