@@ -89,6 +89,7 @@ startObservable.subscribe(function()
       keyboard = false;
     }
     disableButtonKeyboard(buttonKey); //disabilita pulsante per inserimento tramite tastiera
+
   }
   else
   {
@@ -104,6 +105,7 @@ keyboardObservable.subscribe(function()
   clearTimeout(time);
   clearSubscriptions();
   keyboard = !keyboard;
+  startTimeoutShutdown()
   if(keyboard)
   {
     recorder.stop();
@@ -240,10 +242,7 @@ function vocalInit()
         }, start_reminder_button);
       }
       player.speak(response.res.text_response);
-      time = setTimeout(() =>
-      {
-        resetInterface();
-      }, max_silence_time);
+      startTimeoutShutdown()
     },
     error: function(err)
     {
@@ -324,10 +323,7 @@ function textInit()
         }, start_reminder_button);
       }
       player.speak(response.res.text_response);
-      time = setTimeout(() =>
-      {
-        resetInterface();
-      }, max_silence_time);
+      startTimeoutShutdown()
     },
     error: function(err)
     {
@@ -401,10 +397,7 @@ function reminderInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
-      time = setTimeout(() =>
-      {
-        resetInterface();
-      }, max_silence_time);
+      startTimeoutShutdown()
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -432,4 +425,12 @@ function resetInterface()
     disableKeyboard();
   }
   disableButtonKeyboard(buttonKeyboard);
+}
+
+function startTimeoutShutdown()
+{
+  time = setTimeout(() =>
+  {
+    resetInterface();
+  }, max_silence_time);
 }
