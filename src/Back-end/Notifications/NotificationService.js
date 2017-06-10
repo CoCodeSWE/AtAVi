@@ -46,13 +46,13 @@ class NotificationService
             {
               data.channels.forEach(function(item)
               {
-								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === '')
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === item.name)
 								{
 									result.push(
 									{
 										name: item.name,
 										id: item.id,
-										username: '',
+										username: item.name,
 										type: 'channel'
 									});
 								}
@@ -80,13 +80,13 @@ class NotificationService
             {
               data.groups.forEach(function(item)
               {
-								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === '')
+								if(!event.queryStringParameters || !event.queryStringParameters.username || event.queryStringParameters.username === item.name)
 								{
 									result.push(
 									{
 										name: item.name,
 										id: item.id,
-										username: '',
+										username: item.name,
 										type: 'group'
 									});
 								}
