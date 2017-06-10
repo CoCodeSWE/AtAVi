@@ -40,7 +40,7 @@ class UserHandler extends CmdRunner
           case 'user.add':
             if(body.app === 'admin')
             {
-			  params.name = params.name.toLowerCase();
+			        params.name = params.name.toLowerCase();
               query.event = { name: 'addUserSuccess', data: {}};
               this._addUser(
               {
@@ -73,35 +73,54 @@ class UserHandler extends CmdRunner
           case 'user.addEnrollment':
             if(body.app === 'admin')
             {
-			  console.log("user.addEnrollement params: ",params);
-			  if(params.num_repeat < 3)
-				query.event = {name: "repeatEnrollment", data: { username: params.username, num_repeat: params.num_repeat + 1, user_username: params.user_username }};
-			  else
-				query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
-				
-              this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
+      			  console.log("user.addEnrollement params: ", params);
+              this._getUser(params.user_username).subscribe(
               {
-                complete: () => { resolve(query); },
-
+                next: (user) =>
+                {
+                  let sr_id = user.sr_id;
+                  this.vocal.getUser(sr_id).subscribe((sr_user) =>
+                  {
+                    if(sr_user.enrollmentStatus === 'Enrolling')
+                      query.event = {name: "repeatEnrollment", data: { username: params.username, num_repeat: params.num_repeat + 1, user_username: params.user_username }};
+                    else
+                      query.event = {name: "addUserEnrollmentSuccess", data: { username: params.username }};
+                  });
+                },
                 error: (err) =>
-
-								{
-									if(err.code === 400 || err.message === 'TooNoisy')
-									{
-										query.event.name = 'addUserEnrollmentFailure';
-										resolve(query);
-									}
-									else if(err.code === 404)
-									{
-										query.event.name = 'error404';
-										resolve(query);
-									}
-									else
-									{
-										query.event.name = 'error500';
-										resolve(query);
-									}
-								}
+                {
+                  if(err.code === 400 || err.message === 'TooNoisy')
+                    query.event = {name: 'addUserEnrollmentFailure'};
+                  else if(err.code === 404)
+                    query.event = {name: 'error404'};
+                  else
+                    query.event = {name: 'error500'};
+                  resolve(query);
+                }, complete: () =>
+                {
+                  this._addUserEnrollment({audio: body.audio, username: params.user_username}).subscribe(
+                  {
+                    complete: () => { resolve(query); },
+                    error: (err) =>
+                    {
+                      if(err.code === 400 || err.message === 'TooNoisy')
+                      {
+                        query.event.name = 'addUserEnrollmentFailure';
+                        resolve(query);
+                      }
+                      else if(err.code === 404)
+                      {
+                        query.event.name = 'error404';
+                        resolve(query);
+                      }
+                      else
+                      {
+                        query.event.name = 'error500';
+                        resolve(query);
+                      }
+                    }
+                  });
+                }
               });
             }
             else
