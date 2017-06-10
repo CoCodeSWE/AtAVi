@@ -71,6 +71,7 @@ body {
   background-size: 100% 100%;
   background-color: transparent;
   background-repeat: no-repeat;
+  opacity: 0.2;
   border: 0;
   cursor: pointer;
 }
@@ -83,7 +84,6 @@ body {
   background-size: 100% 100%;
   background-color: transparent;
   background-repeat: no-repeat;
-  transition: background-image 1s ease-in-out;
   border: 0;
   cursor: pointer;
   overflow: hidden;
@@ -92,9 +92,9 @@ body {
 
 .buttonReminder {
   margin: 0 auto;
-  display: inline-flex;
   width: 13%;
   height: 30%;
+  display: none;
   background-size: 100% 100%;
   background-color: transparent;
   background-image: url("../Image/reminder.png");
@@ -121,6 +121,14 @@ body {
   float: left;
   width: 100%;
   margin-bottom: 0.5em;
+}
+
+#imgSollecito {
+  height: 8em;
+  position: absolute;
+  left: 55em;
+  top: 37em;
+  display: none;
 }
 
 #staticTitleApp {

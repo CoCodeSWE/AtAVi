@@ -45,6 +45,14 @@ let logic = new Logic();
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
+let patt = new RegExp("Do you like sport"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
+let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
+let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
+let max_silence_time = 90000;
+let start_reminder_button = 30000;
+let buttonKey = document.getElementById("buttonKeyboard");
+let buttonRem = document.getElementById("buttonReminder");
+
 reg_client.register('conversation', ConversationApp).subscribe({error: console.log});
 reg_client.register('admin', AdministrationApp).subscribe({error: console.log}); //registro l'applicazione di conversazione sia per la conversazione sia per l'amministrazione
 reg_client.register('curiosity', AdministrationApp).subscribe({error: console.log});
@@ -59,30 +67,54 @@ console.log('session_id: ', session_id);
 // Observable per i click
 let startObservable = new EventObservable('click', 'start');
 let keyboardObservable = new EventObservable('click', 'buttonKeyboard');
-let reminderObservable = new EventObservable('click', 'buttonReminder')
+let reminderObservable = new EventObservable('click', 'buttonReminder');
 
 // iscrizione a observable per i click
 startObservable.subscribe(function()
 {
   if(enabled)
+  {
+    clearTimeout(time);
+    clearTimeout(start_reminder_button);
+    hideButtonReminder(buttonRem);
     recorder.stop();
+    if(player.isPlaying())
+      player.cancel();
+    application_manager.resetState();
+    application_manager.runApplication("conversation", "clear", {})
+    session_id = uuidV4();
+    if (keyboard)
+    {
+      disableKeyboard();
+      keyboard = false;
+    }
+    disableButtonKeyboard(buttonKey); //disabilita pulsante per inserimento tramite tastiera
+
+  }
   else
+  {
     recorder.enable();
+    enableButtonKeyboard(buttonKey); //abilita pulsante per inserimento tramite tastiera
+  }
   enabled = !enabled;
   changeValueButton();
 });
 
 keyboardObservable.subscribe(function()
 {
+  clearTimeout(time);
   clearSubscriptions();
   keyboard = !keyboard;
+  startTimeoutShutdown()
   if(keyboard)
   {
+    recorder.stop();
     enableKeyboard();
     textInit();
   }
   else
   {
+    recorder.enable();
     disableKeyboard();
     vocalInit();
   }
@@ -122,7 +154,7 @@ function vocalInit()
     next: function(playing)
     {
       console.log('Player next', playing);
-      if(!playing && enabled)
+      if(enabled && !playing)
         recorder.enable();
     },
     error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
@@ -133,6 +165,7 @@ function vocalInit()
   {
     next: function(blob)
     {
+      clearTimeout(time);
       console.log('Recorder next');
       let app = application_manager.application_name || 'conversation';
       blobToBase64(blob)
@@ -158,6 +191,40 @@ function vocalInit()
   {
     next: function(response)
     {
+      disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
+      disableButtonReminder(buttonRem);
+      if (keyboard)
+      {
+        clearSubscriptions();
+        disableKeyboard();
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if(keyboard && !playing)
+            {
+              keyboard = false;
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+              vocalInit();
+            }
+          }
+        });
+      }
+      else
+      {
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if (!playing)
+            {
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+            }
+          }
+        });
+      }
       console.log('logic next');
       data = response.res.data;
       let action = response.action.split('.');
@@ -166,7 +233,16 @@ function vocalInit()
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
+      let res = patt.test(response.res.text_response);
+      if (res)
+      {
+        start_time = setTimeout(() =>
+        {
+          showButtonReminder(buttonRem);
+        }, start_reminder_button);
+      }
       player.speak(response.res.text_response);
+      startTimeoutShutdown()
     },
     error: function(err)
     {
@@ -184,22 +260,26 @@ function textInit()
   {
     next: function(event)
     {
+      clearTimeout(time);
       event.preventDefault();
       console.log('Text next');
       let app = application_manager.application_name || 'conversation';
       console.log(app);
       let input_text = document.getElementById("inputText").value;
       document.getElementById("inputText").value="";
-      console.log(input_text);
-      let query =
+      if (input_text !== "")
       {
-        text : input_text,
-        app: app,
-        data: {},//data, /**@todo passare davvero i dati*/
-        session_id: session_id
+        console.log(input_text);
+        let query =
+        {
+          text : input_text,
+          app: app,
+          data: data, /**@todo passare davvero i dati*/
+          session_id: session_id
+        }
+        logic.sendData(query);
+        toggleLoading();
       }
-      logic.sendData(query);
-      toggleLoading();
     },
     error: console.log,
     complete: console.log
@@ -209,6 +289,26 @@ function textInit()
   {
     next: function(response)
     {
+      if (keyboard)
+      {
+        clearSubscriptions();
+        disableKeyboard();
+        disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
+        disableButtonReminder(buttonRem);
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if(keyboard && !playing)
+            {
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+              keyboard = false;
+              vocalInit();
+            }
+          }
+        });
+      }
       console.log('logic next');
       data = response.res.data;
       let action = response.action.split('.');
@@ -217,7 +317,16 @@ function textInit()
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
+      let res = patt.test(response.res.text_response);
+      if (res)
+      {
+        start_time = setTimeout(() =>
+        {
+          showButtonReminder(buttonRem);
+        }, start_reminder_button);
+      }
       player.speak(response.res.text_response);
+      startTimeoutShutdown()
     },
     error: function(err)
     {
@@ -230,6 +339,8 @@ function textInit()
 
 function reminderInit()
 {
+  hideButtonReminder(buttonRem);
+  clearTimeout(time);
   logic.setUrl(TEXT_URL);
   let app = application_manager.application_name || 'conversation';
   let query =
@@ -246,6 +357,40 @@ function reminderInit()
   {
     next: function(response)
     {
+      disableButtonKeyboard(buttonKey); // disabilito pulsante tastiera
+      disableButtonReminder(buttonRem);
+      if (keyboard)
+      {
+        clearSubscriptions();
+        disableKeyboard();
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if(keyboard && !playing)
+            {
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+              keyboard = false;
+              vocalInit();
+            }
+          }
+        });
+      }
+      else
+      {
+        player.getObservable().subscribe(
+        {
+          next: (playing) =>
+          {
+            if (!playing)
+            {
+              enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
+              enableButtonReminder(buttonRem);
+            }
+          }
+        });
+      }
       console.log('logic next');
       data = response.res.data;
       let action = response.action.split('.');
@@ -255,6 +400,7 @@ function reminderInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
+      startTimeoutShutdown()
     },
     error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
     complete: console.log
@@ -264,4 +410,30 @@ function reminderInit()
 function clearSubscriptions()
 {
   subscriptions.forEach((sub) => sub.unsubscribe());
+}
+
+function resetInterface()
+{
+  hideButtonReminder(buttonRem);
+  clearTimeout(time);
+  enabled = !enabled;
+  changeValueButton();
+  recorder.stop();
+  application_manager.resetState();
+  application_manager.runApplication("conversation", "clear", {})
+  session_id = uuidV4();
+  if (keyboard)
+  {
+    keyboard = false;
+    disableKeyboard();
+  }
+  disableButtonKeyboard(buttonKeyboard);
+}
+
+function startTimeoutShutdown()
+{
+  time = setTimeout(() =>
+  {
+    resetInterface();
+  }, max_silence_time);
 }

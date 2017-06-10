@@ -114,4 +114,8 @@ export default class Manager
     this.frame.appendChild(this.ui);
   }
 
+  resetState()
+  {
+    this.state = new State();
+  }
 }
