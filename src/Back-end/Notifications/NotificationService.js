@@ -167,6 +167,7 @@ class NotificationService
 
   sendMsg(event, context)
   {
+    console.log(event);
     let self = this;
     let body;
     try
@@ -195,6 +196,7 @@ class NotificationService
 			{
 				if (err)
 				{
+          console.log(err);
 					context.succeed(
 					{
 						statusCode: 500,
@@ -203,6 +205,7 @@ class NotificationService
 				}
 				else
 				{
+          console.log(data);
 					context.succeed(
 					{
 						statusCode: 200,
