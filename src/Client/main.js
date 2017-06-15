@@ -36,7 +36,7 @@ const VOCAL_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev
 const TEXT_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
-/** @todo forse da mettere tutto in window.onload*/
+
 let data = {};
 let recorder = new Recorder(rec_conf);
 let player = new Player(tts_conf, window.speechSynthesis);
@@ -157,7 +157,7 @@ function vocalInit()
       if(enabled && !playing)
         recorder.enable();
     },
-    error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
+    error: console.log,
     complete: console.log
   }));
 
@@ -175,7 +175,7 @@ function vocalInit()
           {
             app: app,
             audio: audio,
-            data: data, /**@todo passare davvero i dati*/
+            data: data,
             session_id: session_id
           }
           logic.sendData(query);
@@ -183,7 +183,7 @@ function vocalInit()
         })
         .catch(console.log)
     },
-    error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
+    error: console.log,
     complete: console.log
   }));
 
@@ -274,7 +274,7 @@ function textInit()
         {
           text : input_text,
           app: app,
-          data: data, /**@todo passare davvero i dati*/
+          data: data,
           session_id: session_id
         }
         logic.sendData(query);
@@ -332,7 +332,7 @@ function textInit()
     {
       application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
       setTimeout(() => textInit());
-    },  /**@todo implementare un vero modo di gestire gli errori*/
+    },
     complete: console.log
   }));
 }
@@ -347,7 +347,7 @@ function reminderInit()
   {
     text : 'where required_person is?',
     app: app,
-    data: data, /**@todo passare davvero i dati*/
+    data: data, 
     session_id: session_id
   }
   logic.sendData(query);
@@ -402,7 +402,7 @@ function reminderInit()
       player.speak(response.res.text_response);
       startTimeoutShutdown()
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: console.log,
     complete: console.log
   }));
 }
