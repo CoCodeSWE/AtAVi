@@ -49,7 +49,7 @@ let patt = new RegExp("Do you like sport?"); // stringa da confrontare con la do
 let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
 let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
 let max_silence_time = 90000;
-let start_reminder_button = 10000;
+let start_reminder_button = 30000;
 let buttonKey = document.getElementById("buttonKeyboard");
 let buttonRem = document.getElementById("buttonReminder");
 
@@ -372,6 +372,8 @@ function reminderInit()
               enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
               enableButtonReminder(buttonRem);
               keyboard = false;
+              clearSubscriptions();
+              vocalInit();
             }
           }
         });
@@ -386,6 +388,8 @@ function reminderInit()
             {
               enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
               enableButtonReminder(buttonRem);
+              clearSubscriptions();
+              vocalInit();
             }
           }
         });
@@ -400,8 +404,6 @@ function reminderInit()
       toggleLoading();
       player.speak(response.res.text_response);
       startTimeoutShutdown();
-      clearSubscriptions();
-      vocalInit();
     },
     error: console.log,
     complete: console.log
