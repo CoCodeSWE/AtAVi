@@ -36,7 +36,7 @@ const VOCAL_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev
 const TEXT_URL = 'https://tv7xyk6f3j.execute-api.eu-central-1.amazonaws.com/dev/text-assistant';
 
 // istanziazione classi necessarie al client e inizializzazione variabili
-/** @todo forse da mettere tutto in window.onload*/
+
 let data = {};
 let recorder = new Recorder(rec_conf);
 let player = new Player(tts_conf, window.speechSynthesis);
@@ -45,11 +45,14 @@ let logic = new Logic();
 let registry = new ApplicationLocalRegistry();
 let reg_client = new ApplicationRegistryLocalClient(registry);
 let subscriptions = []; // subscriptions alle observable
-let patt = new RegExp("Do you like sport"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
+let patt_soll = new RegExp("Do you like sport?"); // stringa da confrontare con la domanda dell'assistente per abilitare pulsante sollecito
+let patt_shutdown = new RegExp("helpful");
 let time = null; // timeout per fare lo shutdown dopo un certo lasso di tempo
 let start_time = null; // timeout per abilitare il bottone del sollecito la prima volta
+let finish_time = null; //timeout per spegnere Atavi finita la conversazione
 let max_silence_time = 90000;
-let start_reminder_button = 30000;
+let start_reminder_button = 20000;
+let time_shutdown = 15000;
 let buttonKey = document.getElementById("buttonKeyboard");
 let buttonRem = document.getElementById("buttonReminder");
 
@@ -75,7 +78,6 @@ startObservable.subscribe(function()
   if(enabled)
   {
     clearTimeout(time);
-    clearTimeout(start_reminder_button);
     hideButtonReminder(buttonRem);
     recorder.stop();
     if(player.isPlaying())
@@ -89,12 +91,12 @@ startObservable.subscribe(function()
       keyboard = false;
     }
     disableButtonKeyboard(buttonKey); //disabilita pulsante per inserimento tramite tastiera
-
   }
   else
   {
     recorder.enable();
     enableButtonKeyboard(buttonKey); //abilita pulsante per inserimento tramite tastiera
+    vocalInit();
   }
   enabled = !enabled;
   changeValueButton();
@@ -126,8 +128,6 @@ reminderObservable.subscribe(function()
   reminderInit();
 });
 
-vocalInit();
-
 /**
  * getVoices - funzione che permette di ottenere la lista delle voci disponibili
  * per la sintesi vocale in una certa lingua.
@@ -147,6 +147,7 @@ function getVoices(lang)
 
 function vocalInit()
 {
+  clearSubscriptions();
   logic.setUrl(VOCAL_URL);
   if(enabled) recorder.enable();
   subscriptions.push(player.getObservable().subscribe(
@@ -157,7 +158,7 @@ function vocalInit()
       if(enabled && !playing)
         recorder.enable();
     },
-    error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
+    error: console.log,
     complete: console.log
   }));
 
@@ -175,7 +176,7 @@ function vocalInit()
           {
             app: app,
             audio: audio,
-            data: data, /**@todo passare davvero i dati*/
+            data: data,
             session_id: session_id
           }
           logic.sendData(query);
@@ -183,7 +184,7 @@ function vocalInit()
         })
         .catch(console.log)
     },
-    error: console.log,  /** @todo implementare un vero modo di gestire gli errori */
+    error: console.log,
     complete: console.log
   }));
 
@@ -233,16 +234,25 @@ function vocalInit()
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
-      let res = patt.test(response.res.text_response);
-      if (res)
+      let soll = patt_soll.test(response.res.text_response);
+      let sd = patt_shutdown.test(response.res.text_response);
+      if (soll)
       {
         start_time = setTimeout(() =>
         {
           showButtonReminder(buttonRem);
         }, start_reminder_button);
       }
+      if (sd)
+      {
+        finish_time = setTimeout(() =>
+        {
+          resetInterface();
+        }, time_shutdown);
+      }
       player.speak(response.res.text_response);
-      startTimeoutShutdown()
+      clearTimeout(time);
+      startTimeoutShutdown();
     },
     error: function(err)
     {
@@ -274,7 +284,7 @@ function textInit()
         {
           text : input_text,
           app: app,
-          data: data, /**@todo passare davvero i dati*/
+          data: data,
           session_id: session_id
         }
         logic.sendData(query);
@@ -317,22 +327,31 @@ function textInit()
       console.log(action, app, cmd);
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
-      let res = patt.test(response.res.text_response);
-      if (res)
+      let soll = patt_soll.test(response.res.text_response);
+      let sd = patt_shutdown.test(response.res.text_response);
+      if (soll)
       {
         start_time = setTimeout(() =>
         {
           showButtonReminder(buttonRem);
         }, start_reminder_button);
       }
+      if (sd)
+      {
+        finish_time = setTimeout(() =>
+        {
+          resetInterface();
+        }, time_shutdown);
+      }
       player.speak(response.res.text_response);
+      clearTimeout(time);
       startTimeoutShutdown()
     },
     error: function(err)
     {
       application_manager.runApplication(application_manager.application_name, 'receiveMsg', {text_response: 'Error: ' + err.status_text});
       setTimeout(() => textInit());
-    },  /**@todo implementare un vero modo di gestire gli errori*/
+    },
     complete: console.log
   }));
 }
@@ -347,7 +366,7 @@ function reminderInit()
   {
     text : 'where required_person is?',
     app: app,
-    data: data, /**@todo passare davvero i dati*/
+    data: data,
     session_id: session_id
   }
   logic.sendData(query);
@@ -387,6 +406,7 @@ function reminderInit()
             {
               enableButtonKeyboard(buttonKey); // abilito pulsante tastiera
               enableButtonReminder(buttonRem);
+              vocalInit();
             }
           }
         });
@@ -400,9 +420,10 @@ function reminderInit()
       application_manager.runApplication(app, cmd, response.res);
       toggleLoading();
       player.speak(response.res.text_response);
-      startTimeoutShutdown()
+      clearTimeout(time);
+      startTimeoutShutdown();
     },
-    error: console.log,  /**@todo implementare un vero modo di gestire gli errori*/
+    error: console.log,
     complete: console.log
   }));
 }
@@ -414,9 +435,12 @@ function clearSubscriptions()
 
 function resetInterface()
 {
+  clearSubscriptions();
   hideButtonReminder(buttonRem);
   clearTimeout(time);
-  enabled = !enabled;
+  clearTimeout(finish_time);
+  clearTimeout(start_time)
+  enabled = false;
   changeValueButton();
   recorder.stop();
   application_manager.resetState();

@@ -211,7 +211,8 @@ class VocalAPI
       else
       {
         console.log('response: ', body._response);
-        body._response.text_request = body.text;
+        console.log(body.text);
+        body._response.res.text_request = body.text;
         console.log('response: ', body._response);
         context.succeed({statusCode: 200, headers: { "Access-Control-Allow-Origin" : "*", "Access-Control-Allow-Credentials" : true }, body: JSON.stringify(body._response)});
       }
